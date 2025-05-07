@@ -147,22 +147,3 @@ export const generarRetiroCesantias = async (data: any): Promise<any> => {
     },
   })
 };
-
-export const generarReporteVacaciones = async (data: any): Promise<any> => {
-  return await client_gestion.post("reportes/vacaciones", data, {
-    // responseType: "arraybuffer",
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-};
-
-export const validarTotalRegistros = async(data: any): Promise<any> => {
-  return await client.post("reportes/validar-registros", data, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-  })
-};
-
-

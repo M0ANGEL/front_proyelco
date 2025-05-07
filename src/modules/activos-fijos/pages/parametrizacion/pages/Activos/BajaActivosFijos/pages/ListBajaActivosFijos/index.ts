@@ -1,1 +1,0 @@
-export {ListBajaActivosFijos} from "./ListBajaActivosFijos"

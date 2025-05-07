@@ -1,1 +1,0 @@
-export { RepTrasladosPage } from "./RepTrasladosPage";

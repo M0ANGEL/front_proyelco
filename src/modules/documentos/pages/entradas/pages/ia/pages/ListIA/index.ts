@@ -1,1 +1,0 @@
-export { ListIA } from "./ListIA";

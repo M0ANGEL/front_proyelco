@@ -1,1 +1,0 @@
-export { ModalLotes } from "./ModalLotes";

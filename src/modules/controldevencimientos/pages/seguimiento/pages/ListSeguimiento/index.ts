@@ -1,1 +1,0 @@
-export { ListSeguimiento } from './ListSeguimiento'

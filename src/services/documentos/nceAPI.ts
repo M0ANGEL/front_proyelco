@@ -27,23 +27,6 @@ export const getListaNCE = async (
   );
 };
 
-export const getListaPagNCE = async (
-  page = 1,
-  bodega_id: string,
-  estado: number,
-  searchInput?: string,
-  tipo_documento?: string,
-  paginate = 10
-): Promise<ResponseListaNCE> => {
-  return await client.post(
-    `documentos/nce-paginate`,
-    { page, bodega_id, estado, searchInput, tipo_documento, paginate },
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
-
 export const getInfoNCE = async (id: string): Promise<ResponseInfoNCE> => {
   return await client.get<{
     data: NotaCreditoFVEDisCabecera;

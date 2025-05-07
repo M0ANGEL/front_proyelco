@@ -1,1 +1,0 @@
-export { ModalProductosFP } from "./ModalProductosFP";

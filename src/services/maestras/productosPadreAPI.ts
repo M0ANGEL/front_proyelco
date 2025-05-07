@@ -22,17 +22,6 @@ export const getProductoPadre = async (
   );
 };
 
-export const getProductoPadreByCodigo = async (
-  codigo: string
-): Promise<{ data: { status: string; data: ProductoPadre } }> => {
-  return await client.get(
-    `get-codigo-padre/${encodeURIComponent(btoa(codigo))}`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
-
 export const crearProductoPadre = async (data: any): Promise<any> => {
   return await client.post<any>("productos-padre", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

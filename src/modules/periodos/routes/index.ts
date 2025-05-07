@@ -1,1 +1,0 @@
-export { PeriodosRoutes } from "./PeriodosRoutes";

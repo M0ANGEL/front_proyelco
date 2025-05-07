@@ -1,1 +1,0 @@
-export { ConsultaRoutes } from "./ConsultaRoutes";

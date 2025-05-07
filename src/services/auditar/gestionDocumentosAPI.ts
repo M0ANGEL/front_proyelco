@@ -25,14 +25,14 @@ export const getEstados = async (): Promise<ResponseSearchEstadosAud> => {
 
 export const downloadZip = async (data: any): Promise<any> => {
   return await client.post(`auditoria/images-dispensaciones`, data, {
-    responseType: "blob",
+    responseType: "arraybuffer",
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
 export const downloadZipFile = async (filename: string): Promise<any> => {
   return await client.get(`downloadZipFile/${filename}`, {
-    responseType: "blob",
+    responseType: "arraybuffer",
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}`, "Content-Type": 'application/zip' },
   });
 };

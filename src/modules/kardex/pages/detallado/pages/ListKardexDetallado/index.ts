@@ -1,1 +1,0 @@
-export { ListKardexDetallado } from "./ListKardexDetallado";

@@ -1,1 +1,0 @@
-export {ListParametros_SubCategoria} from "./ListParametros_SubCategoria"

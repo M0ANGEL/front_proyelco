@@ -1,1 +1,0 @@
-export {FormParametros_SubCategoria} from "./FormParametros_SubCategoria"

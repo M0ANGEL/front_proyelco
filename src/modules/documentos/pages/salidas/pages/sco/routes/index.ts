@@ -1,1 +1,0 @@
-export { SCORoutes } from "./SCORoutes";

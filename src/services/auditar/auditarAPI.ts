@@ -129,17 +129,17 @@ export const getEstadoDocumento = async (id: any): Promise<any> => {
 };
 
 export const updateAuditoria = async (
-  data: {
-    idEstado: any;
-    selectedMotivos: any;
-    motivosProducto: any;
-    id_aud_observacion: string;
-  },
+  data: { idEstado: any; selectedMotivos: any; motivosProducto: any },
   id: any
 ): Promise<any> => {
-  return await client.put<any>(`estados-auditoria/${id}`, data, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
+  const { idEstado, selectedMotivos, motivosProducto } = data;
+  return await client.put<any>(
+    `estados-auditoria/${id}`,
+    { idEstado, selectedMotivos, motivosProducto },
+    {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    }
+  );
 };
 
 export const getArchivosDis = async (id: any): Promise<any> => {
@@ -171,10 +171,9 @@ export const getLogAuditoria = async (
 };
 
 export const actualizarEstados = async (
-  ids: React.Key[],
+  ids: string[],
   nuevoEstado?: string,
-  selectedMot?: number[],
-  id_aud_observacion = null
+  selectedMot?: string
 ): Promise<any> => {
   return await client.put<any>(
     "actualizar-estados",
@@ -182,7 +181,6 @@ export const actualizarEstados = async (
       ids,
       nuevoEstado,
       selectedMot,
-      id_aud_observacion,
     },
     {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },

@@ -1,1 +1,0 @@
-export {ListTrasladosActivosPendientes} from "./ListTrasladosActivosPendientes"

@@ -1,1 +1,0 @@
-export { FormDIS } from "./FormDIS";

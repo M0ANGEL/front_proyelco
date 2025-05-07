@@ -1,1 +1,0 @@
-export { FormRQP } from "./FormRQP";

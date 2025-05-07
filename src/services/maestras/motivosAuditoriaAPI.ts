@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "../client";
-import { ResponseMotivoAuditoria, ResponseMotivosAuditoria } from "../types";
+import { ResponseMotivosAuditoria } from "../types";
 
 export const getMotivosAud = async (): Promise<ResponseMotivosAuditoria> => {
   return await client.get("motivos-auditoria", {
@@ -14,8 +14,8 @@ export const crearMotivoAud = async (data: any): Promise<any> => {
   });
 };
 
-export const getMotivoAud = async (id: string): Promise<ResponseMotivoAuditoria> => {
-  return await client.get(`motivos-auditoria/${id}`, {
+export const getMotivoAud = async (id: string): Promise<any> => {
+  return await client.get<any>(`motivos-auditoria/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

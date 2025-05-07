@@ -1,1 +1,0 @@
-export { DistribucionPage } from "./DistribucionPage";

@@ -1,1 +1,0 @@
-export { ListNCV } from "./ListNCV";

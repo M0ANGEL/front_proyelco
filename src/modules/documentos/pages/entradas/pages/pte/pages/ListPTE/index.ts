@@ -1,1 +1,0 @@
-export { ListPTE } from "./ListPTE";

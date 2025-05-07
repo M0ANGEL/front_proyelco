@@ -35,14 +35,5 @@ export const getListaFacturaNotas = async (data:any): Promise<ResponseNotasCredi
       });
     };
 
-    export const anulacionMasiva = async (data: any): Promise<any> => {
-      return await client.post<any>(
-        `/anulacion-masiva-notas`, data,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
-    };
-
 
 

@@ -1,1 +1,0 @@
-export { MedicosRoutes } from "./MedicosRoutes";

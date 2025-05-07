@@ -52,12 +52,3 @@ export const anularDoc = async (
   });
 };
 
-export const anulacionMasiva = async (data: any): Promise<any> => {
-  return await client.post<any>(
-    `/anulacion-masiva-fve`, data,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
-

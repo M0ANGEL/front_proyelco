@@ -1,1 +1,0 @@
-export { PTERoutes } from "./PTERoutes";

@@ -35,7 +35,7 @@ export const updateEmpleado = async (data: any, id: any): Promise<any> => {
 
 /**
  * Lista de empleados activos
- * @returns Empleados activos
+ * @returns Empleados activos con sus contratos
  */
 export const getEmpleadosOn = async (): Promise<ResponseEmpleado> => {
   return await client_gestion.get("empleadoson", {

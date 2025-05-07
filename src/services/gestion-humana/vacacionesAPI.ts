@@ -10,7 +10,6 @@ export const getVacaciones = async (): Promise<ResponseVacaciones> => {
 
 export const crearVacaciones = async (data: any): Promise<any> => {
   return await client_gestion.post<any>("vacaciones", data, {
-    responseType: "blob",
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

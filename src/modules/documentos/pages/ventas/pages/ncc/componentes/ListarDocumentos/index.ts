@@ -1,1 +1,0 @@
-export { ListarDocumentos } from "./ListarDocumentos";

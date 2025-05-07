@@ -1,1 +1,0 @@
-export { AuditoriaRoutes } from "./AuditoriaRoutes";

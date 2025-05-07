@@ -1,1 +1,0 @@
-export {TransladosActivosRoutes} from "./TrasladosActivosRoutes"

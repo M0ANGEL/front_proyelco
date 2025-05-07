@@ -1,1 +1,0 @@
-export { ListLaboratorios } from "./ListLaboratorios";

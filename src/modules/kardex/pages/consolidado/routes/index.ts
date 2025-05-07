@@ -1,1 +1,0 @@
-export { KardexConsolidadoRoutes } from "./KardexConsolidadoRoutes";

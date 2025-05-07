@@ -1,1 +1,0 @@
-export { NCGRoutes } from "./NCGRoutes";

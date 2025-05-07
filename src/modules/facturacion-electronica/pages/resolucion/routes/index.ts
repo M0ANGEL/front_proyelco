@@ -1,1 +1,0 @@
-export { ResolucionRoutes } from "./ResolucionRoutes";

@@ -1,1 +1,0 @@
-export { PATRoutes } from "./PATRoutes";

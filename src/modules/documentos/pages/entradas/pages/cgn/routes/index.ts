@@ -1,1 +1,0 @@
-export { CGNRoutes } from "./CGNRoutes";

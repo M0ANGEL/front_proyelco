@@ -1,1 +1,0 @@
-export { ListPAT } from "./ListPAT";

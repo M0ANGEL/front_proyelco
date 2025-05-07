@@ -1,1 +1,0 @@
-export { RadicarRoutes } from "./RadicarRoutes";

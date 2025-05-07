@@ -1,1 +1,0 @@
-export { DocumentosRoutes } from "./DocumentosRoutes";

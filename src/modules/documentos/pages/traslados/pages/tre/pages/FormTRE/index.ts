@@ -1,1 +1,0 @@
-export { FormTRE } from "./FormTRE";

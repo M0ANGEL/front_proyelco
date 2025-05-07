@@ -1,1 +1,0 @@
-export { ListDIS } from "./ListDIS";

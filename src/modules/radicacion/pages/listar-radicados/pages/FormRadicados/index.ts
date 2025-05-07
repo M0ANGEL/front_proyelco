@@ -1,1 +1,0 @@
-export { FormRadicados } from "./FormRadicados";

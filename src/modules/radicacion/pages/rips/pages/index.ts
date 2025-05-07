@@ -1,1 +1,0 @@
-export { ListRips } from "./ListRips";

@@ -239,7 +239,7 @@ export const getReportInventario = async (searchParams: any): Promise<any> => {
       bodegaLogin || ""
     }&bodegaSelect=${bodegaSelect || ""}&lote=${lote || ""}`,
     {
-      responseType: "arraybuffer",
+      responseType: "blob",
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     }
   );

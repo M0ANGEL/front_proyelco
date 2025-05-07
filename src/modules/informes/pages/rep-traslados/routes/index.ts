@@ -1,1 +1,0 @@
-export { RepTrasladosRoutes } from "./RepTrasladossRoutes";

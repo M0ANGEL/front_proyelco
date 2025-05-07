@@ -1,1 +1,0 @@
-export { ListTRP } from "./ListTRP";

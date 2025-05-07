@@ -59,7 +59,6 @@ export const getEntregaDotaciones =
 
 export const crearEntregaDotacion = async (data: any): Promise<any> => {
   return await client_gestion.post<any>("entregasdotaciones", data, {
-    responseType: "blob",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
       "Content-Type": "multipart/form-data",
@@ -85,12 +84,12 @@ export const getEntregaDotacion = async (
   });
 };
 
-export const updateEntregaDotacion = async (data: any, id: any): Promise<any> => {
-  return await client_gestion.post<any>(`entregasdotaciones/${id}?_method=PUT`, data, {
-    headers: { 
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "multipart/form-data",
-    },
+export const updateEntregaDotacion = async (
+  data: any,
+  id: any
+): Promise<any> => {
+  return await client_gestion.put<any>(`entregasdotaciones/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 

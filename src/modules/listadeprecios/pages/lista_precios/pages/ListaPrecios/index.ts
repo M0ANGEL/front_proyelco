@@ -1,1 +1,0 @@
-export { ListaPrecios } from "./ListaPrecios";

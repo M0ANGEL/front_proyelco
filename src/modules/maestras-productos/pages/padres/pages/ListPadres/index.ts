@@ -1,1 +1,0 @@
-export { ListPadres } from "./ListPadres";

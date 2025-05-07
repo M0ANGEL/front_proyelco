@@ -1,1 +1,0 @@
-export { FormPAT } from "./FormPAT";

@@ -1,1 +1,0 @@
-export { FormDistribucionCompra } from "./FormDistribucionCompra";

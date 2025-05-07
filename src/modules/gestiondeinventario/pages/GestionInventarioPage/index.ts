@@ -1,1 +1,0 @@
-export { InventarioPage } from "./InventarioPage";

@@ -1,1 +1,0 @@
-export { ListMedicos } from "./ListMedicos";

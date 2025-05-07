@@ -1,1 +1,0 @@
-export {ActivosRoutes} from "./ActivosRoutes"

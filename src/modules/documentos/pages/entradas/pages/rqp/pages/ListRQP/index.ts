@@ -1,1 +1,0 @@
-export { ListRQP } from "./ListRQP";

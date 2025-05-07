@@ -99,20 +99,3 @@ export const validarAccesoDocumento = async (
     }
   );
 };
-
-export const getExcel = async (
-  cgn_id: string,
-  bodega_id: string,
-  initialDate = "",
-  endDate = ""
-): Promise<any> => {
-  return await client.get(
-    initialDate == "" && endDate == ""
-      ? `documentos/cgn-excel/${cgn_id}/${bodega_id}`
-      : `documentos/cgn-excel/${cgn_id}/${bodega_id}/${initialDate}/${endDate}`,
-    {
-      responseType: "blob",
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};

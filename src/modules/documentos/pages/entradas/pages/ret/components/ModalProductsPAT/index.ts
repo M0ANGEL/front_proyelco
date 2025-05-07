@@ -1,1 +1,0 @@
-export { ModalProductsPAT } from "./ModalProductsPAT";

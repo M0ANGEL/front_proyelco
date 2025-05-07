@@ -1,1 +1,0 @@
-export {ActivosFijosRoutes} from "./ActivosFijosRoutes"

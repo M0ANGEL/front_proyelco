@@ -1,1 +1,0 @@
-export { ModalConceptos } from "./ModalConceptos";

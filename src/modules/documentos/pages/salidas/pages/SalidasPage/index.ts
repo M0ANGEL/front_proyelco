@@ -1,1 +1,0 @@
-export { SalidasPage } from "./SalidasPage";

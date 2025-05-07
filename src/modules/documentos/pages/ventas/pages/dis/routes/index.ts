@@ -1,1 +1,0 @@
-export { DISRoutes } from "./DISRoutes";

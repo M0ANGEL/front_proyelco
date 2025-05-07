@@ -1,1 +1,0 @@
-export { ListPeriodos } from "./ListPeriodos";

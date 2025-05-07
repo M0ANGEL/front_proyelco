@@ -1,1 +1,0 @@
-export {RetornoActivoProovedoresRoutes} from "./RetornoActivoProovedorRoutes"

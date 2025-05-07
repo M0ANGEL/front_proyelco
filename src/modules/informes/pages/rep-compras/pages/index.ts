@@ -1,1 +1,0 @@
-export { RepComprasPage } from "./RepComprasPage";

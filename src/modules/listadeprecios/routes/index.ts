@@ -1,1 +1,0 @@
-export { ListaPreciosRoutes } from "./ListaPreciosRoutes";

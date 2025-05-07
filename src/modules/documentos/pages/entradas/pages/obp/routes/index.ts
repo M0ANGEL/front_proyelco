@@ -1,1 +1,0 @@
-export { OBPRoutes } from "./OBPRoutes";

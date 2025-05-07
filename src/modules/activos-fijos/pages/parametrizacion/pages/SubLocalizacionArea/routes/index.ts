@@ -1,1 +1,0 @@
-export {SubLocalizacionAreaRoutes} from "./SubLocalizacionAreaRoutes"

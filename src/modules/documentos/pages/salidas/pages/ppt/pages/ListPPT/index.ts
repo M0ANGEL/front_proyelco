@@ -1,1 +1,0 @@
-export { ListPPT } from "./ListPPT";

@@ -22,11 +22,7 @@ import { Convenio, ResponseListaFacturaFVE, ResponseSearchConvenios } from "../t
     const rutas = [
       { key: "CP", url: "generar-rips/capita" },
       { key: "FEV", url: "generar-rips" },
-      { key: "NCT", url: "rips/notacredito" },
-      { key: "NA", url: "generar-rips" },
-      { key: "NACP", url: "generar-rips/capita" }
-
-
+      { key: "NCT", url: "rips/notacredito" }
   ];
   const url=rutas.find(ruta => ruta.key === data[0].mod_contrato)?.url ?? '';
   
@@ -101,35 +97,4 @@ import { Convenio, ResponseListaFacturaFVE, ResponseSearchConvenios } from "../t
       console.error('Error al descargar el archivo ZIP', error);
       throw error; // Puedes manejar el error según tus necesidades
     }
-
-    
   };
-
-  export const getFvc = async (data:any): Promise<any> => {
-    return await client.post("rips/listFvc",data ,{
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-  }; 
-
-  export const getCuv = async (data:any): Promise<any> => {
-    return await client.post("rips/getCuv",data ,{
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-  }; 
-  export const descargarTxt = async (data: any): Promise<Blob> => {
-    const response = await client.post("rips/descargar-txt", data, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}`,},
-      responseType: "blob",
-    });
-    return response.data;
-  };
-
-export const statusApi = async (): Promise<any> => {
-  return await client.get<{status: string }>(
-    "rips/statusApi",
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-}; 
-  

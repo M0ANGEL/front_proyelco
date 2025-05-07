@@ -1,1 +1,0 @@
-export {FormActivos} from "./FormActivos" 

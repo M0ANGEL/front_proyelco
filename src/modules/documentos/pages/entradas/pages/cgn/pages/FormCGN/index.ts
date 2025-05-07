@@ -1,1 +1,0 @@
-export { FormCGN } from "./FormCGN";

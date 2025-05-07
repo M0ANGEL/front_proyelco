@@ -1,1 +1,0 @@
-export { ListNCG } from "./ListNCG";

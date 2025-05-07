@@ -1,1 +1,0 @@
-export {FormRetornoActivoProovedor} from "./FormRetornoActivoProovedor"

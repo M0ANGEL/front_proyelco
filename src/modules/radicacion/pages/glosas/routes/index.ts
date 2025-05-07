@@ -1,1 +1,0 @@
-export { GlosasRoutes } from "./GlosasRoutes";

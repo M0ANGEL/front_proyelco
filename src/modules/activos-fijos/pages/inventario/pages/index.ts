@@ -1,1 +1,0 @@
-export {ListInventario} from "./ListInventario"

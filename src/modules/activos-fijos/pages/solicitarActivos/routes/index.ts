@@ -1,1 +1,0 @@
-export {SolicitarActivosRoutes} from "./SolicitarActivosRoutes"

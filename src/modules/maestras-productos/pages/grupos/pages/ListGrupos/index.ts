@@ -1,1 +1,0 @@
-export { ListGrupos } from "./ListGrupos";

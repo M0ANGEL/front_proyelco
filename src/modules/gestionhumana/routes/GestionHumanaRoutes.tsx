@@ -36,7 +36,6 @@ import {
   RetirarCesantiasRoutes,
   ReporteRetirosCesantiasRoutes,
   SalarioMinimoRoutes,
-  ReporteVacacionesRoutes
 } from "../pages";
 
 export const GestionHumanaRoutes = () => {
@@ -77,7 +76,6 @@ export const GestionHumanaRoutes = () => {
         <Route path="/dotaciones/reporteentregas/*" element={<ReporteEntregasDotacionesRoutes/>} />
         <Route path="/dotaciones/empleados/*" element={<EmpleadosDotacionesRoutes/>} />
         <Route path="/reportes/retirocesantias/*" element={<ReporteRetirosCesantiasRoutes/>} />
-        <Route path="/reportes/vacaciones/*" element={<ReporteVacacionesRoutes/>} />
       </Route>
     </RoutesWithNotFound>
   );

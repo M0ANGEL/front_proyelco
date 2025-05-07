@@ -1,1 +1,0 @@
-export {ListRetornoActivoProovedor} from "./ListRetornoActivoProovedor"

@@ -405,8 +405,6 @@ export interface Producto {
   cod_tipo_medicamento: FormaFarma;
   tipo_medicamento_id: string;
   grupo_invima: string;
-  codigo_dci: string;
-  codigo_dci2: string;
 }
 
 export interface ProductoPadre {
@@ -480,7 +478,7 @@ export interface ProductoLote {
   fecha_vig_invima: string;
   precio: string;
   bodega_id: string;
-  producto_id: string;
+  producto_id: number;
   productos: Producto;
   estado: string;
   bodegas: Bodega;
@@ -2063,7 +2061,6 @@ export interface Paciente {
   localidad: Localidades;
   tipo_regimen_id: string;
   tipo_regimen: TipoRegimen;
-  correo: string;
 }
 
 export interface Eps {
@@ -2169,15 +2166,6 @@ export interface IDispensacion {
   numero_servinte: string;
   id_fuente: string;
   fuente: Fuentes;
-  valor_cuota: string;
-  fve_cuota: string;
-  autoriza_envio: string;
-  ultimo_estado_aud: TrazabilidadDIS;
-  total: string;
-  regimen_id: string;
-  tipo_regimen_id: string;
-  regimen_info: CuotaModeradora;
-  tipo_regimen_info: TipoRegimen;
 }
 
 export interface ResponseDispensaciones {
@@ -2734,31 +2722,6 @@ export interface ResponseListaFacturaVtaDis {
   };
 }
 
-export interface DisCuota {
-  id: number;
-  created_at: Date;
-  consecutivo: string;
-  consecutivo_recaudo: string;
-  tipo_identificacion: string;
-  numero_identificacion: string;
-  nombre_completo: string;
-  valor_cuota: string;
-  num_contrato: string;
-  descripcion: string;
-  bod_nombre: string;
-}
-export interface ResponseListaDisCuotasModeradoras {
-  data: {
-    data: {
-      per_page: number;
-      total: number;
-      data: DisCuota[];
-      page: number;
-    };
-    suma: string;
-  };
-}
-
 export interface FacturaFVE {
   // key: React.Key;
   id: number;
@@ -2863,23 +2826,6 @@ export interface FacturaFVEDetalle {
   aclaracion2_respuesta: string;
   motivo3_respuesta_id: string;
   aclaracion3_respuesta: string;
-  valor_glosado2: string;
-  valor_glosado3: string;
-  valor_aceptado2: string;
-  valor_aceptado3: string;
-  valor_ratificado2: string;
-  valor_ratificado3: string;
-  valor_conciliado2: string;
-  valor_conciliado3: string;
-  motivo_rpta_ratificacion_id: string;
-  motivo2_rpta_ratificacion_id: string;
-  motivo3_rpta_ratificacion_id: string;
-  aclaracion_rpta_ratificacion: string;
-  aclaracion2_rpta_ratificacion: string;
-  aclaracion3_rpta_ratificacion: string;
-  valor_rpta_ratificacion: string;
-  valor_rpta_ratificacion2: string;
-  valor_rpta_ratificacion3: string;
 }
 
 export interface FacturaFVERvdCabecera {
@@ -3085,22 +3031,13 @@ export interface ResponseMotivosAuditoria {
   };
 }
 
-export interface ResponseMotivoAuditoria {
-  data: {
-    status: string;
-    data: MotivosAuditoria;
-  };
-}
-
 export interface MotivosAuditoria {
   id: number;
   codigo: string;
   motivo: string;
   estado: string;
-  created_at: string;
-  updated_at: string;
-  codigo_homologado: string;
-  homologado_info: MotivosAuditoria;
+  created_at: Date;
+  updated_at: Date;
 }
 
 export interface TiposDocumentosIdentificacion {
@@ -3254,7 +3191,6 @@ export interface KardexConsolidado {
   prefijo_doc: string;
   tipo_movimiento: string;
   cod_producto: string;
-  bodega: string;
 }
 
 export interface ResponseDocumentoInt {
@@ -3439,15 +3375,6 @@ export interface Radicacion {
   users: User;
   facturas: FacturaFVECabecera[];
   items: FacturaFVEDetalle[];
-  fecha_radicado_cargue: string;
-  fecha_devolucion: string;
-  fecha_devolucion_cargue: string;
-  fecha_glosa_cargue: string;
-  fecha_respuesta_cargue: string;
-  fecha_ratificacion_cargue: string;
-  fecha_conciliacion_cargue: string;
-  fecha_rpta_ratificacion: string;
-  fecha_rpta_ratificacion_cargue: string;
 }
 
 export interface ResponseListEstadosGlosas {
@@ -3502,8 +3429,6 @@ export interface FacturaRadicada {
   fecha_ratificacion: string;
   fecha_conciliacion: string;
   convenio_id: string;
-  fecha_rpta_ratificacion: string;
-  fecha_rpta_ratificacion_cargue: string;
 }
 
 export interface ResponseTrazabilidadFVE {
@@ -3552,8 +3477,6 @@ export interface TrazabilidadDIS {
   id_motivo_detalle: string;
   consecutivo: string;
   nombre_estado: string;
-  id_aud_observacion: string;
-  aud_observacion_info: AudObservacion;
 }
 export interface ResponseTrazabilidadDIS {
   data: {
@@ -3993,8 +3916,6 @@ export interface Empleado {
   fecha_vacaciones: string;
   no_vacaciones_este_anio: string;
   no_entregas_dotaciones_este_anio: string;
-  salario_minimo: string;
-  gana_mas_de_dos_salarios: string;
 }
 
 export interface ResponsePension {
@@ -4088,7 +4009,6 @@ export interface Incapacidad {
   diagnostico_id: string;
   mes_inicio_incapacidad: string;
   nombre_completo: string;
-  cargo: string;
   mes: string;
   año: string;
   cantidad: string;
@@ -4430,24 +4350,6 @@ export interface ProductoTerminadoDetalle {
   lote: ProductoLote;
 }
 
-export interface ResponseListaPTO {
-  data: {
-    data: {
-      data: ProductoTerminadoCabecera[];
-      per_page: number;
-      total: number;
-    };
-    status: string;
-  };
-}
-
-export interface ResponseInfoPTO {
-  data: {
-    data: ProductoTerminadoCabecera;
-    status: string;
-  };
-}
-
 export interface ResponseIps {
   data: {
     status: string;
@@ -4643,7 +4545,7 @@ export interface Activos {
   categoria: Categoria;
   subcategoria: SubCategoria;
   bodega_info: Bodega;
-  usuarios: UserData[];
+  usuarios: UserData;
   area: SubLocalizacionArea;
   estado: string;
   estado_propiedad: string;
@@ -4664,17 +4566,6 @@ export interface ResponseListActivos {
   status: string;
   total: number;
   per_page: number;
-}
-
-export interface ResponseListActivosPagination {
-  data: {
-    data: {
-      data: Activos[];
-      per_page: number;
-      total: number;
-    };
-    status: string;
-  };
 }
 
 export interface Mantenimiento {
@@ -5065,11 +4956,8 @@ export interface Vacaciones {
   tipo_vacaciones: string;
   user_sys: string;
   periodo: string;
-  dias_vacaciones: string;
+  dias_vacaciones: string; 
   dias_compensados: string;
-  periodo_inicio: string;
-  periodo_fin: string;
-  esta_en_vacaciones: string;
 }
 export interface ResponseVacacion {
   data: Vacaciones;
@@ -5238,7 +5126,6 @@ export interface EmpleadoDotacion {
   dias_dotacion: string;
   fecha_fin_prueba: string;
   no_entregas_dotaciones_este_anio: string;
-  gana_mas_de_dos_salarios: string;
 }
 export interface VariableDinamica {
   id: number;
@@ -5318,7 +5205,6 @@ export interface TkSubCategoria {
   categoria_padre: string;
   updated_at: string;
   tiempo_gestion: string;
-  puntosTicket: string;
   usuarios_autorizados: string;
 }
 
@@ -5345,7 +5231,6 @@ export interface TkTicket {
   id: number;
   created_at: string;
   prioridad: string;
-  puntosTicket: string;
   listo: string;
   detalle: string;
   estado: string;
@@ -5362,7 +5247,7 @@ export interface TkTicket {
   bodega: string;
   idLogueado: number;
   documento: number;
-  // proceso_id: number;
+  proceso_id: number;
   usuarioGestiona: string | null;
   nombre_proceso: string;
   usuarioAsignado: string | null;
@@ -5375,9 +5260,6 @@ export interface TkTicket {
   subcategoria_id: string;
   usuarioCrear: string;
   farmacia: string;
-  MyProceso: string;
-  proceso_id: string;
-  documentoR: string;
 }
 
 export interface ResponseTkTicktsAutorizacion {
@@ -5431,10 +5313,8 @@ export interface EstadosTickets {
   estado: string;
   creador_ticket: string;
   documento: number;
-  documentoR: number;
   nombre_proceso: string;
   usuarioCrear: string;
-  usuario_autoriza: string;
   motivo_cancelacion: string | null;
 }
 
@@ -5562,13 +5442,13 @@ export interface ResponseRetirarCesantias {
 export interface RetirarCesantias {
   id: number;
   empleado: string;
-  asunto: string;
-  concepto: string;
+  asunto : string;
+  concepto: string
   valor: string;
   consecutivo: string;
-  user: string;
+  user : string;
   created_at: string;
-  empleado_id: string;
+  empleado_id : string;
 }
 
 //horarios
@@ -5577,7 +5457,6 @@ export interface ResponseHorarios {
   status: string;
   data: Horarios[];
   perfil?: string;
-  perfil_nombre?: string;
 }
 
 export interface Horarios {
@@ -5589,26 +5468,27 @@ export interface Horarios {
   usuarios_autorizados: string;
 }
 
+
 export interface ResponseHorariosAdicionales {
   status: string;
   data: HorariosAdicional[];
 }
 
 export interface HorariosAdicional {
-  id?: number;
+  id?: number; 
   observacion: string;
   dia: string;
   fecha_inicio: string;
   fecha_final: string;
-  horario_id: string;
+  horario_id: string; 
   usuarios_autorizados: string;
 }
+
 
 export interface ResponsePerfilesHorarios {
   status: string;
   data: Horarios[];
   perfil?: string;
-  perfil_nombre?: string;
 }
 
 export interface HorariosPerfiles {
@@ -5616,7 +5496,9 @@ export interface HorariosPerfiles {
   nombre_perfil: string;
 }
 
+
 //fin horarios
+
 
 //marcaciones asistencias
 
@@ -5636,6 +5518,8 @@ export interface MaLink {
   created_at: string;
 }
 
+
+
 export interface ResponseMaTelefonos {
   data: {
     status: string;
@@ -5652,6 +5536,7 @@ export interface MaTelefonos {
   estado: string;
   created_at: string;
 }
+
 
 export interface ResponseMaRegistroMarcaciones {
   data: {
@@ -5670,6 +5555,7 @@ export interface MaRegistroMarcaiones {
   bodega_registro: string;
   tipo_marcacion: string;
 }
+
 
 export interface ResponseMaFarmcias {
   data: {
@@ -5694,116 +5580,16 @@ export interface ResponseUsuarioRegistrados {
 }
 
 export interface MaUsuariosRegistrados {
-  id: number;
-  nombre_completo: string;
-  cedula: string;
-  telefono: number;
-  bod_nombre: string;
-  nombre_cargo: string;
-  foto: string;
-  foto_url: string;
-  created_at: string;
+  id: number
+  nombre_completo: string
+  cedula: string
+  telefono: number
+  bod_nombre: string
+  nombre_cargo: string
+  foto: string
+  foto_url: string
+  created_at: string
 }
 
 //fin marcación
 
-export interface AudObservacion {
-  id: number;
-  aud_observacion: string;
-  aud_motivos: string;
-  estado: string;
-  created_at: string;
-  updated_at: string;
-  motivos: MotivosAuditoria[];
-}
-
-export interface ResponseAudObservacion {
-  data: {
-    status: string;
-    data: AudObservacion;
-  };
-}
-
-export interface ResponseAudObservaciones {
-  data: {
-    status: string;
-    data: AudObservacion[];
-  };
-}
-
-export interface ResponseAudObservacionesListPag {
-  data: {
-    data: {
-      data: AudObservacion[];
-      per_page: number;
-      total: number;
-    };
-    status?: string;
-  };
-}
-
-export interface ResponseSalidaConsignacion {
-  data: {
-    status: string;
-    data: SalidaConsignacionCabecera;
-  };
-}
-
-export interface ResponseSalidaConsignacionList {
-  data: {
-    status: string;
-    data: SalidaConsignacionCabecera[];
-  };
-}
-
-export interface ResponseSalidaConsignacionListPag {
-  data: {
-    data: {
-      data: SalidaConsignacionCabecera[];
-      per_page: number;
-      total: number;
-    };
-    status?: string;
-  };
-}
-
-export interface SalidaConsignacionCabecera {
-  id: number;
-  observacion: string;
-  estado: string;
-  subtotal: string;
-  iva: string;
-  total: string;
-  consecutivo: string;
-  tipo_documento_id: string;
-  user_id: string;
-  bodega_id: string;
-  tercero_id: string;
-  created_at: string;
-  updated_at: string;
-  usuario: User;
-  detalle: SalidaConsignacionDetalle[];
-  bodega: Bodega;
-  tipo_documento: TipoDocumento;
-  tercero: Tercero;
-}
-
-export interface SalidaConsignacionDetalle {
-  id: number;
-  cantidad: string;
-  estado: string;
-  lote: string;
-  fecha_vencimiento: string;
-  numero_linea: string;
-  precio_promedio: string;
-  precio_subtotal: string;
-  precio_iva: string;
-  precio_total: string;
-  sco_id: string;
-  producto_id: string;
-  producto_lote_id: string;
-  created_at: string;
-  updated_at: string;
-  producto: Producto;
-  producto_Lote: ProductoLote;
-}

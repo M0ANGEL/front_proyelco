@@ -1,1 +1,0 @@
-export { FormResolucion } from "./FormResolucion";

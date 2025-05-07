@@ -1,1 +1,0 @@
-export { ModalDetalleCantidad } from "./ModalDetalleCantidades";

@@ -1,1 +1,0 @@
-export { MotivosRoutes } from "./MotivosRoutes";

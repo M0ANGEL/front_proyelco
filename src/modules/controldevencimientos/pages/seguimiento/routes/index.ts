@@ -1,1 +1,0 @@
-export {SeguimientoRoute} from './seguimientoRoutes';

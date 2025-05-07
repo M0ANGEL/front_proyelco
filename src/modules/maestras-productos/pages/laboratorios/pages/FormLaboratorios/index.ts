@@ -1,1 +1,0 @@
-export { FormLaboratorios } from "./FormLaboratorios";

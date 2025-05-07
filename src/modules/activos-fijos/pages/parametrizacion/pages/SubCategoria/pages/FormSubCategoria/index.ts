@@ -1,1 +1,0 @@
-export {FormSubCategoria} from "./FormSubCategoria"

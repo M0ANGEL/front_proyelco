@@ -1,1 +1,0 @@
-export {TrasladosActivosPage} from "./TrasladosActivosPage"

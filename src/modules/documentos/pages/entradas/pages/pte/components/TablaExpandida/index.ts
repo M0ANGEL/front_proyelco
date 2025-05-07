@@ -1,1 +1,0 @@
-export { TablaExpandida } from "./TablaExpandida";

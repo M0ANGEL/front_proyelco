@@ -32,4 +32,3 @@ export * from "./documentosauditoria";
 export * from "./retirarcesantias";
 export * from "./reportesretiroscesantias";
 export * from "./salariominimo"
-export * from "./reportevacaciones";

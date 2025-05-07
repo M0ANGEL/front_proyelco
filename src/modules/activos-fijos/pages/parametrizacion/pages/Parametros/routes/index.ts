@@ -1,1 +1,0 @@
-export {ParametrosRoutes} from "./ParametrosRoutes"

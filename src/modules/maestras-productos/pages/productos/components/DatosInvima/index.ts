@@ -1,1 +1,0 @@
-export { DatosInvima } from "./DatosInvima";

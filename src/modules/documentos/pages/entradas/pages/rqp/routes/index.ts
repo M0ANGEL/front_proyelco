@@ -1,1 +1,0 @@
-export { RQPRoutes } from "./RQPRoutes";

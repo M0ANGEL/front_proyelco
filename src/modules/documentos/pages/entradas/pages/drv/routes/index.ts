@@ -1,1 +1,0 @@
-export { DRVRoutes } from "./DRVRoutes";

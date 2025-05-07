@@ -107,32 +107,6 @@ export const getListaTrasladosActivosPorBodegaYEstado = async (
   };
 };
 
-
-export const getListaTrasladosActivosPendientesAdminGerencia = async (
-  estado: string,
-): Promise<ResponseListTransladosActivos> => {
-  const response = await clientActivos.get<{
-    data: TrasladosActivos[];
-    status: string;
-    total: number;
-    per_page: number;
-  }>(`traslados-activos-estado-admin-gerencia`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    params: {
-      estado: estado.toString(), // Asegúrate de que 'estado' sea una cadena
-    },
-  });
-
-  return {
-    data: response.data.data,
-    status: response.data.status,
-    total: response.data.total,
-    per_page: response.data.per_page,
-  };
-};
-
-
-
 // Obtener información de los activos
 export const getTrasladosActivos = async (
   id: number

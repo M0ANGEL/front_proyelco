@@ -1,1 +1,0 @@
-export { InformesRoutes } from "./InformesRoutes";

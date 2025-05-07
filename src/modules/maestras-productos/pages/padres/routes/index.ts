@@ -1,1 +1,0 @@
-export { PadresRoutes } from "./PadresRoutes";

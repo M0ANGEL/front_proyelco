@@ -1,1 +1,0 @@
-export { ListConceptos } from "./ListConceptos";

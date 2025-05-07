@@ -1,1 +1,0 @@
-export { NCERoutes } from "./NCERoutes";

@@ -1,1 +1,0 @@
-export { ModalRespuestaRips } from "./ModalRespuestaRips";

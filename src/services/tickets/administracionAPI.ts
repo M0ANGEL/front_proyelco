@@ -77,15 +77,9 @@ export const GestionarTkTicket = async (data: any, id: any): Promise<any> => {
 };
 
 //cambiar el estado de el ticket
-export const CerrarTkTicket = async (
-  id: number,
-  data: FormData
-): Promise<any> => {
-  return await client_tk.post<any>(`cerrar-ticket/${id}`, data, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      "Content-Type": "multipart/form-data",
-    },
+export const CerrarTkTicket = async (data: any, id: any): Promise<any> => {
+  return await client_tk.put<any>(`cerrar-ticket/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
@@ -106,16 +100,6 @@ export const RechazoGestionTkTicket = async (data: any, id: any): Promise<any> =
 //descargar de documento amarrado al ticket
 export const DocumentoTkTicket = async (id: any) => {
   return await client_tk.get(`/documento-ticket-descarga/${id}`, {
-    headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-    },
-    responseType: "blob", // Asegura que la respuesta sea tratada como un archivo binario
-  });
-};
-
-//descargar de documento amarrado al ticket de respuetas
-export const DocumentoTkTicketRespuesta = async (id: any) => {
-  return await client_tk.get(`/documento-ticket-descarga-r/${id}`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`,
     },
@@ -164,14 +148,6 @@ export const observacionTkTicket = async (data: any, id: any): Promise<any> => {
 //entrar en estad de validacion y salir de ese estado
 export const estadoValidacion = async (id: React.Key): Promise<any> => {
   return await client_tk.get<any>(`ticket-estado-validacion/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-};
-
-
-//asiganar  el ticket
-export const AsignarTkTicketAutorizar = async (data: any): Promise<any> => {
-  return await client_tk.post<any>("AutirizarModerador", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

@@ -11,7 +11,6 @@ import {
   ResponseActivos,
   ResponseImpuestoRodamiento,
   ResponseListActivos,
-  ResponseListActivosPagination,
   ResponseListaLocalizaciones,
   ResponseListaUsuarios,
   ResponseListBajaActivosFijos,
@@ -21,8 +20,7 @@ import {
 import QRCode from "qrcode";
 
 // Obtener lista de activos
-export const getListaActivos = async (
-): Promise<ResponseListActivos> => {
+export const getListaActivos = async (): Promise<ResponseListActivos> => {
   const response = await clientActivos.get<{
     data: Activos[];
     status: string;
@@ -38,15 +36,6 @@ export const getListaActivos = async (
     total: response.data.total,
     per_page: response.data.per_page,
   };
-};
-
-export const getListaActivosPagination = async (
-  data: any
-): Promise<ResponseListActivosPagination> => {
-  return await clientActivos.post
-  (`activos-pagination`, data, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
 };
 
 // Método para obtener la lista de activos con filtros
@@ -387,15 +376,13 @@ export const getUsuariosLista = async (): Promise<ResponseListaUsuarios> => {
 export const updateLocalizacion = async (
   id: number,
   localizacion: number,
-  usuarios: number,
-  userId: number
+  usuarios: number
 ): Promise<any> => {
   return await clientActivos.put(
     `actualizar-Movimientos-activos/${id}`,
     {
       localizacion,
       usuarios,
-      userId
     },
     {
       headers: {

@@ -1,1 +1,0 @@
-export { VEARoutes } from "./VEARoutes";

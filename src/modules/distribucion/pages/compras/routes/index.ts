@@ -1,1 +1,0 @@
-export { DistComprasRoutes } from "./DistComprasRoutes";

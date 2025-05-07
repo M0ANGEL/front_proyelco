@@ -1,7 +1,0 @@
-export * from "./categoria" 
-export * from "./ParametrizacionPage"
-export * from "./SubCategoria"
-export * from "./Parametros"
-export * from "./Parametros_SubCategoria"
-export * from "./Datos"
-export * from "./Activos"

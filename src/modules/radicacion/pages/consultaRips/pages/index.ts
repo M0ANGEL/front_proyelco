@@ -1,1 +1,0 @@
-export { ListConsultaRips } from "./ListConsultaRips";

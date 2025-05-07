@@ -1,1 +1,0 @@
-export {ListSolicitudesPendientesActivos} from "./ListSolicitudesPendientesActivos"

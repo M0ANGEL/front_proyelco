@@ -1,1 +1,0 @@
-export {ListActivos} from "./ListActivos" 

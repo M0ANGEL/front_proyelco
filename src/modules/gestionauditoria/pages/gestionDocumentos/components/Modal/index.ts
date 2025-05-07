@@ -1,1 +1,0 @@
-export { ModalUpLoad } from "./Modal";

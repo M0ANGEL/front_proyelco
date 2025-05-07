@@ -1,1 +1,0 @@
-export { FormPTE } from "./FormPTE";

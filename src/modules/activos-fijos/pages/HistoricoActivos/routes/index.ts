@@ -1,1 +1,0 @@
-export {HistoricoRoutes} from "./HistoricoRoutes"
