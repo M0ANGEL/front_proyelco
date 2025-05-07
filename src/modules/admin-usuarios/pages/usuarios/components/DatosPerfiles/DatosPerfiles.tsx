@@ -38,6 +38,8 @@ export const DatosPerfiles = ({ usuario }: Props) => {
     getPerfiles()
       .then(({ data }) => {
         let perfiles: DataType[] = [];
+        console.log(data);
+        
 
         if (usuario) {
           const perfilesUsu = usuario.perfiles.map((perfil) => {

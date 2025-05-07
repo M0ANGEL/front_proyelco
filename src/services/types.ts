@@ -5183,6 +5183,29 @@ export interface TkCategoria {
   updated_at: string;
 }
 
+
+/* type de datos categorias */
+export interface ResponseAmClientes {
+  data: {
+    status: string;
+    data: AmClientes[];
+  };
+}
+export interface AmClientes {
+  id: number;
+  emp_nombre: string;
+  estado: string;
+  nit: number;
+  direccion: string;
+  telefono: string;
+  cuenta_de_correo: string;
+  id_user: string;
+  nombre: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
 export interface ResponseTkSubCategorias {
   data: {
     status: string;

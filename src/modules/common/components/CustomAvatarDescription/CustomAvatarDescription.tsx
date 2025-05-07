@@ -129,7 +129,7 @@ export const CustomAvatarDescription = ({
                   {shotName ? <Text>{user?.nombre}</Text> : null}
 
                   <Text strong keyboard>
-                    {"Bodega: " + bodega?.bodega.bod_nombre}
+                    {"Empresa: Proyelco "  /* bodega?.bodega.bod_nombre */}
                   </Text>
                 </>
               ) : (

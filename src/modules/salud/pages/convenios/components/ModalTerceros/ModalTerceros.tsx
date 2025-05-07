@@ -2,17 +2,17 @@
 import { useEffect, useState } from "react";
 import { Props } from "./types";
 import { Col, Input, Modal, Row, Table } from "antd";
-import { getNitTercero } from "@/services/salud/conveniosTipoAPI";
+import { getCLientesNIT } from "@/services/salud/conveniosTipoAPI";
 import { SearchBar } from "@/modules/common/components/FormDocuments/styled";
-import { Tercero } from "@/services/types";
+import { AmClientes } from "@/services/types";
 
 export const ModalTerceros = ({
   open,
   setOpen,
   handleSelectTercero,
 }: Props) => {
-  const [dataSource, setDataSource] = useState<Tercero[]>([]);
-  const [initialData, setInitialData] = useState<Tercero[]>([]);
+  const [dataSource, setDataSource] = useState<AmClientes[]>([]);
+  const [initialData, setInitialData] = useState<AmClientes[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ export const ModalTerceros = ({
       setDataSource([]);
       setInitialData([]);
       setLoader(true);
-      getNitTercero(1, "").then(({ data: { data } }) => {
+      getCLientesNIT().then(({ data: { data } }) => {
         setDataSource(data);
         setInitialData(data);
         setLoader(false);
@@ -53,7 +53,7 @@ export const ModalTerceros = ({
         destroyOnClose={true}
       >
         <Row gutter={12}>
-          <Col span={24}>
+          <Col span={24} style={{marginBottom: 10}}>
             <SearchBar>
               <Input
                 placeholder="Buscar"
@@ -70,14 +70,14 @@ export const ModalTerceros = ({
               columns={[
                 { title: "Nit", dataIndex: "nit", key: "nit", align: "center" },
                 {
-                  title: "Razon Social",
-                  dataIndex: "razon_soc",
-                  key: "razon_soc",
+                  title: "Cliente",
+                  dataIndex: "emp_nombre",
+                  key: "emp_nombre",
                 },
               ]}
               rowKey="id"
-              onRow={({ nit, razon_soc }) => ({
-                onClick: () => handleSelectTercero(nit, razon_soc),
+              onRow={({ nit, emp_nombre }) => ({
+                onClick: () => handleSelectTercero(nit.toString(), emp_nombre),
               })}
             />
           </Col>

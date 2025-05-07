@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
-  Badge,
   Input,
   Space,
   Tag,
-  Tooltip,
   Typography,
   notification,
 } from "antd";
@@ -21,7 +19,6 @@ import { DescargaDocTk } from "../descargaArchivos/DescargaDocTk";
 import { TkUsers } from "@/services/types";
 import { HistorialTicket } from "../historialTicket";
 import { ModalObservacion } from "../observacion";
-import { ModalAutorizacion } from "./ModalAutorizacion";
 
 //datos tipos
 interface DataType {
@@ -393,15 +390,6 @@ export const ListAbiertos = () => {
               pushNotification={pushNotification}
               fetchList={() => fetchTicketsAbiertos()}
             />
-            {record.autorizacion !== "0" ? (
-              ""
-            ) : (
-              <ModalAutorizacion
-                dataTicket={record}
-                pushNotification={pushNotification}
-                fetchList={() => fetchTicketsAbiertos()}
-              />
-            )}
           </>
         );
       },

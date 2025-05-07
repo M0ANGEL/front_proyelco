@@ -281,6 +281,7 @@ export const FormConvenios = () => {
     }
   };
 
+  //html visual
   return (
     <>
       {contextHolder}
@@ -298,7 +299,7 @@ export const FormConvenios = () => {
             autoComplete="off"
           >
             <StyledCard
-              title={(convenio ? "Editar" : "Crear") + " convenio"}
+              title={(convenio ? "Editar" : "Crear") + " proyecto"}
               extra={
                 <Space>
                   <Button
@@ -377,7 +378,31 @@ export const FormConvenios = () => {
                               : undefined
                           }
                         >
-                          Datos Facturación
+                          Datos Proyecto
+                        </Text>
+                      </Space>
+                    ),
+                    children: (
+                      <DatosFacturacion
+                        selectTipoFacturacion={selectTipoFacturacion}
+                        selectBodegas={selectBodegas}
+                        selectConceptos={selectConceptos}
+                      />
+                    ),
+                    forceRender: true,
+                  },
+                  {
+                    key: "3",
+                    label: (
+                      <Space>
+                        <Text
+                          type={
+                            Object.keys(control.formState.errors).length > 0
+                              ? "danger"
+                              : undefined
+                          }
+                        >
+                          Configurar Proyecto
                         </Text>
                       </Space>
                     ),

@@ -14,6 +14,7 @@ import { GestionHumanaRoutes } from "@/modules/gestionhumana";
 import { TickestRoutes } from "@/modules/tickets";
 import { GlobalProvider } from "./GlobalContext";
 import { MarcacionAsistenciasRoutes } from "@/modules/marcaciones-asistencias/routes/MarcacionAsistenciaRoutes";
+import { AdministrarClientesRoutes } from "@/modules/clientes/routes";
 
 export const AdminRoutes = () => {
   return (
@@ -38,9 +39,10 @@ export const AdminRoutes = () => {
               path={"administraciondebodegas/*"}
               element={<AdminBodegasRoutes />}
             />
-            <Route path={"salud/*"} element={<SaludRoutes />} />
+            <Route path={"proyectos/*"} element={<SaludRoutes />} />
             <Route path={"terceros/*"} element={<AdminTercerosRoutes />} />
             <Route path={"logsdelsistema/*"} element={<LogSistemaRoutes />} />
+            <Route path={"clientes/*"} element={<AdministrarClientesRoutes />} />
         
             <Route path={"aliados/*"} element={<AliadosRoutes />} />
 

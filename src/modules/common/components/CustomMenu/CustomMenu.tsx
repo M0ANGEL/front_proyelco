@@ -4,7 +4,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiOutlineBarChart } from "react-icons/ai";
+import { AiOutlineBarChart, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -16,9 +16,9 @@ import { FiUsers } from "react-icons/fi";
 import { ConfigProvider } from "antd";
 import { BsBank } from "react-icons/bs";
 import { TfiAlarmClock } from "react-icons/tfi";
+import { HiUserGroup } from "react-icons/hi";
 
 import {
-  FaHandHoldingMedical,
   FaRegHandshake,
   FaTruckLoading,
   FaHistory,
@@ -54,7 +54,7 @@ const moduleIcons = [
   { cod: "CFGSIS", icon: <BsGear /> },
   { cod: "ADMBOD", icon: <BsBuildingGear /> },
   { cod: "DOCS", icon: <IoDocumentsOutline /> },
-  { cod: "SLD", icon: <FaHandHoldingMedical /> },
+  { cod: "SLD", icon: <FaUserTie /> },
   { cod: "LPR", icon: <LiaClipboardListSolid /> },
   { cod: "TER", icon: <FaUserTie /> },
   { cod: "PRD", icon: <LiaBarcodeSolid /> },
@@ -75,6 +75,7 @@ const moduleIcons = [
   { cod: "GSTHUM", icon: <MdGroup /> },
   { cod: "AFJ", icon: <BsBank /> },
   { cod: "MA", icon: <TfiAlarmClock /> },
+  { cod: "CLI", icon: <HiUserGroup /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
@@ -190,10 +191,10 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
       theme={{
         components: {
           Menu: {
-            colorBgContainer: "#000000",
+            colorBgContainer: "#000000", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#f9af11",
-            itemHoverBg: "#f9af11",
+            itemSelectedColor: "#d31225", //color de texto selecionado
+            itemHoverBg: "#000000",
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
             itemActiveBg: "#FFFFFF",

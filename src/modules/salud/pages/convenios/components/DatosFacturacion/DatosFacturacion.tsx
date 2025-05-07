@@ -1,24 +1,116 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Col, Input, Row, Select, Space, Typography } from "antd";
+import { Alert, Col, Collapse, Input, Row, Select, Typography } from "antd";
 import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { ModalListaPrecios } from "../ModalListaPrecios";
 import { Props } from "./types";
 
 const { Text } = Typography;
+const { Panel } = Collapse;
 
-export const DatosFacturacion = ({
-  selectTipoFacturacion,
-  selectConceptos,
-  selectBodegas,
-}: Props) => {
+export const DatosFacturacion = ({ selectTipoFacturacion }: Props) => {
   const [openModalListaPrecios, setOpenModalListaPrecios] =
     useState<boolean>(false);
-  const [searchSelect, setSearchSelect] = useState<string>("");
   const methods = useFormContext();
+
+  // Observar el valor actual del campo tipo_obra (0 = Simétrica, 1 = Personalizada)
+  const tipoObra = useWatch({
+    control: methods.control,
+    name: "tipo_obra",
+  });
+  const cantidadTorres = useWatch({ name: "torres", control: methods.control });
+
+  const renderPersonalizada = () => {
+    const bloques = [];
+    const totalTorres = parseInt(cantidadTorres || "0", 10);
+
+    for (let i = 0; i < totalTorres; i++) {
+      bloques.push(
+        <Col span={24} key={i}>
+          <Collapse
+            style={{ backgroundColor: "#1a4c9e" }}
+            expandIconPosition="right"
+          >
+            <Panel
+              header={`Torre ${i + 1}`}
+              key={i}
+              style={{ color: "#FFFFFF" }}
+            >
+              <Row gutter={[12, 6]}>
+                <Col xs={24} sm={12}>
+                  <Controller
+                    name={`bloques[${i}].pisos`}
+                    control={methods.control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Cantidad de pisos requerida",
+                      },
+                      pattern: {
+                        value: /^[0-9]+$/, // Ensure only numbers are allowed
+                        message: "Solo se permiten números",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <StyledFormItem required label="Cantidad de Pisos">
+                        <Input
+                          {...field}
+                          placeholder="Solo Numero"
+                          type="number" // Restrict input to numbers only
+                          status={error && "error"}
+                        />
+                        <Text type="danger">{error?.message}</Text>
+                      </StyledFormItem>
+                    )}
+                  />
+                </Col>
+                <Col xs={24} sm={12}>
+                  <Controller
+                    name={`bloques[${i}].apt`}
+                    control={methods.control}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Cantidad de apartamentos requerida",
+                      },
+                      pattern: {
+                        value: /^[0-9]+$/, // Ensure only numbers are allowed
+                        message: "Solo se permiten números",
+                      },
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <StyledFormItem required label="Cantidad de Apartamentos">
+                        <Input
+                          {...field}
+                          placeholder="Solo Numero"
+                          type="number" // Restrict input to numbers only
+                          status={error && "error"}
+                        />
+                        <Text type="danger">{error?.message}</Text>
+                      </StyledFormItem>
+                    )}
+                  />
+                </Col>
+              </Row>
+            </Panel>
+          </Collapse>
+        </Col>
+      );
+    }
+
+    return (
+      <>
+        <Col span={24}>
+          <Alert
+            message="Selecciona cantidad de torres, por cada torre tendrás que especificar la cantidad de apartamentos y cantidad de pisos. Tendrás la opción de duplicar una plantilla ya creada."
+            type="success"
+          />
+        </Col>
+        {bloques}
+      </>
+    );
+  };
+
   return (
     <>
       <ModalListaPrecios
@@ -30,351 +122,168 @@ export const DatosFacturacion = ({
           setOpenModalListaPrecios(false);
         }}
       />
+
       <Row gutter={[12, 6]}>
-        <Col xs={24} sm={24} md={12}>
-          <StyledFormItem label="Lista de Precios:">
-            <Space.Compact style={{ width: "100%" }}>
-              <Button
-                type="primary"
-                icon={<SearchOutlined />}
-                style={{ width: 50 }}
-                onClick={() => setOpenModalListaPrecios(true)}
-              />
-              <Controller
-                name="cod_listapre"
-                control={methods.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      readOnly
-                      {...field}
-                      placeholder="ID"
-                      status={error && "error"}
-                      style={{ textAlign: "center" }}
-                    />
-                  </>
-                )}
-              />
-              <Input
-                style={{
-                  width: 60,
-                  pointerEvents: "none",
-                  textAlign: "center",
-                }}
-                value=" - "
-                readOnly
-              />
-              <Controller
-                name="id_listapre"
-                control={methods.control}
-                render={({ field, fieldState: { error } }) => (
-                  <>
-                    <Input
-                      readOnly
-                      {...field}
-                      status={error && "error"}
-                      placeholder="Nombre"
-                      style={{ textAlign: "center", width: "100%" }}
-                    />
-                  </>
-                )}
-              />
-            </Space.Compact>
-          </StyledFormItem>
-        </Col>
-        <Col xs={24} sm={24} md={12}>
+        {/* tipo de proyecto */}
+        <Col xs={24} sm={12} md={12}>
           <Controller
-            name="tipo_factu"
+            name="tipoProyecto_id"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Tipo Facturación es requerido",
+                message: "Tipo de proyecto es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Tipo Facturación:">
+              <StyledFormItem required label="Tipo Proyecto:">
                 <Select
                   {...field}
+                  status={error && "error"}
                   options={selectTipoFacturacion}
-                  placeholder="Tipo Facturación"
-                  status={error && "error"}
+                  placeholder="Tipo de Proyecto"
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
             )}
           />
         </Col>
+
+        {/* tipo de obra */}
         <Col xs={24} sm={12} md={12}>
           <Controller
-            name="centro_costo"
+            name="tipo_obra"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Centro de Costo es requerido",
+                message: "Tipo de Obra es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Centro de Costo:">
-                <Input
-                  {...field}
-                  placeholder="Centro de Costo"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="periodo_pago"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Periodo de Pago es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Periodo de Pago:">
+              <StyledFormItem required label="Tipo de Obra">
                 <Select
                   {...field}
                   options={[
-                    { label: "30 días", value: "30" },
-                    { label: "45 días", value: "45" },
-                    { label: "60 días", value: "60" },
-                    { label: "90 días", value: "90" },
-                    { label: "120 días", value: "120" },
-                  ]}
-                  placeholder="Periodo de Pago"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={24} md={24}>
-          <Controller
-            name="bodegas"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Bodegas Asociadas es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Bodegas Asociadas:">
-                <Select
-                  allowClear
-                  {...field}
-                  mode="multiple"
-                  maxTagCount={10}
-                  options={selectBodegas}
-                  onBlur={() => {
-                    setSearchSelect("");
-                  }}
-                  style={{ width: "100%" }}
-                  status={error && "error"}
-                  searchValue={searchSelect}
-                  popupMatchSelectWidth={false}
-                  onSearch={(value: string) => {
-                    setSearchSelect(value);
-                  }}
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  placeholder="Selecciona una o varias Bodegas"
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={24} md={24}>
-          <Controller
-            name="conceptos"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Conceptos es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Conceptos (Servicios):">
-                <Select
-                  allowClear
-                  {...field}
-                  mode="multiple"
-                  maxTagCount={5}
-                  onBlur={() => {
-                    setSearchSelect("");
-                  }}
-                  style={{ width: "100%" }}
-                  status={error && "error"}
-                  options={selectConceptos}
-                  searchValue={searchSelect}
-                  onSearch={(value: string) => {
-                    setSearchSelect(value);
-                  }}
-                  filterOption={(input, option) =>
-                    (option?.label ?? "")
-                      .toString()
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                  placeholder="Selecciona uno o varios Conceptos"
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="cuota_mod"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Cuota Moderadora es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Cuota Moderadora:">
-                <Select
-                  {...field}
-                  placeholder="Cuota Moderadora"
-                  options={[
-                    { value: 1, label: "Sí" },
-                    { value: 0, label: "No" },
+                    { value: 1, label: "Personalizada" },
+                    { value: 0, label: "Simétrica" },
                   ]}
                   status={error && "error"}
+                  placeholder="Selecciona Tipo de Obra"
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
             )}
           />
         </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="iva"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Facturación Discriminando Iva es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="¿Facturación Discriminando Iva?">
-                <Select
-                  {...field}
-                  options={[
-                    { value: 1, label: "Sí" },
-                    { value: 0, label: "No" },
-                  ]}
-                  status={error && "error"}
-                  placeholder="¿Facturación Discriminando Iva?"
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="redondeo_iva"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Redondeo de IVA es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Redondeo de IVA:">
-                <Select
-                  {...field}
-                  placeholder="Redondeo de IVA"
-                  options={[
-                    { value: 0, label: "Redondeo Abajo" },
-                    { value: 1, label: "Redondeo Arriba" },
-                    { value: 2, label: "Sin redondeo" },
-                    { value: 3, label: "Redondeo Automatico" },
-                  ]}
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="dto_cuota"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Facturacion Cuota es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem
-                required
-                label="Descuento de Cuota Moderadora en Facturación:"
-              >
-                <Select
-                  {...field}
-                  options={[
-                    { value: 0, label: "No" },
-                    { value: 1, label: "Sí" },
-                  ]}
-                  placeholder="Facturacion Cuota moderadora"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="etiqueta_rips"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Etiquetas de Salud es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem
-                required
-                label="¿Presenta Etiquetas al ministerio de salud?"
-              >
-                <Select
-                  {...field}
-                  options={[
-                    { value: 0, label: "No" },
-                    { value: 1, label: "Sí" },
-                  ]}
-                  placeholder="Etiquetas de Salud"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
+
+        {/* Sección para tipo de obra SIMÉTRICA */}
+        {tipoObra === 0 && (
+          <>
+            <Col xs={24} sm={12} md={12}>
+              <Controller
+                name="torres"
+                control={methods.control}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La cantidad de torres es requerida",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <StyledFormItem required label="Cantidad Torres:">
+                    <Input
+                      {...field}
+                      placeholder="00"
+                      status={error && "error"}
+                    />
+                    <Text type="danger">{error?.message}</Text>
+                  </StyledFormItem>
+                )}
+              />
+            </Col>
+
+            <Col xs={24} sm={12} md={12}>
+              <Controller
+                name="cant_pisos"
+                control={methods.control}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La cantidad de pisos es requerida",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <StyledFormItem required label="Cantidad Pisos:">
+                    <Input
+                      {...field}
+                      placeholder="00"
+                      status={error && "error"}
+                    />
+                    <Text type="danger">{error?.message}</Text>
+                  </StyledFormItem>
+                )}
+              />
+            </Col>
+
+            <Col xs={24} sm={12} md={12}>
+              <Controller
+                name="apt"
+                control={methods.control}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La cantidad de apartamentos es requerida",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <StyledFormItem required label="Cantidad Apartamentos:">
+                    <Input
+                      {...field}
+                      placeholder="00"
+                      status={error && "error"}
+                    />
+                    <Text type="danger">{error?.message}</Text>
+                  </StyledFormItem>
+                )}
+              />
+            </Col>
+          </>
+        )}
+
+        {/* Sección para tipo de obra PERSONALIZADA */}
+        {tipoObra === 1 && (
+          <>
+            <Col xs={24} sm={12} md={12}>
+              <Controller
+                name="torres"
+                control={methods.control}
+                rules={{
+                  required: {
+                    value: true,
+                    message: "La cantidad de torres es requerida",
+                  },
+                  pattern: {
+                    value: /^[0-9]+$/, // This ensures only numbers are allowed
+                    message: "Solo se permiten números",
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <StyledFormItem required label="Cantidad Torres:">
+                    <Input
+                      {...field}
+                      placeholder="Solo Numero"
+                      type="number" // Ensure the input is of type number
+                      status={error && "error"}
+                    />
+                    <Text type="danger">{error?.message}</Text>
+                  </StyledFormItem>
+                )}
+              />
+            </Col>
+          </>
+        )}
+        {tipoObra === 1 && cantidadTorres && renderPersonalizada()}
       </Row>
     </>
   );

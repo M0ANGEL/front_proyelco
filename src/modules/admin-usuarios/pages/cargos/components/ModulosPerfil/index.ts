@@ -1,1 +1,0 @@
-export { ModulosPerfil } from "./ModulosPerfil";

@@ -1,14 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { DatosBasicos, DatosEmpresas, DatosPerfiles } from "../../components";
+import { DatosBasicos, DatosPerfiles } from "../../components";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { DatosDocumentos } from "../../components/DatosDocumentos";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosCargos } from "../../components/DatosCargos";
-import { Bodega, Empresa } from "@/services/types";
 import { useEffect, useState } from "react";
 import {
   updateUsuario,
@@ -38,9 +36,6 @@ const { Text } = Typography;
 export const FormUsuarios = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(true);
   const [api, contextHolder] = notification.useNotification();
-  const [loaderEmp, setLoaderEmp] = useState<boolean>(false);
-  const [empresas, setEmpresas] = useState<Empresa[]>([]);
-  const [bodegas, setBodegas] = useState<Bodega[]>([]);
   const [usuario, setUsuario] = useState<Usuario>();
   const { transformToUpperCase } = useSerialize();
   const { id } = useParams<{ id: string }>();
@@ -71,30 +66,6 @@ export const FormUsuarios = () => {
         .finally(() => setLoaderSave(false));
     }
     setLoaderSave(false);
-    setLoaderEmp(true);
-    getEmpresas()
-      .then(({ data: { data } }) => {
-        setEmpresas(data);
-        getBodegas()
-          .then(({ data: { data } }) => {
-            setBodegas(data);
-            setLoaderEmp(false);
-          })
-          .catch((error) => {
-            pushNotification({
-              type: "error",
-              title: error.code,
-              description: error.message,
-            });
-          });
-      })
-      .catch((error) => {
-        pushNotification({
-          type: "error",
-          title: error.code,
-          description: error.message,
-        });
-      });
   }, []);
 
   const pushNotification = ({
@@ -228,69 +199,19 @@ export const FormUsuarios = () => {
                     ),
                     children: <DatosBasicos usuario={usuario} />,
                   },
+
                   {
                     key: "2",
-                    label: (
-                      <Space>
-                        <Text
-                          disabled={loaderEmp}
-                          type={
-                            control.getFieldState("bodegas").error ||
-                            (!control.getValues("bodegas") && !usuario)
-                              ? "danger"
-                              : undefined
-                          }
-                        >
-                          Empresa
-                        </Text>
-                        {loaderEmp ? (
-                          <Spin spinning indicator={<LoadingOutlined spin />} />
-                        ) : null}
-                      </Space>
-                    ),
-                    children: (
-                      <DatosEmpresas
-                        onPushNotification={(data: Notification) => {
-                          pushNotification(data);
-                        }}
-                        empresas={empresas}
-                        bodegas={bodegas}
-                        usuario={usuario}
-                        setUsuario={(value: Usuario) => {
-                          setUsuario(value);
-                        }}
-                      />
-                    ),
-                    disabled: loaderEmp,
+                    label: <Text>Perfiles</Text>,
+                    children: <DatosPerfiles usuario={usuario} />,
                   },
                   {
                     key: "3",
                     label: (
                       <Text
                         type={
-                          control.getFieldState("perfiles").error
+                          Object.keys(control.formState.errors).length > 0
                             ? "danger"
-                            : undefined
-                        }
-                      >
-                        Perfiles
-                      </Text>
-                    ),
-                    children: <DatosPerfiles usuario={usuario} />,
-                    disabled:
-                      control.getValues("empresas")?.length > 0 || usuario
-                        ? false
-                        : true,
-                  },
-                  {
-                    key: "4",
-                    label: (
-                      <Text
-                        type={
-                          control.getFieldState("cargos").error
-                            ? // ||
-                              // (!control.getValues("cargos") && !usuario)
-                              "danger"
                             : undefined
                         }
                       >
@@ -298,39 +219,6 @@ export const FormUsuarios = () => {
                       </Text>
                     ),
                     children: <DatosCargos usuario={usuario} />,
-                    disabled:
-                      control.getValues("empresas")?.length > 0 || usuario
-                        ? false
-                        : true,
-                  },
-                  {
-                    key: "5",
-                    label: (
-                      <Text
-                        type={
-                          control.getFieldState("documentos").error
-                            ? // ||
-                              // (!control.getValues("documentos") && !usuario)
-                              "danger"
-                            : undefined
-                        }
-                      >
-                        Documentos
-                      </Text>
-                    ),
-                    children: (
-                      <DatosDocumentos
-                        empresas={empresas}
-                        onPushNotification={(data: Notification) => {
-                          pushNotification(data);
-                        }}
-                        usuario={usuario}
-                      />
-                    ),
-                    disabled:
-                      control.getValues("cargos")?.length > 0 || usuario
-                        ? false
-                        : true,
                   },
                 ]}
                 animated

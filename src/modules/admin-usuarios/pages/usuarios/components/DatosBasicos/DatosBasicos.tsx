@@ -13,7 +13,6 @@ import { Usuario } from "../../types";
 import {
   SelectProps,
   Typography,
-  Checkbox,
   Select,
   Input,
   Col,
@@ -31,13 +30,6 @@ interface Props {
 
 export const DatosBasicos = ({ usuario }: Props) => {
   const [phoneValue, setPhoneValue] = useState<string>("");
-  const [selectBodegas, setSelectBodegas] = useState<SelectProps["options"]>(
-    []
-  );
-  const [selectAliado, setSelectAliado] = useState<SelectProps["options"]>([]);
-  const [selectFuentes, setSelectFuentes] = useState<SelectProps["options"]>(
-    []
-  );
   const [timer, setTimer] = useState<any>(null);
   const methods = useFormContext();
   //procesos
@@ -71,21 +63,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
     });
   }, []);
 
-  useEffect(() => {
-    methods.setValue("has_bodegas", methods.watch("has_bodegas"));
-  }, [methods.watch("has_bodegas")]);
-
-  useEffect(() => {
-    methods.setValue("moderador_tickets", methods.watch("moderador_tickets"));
-  }, [methods.watch("moderador_tickets")]);
-
-  useEffect(() => {
-    methods.setValue("can_config_telefono", methods.watch("can_config_telefono"));
-  }, [methods.watch("can_config_telefono")]);
-
-  useEffect(() => {
-    methods.setValue("has_fuentes", methods.watch("has_fuentes"));
-  }, [methods.watch("has_fuentes")]);
 
   useEffect(() => {
     methods.setValue("rol", methods.watch("rol"));
@@ -124,17 +101,12 @@ export const DatosBasicos = ({ usuario }: Props) => {
             telefono: usuario.user.telefono,
             rol: usuario.user.rol,
             username: usuario.user.username,
-            has_bodegas: parseInt(usuario.user.has_bodegas) == 1,
-            has_fuentes: parseInt(usuario.user.has_fuentes) == 1,
-            bodegas_habilitadas: usuario.user.bodegas_habilitadas,
             password: "",
-            fuentes: usuario.fuentes,
             correo: usuario.user.correo,
             proceso_id: usuario.user.proceso_id,
-            has_limite_reportes: parseInt(usuario.user.has_limite_reportes),
+            // has_limite_reportes: parseInt(usuario.user.has_limite_reportes),
             moderador_tickets: usuario.user.moderador_tickets,
             horario_id: usuario.user.horario_id,
-            can_config_telefono: usuario.user.can_config_telefono,
           }
         : {
             nombre: null,
@@ -143,16 +115,10 @@ export const DatosBasicos = ({ usuario }: Props) => {
             telefono: null,
             rol: null,
             username: null,
-            has_bodegas: 0,
-            bodegas_habilitadas: [],
             password: "",
-            has_fuentes: 0,
-            fuentes: [],
             correo: null,
             proceso_id: null,
-            has_limite_reportes: 1,
             moderador_tickets: 0,
-            can_config_telefono: 0,
             horario_id: [],
           }
     );
@@ -401,30 +367,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
                     options={[
                       { value: "administrador", label: "Administrador" },
                       { value: "usuario", label: "Usuario" },
-                      { value: "compras", label: "Compras" },
-                      { value: "auditoria", label: "Auditoria" },
-                      { value: "regente", label: "Regente" },
-                      { value: "regente_farmacia", label: "Regente Farmacia" },
-                      { value: "cotizaciones", label: "Cotizaciones" },
-                      { value: "quimico", label: "Quimico" },
-                      { value: "revisor_compras", label: "Revisor Compras" },
-                      { value: "auxiliar_bodega", label: "Auxiliar Bodega" },
-                      { value: "juridico", label: "Jurídico" },
-                      { value: "facturacion", label: "Facturación" },
-                      { value: "contabilidad", label: "Contabilidad" },
-                      { value: "calidad", label: "Calidad" },
-                      { value: "gh_admin", label: "Gestión Humana Admin" },
-                      {
-                        value: "gh_auxiliar",
-                        label: "Gestión Humana Auxiliar",
-                      },
-                      {
-                        value: "gh_consulta",
-                        label: "Gestión Humana Consulta",
-                      },
-                      { value: "gh_bienestar", label: "Bienestar" },
-                      { value: "gerencia", label: "Gerente Farmart" },
-                      { value: "af-admin", label: "Activos Fijos Admin" },
                     ]}
                     status={error && "error"}
                   />
@@ -510,157 +452,11 @@ export const DatosBasicos = ({ usuario }: Props) => {
                 </StyledFormItem>
               )}
             />
-            <Controller
-              name="aliado_id"
-              control={methods.control}
-              render={({ field }) => (
-                <StyledFormItem
-                  label="Aliado:"
-                  extra={
-                    <Text type="danger" style={{ fontSize: 11 }}>
-                      Este campo solo aplica para los usuarios que van a cargar
-                      dispensaciones por archivo plano
-                    </Text>
-                  }
-                >
-                  <Select
-                    {...field}
-                    showSearch
-                    allowClear
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "")
-                        .toString()
-                        .toLowerCase()
-                        .localeCompare(
-                          (optionB?.label ?? "").toString().toLowerCase()
-                        )
-                    }
-                    filterOption={(input, option) =>
-                      (option?.label?.toString() ?? "")
-                        .toLowerCase()
-                        .includes(input.toString().toLowerCase())
-                    }
-                    options={selectAliado}
-                  />
-                </StyledFormItem>
-              )}
-            />
           </Col>
         </Row>
       </Col>
-      <Col span={24}>
+      {/* <Col span={24}>
         <Row gutter={[12, 12]}>
-          <Col xs={24} md={12}>
-            <Controller
-              name="has_bodegas"
-              control={methods.control}
-              render={({ field }) => (
-                <StyledFormItem>
-                  <Checkbox
-                    {...field}
-                    checked={methods.getValues("has_bodegas")}
-                  >
-                    Habilitar bodegas
-                  </Checkbox>
-                </StyledFormItem>
-              )}
-            />
-            {methods.getValues("has_bodegas") ? (
-              <Controller
-                name="bodegas_habilitadas"
-                control={methods.control}
-                render={({ field }) => (
-                  <StyledFormItem
-                    label="Bodegas Habilitadas:"
-                    extra={
-                      <Text type="secondary" style={{ fontSize: 11 }}>
-                        Las bodegas seleccionadas serán las habilitadas como
-                        bodega destino en los traslados y en la lista de
-                        inventario.
-                      </Text>
-                    }
-                  >
-                    <Select
-                      {...field}
-                      showSearch
-                      mode="multiple"
-                      maxTagCount={10}
-                      maxTagTextLength={15}
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toString()
-                          .toLowerCase()
-                          .localeCompare(
-                            (optionB?.label ?? "").toString().toLowerCase()
-                          )
-                      }
-                      filterOption={(input, option) =>
-                        (option?.label?.toString() ?? "")
-                          .toLowerCase()
-                          .includes(input.toString().toLowerCase())
-                      }
-                      options={selectBodegas}
-                    />
-                  </StyledFormItem>
-                )}
-              />
-            ) : null}
-          </Col>
-          <Col xs={24} md={12}>
-            <Controller
-              name="has_fuentes"
-              control={methods.control}
-              render={({ field }) => (
-                <StyledFormItem>
-                  <Checkbox
-                    {...field}
-                    checked={methods.getValues("has_fuentes")}
-                  >
-                    Habilitar fuentes
-                  </Checkbox>
-                </StyledFormItem>
-              )}
-            />
-            {methods.getValues("has_fuentes") ? (
-              <Controller
-                name="fuentes"
-                control={methods.control}
-                render={({ field }) => (
-                  <StyledFormItem
-                    label="Fuentes:"
-                    extra={
-                      <Text type="secondary" style={{ fontSize: 11 }}>
-                        Las fuentes seleccionadas solo aplicarán para los
-                        usuarios del HUV
-                      </Text>
-                    }
-                  >
-                    <Select
-                      {...field}
-                      showSearch
-                      mode="multiple"
-                      maxTagCount={10}
-                      maxTagTextLength={15}
-                      filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? "")
-                          .toString()
-                          .toLowerCase()
-                          .localeCompare(
-                            (optionB?.label ?? "").toString().toLowerCase()
-                          )
-                      }
-                      filterOption={(input, option) =>
-                        (option?.label?.toString() ?? "")
-                          .toLowerCase()
-                          .includes(input.toString().toLowerCase())
-                      }
-                      options={selectFuentes}
-                    />
-                  </StyledFormItem>
-                )}
-              />
-            ) : null}
-          </Col>
           <Col xs={24} md={12}>
             <Controller
               name="has_limite_reportes"
@@ -740,7 +536,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
             />
           </Col>
         </Row>
-      </Col>
+      </Col> */}
     </Row>
   );
 };

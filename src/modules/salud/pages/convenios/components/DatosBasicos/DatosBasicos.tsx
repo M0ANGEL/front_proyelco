@@ -3,9 +3,7 @@ import { Controller, useFormContext } from "react-hook-form";
 import { SearchOutlined } from "@ant-design/icons";
 import { ModalTerceros } from "../ModalTerceros";
 import { useState } from "react";
-import { Props } from "./types";
 import {
-  InputNumber,
   DatePicker,
   Typography,
   Button,
@@ -18,13 +16,7 @@ import {
 
 const { Text } = Typography;
 
-export const DatosBasicos = ({
-  selectTipoConvenio,
-  selectCoberturaPlan,
-  selectTipoConsulta,
-  selectModalidadContratacion,
-  selectTipoDispensaciones,
-}: Props) => {
+export const DatosBasicos = () => {
   const [openModalTerceros, setOpenModalTerceros] = useState<boolean>(false);
   const methods = useFormContext();
 
@@ -43,24 +35,24 @@ export const DatosBasicos = ({
         }}
       />
       <Row gutter={[12, 6]}>
+        {/* fecha de inicio del proyecto */}
         <Col xs={24} sm={12} md={6}>
           <Controller
-            name="tipo_id"
+            name="fecha_inicio"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Tipo de Convenio es requerido",
+                message: "Fecha Inicial del proyecto es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Tipo Convenio:">
-                <Select
+              <StyledFormItem required label="Fecha Inicio:">
+                <DatePicker
                   {...field}
                   status={error && "error"}
-                  options={selectTipoConvenio}
-                  placeholder="Tipo de Convenio"
-                  // disabled={Boolean(tipoId)}
+                  placeholder="10/01/01"
+                  style={{ width: "100%" }}
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
@@ -94,6 +86,7 @@ export const DatosBasicos = ({
             )}
           />
         </Col>
+        {/* selecion de cliente */}
         <Col xs={24} sm={24} md={12}>
           <StyledFormItem required label="Cliente:">
             <Space.Compact style={{ width: "100%" }}>
@@ -105,7 +98,7 @@ export const DatosBasicos = ({
                 disabled={Boolean(tipoId)}
               />
               <Controller
-                name="nit"
+                name="cliente_id"
                 control={methods.control}
                 rules={{
                   required: {
@@ -132,13 +125,15 @@ export const DatosBasicos = ({
                   textAlign: "center",
                 }}
                 status={
-                  methods.getFieldState("nit").error ? "error" : undefined
+                  methods.getFieldState("cliente_id").error
+                    ? "error"
+                    : undefined
                 }
                 value=" - "
                 readOnly
               />
               <Controller
-                name="nom_nit"
+                name="nombre_cliente"
                 control={methods.control}
                 rules={{
                   required: true,
@@ -149,7 +144,7 @@ export const DatosBasicos = ({
                       readOnly
                       {...field}
                       status={error && "error"}
-                      placeholder="Nombre Tercero"
+                      placeholder="Nombre Cliente"
                       style={{ textAlign: "center", width: "100%" }}
                     />
                   </>
@@ -157,12 +152,14 @@ export const DatosBasicos = ({
               />
             </Space.Compact>
             <Text type="danger">
-              {methods.getFieldState("nit").error
-                ? methods.getFieldState("nit").error?.message
+              {methods.getFieldState("cliente_id").error
+                ? methods.getFieldState("cliente_id").error?.message
                 : null}
             </Text>
           </StyledFormItem>
         </Col>
+
+        {/* decripcion del proyecto */}
         <Col xs={24} sm={24} md={12}>
           <Controller
             name="descripcion"
@@ -178,7 +175,7 @@ export const DatosBasicos = ({
                 <Input
                   showCount
                   {...field}
-                  maxLength={100}
+                  maxLength={150}
                   placeholder="Descripción"
                   status={error && "error"}
                   disabled={Boolean(tipoId)}
@@ -188,7 +185,9 @@ export const DatosBasicos = ({
             )}
           />
         </Col>
-        <Col xs={24} sm={12} md={12}>
+
+        {/* valor del proyecto ?? */}
+        {/* <Col xs={24} sm={12} md={12}>
           <Controller
             name="valor_total"
             control={methods.control}
@@ -219,59 +218,10 @@ export const DatosBasicos = ({
               </StyledFormItem>
             )}
           />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="regimen_conv"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Régimen Convenio es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Régimen Convenio:">
-                <Select
-                  {...field}
-                  status={error && "error"}
-                  placeholder="Régimen Convenio"
-                  options={[
-                    { value: "Contributivo", label: "Contributivo" },
-                    { value: "Subsidiado", label: "Subsidiado" },
-                    { value: "Especial", label: "Especial" },
-                  ]}
-                  disabled={Boolean(tipoId)}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Controller
-            name="fechaini"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Fecha Inicial es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Fecha Inicial:">
-                <DatePicker
-                  {...field}
-                  status={error && "error"}
-                  placeholder="Fecha Inicial"
-                  style={{ width: "100%" }}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={6}>
+        </Col> */}
+
+        {/* fecha final del proyecto ?? */}
+        {/* <Col xs={24} sm={12} md={6}>
           <Controller
             name="fechafin"
             control={methods.control}
@@ -293,15 +243,16 @@ export const DatosBasicos = ({
               </StyledFormItem>
             )}
           />
-        </Col>
+        </Col> */}
+
         <Col xs={24} sm={12} md={12}>
           <Controller
-            name="num_contrato"
+            name="codigo_contrato"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Número Contrato es requerido",
+                message: "Codigo Unico del Contrato es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
@@ -309,182 +260,8 @@ export const DatosBasicos = ({
                 <Input
                   showCount
                   {...field}
-                  maxLength={60}
+                  maxLength={20}
                   placeholder="Número Contrato"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="mod_contrato"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Modalidad de Contratación es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Modalidad de Contratación:">
-                <Select
-                  {...field}
-                  options={selectModalidadContratacion}
-                  placeholder="Modalidad de Contratación"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="cober_pb"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Cobertura Plan Beneficios es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Cobertura Plan Beneficios:">
-                <Select
-                  {...field}
-                  options={selectCoberturaPlan}
-                  placeholder="Cobertura Plan Beneficios"
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="auth_cabe"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Autorización Cabecera es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Autorización Cabecera:">
-                <Select
-                  {...field}
-                  placeholder="Autorización Cabecera"
-                  options={[
-                    { value: 1, label: "Si" },
-                    { value: 0, label: "No" },
-                  ]}
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={24} md={12}>
-          <Controller
-            name="tipo_consulta"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Tipos de Consultas es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Tipos de Consultas:">
-                <Select
-                  {...field}
-                  mode="multiple"
-                  maxTagCount={4}
-                  style={{ width: "100%" }}
-                  status={error && "error"}
-                  options={selectTipoConsulta}
-                  placeholder="Selecciona una o varios Tipos de Consultas"
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Controller
-            name="auth_det"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Autorización Detalle es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Autorización Detalle:">
-                <Select
-                  {...field}
-                  placeholder="Autorización Detalle"
-                  options={[
-                    { value: 1, label: "Si" },
-                    { value: 0, label: "No" },
-                  ]}
-                  status={error && "error"}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Controller
-            name="long_det"
-            control={methods.control}
-            defaultValue={0}
-            rules={{
-              required: {
-                value: true,
-                message: "No. Caracteres Det. es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="No. Caracteres Det.:">
-                <InputNumber
-                  min={0}
-                  {...field}
-                  controls={false}
-                  max={30}
-                  placeholder="No. Caracteres Det."
-                  status={error && "error"}
-                  style={{ width: "100%" }}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col>
-        <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="id_tipo_dispensacion"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Tipo Dispensación es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Tipo Dispensación:">
-                <Select
-                  {...field}
-                  placeholder="Tipo Dispensación"
-                  options={selectTipoDispensaciones}
                   status={error && "error"}
                 />
                 <Text type="danger">{error?.message}</Text>

@@ -18,15 +18,16 @@ import {
   LoginInputPassword,
 } from "../../pages/LoginPage/styled";
 import { Props } from "./types";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
 export const FormLogin = ({
   spin,
   onPushNotification,
-  onChangeLoginStep,
   onFetch,
 }: Props) => {
+  const navigate = useNavigate();
   const { setSessionVariable, getSessionVariable } = useSessionStorage();
   const [btnCleanTokens, setBtnCleanTokens] = useState<boolean>(false);
   const { control, handleSubmit, getValues } = useForm<LoginFormInput>({
@@ -106,7 +107,11 @@ export const FormLogin = ({
           fetchUserProfile()
             .then(({ data }) => {
               setSessionVariable(KEY_ROL, data.userData.rol);
-              onChangeLoginStep(1, data.userData);
+              // Guardar valores por defecto
+              setSessionVariable(KEY_EMPRESA, "1");
+              setSessionVariable(KEY_BODEGA, "1");
+              // Redirigir directamente al dashboard
+              navigate('/dashboard');
               onFetch(false);
             })
             .catch((error) => {

@@ -13,7 +13,7 @@ import {
   ConvenioTipo,
   ListaPrecios,
   TipoConsulta,
-  Tercero,
+  ResponseAmClientes,
 } from "../types";
 
 export const getTipoConvenio = async (): Promise<ResponseConvenioTipo> => {
@@ -74,16 +74,12 @@ export const getListapreCli = async (): Promise<ResponseListapreCli> => {
   );
 };
 
-export const getNitTercero = async (
-  page = 1,
-  query?: string
-): Promise<ResponseSearchTerceros> => {
-  return await client.get<{ data: Tercero[]; status: string }>(
-    `nit?page=${page}&value=${query}`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
+
+//llamada de los cleintes
+export const getCLientesNIT= async (): Promise<ResponseAmClientes> => {
+  return await client.get("admin-clientes", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 };
 
 export const getTerceros = async (page = 1): Promise<ResponseTerceros> => {
@@ -101,12 +97,16 @@ export const getTerceroTipo = async (id: string): Promise<any> => {
   });
 };
 
+
+//crear proyecto
 export const crearTerceroTipo = async (data: any): Promise<any> => {
   return await client.post<any>("tercero-tipos", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
+
+//actualizar poryecto si no inicia aun
 export const updateTerceroTipo = async (data: any, id: any): Promise<any> => {
   return await client.put<any>(`tercero-tipos/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
