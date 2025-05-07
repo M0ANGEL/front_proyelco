@@ -1,0 +1,1 @@
+export { ModalConceptos } from "./ModalConceptos";

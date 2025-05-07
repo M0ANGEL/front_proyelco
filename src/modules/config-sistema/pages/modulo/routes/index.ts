@@ -1,0 +1,1 @@
+export { ModuloRoutes } from "./ModuloRoutes";

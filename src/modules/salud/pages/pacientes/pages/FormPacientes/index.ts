@@ -1,0 +1,1 @@
+export { FormPacientes } from "./FormPacientes";

@@ -1,0 +1,1 @@
+export { ListarRadicadosRoutes } from "./ListarRadicadosRoutes";

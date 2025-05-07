@@ -1,0 +1,1 @@
+export { ListaPreciosCli } from "./ListaPreciosCli";

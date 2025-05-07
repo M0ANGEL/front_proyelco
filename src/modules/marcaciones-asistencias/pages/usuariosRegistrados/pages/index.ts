@@ -1,0 +1,1 @@
+export {UsuariosRegistrados} from './UsuariosRegistrados'

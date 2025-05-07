@@ -1,0 +1,1 @@
+export { ListCGN } from "./ListCGN";

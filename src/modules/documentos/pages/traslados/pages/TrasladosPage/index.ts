@@ -1,0 +1,1 @@
+export { TrasladosPage } from "./TrasladosPage";

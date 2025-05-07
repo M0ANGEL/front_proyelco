@@ -1,0 +1,1 @@
+export { ModalPacientes } from "./ModalPacientes";

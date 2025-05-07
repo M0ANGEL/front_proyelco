@@ -1,0 +1,1 @@
+export { DatosAfiliaciones } from './DatosAfiliaciones';

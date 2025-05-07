@@ -1,0 +1,1 @@
+export { ListDiagnosticos } from "./ListDiagnosticos";

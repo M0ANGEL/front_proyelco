@@ -1,0 +1,1 @@
+export { ConceptosRoutes } from "./ConceptosRoutes";

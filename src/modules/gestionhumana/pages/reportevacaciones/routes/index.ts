@@ -1,0 +1,1 @@
+export { ReporteVacacionesRoutes } from './ReporteVacacionesRoutes';

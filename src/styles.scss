@@ -1,0 +1,130 @@
+.custom-table {
+  .ant-table-body {
+    min-height: 150px;
+  }
+}
+
+.styled-card-documents {
+  .ant-card-head {
+    background-color: #ffda8f;
+    h4 {
+      margin-block: 0px;
+      text-transform: uppercase;
+    }
+  }
+}
+td.ant-table-column-sort,
+td.ant-table-cell-row-hover {
+  background-color: rgb(212, 212, 212) !important;
+}
+
+.expanded-table {
+  .ant-table-expanded-row {
+    .ant-table-wrapper tr.ant-table-expanded-row > td {
+      background-color: #ffffff !important;
+    }
+  }
+  table {
+    th {
+      border-radius: 0px !important;
+    }
+  }
+}
+
+.red-row {
+  background-color: #f69987;
+  .ant-table-cell-row-hover {
+    background-color: #fe7458 !important;
+  }
+}
+
+.orange-row {
+  background-color: #fddb91;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #ffca56 !important;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #fddb91;
+  }
+}
+
+.cyan-row {
+  background-color: #aecdff;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #1e85f9 !important;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #aecdff;
+  }
+}
+
+.red-row {
+  
+  background-color: #ff7979;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #ff5050 !important;
+    color: white;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #ff7979;
+  }
+}
+
+.yellow-row {
+  background-color: #ffde84;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #ffc31e !important;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #ffde84;
+  }
+}
+
+.green-row {
+  background-color: #68c468;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #258925 !important;
+    color: white;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #68c468;
+  }
+}
+
+.upperCaseText {
+  textarea {
+    text-transform: uppercase;
+  }
+}
+
+.red-row-st {
+  background-color: #e04425;
+  color: #ffffff;
+  .ant-table-cell-row-hover {
+    background-color: #fe7458 !important;
+  }
+}
+
+.highlight-row {
+  background-color: #fffae6 !important; /* Amarillo claro */
+}
+
+.table-glosas .fila-par, 
+.table-glosas .fila-par .ant-table-cell {
+  background-color: #c4c4c4;
+}
+
+.table-glosas .fila-impar, 
+.table-glosas .fila-impar .ant-table-cell {
+  background-color: #f0f0f0;
+}

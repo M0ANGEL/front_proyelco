@@ -1,0 +1,1 @@
+export {ReporteMarcaciones} from './ReporteMarcaciones'

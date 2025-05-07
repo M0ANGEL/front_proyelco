@@ -1,0 +1,1 @@
+export {ListSubcategorias} from "./ListSubCategoria"

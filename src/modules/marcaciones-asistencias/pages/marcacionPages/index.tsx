@@ -1,0 +1,2 @@
+export {MarcacionPages} from "./MarcacionPages";
+

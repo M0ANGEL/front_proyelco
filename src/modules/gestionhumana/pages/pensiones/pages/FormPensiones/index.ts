@@ -1,0 +1,2 @@
+export { FormPensiones } from "./FormPensiones";
+

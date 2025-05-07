@@ -1,0 +1,9 @@
+.row-red > .ant-table-cell {
+  background-color: rgb(213 116 116 / 65%);
+  color: rgb(15, 14, 14);
+}
+
+.row-red > .ant-table-cell-row-hover {
+  background-color: rgba(212, 83, 83, 0.65) !important;
+  color: rgb(15, 14, 14);
+}

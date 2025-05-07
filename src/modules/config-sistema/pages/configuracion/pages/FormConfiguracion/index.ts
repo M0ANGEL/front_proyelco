@@ -1,0 +1,1 @@
+export {FormConfiguracion} from "./FormConfiguracion"

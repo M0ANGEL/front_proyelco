@@ -1,0 +1,1 @@
+export {FormTranslados} from "./FormTransladosActivos"

@@ -1,0 +1,1 @@
+export { ModalTrazabilidad } from "./ModalTrazabilidad";

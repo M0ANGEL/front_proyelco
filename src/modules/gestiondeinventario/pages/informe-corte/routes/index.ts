@@ -1,0 +1,1 @@
+export { InformeCorteRoutes } from "./InformeCorteRoutes";

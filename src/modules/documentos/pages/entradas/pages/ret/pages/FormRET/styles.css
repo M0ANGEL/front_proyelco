@@ -1,0 +1,9 @@
+.green-title {
+    color: #66bb6a85;
+    /* Cambia este valor al color verde claro que desees */
+}
+
+th.green-title-background {
+    background-color: #66bb6a85;
+    /* Cambia esto al color verde claro deseado */
+}

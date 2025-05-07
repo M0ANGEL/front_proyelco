@@ -1,0 +1,1 @@
+export{SubCategoriaRoutes} from "./SubCategoriasRoutes"

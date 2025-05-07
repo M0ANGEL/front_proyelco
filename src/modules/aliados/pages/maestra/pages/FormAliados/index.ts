@@ -1,0 +1,1 @@
+export { FormAliados } from "./FormAliados";

@@ -1,0 +1,1 @@
+export { ListEstadisticaIncapacidades } from './ListEstadisticaIncapacidades';

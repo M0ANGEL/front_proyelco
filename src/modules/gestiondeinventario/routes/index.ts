@@ -1,0 +1,1 @@
+export { GestionInventarioRoutes } from "./GestionInventarioRoutes";

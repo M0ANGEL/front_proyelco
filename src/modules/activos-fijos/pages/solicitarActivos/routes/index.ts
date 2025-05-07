@@ -1,0 +1,1 @@
+export {SolicitarActivosRoutes} from "./SolicitarActivosRoutes"

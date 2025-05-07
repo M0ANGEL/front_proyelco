@@ -1,0 +1,1 @@
+export { LogSistemaPage } from "./LogSistemaPage";

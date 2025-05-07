@@ -1,0 +1,1 @@
+export { SubmenuRoutes } from "./SubmenuRoutes";

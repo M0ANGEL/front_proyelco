@@ -1,0 +1,1 @@
+export {ParametrizacionRoutes} from "./ParametrizacionRoutes"

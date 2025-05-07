@@ -1,0 +1,24 @@
+import { DevolucionDispensacionCabecera, Privilegios } from "@/services/types";
+
+export interface Props {
+  // documentos: DevolucionDispensacionCabecera[];
+  privilegios?: Privilegios;
+  tab: string;
+  setLoader: (value: boolean) => void;
+}
+
+export interface DataType {
+  key: React.Key;
+  bodega: string;
+  usuario: string;
+  paciente: string;
+  fecha: string;
+  consecutivo: string;
+  observacion: string;
+}
+
+export interface Pagination {
+  data: DevolucionDispensacionCabecera[];
+  per_page: number;
+  total: number;
+}

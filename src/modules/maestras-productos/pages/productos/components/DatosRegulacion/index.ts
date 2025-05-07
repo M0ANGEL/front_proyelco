@@ -1,0 +1,1 @@
+export { DatosRegulacion } from "./DatosRegulacion";

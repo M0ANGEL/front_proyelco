@@ -1,0 +1,1 @@
+export { ListDispensaciones } from "./ListDispensaciones";

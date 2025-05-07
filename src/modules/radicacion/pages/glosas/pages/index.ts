@@ -1,0 +1,1 @@
+export { FormGlosas } from "./FormGlosas";

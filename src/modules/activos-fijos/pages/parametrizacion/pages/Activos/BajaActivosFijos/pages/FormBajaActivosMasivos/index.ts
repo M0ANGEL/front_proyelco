@@ -1,0 +1,1 @@
+export {FormBajaActivosMasivos} from "./FormBajaActivosMasivos"

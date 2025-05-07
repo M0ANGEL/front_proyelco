@@ -1,0 +1,1 @@
+export { PreguntasDinamicasRoutes } from "./PreguntasDinamicasRoutes";

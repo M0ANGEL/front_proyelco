@@ -1,0 +1,1 @@
+export { NotasPendientesTable } from "./NotasPendientesTable";

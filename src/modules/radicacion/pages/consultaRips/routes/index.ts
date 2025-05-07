@@ -1,0 +1,1 @@
+export { ConsultaRipsRoutes } from "./ConsultaRipsRoutes";

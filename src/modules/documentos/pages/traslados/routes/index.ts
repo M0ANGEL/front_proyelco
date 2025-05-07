@@ -1,0 +1,1 @@
+export { TrasladosRoutes } from "./TrasladosRoutes";

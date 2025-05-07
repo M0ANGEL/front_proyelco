@@ -1,0 +1,1 @@
+export {MarcacionAsistenciasRoutes} from './MarcacionAsistenciaRoutes'

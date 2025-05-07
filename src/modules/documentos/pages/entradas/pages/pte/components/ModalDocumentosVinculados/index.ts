@@ -1,0 +1,1 @@
+export { ModalDispensaciones } from "./ModalDocumentosVinculados";

@@ -1,0 +1,1 @@
+export { ListAlertasContratos } from './ListAlertasContratos';

@@ -1,0 +1,1 @@
+export {FormSubLocalizacionArea} from "./FormSubLocalizacionArea"

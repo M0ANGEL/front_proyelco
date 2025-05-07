@@ -1,0 +1,1 @@
+export { ModalGeneracionPDF } from "./ModalGeneracionPDF";

@@ -1,0 +1,1 @@
+export { ListCartas } from './ListCartas';

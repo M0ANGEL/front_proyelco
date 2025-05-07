@@ -1,0 +1,1 @@
+export { FormProcesosDisciplinarios } from './FormProcesosDisciplinarios';

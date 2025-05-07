@@ -1,0 +1,1 @@
+export {ListMovimientosPropiedades} from "./ListMovimientosPropiedades"

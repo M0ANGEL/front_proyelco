@@ -1,0 +1,1 @@
+export { ReportIngresosRoutes } from './ReportIngresosRoutes';

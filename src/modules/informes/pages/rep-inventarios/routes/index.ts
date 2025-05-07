@@ -1,0 +1,1 @@
+export { RepInventariosRoutes } from "./RepInventariosRoutes";

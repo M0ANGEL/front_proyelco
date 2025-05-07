@@ -1,0 +1,1 @@
+export { ListConsulta } from "./ListConsulta";

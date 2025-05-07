@@ -1,0 +1,1 @@
+export { ReportIngresos } from  './ReportIngresos';

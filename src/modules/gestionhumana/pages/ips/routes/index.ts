@@ -1,0 +1,1 @@
+export { IpsRoutes } from './IpsRoutes';

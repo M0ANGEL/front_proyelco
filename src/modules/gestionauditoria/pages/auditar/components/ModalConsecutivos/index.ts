@@ -1,0 +1,1 @@
+export { ModalConsecutivos } from "./ModalConsecutivos";

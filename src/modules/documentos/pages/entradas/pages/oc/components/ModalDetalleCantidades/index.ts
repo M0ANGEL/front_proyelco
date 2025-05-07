@@ -1,0 +1,1 @@
+export { ModalDetalleCantidad } from "./ModalDetalleCantidades";

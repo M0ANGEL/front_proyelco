@@ -1,0 +1,1 @@
+export {ActaAsignacionActivoRoutes} from "./ActaAsignacionActivosRoutes"

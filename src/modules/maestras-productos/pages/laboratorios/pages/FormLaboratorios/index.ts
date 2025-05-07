@@ -1,0 +1,1 @@
+export { FormLaboratorios } from "./FormLaboratorios";

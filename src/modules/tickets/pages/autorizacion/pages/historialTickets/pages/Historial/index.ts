@@ -1,0 +1,1 @@
+export {ListHistorialAutorizacion} from './ListHistorialAutorizacion'

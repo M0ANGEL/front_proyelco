@@ -1,0 +1,1 @@
+export {AsignacionActivosRoutes} from "./AsignacionActivosRoutes"

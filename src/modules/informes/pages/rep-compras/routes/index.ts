@@ -1,0 +1,1 @@
+export { RepComprasRoutes } from "./RepComprasRoutes";

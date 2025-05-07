@@ -1,0 +1,1 @@
+export {ActivosFijosPage} from "./ActivosFijosPage"

@@ -1,0 +1,1 @@
+export { ModalAdjuntos } from "./ModalAdjuntos";

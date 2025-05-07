@@ -1,0 +1,1 @@
+export { BancosRoutes } from './BancosRoutes';

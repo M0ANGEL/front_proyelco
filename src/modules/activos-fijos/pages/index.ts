@@ -1,0 +1,5 @@
+export * from "./parametrizacion"
+export * from "./ActivosFijosPage"
+export * from "./mantenimiento"
+export * from "./inventario"
+export * from "./traslados"

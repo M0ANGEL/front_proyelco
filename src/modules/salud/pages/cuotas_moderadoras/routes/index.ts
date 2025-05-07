@@ -1,0 +1,1 @@
+export { CuotasModeradorasRoutes } from "./CuotasModeradorasRoutes";

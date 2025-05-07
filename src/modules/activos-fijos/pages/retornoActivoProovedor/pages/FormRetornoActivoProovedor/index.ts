@@ -1,0 +1,1 @@
+export {FormRetornoActivoProovedor} from "./FormRetornoActivoProovedor"

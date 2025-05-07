@@ -1,0 +1,1 @@
+export { ListCuotas } from "./ListCuotas";

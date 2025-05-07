@@ -1,0 +1,1 @@
+export { ListIngresoDotacion } from './ListIngresoDotacion'

@@ -1,0 +1,1 @@
+export { IncapacidadesRoutes } from './IncapacidadesRoutes';

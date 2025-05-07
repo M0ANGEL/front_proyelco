@@ -1,0 +1,1 @@
+export {FormInformesTraslados} from "./FormInformesTraslados"

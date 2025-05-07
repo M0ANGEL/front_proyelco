@@ -1,0 +1,1 @@
+export {ReporteTicketsRoute} from './ReporteTicketsRouter'

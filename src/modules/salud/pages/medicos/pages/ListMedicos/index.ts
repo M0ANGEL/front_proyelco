@@ -1,0 +1,1 @@
+export { ListMedicos } from "./ListMedicos";

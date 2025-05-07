@@ -1,0 +1,1 @@
+export { ProcesosDisciplinariosRoutes } from './ProcesosDisciplinariosRoutes';

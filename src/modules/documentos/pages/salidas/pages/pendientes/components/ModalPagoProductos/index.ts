@@ -1,0 +1,1 @@
+export { ModalPagoProductos } from "./ModalPagoProductos";

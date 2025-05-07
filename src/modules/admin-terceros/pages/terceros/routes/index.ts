@@ -1,0 +1,1 @@
+export { TercerosRoutes } from "./TercerosRoutes";

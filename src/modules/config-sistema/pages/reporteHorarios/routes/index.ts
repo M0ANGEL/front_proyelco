@@ -1,0 +1,1 @@
+export {ReporteLogHorariosRouter} from './ReporteLogHorariosRouter'

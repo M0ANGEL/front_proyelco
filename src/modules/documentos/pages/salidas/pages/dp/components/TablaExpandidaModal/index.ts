@@ -1,0 +1,1 @@
+export { TablaExpandidaModal } from "./TablaExpandidaModal";

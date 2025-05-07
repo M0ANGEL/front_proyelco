@@ -1,0 +1,1 @@
+export { FormRiesgoArl } from './FormRiesgoArl'

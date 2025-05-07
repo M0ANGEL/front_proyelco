@@ -1,0 +1,1 @@
+export { RepAnuladosPage } from "./RepAnuladosPage";

@@ -1,0 +1,1 @@
+export { PerfilesRoutes } from "./PerfilesRoutes";

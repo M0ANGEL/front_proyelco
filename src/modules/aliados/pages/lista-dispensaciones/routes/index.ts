@@ -1,0 +1,1 @@
+export { ListaDispensacionesRoutes } from "./ListaDispensacionesRoutes";

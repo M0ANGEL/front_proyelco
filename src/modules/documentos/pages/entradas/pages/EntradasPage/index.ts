@@ -1,0 +1,1 @@
+export { EntradasPage } from "./EntradasPage";

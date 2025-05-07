@@ -1,0 +1,1 @@
+export { ModalProductosPadre } from "./ModalProductosPadre";

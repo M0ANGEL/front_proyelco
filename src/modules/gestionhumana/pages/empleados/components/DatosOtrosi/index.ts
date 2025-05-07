@@ -1,0 +1,1 @@
+export { DatosOtrosi } from './DatosOtrosi';

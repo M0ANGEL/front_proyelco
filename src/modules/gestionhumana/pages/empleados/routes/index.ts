@@ -1,0 +1,1 @@
+export { EmpleadosRoutes } from "./EmpleadosRoutes";

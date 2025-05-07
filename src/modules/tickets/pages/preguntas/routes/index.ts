@@ -1,0 +1,1 @@
+export {PreguntasRoutes} from './PreguntasRoutes'

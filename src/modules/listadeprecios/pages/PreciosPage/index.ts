@@ -1,0 +1,1 @@
+export { PreciosPage } from "./PreciosPage";

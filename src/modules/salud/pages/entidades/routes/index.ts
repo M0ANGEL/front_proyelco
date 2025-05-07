@@ -1,0 +1,1 @@
+export { EntidadesRoutes } from "./EntidadesRoutes";

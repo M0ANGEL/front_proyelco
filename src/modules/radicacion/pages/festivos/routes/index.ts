@@ -1,0 +1,1 @@
+export { FestivosRoutes } from "./FestivosRoutes";

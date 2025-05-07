@@ -1,0 +1,1 @@
+export { FormReporteIncapacidades } from './FormReporteIncapacidades';

@@ -1,0 +1,1 @@
+export {ObservacionModalCliente} from "./ObservacionModalCliente"

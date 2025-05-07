@@ -1,0 +1,1 @@
+export { ListProcesosDisciplinarios } from './ListProcesosDisciplinarios';

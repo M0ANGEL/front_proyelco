@@ -1,0 +1,1 @@
+export { ConfigSisPage } from "./ConfigSisPage";

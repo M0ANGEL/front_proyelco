@@ -1,0 +1,1 @@
+export {ListSubLocalizacionArea} from "./ListSubLocalizacionArea"

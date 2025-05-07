@@ -1,0 +1,1 @@
+export { FormBodegas } from "./FormBodegas";

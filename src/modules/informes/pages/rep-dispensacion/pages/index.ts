@@ -1,0 +1,1 @@
+export { RepDispensacionPage } from "./RepDispensacionPage";

@@ -1,0 +1,10 @@
+.ant-table-selection-column input[type="checkbox"] {
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+}
+
+.ant-table-selection-column input[type="checkbox"]:checked + span {
+  background-color: #52c41a;
+  border-color: #52c41a;
+}

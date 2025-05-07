@@ -1,0 +1,1 @@
+export { AdminBodegasPage } from "./AdminBodegasPage";

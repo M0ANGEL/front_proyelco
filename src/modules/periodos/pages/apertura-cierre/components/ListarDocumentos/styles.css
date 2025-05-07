@@ -1,0 +1,104 @@
+/* TuArchivoDeEstilos.css */
+
+.formulario-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* min-height: 90vh; */
+    background-color: #f0f0f0;
+    padding-top: 25px;
+    padding-bottom: 25px;
+
+    /* Cambia el fondo según tus preferencias */
+}
+
+.formulario {
+    padding: 25px;
+    background-color: #ffffff;
+    /* Fondo del formulario */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* Sombra del formulario */
+}
+
+.botones-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.boton-apertura {
+    flex: 1;
+    margin-right: 10px;
+    background-color: #1890ff;
+    /* Color de fondo del botón de Apertura */
+    border-color: #1890ff;
+    /* Color del borde del botón de Apertura */
+    color: #fff;
+    /* Color del texto del botón de Apertura */
+}
+
+.boton-cierre {
+    flex: 1;
+    background-color: #ff4d4f;
+    /* Color de fondo del botón de Cierre */
+    border-color: #ff4d4f;
+    /* Color del borde del botón de Cierre */
+    color: #fff;
+    /* Color del texto del botón de Cierre */
+}
+
+.listado-meses {
+    margin-left: 20px;
+    /* Margen izquierdo para separar del contenido anterior */
+    padding: 20px;
+    /* Espaciado dentro del div */
+    background-color: #f9f9f9;
+    /* Fondo del div de listado de meses */
+    border-radius: 10px;
+    /* Borde redondeado */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+}
+
+.cuadro-listado {
+    border: 1px solid #ccc;
+    /* Borde del cuadro */
+    padding: 10px;
+    /* Espaciado dentro del cuadro */
+    border-radius: 5px;
+    /* Borde redondeado */
+    background-color: #f9f9f9;
+    /* Fondo del cuadro */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    /* Sombra suave */
+}
+
+.mes-item {
+    display: flex; /* Establece un diseño flexible para las columnas */
+    justify-content: space-between; /* Distribuye el espacio entre las columnas */
+    border-bottom: 1px solid #ccc; /* Línea divisoria entre elementos */
+    padding: 5px 0; /* Espaciado vertical entre elementos */
+  }
+  
+  .mes-columna {
+    flex: 1; /* Distribuye el espacio de manera uniforme en ambas columnas */
+    text-align: center;
+  }
+  
+  .nombre-mes {
+    font-weight: bold; /* Estilo de fuente para el nombre del mes */
+  }
+  
+  .estado-mes {
+    color: #888; /* Color del estado del mes */
+  }
+
+  .mes-fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0; /* Espaciado vertical entre filas */
+    border-bottom: 1px solid #ccc; /* Línea divisoria entre filas */
+  }
+  

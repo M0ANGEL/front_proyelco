@@ -1,0 +1,1 @@
+export { FormDistCompras } from "./FormDistCompras";

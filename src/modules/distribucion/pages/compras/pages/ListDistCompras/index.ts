@@ -1,0 +1,1 @@
+export { ListDistCompras } from "./ListDistCompras";

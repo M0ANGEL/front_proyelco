@@ -1,0 +1,1 @@
+export { ListEntidades } from "./ListEntidades";

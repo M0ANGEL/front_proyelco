@@ -1,0 +1,1 @@
+export { ModalProductosOC } from "./ModalProductosOC";

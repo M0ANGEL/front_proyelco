@@ -1,0 +1,1 @@
+export { ModalOrdenesCompra } from "./ModalOrdenesCompra";

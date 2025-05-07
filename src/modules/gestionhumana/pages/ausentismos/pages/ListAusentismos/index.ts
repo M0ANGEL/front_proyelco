@@ -1,0 +1,1 @@
+export { ListAusentismos }  from './ListAusentismos';

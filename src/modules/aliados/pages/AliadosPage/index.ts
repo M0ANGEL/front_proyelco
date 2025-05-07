@@ -1,0 +1,1 @@
+export { AliadosPage } from "./AliadosPage";

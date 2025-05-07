@@ -1,0 +1,1 @@
+export { MenuRoutes } from "./MenuRoutes";

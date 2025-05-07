@@ -1,0 +1,1 @@
+export {FormProcesos} from "./FormCategorias";

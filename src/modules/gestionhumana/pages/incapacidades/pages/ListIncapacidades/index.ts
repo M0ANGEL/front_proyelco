@@ -1,0 +1,1 @@
+export { ListIncapacidades } from './ListIncapacidades'; 

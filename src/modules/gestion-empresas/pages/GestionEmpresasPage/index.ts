@@ -1,0 +1,1 @@
+export { GestionEmpresasPage } from "./GestionEmpresasPage";

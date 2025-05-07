@@ -1,0 +1,1 @@
+export {ActivosFijosRoutes} from "./ActivosFijosRoutes"

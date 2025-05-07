@@ -1,0 +1,10 @@
+.row-red {
+  background-color: rgba(193, 78, 78, 0.652);
+  /* Cambiar el color de fondo a rojo */
+  color: rgb(15, 14, 14);
+  /* Cambiar el color del texto a blanco (opcional) */
+}
+
+.color-card-title {
+  color: rgb(226, 94, 5); /* Puedes ajustar el color gris según tus preferencias */
+}

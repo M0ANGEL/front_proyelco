@@ -1,0 +1,1 @@
+export { GenerarContratosRoutes } from './GenerarContratosRoutes';

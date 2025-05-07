@@ -1,0 +1,1 @@
+export {ListAutorizacion} from './ListAutorizacion'

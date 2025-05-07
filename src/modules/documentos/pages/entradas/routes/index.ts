@@ -1,0 +1,1 @@
+export { EntradasRoutes } from "./EntradasRoutes";

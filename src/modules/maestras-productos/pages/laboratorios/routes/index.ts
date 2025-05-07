@@ -1,0 +1,1 @@
+export { LaboratoriosRoutes } from "./LaboratoriosRoutes";

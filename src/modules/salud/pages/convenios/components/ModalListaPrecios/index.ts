@@ -1,0 +1,1 @@
+export { ModalListaPrecios } from "./ModalListaPrecios";

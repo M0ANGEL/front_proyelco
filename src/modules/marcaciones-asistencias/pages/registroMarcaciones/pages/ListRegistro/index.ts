@@ -1,0 +1,1 @@
+export {ListRegistroMarcaciones} from './ListRegistroMarcaciones';

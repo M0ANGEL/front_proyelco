@@ -1,0 +1,1 @@
+export { KardexRoutes } from "./KardexRoutes";

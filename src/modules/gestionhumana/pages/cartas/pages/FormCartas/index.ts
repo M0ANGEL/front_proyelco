@@ -1,0 +1,1 @@
+export { FormCartas } from './FormCartas';

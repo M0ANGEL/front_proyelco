@@ -1,0 +1,1 @@
+export { TablaEmpresasBodegas } from "./TablaEmpresasBodegas";

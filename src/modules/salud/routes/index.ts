@@ -1,0 +1,1 @@
+export { SaludRoutes } from "./SaludRoutes";

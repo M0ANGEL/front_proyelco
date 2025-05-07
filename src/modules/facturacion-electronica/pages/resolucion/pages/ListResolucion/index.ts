@@ -1,0 +1,1 @@
+export { ListResolucion } from "./ListResolucion";

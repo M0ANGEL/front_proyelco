@@ -1,0 +1,1 @@
+export { FormGenerarContratos } from './FormGenerarContratos';

@@ -1,0 +1,1 @@
+export { EstadisticaIncapacidadesRoutes } from './EstadisticaIncapacidadesRoutes';

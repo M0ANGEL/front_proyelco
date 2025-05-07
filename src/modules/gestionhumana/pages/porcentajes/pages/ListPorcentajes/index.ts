@@ -1,0 +1,1 @@
+export { ListPorcentajes } from './ListPorcentajes';

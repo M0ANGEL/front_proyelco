@@ -1,0 +1,1 @@
+export { DatosPerfiles } from "./DatosPerfiles";

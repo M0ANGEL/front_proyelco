@@ -1,0 +1,1 @@
+export { ModalCambioProducto } from "./ModalCambioProducto";

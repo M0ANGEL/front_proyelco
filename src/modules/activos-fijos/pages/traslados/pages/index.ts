@@ -1,0 +1,5 @@
+export {FormTranslados} from "./FormTraslados"
+export {ListTrasladosActivos} from "./ListTrasladosActivos"
+export {ListarActivosSalidas} from "./ListarActivosSalidas"
+export {ListTrasladosActivosEntrada} from "./ListTrasladosActivosEntrada"
+export {ListTrasladosActivosPendientes} from "./ListTrasladosActivosPendientes"

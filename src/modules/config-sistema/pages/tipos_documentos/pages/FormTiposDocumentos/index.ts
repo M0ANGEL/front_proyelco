@@ -1,0 +1,1 @@
+export { FormTiposDocumentos } from "./FormTiposDocumentos";

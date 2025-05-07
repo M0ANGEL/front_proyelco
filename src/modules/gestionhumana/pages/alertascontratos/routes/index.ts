@@ -1,0 +1,1 @@
+export { AlertasContratosRoutes } from './AlertasContratosRoutes'

@@ -1,0 +1,1 @@
+export { ListarRadicados } from "./ListarRadicados";

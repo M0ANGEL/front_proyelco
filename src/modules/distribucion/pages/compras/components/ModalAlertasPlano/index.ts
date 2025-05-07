@@ -1,0 +1,1 @@
+export { ModalAlertasPlano } from "./ModalAlertasPlano";

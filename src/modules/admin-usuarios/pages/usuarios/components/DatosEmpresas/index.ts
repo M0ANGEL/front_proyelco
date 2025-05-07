@@ -1,0 +1,1 @@
+export { DatosEmpresas } from "./DatosEmpresas";

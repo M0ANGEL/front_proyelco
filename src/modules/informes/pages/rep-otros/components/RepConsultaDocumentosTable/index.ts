@@ -1,0 +1,1 @@
+export { RepConsultaDocumentosTable } from "./RepConsultaDocumentosTable";

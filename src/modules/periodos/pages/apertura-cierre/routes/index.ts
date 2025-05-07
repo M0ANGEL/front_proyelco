@@ -1,0 +1,1 @@
+export { AperturaRoutes } from "./AperturaRoutes";

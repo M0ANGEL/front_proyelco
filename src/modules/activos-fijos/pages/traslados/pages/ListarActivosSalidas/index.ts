@@ -1,0 +1,1 @@
+export { ListarActivosSalidas } from "./ListarActivosSalidas";

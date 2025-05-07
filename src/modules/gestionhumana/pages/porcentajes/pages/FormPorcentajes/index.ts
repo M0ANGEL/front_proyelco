@@ -1,0 +1,1 @@
+export { FormPorcentajes } from './FormPorcentajes';

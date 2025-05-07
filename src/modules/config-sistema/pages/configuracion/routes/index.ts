@@ -1,0 +1,1 @@
+export { ConfiguracionRoutes } from "./ConfiguracionRoutes";

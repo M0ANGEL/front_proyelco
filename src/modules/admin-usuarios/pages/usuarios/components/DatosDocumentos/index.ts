@@ -1,0 +1,1 @@
+export { DatosDocumentos } from "./DatosDocumentos";

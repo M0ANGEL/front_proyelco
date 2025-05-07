@@ -1,0 +1,1 @@
+export { DatosBasicosCampos } from "./DatosBasicosCampos";

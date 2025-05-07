@@ -1,0 +1,1 @@
+export { DistribucionPage } from "./DistribucionPage";

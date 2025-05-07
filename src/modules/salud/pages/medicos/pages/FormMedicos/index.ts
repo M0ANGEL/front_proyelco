@@ -1,0 +1,1 @@
+export { FormMedicos } from "./FormMedicos";

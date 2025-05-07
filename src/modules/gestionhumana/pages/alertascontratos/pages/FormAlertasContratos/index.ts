@@ -1,0 +1,1 @@
+export { FormAlertasContratos } from './FormAlertasContratos';

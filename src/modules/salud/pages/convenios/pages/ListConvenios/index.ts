@@ -1,0 +1,1 @@
+export { ListConvenios } from "./ListConvenios";

@@ -1,0 +1,1 @@
+export { DiagnosticosRoutes } from "./DiagnosticosRoutes";

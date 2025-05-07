@@ -1,0 +1,1 @@
+export { GestionHumanaPage } from "./GestionHumanaPage";

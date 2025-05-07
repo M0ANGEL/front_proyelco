@@ -1,0 +1,1 @@
+export { FormEntidades } from "./FormEntidades";

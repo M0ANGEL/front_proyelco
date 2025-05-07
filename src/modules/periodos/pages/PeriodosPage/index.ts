@@ -1,0 +1,1 @@
+export { PeriodosPage } from "./PeriodosPage";

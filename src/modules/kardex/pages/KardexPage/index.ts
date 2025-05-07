@@ -1,0 +1,1 @@
+export { KardexPage } from "./KardexPage";

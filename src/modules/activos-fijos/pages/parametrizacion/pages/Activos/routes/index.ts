@@ -1,0 +1,1 @@
+export {ActivosRoutes} from "./ActivosRoutes"

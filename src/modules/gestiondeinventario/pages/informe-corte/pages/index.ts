@@ -1,0 +1,1 @@
+export { FormCorte } from "./FormCorte";
