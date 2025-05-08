@@ -4,7 +4,6 @@ import {
   ResponseCoberturaPlanBeneficios,
   ResponseModalidadContrato,
   CoberturaPlanBeneficios,
-  ResponseSearchTerceros,
   ResponseConvenioTipo,
   ResponseTipoConsulta,
   ResponseListapreCli,
@@ -14,6 +13,7 @@ import {
   ListaPrecios,
   TipoConsulta,
   ResponseAmClientes,
+  ResponseTipoProyectos,
 } from "../types";
 
 export const getTipoConvenio = async (): Promise<ResponseConvenioTipo> => {
@@ -53,8 +53,9 @@ export const getTipoConsulta = async (): Promise<ResponseTipoConsulta> => {
   );
 };
 
-export const getTipoFactu = async (): Promise<ResponseConvenioTipo> => {
-  return await client.get<{ data: any; status: string }>(`tipo-factu`, {
+//llamado de los tipos de proyectos 
+export const getTipoProyectos = async (): Promise<ResponseTipoProyectos> => {
+  return await client.get<{ data: any; status: string }>(`tipo-proyectos`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

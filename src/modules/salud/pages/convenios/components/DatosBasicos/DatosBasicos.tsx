@@ -28,9 +28,9 @@ export const DatosBasicos = () => {
         open={openModalTerceros}
         setOpen={(value: boolean) => setOpenModalTerceros(value)}
         handleSelectTercero={(nit: string, razon_soc: string) => {
-          methods.clearErrors(["nit", "nom_nit"]);
+          methods.clearErrors(["nit", "emp_nombre"]);
           methods.setValue("nit", nit);
-          methods.setValue("nom_nit", razon_soc);
+          methods.setValue("emp_nombre", razon_soc);
           setOpenModalTerceros(false);
         }}
       />
@@ -59,6 +59,8 @@ export const DatosBasicos = () => {
             )}
           />
         </Col>
+
+        {/* estado proyecto */}
         <Col xs={24} sm={12} md={6}>
           <Controller
             name="estado"
@@ -98,7 +100,7 @@ export const DatosBasicos = () => {
                 disabled={Boolean(tipoId)}
               />
               <Controller
-                name="cliente_id"
+                name="nit"
                 control={methods.control}
                 rules={{
                   required: {
@@ -133,7 +135,7 @@ export const DatosBasicos = () => {
                 readOnly
               />
               <Controller
-                name="nombre_cliente"
+                name="emp_nombre"
                 control={methods.control}
                 rules={{
                   required: true,
@@ -245,6 +247,8 @@ export const DatosBasicos = () => {
           />
         </Col> */}
 
+
+          {/* codigo proyecto */}
         <Col xs={24} sm={12} md={12}>
           <Controller
             name="codigo_contrato"
@@ -256,12 +260,12 @@ export const DatosBasicos = () => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Número Contrato:">
+              <StyledFormItem required label="Codigo Proyecto:">
                 <Input
                   showCount
                   {...field}
                   maxLength={20}
-                  placeholder="Número Contrato"
+                  placeholder="00"
                   status={error && "error"}
                 />
                 <Text type="danger">{error?.message}</Text>

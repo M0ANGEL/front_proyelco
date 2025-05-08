@@ -4,7 +4,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiOutlineBarChart, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { AiFillControl, AiOutlineBarChart, AiOutlineUsergroupAdd } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -39,7 +39,7 @@ import {
   LiaTerminalSolid,
   LiaBarcodeSolid,
 } from "react-icons/lia";
-import { MdGroup } from "react-icons/md";
+import { MdGroup, MdOutlineAddHomeWork } from "react-icons/md";
 import { IoTicketOutline } from "react-icons/io5";
 
 interface Props {
@@ -76,6 +76,7 @@ const moduleIcons = [
   { cod: "AFJ", icon: <BsBank /> },
   { cod: "MA", icon: <TfiAlarmClock /> },
   { cod: "CLI", icon: <HiUserGroup /> },
+  { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
@@ -191,10 +192,10 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
       theme={{
         components: {
           Menu: {
-            colorBgContainer: "#000000", //azul
+            colorBgContainer: "#0b287c", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#d31225", //color de texto selecionado
-            itemHoverBg: "#000000",
+            itemSelectedColor: "#f1c40f", //color de texto selecionado
+            itemHoverBg: "#081a63",  //azul de hover
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
             itemActiveBg: "#FFFFFF",
@@ -209,8 +210,7 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
         }}
       >
         <LogoSider>
-          {/* <img src={collapsed ? "./logo.png" : "./logo2.png"} /> */}
-          <p>AQUI LOGO</p>
+          <img src={collapsed ? "./logo_dash.png" : "./logo_dash.png"} />
         </LogoSider>
       </Link>
       <SiderMenu

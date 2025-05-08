@@ -11,7 +11,7 @@ export const SaludRoutes = () => {
     <RoutesWithNotFound>
       <Route element={<AuthGuard />}>
         <Route path="/" element={<SaludPage />} />
-        <Route path="/convenios/*" element={<ConveniosRoutes />} />
+        <Route path="/administrar-proyectos/*" element={<ConveniosRoutes />} />
       </Route>
     </RoutesWithNotFound>
   );

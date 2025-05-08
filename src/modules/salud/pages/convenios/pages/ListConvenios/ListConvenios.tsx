@@ -116,12 +116,12 @@ export const ListConvenios = () => {
         }
       >
         <Row gutter={12}>
-          <Col xs={24} sm={18}>
+          <Col xs={24} sm={24}>
             <SearchBar>
               <Input placeholder="Buscar" onChange={handleSearch} />
             </SearchBar>
           </Col>
-          <Col xs={24} sm={6} style={{ marginBottom: 20 }}>
+          {/* <Col xs={24} sm={6} style={{ marginBottom: 20 }}>
             <Spin
               spinning={loadingRep}
               indicator={<LoadingOutlined spin style={{ color: "white" }} />}
@@ -153,7 +153,7 @@ export const ListConvenios = () => {
               checked={showActiveConvenios}
               onChange={toggleConvenioList}
             />
-          </Col>
+          </Col> */}
         </Row>
         <List
           grid={{

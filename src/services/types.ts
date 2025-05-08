@@ -5616,3 +5616,39 @@ export interface MaUsuariosRegistrados {
 
 //fin marcación
 
+//tipo proyectos
+export interface ResponseTipoProyectos {
+  data: {
+    status: string;
+    data: MaFarmacias[];
+  };
+}
+
+export interface TipoProyectos {
+  id: number;
+  nombre_tipo: string;
+  user_id: string;
+  nombre: string;
+  created_at: string;
+}
+
+
+
+/* type de proceos proyecos */
+export interface ResponseProcesosProyectos {
+  data: {
+    status: string;
+    data: ProcesosProyectos[];
+  };
+}
+export interface ProcesosProyectos {
+  id: number;
+  tipoPoryecto_id: string;
+  estado: string;
+  nombre_proceso: number;
+  id_user: string;
+  nombre: string;
+  created_at: string;
+  updated_at: string;
+}
+

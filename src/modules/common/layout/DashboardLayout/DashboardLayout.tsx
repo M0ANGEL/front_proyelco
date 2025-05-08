@@ -388,7 +388,7 @@ export const DashboardLayout = () => {
               scrollbarWidth: "thin",
               scrollbarGutter: "stable",
               transition: ".6s all",
-              backgroundColor: "#000000", //color sidebar
+              backgroundColor: "#0b287c", //color sidebar
               zIndex: 0,
             }}
           >
@@ -448,7 +448,7 @@ export const DashboardLayout = () => {
                 position: "relative",
                 background: "#f8f8f8",
                 minHeight: "calc(100vh - 64px)",
-                // backgroundImage: "url(./logo_dash.png)",  //logo de dashboard
+                backgroundImage: "url(./logo_dash1.png)",  //logo de dashboard
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 overflow: "initial",

@@ -1,0 +1,2 @@
+export {ProcesosProyectoPage} from "./ProcesosProyectoPage";
+
