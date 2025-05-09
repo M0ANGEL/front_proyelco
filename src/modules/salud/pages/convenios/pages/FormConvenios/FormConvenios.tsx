@@ -6,14 +6,16 @@ import {
   getConvenio,
   updateConvenio,
 } from "@/services/salud/conveniosAPI";
-import { DatosBasicos, DatosFacturacion } from "../../components";
+import {
+  DatosBasicos,
+  DatosConfigProyecto,
+  DatosFacturacion,
+} from "../../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Convenio } from "@/services/types";
-import {
-  getTipoProyectos,
-} from "@/services/salud/conveniosTipoAPI";
+import { getProcesosProyectos, getTipoProyectos } from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
   LoadingOutlined,
@@ -34,11 +36,13 @@ import {
 const { Text } = Typography;
 
 export const FormConvenios = () => {
-
   const [selectTipoProyecto, setselectTipoProyecto] = useState<
     SelectProps["options"]
   >([]);
 
+  const [selectTipoProcesos, setselectTipoProcesos] = useState<
+    SelectProps["options"]
+  >([]);
 
   const [convenio, setConvenio] = useState<Convenio>();
   const [loader, setLoader] = useState<boolean>(false);
@@ -46,6 +50,7 @@ export const FormConvenios = () => {
   const navigate = useNavigate();
   const control = useForm();
 
+  //llamado a tipo de proyectps
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
@@ -64,6 +69,27 @@ export const FormConvenios = () => {
       })
       .finally(() => setLoader(false));
   }, []);
+
+  //llamado a procesos proyectps
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getProcesosProyectos().then(({ data: { data } }) => {
+        setselectTipoProcesos(
+          data.map((item) => ({
+            value: item.id,
+            label: item.nombre_proceso,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
 
   useEffect(() => {
     if (id) {
@@ -242,10 +268,7 @@ export const FormConvenios = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: (
-                      <DatosBasicos
-                      />
-                    ),
+                    children: <DatosBasicos />,
                   },
                   {
                     key: "2",
@@ -264,7 +287,7 @@ export const FormConvenios = () => {
                     ),
                     children: (
                       <DatosFacturacion
-                      selectTipoProyecto={selectTipoProyecto}
+                        selectTipoProyecto={selectTipoProyecto}
                       />
                     ),
                     forceRender: true,
@@ -285,8 +308,8 @@ export const FormConvenios = () => {
                       </Space>
                     ),
                     children: (
-                      <DatosFacturacion
-                        selectTipoProyecto={selectTipoProyecto}
+                      <DatosConfigProyecto
+                        selectTipoProcesos={selectTipoProcesos}
                       />
                     ),
                     forceRender: true,

@@ -60,6 +60,21 @@ export const getTipoProyectos = async (): Promise<ResponseTipoProyectos> => {
   });
 };
 
+
+//llamado de los tipos de procesos 
+export const getProcesosProyectos = async (): Promise<ResponseTipoProyectos> => {
+  return await client.get<{ data: any; status: string }>(`procesos-proyectos`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//llamado de los tipos de proyectos 
+export const getValidacionesProcesos = async (): Promise<ResponseTipoProyectos> => {
+  return await client.get<{ data: any; status: string }>(`validacion-procesos-proyectos`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
 export const getConcepto = async (): Promise<ResponseConvenioTipo> => {
   return await client.get<{ data: any; status: string }>(`conceptos`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
