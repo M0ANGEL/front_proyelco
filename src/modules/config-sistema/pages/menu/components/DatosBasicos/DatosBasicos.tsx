@@ -30,7 +30,7 @@ export const DatosBasicos = ({ menu, modulos }: Props) => {
             nom_menu: menu.nom_menu,
             desc_menu: menu.desc_menu,
             link_menu: menu.link_menu,
-            id_modulo: menu.id_modulo,
+            id_modulo: menu.id_modulo.toString(),
           }
         : {
             nom_menu: null,

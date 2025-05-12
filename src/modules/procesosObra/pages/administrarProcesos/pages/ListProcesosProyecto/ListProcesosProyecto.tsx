@@ -11,11 +11,11 @@ import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
 import { DeleteAmCliente } from "@/services/administraClientes/AdministrarClientesApi";
-import { getProcesosProyecto } from "@/services/proyectos/proyectosApi";
+import { getProcesosProyecto } from "@/services/proyectos/proyectosAPI";
 
 interface DataType {
   key: number;
-  tipoPoryecto_id: string;
+  nombre_tipo: string;
   estado: string;
   nombre_proceso: number;
   id_user: string;
@@ -45,6 +45,7 @@ const ListProcesosProyecto = () => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
+          nombre_tipo: categoria.nombre_tipo,
           tipoPoryecto_id: categoria.tipoPoryecto_id,
           // estado: categoria.estado.toString(),
           estado:"1",
@@ -88,8 +89,8 @@ const ListProcesosProyecto = () => {
   const columns: ColumnsType<DataType> = [
     {
       title: "Proyecto Padre",
-      dataIndex: "tipoPoryecto_id",
-      key: "tipoPoryecto_id",
+      dataIndex: "nombre_tipo",
+      key: "nombre_tipo",
       // sorter: (a, b) => a.tipoPoryecto_id.localeCompare(b.tipoPoryecto_id),
     },
     {

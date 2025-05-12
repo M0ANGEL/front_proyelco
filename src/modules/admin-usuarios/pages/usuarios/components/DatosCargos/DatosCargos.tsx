@@ -48,7 +48,7 @@ export const DatosCargos = ({ usuario }: Props) => {
                 data: value,
               }));
             return {
-              id_empresa: cargo.cargo.id_empresa,
+              id_empresa: cargo.cargo.id_empresa.toString(),
               nom_empresa: cargo.cargo.empresas.emp_nombre,
               cargos: cargosEmp,
               id_cargo: cargo.id_cargo,

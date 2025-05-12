@@ -20,11 +20,9 @@ export const DatosBasicos = ({ empresa }: Props) => {
             nit: empresa.nit,
             direccion: empresa.direccion,
             telefono: empresa.telefono,
-            estado: empresa.estado,
+            estado: empresa.estado.toString(),
             servidor_smtp: empresa.servidor_smtp,
-            protocolo_smtp: empresa.protocolo_smtp,
             cuenta_de_correo: empresa.cuenta_de_correo,
-            contrasena_correo: empresa.contrasena_correo,
           }
         : {
             emp_nombre: null,
@@ -32,10 +30,7 @@ export const DatosBasicos = ({ empresa }: Props) => {
             direccion: null,
             telefono: null,
             estado: "1",
-            servidor_smtp: null,
-            protocolo_smtp: null,
             cuenta_de_correo: null,
-            contrasena_correo: null,
           }
     );
   }, [empresa]);
@@ -132,27 +127,20 @@ export const DatosBasicos = ({ empresa }: Props) => {
         </Col>
         <Col xs={24} sm={12} style={{ width: "100%" }}>
           <Controller
-            name="dominio_tenant"
+            name="cuenta_de_correo"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Estado es requerido",
+                message: "Correo es requerido",
               },
             }}
-            defaultValue={"sebthi.test"}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Dominio Tenant:">
+              <StyledFormItem required label="Correo:">
                 <Input
                   {...field}
-                  placeholder="Enlace/Host de la empresa"
+                  placeholder="Cuenta de correo "
                   status={error && "error"}
-                  disabled={!empresa ? true : false}
-                  value={
-                    nombreEmpresa.length >= 3
-                      ? `${nombreEmpresa.substring(0, 3)}.sebthi.test`
-                      : nombreEmpresa
-                  }
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>

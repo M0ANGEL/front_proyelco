@@ -3,7 +3,7 @@
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { DatosBasicos, DatosSMTP } from "../../components";
+import { DatosBasicos } from "../../components";
 import { useNavigate, useParams } from "react-router";
 import { useState, useEffect } from "react";
 import { Empresa } from "@/services/types";
@@ -172,24 +172,6 @@ export const FormEmpresas = () => {
                       </Text>
                     ),
                     children: <DatosBasicos empresa={empresa} />,
-                  },
-                  {
-                    key: "2",
-                    label: (
-                      <Space>
-                        <Text
-                          type={
-                            Object.keys(control.formState.errors).length > 0
-                              ? "danger"
-                              : undefined
-                          }
-                        >
-                          Configuración SMTP
-                        </Text>
-                      </Space>
-                    ),
-                    children: <DatosSMTP />,
-                    forceRender: true,
                   },
                 ]}
                 animated

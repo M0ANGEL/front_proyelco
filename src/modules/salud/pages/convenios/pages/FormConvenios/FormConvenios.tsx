@@ -32,6 +32,7 @@ import {
   Tabs,
   notification,
 } from "antd";
+import { crearProyecto, getProyectoID } from "@/services/proyectos/proyectosAPI";
 
 const { Text } = Typography;
 
@@ -93,16 +94,23 @@ export const FormConvenios = () => {
 
   useEffect(() => {
     if (id) {
-      getConvenio(id).then(({ data: { data } }) => {
+      getProyectoID(id).then(({ data: { data } }) => {
         setConvenio(data);
         control.reset({
-          estado: parseInt(data.estado),
-          bloques: JSON.parse(data.bodegas),
-          codigo_contrato: data.codigo_contrato,
-          emp_nombre: data.emp_nombre,
-          descripcion: data.descripcion,
+          // tipoProyecto_id: data.tipoProyecto_id.toString(),
+          tipoProyecto_id: parseInt(data.tipoProyecto_id),
+
+          cliente_id: data.cliente_id.toString(),
+          usuario_crea_id: data.usuario_crea_id.toString(),
+          descripcion_proyecto: data.descripcion_proyecto,
           fecha_inicio: dayjs(data.fecha_inicio),
+          codigo_contrato: data.codigo_contrato,
           torres: data.torres,
+          cant_pisos: data.cant_pisos,
+          apt: data.apt,
+          estado: data.estado.toString(),
+          bloques: JSON.parse(data.bodegas),
+          emp_nombre: data.emp_nombre,
           nit: data.nit,
         });
       });
@@ -119,6 +127,8 @@ export const FormConvenios = () => {
         nit: null,
       });
     }
+
+    
   }, [id]);
 
   const onFinish = (data: any) => {
@@ -158,7 +168,7 @@ export const FormConvenios = () => {
           }
         );
     } else {
-      crearConvenio(data)
+      crearProyecto(data)
         .then(() => {
           notification.success({
             message: "Convenio creado con éxito!",

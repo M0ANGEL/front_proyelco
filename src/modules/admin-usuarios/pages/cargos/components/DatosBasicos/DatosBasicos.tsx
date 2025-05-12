@@ -1,61 +1,68 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
+import { getEmpresas } from "@/services/maestras/empresasAPI";
+import { Col, Input, Row, Select, SelectProps, Spin, Typography } from "antd";
+import { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { Col, Input, Row, Select, Tooltip, Typography } from "antd";
-import { useEffect } from "react";
-import { Props } from "./types";
-
-import { InfoCircleOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
+import { Cargo } from "@/services/types";
 
 const { Text } = Typography;
 
-export const DatosBasicos = ({ modulo }: Props) => {
+interface Props {
+  onPushNotification: (data: Notification) => void;
+  cargo?: Cargo;
+}
+
+export const DatosBasicos = ({ onPushNotification, cargo }: Props) => {
+  const [loaderEmp, setLoaderEmp] = useState<boolean>(false);
+  const [selectEmpresa, setSelectEmpresas] = useState<SelectProps["options"]>(
+    []
+  );
   const methods = useFormContext();
 
   useEffect(() => {
     methods.reset(
-      modulo
+      cargo
         ? {
-            cod_modulo: modulo.cod_modulo,
-            nom_modulo: modulo.nom_modulo,
-            desc_modulo: modulo.desc_modulo,
-            estado: modulo.estado.toString(),
+            nombre: cargo.nombre,
+            descripcion: cargo.descripcion,
+            id_empresa: cargo.id_empresa,
+            estado: cargo.estado,
           }
         : {
-            cod_modulo: null,
-            nom_modulo: null,
-            desc_modulo: null,
+            nombre: null,
+            descripcion: null,
+            id_empresa: null,
             estado: "1",
           }
     );
-  }, [modulo]);
+    setLoaderEmp(true);
+    getEmpresas()
+      .then(({ data: { data } }) => {
+        const options = data.map((item) => {
+          return { label: item.emp_nombre, value: item.id.toString() };
+        });
+        setSelectEmpresas(options);
+        setLoaderEmp(false);
+      })
+      .catch((error) => {
+        onPushNotification({
+          type: "error",
+          title: error.code,
+          description: error.message,
+        });
+        setLoaderEmp(false);
+      });
+  }, [cargo]);
+
   return (
     <>
       <Row gutter={24}>
         <Col xs={24} sm={12} style={{ width: "100%" }}>
           <Controller
-            name="cod_modulo"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Código es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Código:">
-                <Input
-                  {...field}
-                  placeholder="Código del módulo"
-                  status={error && "error"}
-                  disabled={modulo ? true : false}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-          <Controller
-            name="nom_modulo"
+            name="nombre"
             control={methods.control}
             rules={{
               required: {
@@ -64,28 +71,33 @@ export const DatosBasicos = ({ modulo }: Props) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem
-                required
-                label={
-                  <Tooltip
-                    title={
-                      <Text style={{ color: "white" }}>
-                        Este nombre es la posición número 1, por ejemplo en la
-                        url <Text type="warning">modulo</Text>/menu/submenu, el
-                        valor que ingreses aquí estaría en la mitad de la url
-                      </Text>
-                    }
-                  >
-                    <Text>Nombre: </Text>
-                    <InfoCircleOutlined style={{ color: "#1677ff" }} />
-                  </Tooltip>
-                }
-              >
+              <StyledFormItem required label="Nombre del cargo">
                 <Input
                   {...field}
-                  placeholder="Nombre del módulo"
+                  placeholder="Nombre del cargo"
                   status={error && "error"}
-                  disabled={modulo ? true : false}
+                  style={{ textTransform: "uppercase" }}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+          <Controller
+            name="descripcion"
+            control={methods.control}
+            rules={{
+              required: {
+                value: true,
+                message: "Descripcion es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Descripcion">
+                <Input
+                  {...field}
+                  placeholder="Descripcion del cargo"
+                  status={error && "error"}
+                  style={{ textTransform: "uppercase" }}
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
@@ -94,21 +106,23 @@ export const DatosBasicos = ({ modulo }: Props) => {
         </Col>
         <Col xs={24} sm={12} style={{ width: "100%" }}>
           <Controller
-            name="desc_modulo"
+            name="id_empresa"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Descripción es requerido",
+                message: "Empresa es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Descripción">
-                <Input
-                  {...field}
-                  placeholder="Descripción del módulo"
-                  status={error && "error"}
-                />
+              <StyledFormItem required label="Empresa">
+                <Spin spinning={loaderEmp} indicator={<LoadingOutlined spin />}>
+                  <Select
+                    {...field}
+                    options={selectEmpresa}
+                    status={error && "error"}
+                  />
+                </Spin>
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
             )}
@@ -132,7 +146,7 @@ export const DatosBasicos = ({ modulo }: Props) => {
                     { value: "1", label: "ACTIVO" },
                   ]}
                   status={error && "error"}
-                  disabled={!modulo ? true : false}
+                  disabled={!cargo ? true : false}
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>

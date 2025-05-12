@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Card, Select, Input, Button } from "antd";
+import { Card, Select, Input, Button, Typography } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
+import TextArea from "antd/es/input/TextArea";
+import { Controller, useFormContext } from "react-hook-form";
+import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 
 const { Option } = Select;
 
@@ -19,6 +22,8 @@ interface Props {
   onChangeTipos: (nuevosTipos: Tipo[]) => void;
 }
 
+const { Text } = Typography;
+
 export const TipoProyectoRectangles = ({
   tipos,
   value,
@@ -28,6 +33,7 @@ export const TipoProyectoRectangles = ({
   const [openId, setOpenId] = useState<number | null>(null);
   const [disponibles, setDisponibles] = useState<Tipo[]>([]);
   const [confirmados, setConfirmados] = useState<Tipo[]>([]);
+  const methods = useFormContext();
 
   useEffect(() => {
     setDisponibles(tipos);
@@ -107,7 +113,7 @@ export const TipoProyectoRectangles = ({
             style={{
               cursor: "pointer",
               backgroundColor: isConfirmado ? "#e6f7ff" : "#f5f5f5",
-              borderColor: value === tipo.value ? "#1890ff" : undefined,
+              borderColor: "#1890ff",
             }}
             title={
               <div
@@ -136,25 +142,33 @@ export const TipoProyectoRectangles = ({
           >
             {isConfirmado && openId === tipo.value && (
               <div style={{ display: "flex", gap: 8, marginTop: 5 }}>
-                <Select
-                  placeholder="Tipo validación"
-                  value={tipo.tipoValidacion}
-                  onChange={(val) =>
-                    actualizarCampo(index, "tipoValidacion", val)
-                  }
-                  style={{ width: 200 }}
-                >
-                  <Option value="0">Por Piso</Option>
-                  <Option value="1">Por Apt</Option>
-                  <Option value="2">Confirmación</Option>
-                </Select>
-                <Input
-                  placeholder="Valor"
+                <TextArea
+                  placeholder="Texto dinamico para pregunta de validacion"
                   value={tipo.valor}
                   onChange={(e) =>
                     actualizarCampo(index, "valor", e.target.value)
                   }
-                  style={{ width: 200 }}
+                  maxLength={200}
+                />
+                <Controller
+                  name="PsiguentePro"
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Pisos por proceso es requerido",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem required label="Pisos Cambio Proceso:">
+                      <Input
+                        {...field}
+                        status={error && "error"}
+                        placeholder="00"
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
                 />
               </div>
             )}
@@ -212,12 +226,8 @@ export const TipoProyectoRectangles = ({
                   {/* Inputs ocultos para enviar en el formulario padre */}
                   <input
                     type="hidden"
-                    name={`tipos[${index}][tipoValidacion]`}
-                    value={tipo.tipoValidacion || ""}
-                  />
-                  <input
-                    type="hidden"
-                    name={`tipos[${index}][valor]`}
+                    // name={`tipos[${index}][valor]`}
+                    name="coco"
                     value={tipo.valor || ""}
                   />
                 </div>

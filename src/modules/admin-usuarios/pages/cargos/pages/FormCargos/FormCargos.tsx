@@ -1,67 +1,53 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { DatosBasicos, DatosPerfiles } from "../../components";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
-import { DatosCargos } from "../../components/DatosCargos";
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  Button,
+  Form,
+  Space,
+  Spin,
+  Tabs,
+  Typography,
+  notification,
+} from "antd";
 import { useEffect, useState } from "react";
 import {
-  updateUsuario,
-  crearUsuario,
-  getUsuario,
-} from "@/services/maestras/maestrasAPI";
-import { Usuario } from "../../types";
-import {
-  ArrowLeftOutlined,
   LoadingOutlined,
+  ArrowLeftOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { DatosBasicos } from "../../components";
+import { Notification } from "@/modules/auth/pages/LoginPage/types";
+import { Cargo } from "@/services/types";
 import {
-  notification,
-  Typography,
-  Button,
-  Space,
-  Form,
-  Tabs,
-  Spin,
-} from "antd";
+  crearCargo,
+  getCargo,
+  updateCargo,
+} from "@/services/maestras/cargosAPI";
+import useSerialize from "@/modules/common/hooks/useUpperCase";
 
 const { Text } = Typography;
 
-export const FormUsuarios = () => {
+export const FormCargos = () => {
+  const { id } = useParams<{ id: string }>();
+  const [cargo, setCargo] = useState<Cargo>();
   const [loaderSave, setLoaderSave] = useState<boolean>(true);
   const [api, contextHolder] = notification.useNotification();
-  const [usuario, setUsuario] = useState<Usuario>();
   const { transformToUpperCase } = useSerialize();
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const control = useForm({
-    defaultValues: {
-      empresas: [],
-      cargos: [],
-      perfiles: [],
-    },
-  });
+  const control = useForm();
 
   useEffect(() => {
     if (id) {
-      getUsuario(id ?? "")
-        .then(({ data }) => {
-          setUsuario(data);
-        })
-        .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.code,
-            description: error.message,
-          });
-        })
-        .finally(() => setLoaderSave(false));
+      getCargo(id ?? "").then(({ data }) => {
+        setCargo(data);
+        setLoaderSave(false);
+      });
+    } else {
+      setLoaderSave(false);
     }
-    setLoaderSave(false);
   }, []);
 
   const pushNotification = ({
@@ -77,46 +63,33 @@ export const FormUsuarios = () => {
   };
 
   const onFinish: SubmitHandler<any> = async (data) => {
-    data = transformToUpperCase(data, ["nombre"]);
+    data = transformToUpperCase(data, ["nombre", "descripcion"]);
     setLoaderSave(true);
-    if (usuario) {
-      updateUsuario(data, id)
-        .then(({ data }) => {
-          pushNotification({ title: data.message });
+    if (cargo) {
+      updateCargo(data, id).then(() => {
+        pushNotification({ title: "Cargo actualizado con exito!" });
+        setTimeout(() => {
+          navigate("..");
+        }, 800);
+      });
+    } else {
+      crearCargo(data)
+        .then(() => {
+          pushNotification({ title: "Cargo creado con exito!" });
           setTimeout(() => {
-            navigate("..");
+            navigate(-1);
           }, 800);
         })
-        .catch(({ response: { data } }) => {
+        .catch((error) => {
           pushNotification({
             type: "error",
-            title: data.error,
-            description: data.message,
+            title: error.error,
+            description: error.message,
           });
           setLoaderSave(false);
         });
-    } else {
-      if (control.getValues().empresas) {
-        crearUsuario(data)
-          .then(() => {
-            pushNotification({ title: "Usuario creado con exito!" });
-            setTimeout(() => {
-              navigate(-1);
-            }, 800);
-          })
-          .catch((error) => {
-            const data = error.response.data;
-            pushNotification({
-              type: "error",
-              title: data.error,
-              description: data.message,
-            });
-            setLoaderSave(false);
-          });
-      } 
     }
   };
-
   return (
     <>
       {contextHolder}
@@ -134,7 +107,7 @@ export const FormUsuarios = () => {
             autoComplete="off"
           >
             <StyledCard
-              title={(usuario ? "Editar" : "Crear") + " usuario"}
+              title={(cargo ? "Editar" : "Crear") + " cargo"}
               extra={
                 <Space>
                   <Button
@@ -144,7 +117,8 @@ export const FormUsuarios = () => {
                   >
                     Guardar
                   </Button>
-                  {usuario ? (
+
+                  {cargo ? (
                     <Link to="../.." relative="path">
                       <Button
                         danger
@@ -189,28 +163,14 @@ export const FormUsuarios = () => {
                         Datos Basicos
                       </Text>
                     ),
-                    children: <DatosBasicos usuario={usuario} />,
-                  },
-
-                  {
-                    key: "2",
-                    label: <Text>Perfiles</Text>,
-                    children: <DatosPerfiles usuario={usuario} />,
-                  },
-                  {
-                    key: "3",
-                    label: (
-                      <Text
-                        type={
-                          Object.keys(control.formState.errors).length > 0
-                            ? "danger"
-                            : undefined
+                    children: (
+                      <DatosBasicos
+                        onPushNotification={(data: Notification) =>
+                          pushNotification(data)
                         }
-                      >
-                        Cargos
-                      </Text>
+                        cargo={cargo}
+                      />
                     ),
-                    children: <DatosCargos usuario={usuario} />,
                   },
                 ]}
                 animated

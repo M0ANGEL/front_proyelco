@@ -5644,6 +5644,7 @@ export interface ResponseProcesosProyectos {
 export interface ProcesosProyectos {
   id: number;
   tipoPoryecto_id: string;
+  nombre_tipo: string;
   estado: string;
   nombre_proceso: number;
   id_user: string;

@@ -29,8 +29,8 @@ export const DatosBasicos = ({ onPushNotification, perfil }: Props) => {
             cod_perfil: perfil.cod_perfil,
             nom_perfil: perfil.nom_perfil,
             desc_perfil: perfil.desc_perfil,
-            id_empresa: perfil.id_empresa,
-            estado: perfil.estado,
+            id_empresa: perfil.id_empresa.toString(),
+            estado: perfil.estado.toString(),
           }
         : {
             cod_perfil: "COD",

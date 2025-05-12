@@ -1,49 +1,56 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { getEmpresas, setStatusEmpresa } from "@/services/maestras/empresasAPI";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
-import { useState, useEffect } from "react";
-import Table, { ColumnsType } from "antd/es/table";
-import { useLocation } from "react-router";
-import { Link } from "react-router-dom";
-import { DataType } from "./types";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
+import { ButtonTag } from "../../../usuarios/pages/ListUsuarios/styled";
+import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { EditOutlined, SyncOutlined } from "@ant-design/icons";
+import { Link, useLocation } from "react-router-dom";
+import Table, { ColumnsType } from "antd/es/table";
+import { useEffect, useState } from "react";
 import { SearchBar } from "./styled";
-import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
+import { getCargos, setStatusCargo } from "@/services/maestras/cargosAPI";
 
 const { Text } = Typography;
 
-export const ListEmpresas = () => {
-  const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
+interface DataType {
+  key: number;
+  nombre: string;
+  descripcion: string;
+  empresa: string;
+  estado: string;
+}
+
+export const ListCargos = () => {
+  const [loadingRow, setLoadingRow] = useState<any>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const location = useLocation();
+
   useEffect(() => {
-    fetchEmpresas();
+    fetchCargos();
   }, []);
 
-  const fetchEmpresas = () => {
-    getEmpresas().then(({ data: { data } }) => {
-      const empresas = data.map((empresa) => {
+  const fetchCargos = () => {
+    getCargos().then(({ data: { data } }) => {
+      const cargos = data.map((cargo) => {
         return {
-          key: empresa.id,
-          nombre: empresa.emp_nombre,
-          nit: empresa.nit,
-          direccion: empresa.direccion,
-          estado: empresa.estado.toString(),
+          key: cargo.id,
+          nombre: cargo.nombre,
+          descripcion: cargo.descripcion,
+          empresa: cargo.empresas.emp_nombre,
+          estado: cargo.estado,
         };
       });
-      setInitialData(empresas);
-      setDataSource(empresas);
+      setInitialData(cargos);
+      setDataSource(cargos);
       setLoadingRow([]);
     });
   };
 
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    setStatusEmpresa(id)
+    setStatusCargo(id)
       .then(() => {
-        fetchEmpresas();
+        fetchCargos();
       })
       .catch(() => {
         setLoadingRow([]);
@@ -63,22 +70,22 @@ export const ListEmpresas = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Empresa",
+      title: "Nombre",
       dataIndex: "nombre",
       key: "nombre",
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
     },
     {
-      title: "Nit",
-      dataIndex: "nit",
-      key: "nit",
-      sorter: (a, b) => a.nit.localeCompare(b.nit),
+      title: "Descripción",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
     },
     {
-      title: "Direccion",
-      dataIndex: "direccion",
-      key: "direccion",
-      sorter: (a, b) => a.direccion.localeCompare(b.direccion),
+      title: "Empresa",
+      dataIndex: "empresa",
+      key: "empresa",
+      sorter: (a, b) => a.empresa.localeCompare(b.empresa),
     },
     {
       title: "Estado",
@@ -88,7 +95,7 @@ export const ListEmpresas = () => {
       render: (_, record: { key: React.Key; estado: string }) => {
         let estadoString = "";
         let color;
-        if (record.estado === "1") {
+        if (record.estado) {
           estadoString = "ACTIVO";
           color = "green";
         } else {
@@ -141,7 +148,7 @@ export const ListEmpresas = () => {
   return (
     <>
       <StyledCard
-        title={"Lista de empresas"}
+        title={"Lista de cargos"}
         extra={
           <Link to={`${location.pathname}/create`}>
             <Button type="primary">Crear</Button>

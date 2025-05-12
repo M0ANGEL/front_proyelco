@@ -28,7 +28,7 @@ export const LoginCard = styled(Card)`
     border-bottom: 0px;
   }
   .ant-card-body {
-    background: rgba(0, 0, 0, 0.89);
+    background: #0b287c;
     border: 1px solid #b9b7b7;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
@@ -75,7 +75,7 @@ export const LoginTitle = styled(Title)`
 
 export const LoginButton = styled(Button)`
   font-size: 20px !important;
-  background-color: #ffb923;
+  background-color:rgb(35, 64, 255);
   color: #ffffff;
   border: none;
   font-size: 22px !important;

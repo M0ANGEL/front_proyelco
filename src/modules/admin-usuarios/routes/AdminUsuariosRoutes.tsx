@@ -7,6 +7,7 @@ import {
   UsuariosRoutes,
   ProcesosRoutes,
 } from "../pages";
+import { CargosRoutes } from "../pages/cargos";
 
 export const AdminUsuariosRoutes = () => {
   return (
@@ -16,6 +17,7 @@ export const AdminUsuariosRoutes = () => {
         <Route path="/usuarios/*" element={<UsuariosRoutes />} />
         <Route path="/perfiles/*" element={<PerfilesRoutes />} />
         <Route path="/procesos/*" element={<ProcesosRoutes />} />
+        <Route path="/cargos/*" element={<CargosRoutes />} />
       </Route>
     </RoutesWithNotFound>
   );
