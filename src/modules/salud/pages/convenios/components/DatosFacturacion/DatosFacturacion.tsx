@@ -6,7 +6,7 @@ import { Props } from "./types";
 const { Text } = Typography;
 const { Panel } = Collapse;
 
-export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
+export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) => {
   const methods = useFormContext();
 
   const tipoObra = useWatch({
@@ -156,9 +156,9 @@ export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
   return (
     <Row gutter={[12, 6]}>
       {/* pisos para cambio de proceso */}
-      <Col xs={24} sm={8}>
+      <Col xs={24} sm={4}>
         <Controller
-          name="PsiguentePro"
+          name="pisosCambiarProceso"
           control={methods.control}
           rules={{
             required: {
@@ -175,8 +175,34 @@ export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
         />
       </Col>
 
-      {/* Tipo Proyecto */}
+       {/* usuario asignado */}
       <Col xs={24} sm={8}>
+        <Controller
+          name="encargado_id"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Usuario asignado de proyecto es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Encargado Proyecto:">
+              <Select
+                {...field}
+                status={error && "error"}
+                options={selectUSuarios}
+                placeholder="Tipo de Proyecto"
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+
+      {/* Tipo Proyecto */}
+      <Col xs={24} sm={6}>
         <Controller
           name="tipoProyecto_id"
           control={methods.control}
@@ -201,7 +227,7 @@ export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
       </Col>
 
       {/* Tipo Obra */}
-      <Col xs={24} sm={8}>
+      <Col xs={24} sm={6}>
         <Controller
           name="tipo_obra"
           control={methods.control}
@@ -254,25 +280,6 @@ export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
             />
           </Col>
 
-          <Controller
-            name="op1"
-            control={methods.control}
-            rules={{
-              required: {
-                value: false,
-                message: "Op es requerida",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                style={{ display: "none" }}
-                {...field}
-                status={error && "error"}
-                value={1}
-              />
-            )}
-          />
-
           <Col xs={24} sm={12}>
             <Controller
               name="cant_pisos"
@@ -306,7 +313,7 @@ export const DatosFacturacion = ({ selectTipoProyecto }: Props) => {
                 },
               }}
               render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cantidad Apartamentos:">
+                <StyledFormItem required label="Cantidad Apartamentos por Piso:">
                   <Input
                     {...field}
                     placeholder="00"

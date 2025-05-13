@@ -161,7 +161,7 @@ export const DatosBasicos = () => {
           </StyledFormItem>
         </Col>
 
-        {/* decripcion del proyecto */}
+        {/* nombre del proyecto */}
         <Col xs={24} sm={24} md={12}>
           <Controller
             name="descripcion"

@@ -1,0 +1,1 @@
+export { ModalProcesoProyecto } from "./ModalProcesoProyecto";

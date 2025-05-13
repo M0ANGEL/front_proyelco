@@ -4,7 +4,6 @@ import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
-import { setStatusConvenio } from "@/services/salud/conveniosAPI";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
 import "./CustomList.css";
@@ -26,7 +25,9 @@ import {
   DeleteProyecto,
   getProyectos,
 } from "@/services/proyectos/proyectosAPI";
-import { AiOutlineExpandAlt, AiOutlineFieldTime } from "react-icons/ai";
+import { AiOutlineExpandAlt } from "react-icons/ai";
+import { ModalProcesoProyecto } from "../../components";
+import Item from "antd/es/list/Item";
 
 const { Text } = Typography;
 
@@ -36,6 +37,11 @@ export const ListConvenios = () => {
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
   const [loadingRep, setLoadingRep] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
+
+  /* modal de proceso proyecto */
+  const [modalVisible, setModalVisible] = useState(false);
+  const [proyectoIdActivo, setProyectoIdActivo] = useState<number | null>(null);
+
   const location = useLocation();
 
   useEffect(() => {
@@ -190,10 +196,14 @@ export const ListConvenios = () => {
                     </Popconfirm>
                   </div>
                   <div className="status-container">
+                    {/* aqui abrir el modal del procesos del proyecto */}
                     <Tooltip title="Ver Proceso Proyecto">
                       <ButtonTag
-                        className="custom-button-tag"
-                        style={{
+                        onClick={() => {
+                          setProyectoIdActivo(item.key); 
+                          setModalVisible(true);
+                        }}
+                         style={{
                           padding: 5,
                           borderRadius: 8,
                           width: 40,
@@ -235,6 +245,15 @@ export const ListConvenios = () => {
           }}
         />
       </StyledCard>
+
+      {/* modal */}
+      {modalVisible && proyectoIdActivo && (
+        <ModalProcesoProyecto
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          proyectoId={proyectoIdActivo}
+        />
+      )}
     </>
   );
 };

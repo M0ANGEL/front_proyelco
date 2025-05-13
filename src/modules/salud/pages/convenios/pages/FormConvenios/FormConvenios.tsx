@@ -15,7 +15,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Convenio } from "@/services/types";
-import { getProcesosProyectos, getTipoProyectos } from "@/services/salud/conveniosTipoAPI";
+import { getProcesosProyectos, getTipoProyectos, getUsersProyecto } from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
   LoadingOutlined,
@@ -42,6 +42,10 @@ export const FormConvenios = () => {
   >([]);
 
   const [selectTipoProcesos, setselectTipoProcesos] = useState<
+    SelectProps["options"]
+  >([]);
+
+    const [USuarios, selectUSuarios] = useState<
     SelectProps["options"]
   >([]);
 
@@ -80,6 +84,26 @@ export const FormConvenios = () => {
           data.map((item) => ({
             value: item.id,
             label: item.nombre_proceso,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
+    //llamado de usuarios para asignar poryecto  77 
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getUsersProyecto().then(({ data: { data } }) => {
+        selectUSuarios(
+          data.map((item) => ({
+            value: item.id,
+            label: item.nombre,
           }))
         );
       });
@@ -137,7 +161,7 @@ export const FormConvenios = () => {
       updateConvenio(data, id)
         .then(() => {
           notification.success({
-            message: "Convenio actualizado con éxito!",
+            message: "Proyecto actualizado con éxito!",
           });
           setTimeout(() => {
             navigate("..");
@@ -171,7 +195,7 @@ export const FormConvenios = () => {
       crearProyecto(data)
         .then(() => {
           notification.success({
-            message: "Convenio creado con éxito!",
+            message: "Proyecto creado con éxito!",
           });
           setTimeout(() => {
             navigate(-1);
@@ -298,6 +322,7 @@ export const FormConvenios = () => {
                     children: (
                       <DatosFacturacion
                         selectTipoProyecto={selectTipoProyecto}
+                        selectUSuarios={USuarios}
                       />
                     ),
                     forceRender: true,

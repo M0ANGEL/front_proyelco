@@ -1,4 +1,5 @@
 export { DatosConfigProyecto } from "./DatosConfiProyecto";
 export { DatosFacturacion } from "./DatosFacturacion";
-export { ModalTerceros } from "./ModalTerceros";
+export { ModalProcesoProyecto} from "./ModalProcesoProyecto";
 export { DatosBasicos } from "./DatosBasicos";
+export { ModalTerceros } from "./ModalTerceros";

@@ -44,3 +44,10 @@ export const DeleteProyecto = async ( id: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+//ver de la categoria por id
+export const getProyectoDetalle = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`administracion-proyectos-detalle/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
