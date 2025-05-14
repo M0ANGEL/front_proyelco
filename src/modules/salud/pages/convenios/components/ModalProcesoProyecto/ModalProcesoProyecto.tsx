@@ -1,6 +1,5 @@
 import { Modal, Row, Col, Card, Spin } from "antd";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { getProyectoDetalle } from "@/services/proyectos/proyectosAPI";
 
 type Apartamento = {
@@ -24,25 +23,7 @@ export const ModalProcesoProyecto = ({
   const [data, setData] = useState<Apartamento[]>([]);
   const [loading, setLoading] = useState(false);
 
-  console.log(proyectoId);
-  
-
   useEffect(() => {
-    // if (visible && proyectoId) {
-    //   setLoading(true);
-    //   axios
-    //     .get(`/api/proyectos/${proyectoId}/apartamentos`)
-    //     .then((res) => {
-    //       setData(res.data.data);
-    //     })
-    //     .catch((err) => {
-    //       console.error("Error cargando datos", err);
-    //     })
-    //     .finally(() => {
-    //       setLoading(false);
-    //     });
-    // }
-
     getProyectoDetalle(proyectoId).then(({ data: { data } }) => {
       setData(data);
     });

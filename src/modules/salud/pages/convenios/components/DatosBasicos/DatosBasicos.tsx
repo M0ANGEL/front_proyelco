@@ -188,75 +188,15 @@ export const DatosBasicos = () => {
           />
         </Col>
 
-        {/* valor del proyecto ?? */}
-        {/* <Col xs={24} sm={12} md={12}>
-          <Controller
-            name="valor_total"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Valor Total es requerido",
-              },
-              min: {
-                value: 1,
-                message: "El valor del convenio debe ser mayor a cero",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Valor Total:">
-                <InputNumber
-                  {...field}
-                  min={0}
-                  controls={false}
-                  style={{ width: "100%" }}
-                  status={error && "error"}
-                  placeholder="Ingresa Valor Total"
-                  formatter={(value) =>
-                    `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                  }
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col> */}
-
-        {/* fecha final del proyecto ?? */}
-        {/* <Col xs={24} sm={12} md={6}>
-          <Controller
-            name="fechafin"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "Fecha Final es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Fecha Final:">
-                <DatePicker
-                  {...field}
-                  style={{ width: "100%" }}
-                  status={error && "error"}
-                  placeholder="Fecha Final"
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            )}
-          />
-        </Col> */}
-
-
           {/* codigo proyecto */}
         <Col xs={24} sm={12} md={12}>
           <Controller
-            name="codigo_contrato"
+            name="codigo_proyecto"
             control={methods.control}
             rules={{
               required: {
                 value: true,
-                message: "Codigo Unico del Contrato es requerido",
+                message: "Codigo Unico del Poryecto es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (

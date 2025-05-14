@@ -10,18 +10,25 @@ import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteAmCliente, getAmClientes } from "@/services/administraClientes/AdministrarClientesApi";
+import { DeleteAmCliente } from "@/services/administraClientes/AdministrarClientesApi";
+import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
 
 interface DataType {
   key: number;
-  emp_nombre: string;
+  tipoPoryecto_id: string;
+  cliente_id: string;
+  usuario_crea_id: string;
+  encargado_id: string;
+  descripcion_proyecto: string;
+  fecha_inicio: string;
+  codigo_contrato: string;
+  torres: string;
+  cant_pisos: string;
+  apt: string;
+  pisoCambiarProceso: string;
   estado: string;
-  nit: number;
-  direccion: string;
-  telefono: string;
-  cuenta_de_correo: string;
-  id_user: string;
-  nombre: string;
+  nombre_tipo: string;
+  emp_nombre: string;
   created_at: string;
   updated_at: string;
 }
@@ -42,18 +49,23 @@ const ListGestionProyectos = () => {
   }, []);
 
   const fetchCategorias = () => {
-    getAmClientes().then(({ data: { data } }) => {
+    getGestionProyecto().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
-          emp_nombre: categoria.emp_nombre,
+          tipoPoryecto_id: categoria.tipoPoryecto_id,
           estado: categoria.estado.toString(),
-          nit: categoria.nit,
-          direccion: categoria.direccion,
-          telefono: categoria.telefono,
-          cuenta_de_correo: categoria.cuenta_de_correo,
-          nombre: categoria.nombre,
-          id_user: categoria.id_user,
+          cliente_id: categoria.cliente_id,
+          usuario_crea_id: categoria.usuario_crea_id,
+          descripcion_proyecto: categoria.descripcion_proyecto,
+          fecha_inicio: categoria.fecha_inicio,
+          codigo_contrato: categoria.codigo_contrato,
+          torres: categoria.torres,
+          cant_pisos: categoria.cant_pisos,
+          apt: categoria.apt,
+          pisoCambiarProceso: categoria.pisoCambiarProceso,
+          nombre_tipo: categoria.nombre_tipo,
+          emp_nombre: categoria.emp_nombre,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -90,36 +102,58 @@ const ListGestionProyectos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Nombre",
+      title: "Fecha Creacion",
+      dataIndex: "created_at",
+      key: "created_at",
+      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+      fixed: "left",
+    },
+    {
+      title: "Tipo Proyecto",
+      dataIndex: "nombre_tipo",
+      key: "nombre_tipo",
+      sorter: (a, b) => a.nombre_tipo.localeCompare(b.nombre_tipo),
+    },
+    {
+      title: "Descripcion",
+      dataIndex: "descripcion_proyecto",
+      key: "descripcion_proyecto",
+    },
+    {
+      title: "Codigo Proyecto",
+      dataIndex: "codigo_contrato",
+      key: "codigo_contrato",
+    },
+    {
+      title: "Cliente",
       dataIndex: "emp_nombre",
       key: "emp_nombre",
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
+
     {
-      title: "Nit",
-      dataIndex: "nit",
-      key: "nit",
+      title: "Cant Torres",
+      dataIndex: "torres",
+      key: "torres",
+      sorter: (a, b) => a.torres.localeCompare(b.torres),
+      align: "center",
     },
     {
-      title: "Usuario Creo",
-      dataIndex: "nombre",
-      key: "nombre",
-      sorter: (a, b) => a.nombre.localeCompare(b.nombre),
+      title: "Cant Pisos",
+      dataIndex: "cant_pisos",
+      key: "cant_pisos",
+      sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
+      align: "center",
     },
     {
-      title: "Telefono",
-      dataIndex: "telefono",
-      key: "telefono",
-      sorter: (a, b) => a.telefono.localeCompare(b.telefono),
+      title: "Cant Apt",
+      dataIndex: "apt",
+      key: "apt",
+      sorter: (a, b) => a.apt.localeCompare(b.apt),
+      align: "center",
     },
     {
-      title: "direccion",
-      dataIndex: "direccion",
-      key: "direccion",
-      sorter: (a, b) => a.direccion.localeCompare(b.direccion),
-    },
-    {
-      title: "Estado",
+      title: "Estado Proyecto",
       dataIndex: "estado",
       key: "estado",
       align: "center",
@@ -141,7 +175,7 @@ const ListGestionProyectos = () => {
           >
             <ButtonTag
               color={color}
-              disabled={!["administrador"].includes(user_rol)}
+              disabled={!Number(record.estado === "1") ? false : true}
             >
               <Tooltip title="Cambiar estado">
                 <Tag
@@ -169,24 +203,26 @@ const ListGestionProyectos = () => {
       align: "center",
       render: (_, record: { key: React.Key }) => {
         return (
-          <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`}>
+          <Tooltip title="Gestionar">
+            <Link to={`${location.pathname}/gestionar/${record.key}`}>
               <Button icon={<EditOutlined />} type="primary" />
             </Link>
           </Tooltip>
         );
       },
+      fixed: "right",
+      width: 70,
     },
   ];
 
   return (
     <StyledCard
-      title={"Lista de Clientes"}
-      extra={
-        <Link to={`${location.pathname}/create`}>
-          <Button type="primary">Crear</Button>
-        </Link>
-      }
+      title={"Lista de Proyectos Asignados"}
+      // extra={
+      //   <Link to={`${location.pathname}/gestionar`}>
+      //     <Button type="primary">Crear</Button>
+      //   </Link>
+      // }
     >
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />
@@ -198,6 +234,7 @@ const ListGestionProyectos = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
@@ -207,6 +244,7 @@ const ListGestionProyectos = () => {
             return <Text>Total Registros: {total}</Text>;
           },
         }}
+        style={{ textAlign: "center" }}
         bordered
       />
     </StyledCard>

@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Card, Select, Input, Button, Typography } from "antd";
+import { Card, Button } from "antd";
 import { SettingOutlined } from "@ant-design/icons";
-import TextArea from "antd/es/input/TextArea";
 import { Controller, useFormContext } from "react-hook-form";
+import TextArea from "antd/es/input/TextArea";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-
-const { Option } = Select;
 
 interface Tipo {
   value: number;
@@ -17,19 +15,10 @@ interface Tipo {
 
 interface Props {
   tipos: Tipo[];
-  value: number | null;
-  onSelect: (id: number) => void;
   onChangeTipos: (nuevosTipos: Tipo[]) => void;
 }
 
-const { Text } = Typography;
-
-export const TipoProyectoRectangles = ({
-  tipos,
-  value,
-  onSelect,
-  onChangeTipos,
-}: Props) => {
+export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
   const [openId, setOpenId] = useState<number | null>(null);
   const [disponibles, setDisponibles] = useState<Tipo[]>([]);
   const [confirmados, setConfirmados] = useState<Tipo[]>([]);
@@ -37,7 +26,7 @@ export const TipoProyectoRectangles = ({
 
   useEffect(() => {
     setDisponibles(tipos);
-    setConfirmados([]); // Si quieres precargar valores, cámbialo aquí
+    setConfirmados([]);
   }, [tipos]);
 
   const handleDragEnd = (result: any) => {
@@ -51,7 +40,6 @@ export const TipoProyectoRectangles = ({
 
     const [movedItem] = [...sourceList].splice(source.index, 1);
 
-    // Si es dentro de la misma lista (reordenar)
     if (source.droppableId === destination.droppableId) {
       const reordered = [...sourceList];
       const [moved] = reordered.splice(source.index, 1);
@@ -61,10 +49,9 @@ export const TipoProyectoRectangles = ({
         setDisponibles(reordered);
       } else {
         setConfirmados(reordered);
-        onChangeTipos(reordered); // Actualiza orden en el padre
+        onChangeTipos(reordered);
       }
     } else {
-      // Mover entre listas
       const newSource = [...sourceList];
       const newDest = [...destList];
       const [moved] = newSource.splice(source.index, 1);
@@ -123,10 +110,7 @@ export const TipoProyectoRectangles = ({
                   alignItems: "center",
                 }}
               >
-                <span
-                  onClick={() => onSelect(tipo.value)}
-                  style={{ fontWeight: 600, flex: 1 }}
-                >
+                <span style={{ fontWeight: 600, flex: 1 }}>
                   {`${index + 1}. ${tipo.label}`}
                 </span>
                 <Button
@@ -141,23 +125,31 @@ export const TipoProyectoRectangles = ({
             }
           >
             {isConfirmado && openId === tipo.value && (
-              <div style={{ display: "flex", gap: 8, marginTop: 5 }}>
-                <TextArea
-                  placeholder="Texto dinamico para pregunta de validacion"
-                  value={tipo.valor}
-                  onChange={(e) =>
-                    actualizarCampo(index, "valor", e.target.value)
-                  }
-                  maxLength={200}
-                />
+              <div style={{ marginTop: 5, width:'100%' }}>
                 <Controller
-                  name="PsiguentePro"
+                  name={`procesos[${index}].valor`}
+                  control={methods.control}
+                  render={({ field }) => (
+                    <StyledFormItem required label="Nombre de validacion para pasar a la siguiente actividad:">
+                      <TextArea
+                        {...field}
+                        placeholder="Texto dinámico para pregunta de validación"
+                        maxLength={200}
+                        onChange={(e) => {
+                          field.onChange(e);
+                          actualizarCampo(index, "valor", e.target.value);
+                        }}
+                        value={field.value}
+                      />
+                    </StyledFormItem>
+                  )}
+                />
+
+                {/* <Controller
+                  name={`procesos[${index}].pisosPorProceso`}
                   control={methods.control}
                   rules={{
-                    required: {
-                      value: true,
-                      message: "Pisos por proceso es requerido",
-                    },
+                    required: "Pisos por proceso es requerido",
                   }}
                   render={({ field, fieldState: { error } }) => (
                     <StyledFormItem required label="Pisos Cambio Proceso:">
@@ -165,11 +157,15 @@ export const TipoProyectoRectangles = ({
                         {...field}
                         status={error && "error"}
                         placeholder="00"
+                        onChange={(e) => {
+                          field.onChange(e);
+                          actualizarCampo(index, "tipoValidacion", e.target.value);
+                        }}
                       />
                       <Text type="danger">{error?.message}</Text>
                     </StyledFormItem>
                   )}
-                />
+                /> */}
               </div>
             )}
           </Card>
@@ -181,7 +177,6 @@ export const TipoProyectoRectangles = ({
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <div style={{ display: "flex", gap: 16 }}>
-        {/* Disponibles */}
         <Droppable droppableId="disponibles">
           {(provided) => (
             <div
@@ -204,7 +199,6 @@ export const TipoProyectoRectangles = ({
           )}
         </Droppable>
 
-        {/* Seleccionados */}
         <Droppable droppableId="confirmados">
           {(provided) => (
             <div
@@ -219,20 +213,9 @@ export const TipoProyectoRectangles = ({
               }}
             >
               <h4>Procesos seleccionados</h4>
-              {confirmados.map((tipo, index) => (
-                <div key={tipo.value}>
-                  {renderTarjeta(tipo, index, true)}
-
-                  {/* Inputs ocultos para enviar en el formulario padre */}
-                  <input
-                    type="hidden"
-                    // name={`tipos[${index}][valor]`}
-                    name="coco"
-                    value={tipo.valor || ""}
-                  />
-                </div>
-              ))}
-
+              {confirmados.map((tipo, index) =>
+                renderTarjeta(tipo, index, true)
+              )}
               {provided.placeholder}
             </div>
           )}
