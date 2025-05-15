@@ -1,43 +1,27 @@
-import { Card, Spin, Select, Typography } from "antd";
+import { Card, Spin, Select, Typography, Button } from "antd";
 import { useEffect, useState } from "react";
-import { getProyectoDetalle } from "@/services/proyectos/proyectosAPI";
 import { useParams } from "react-router-dom";
+import { getProyectoDetalleGestion } from "@/services/proyectos/gestionProyectoAPI";
 
 const { Title } = Typography;
 
-type Apartamento = {
-  torre: string;
-  piso: string;
-  apartamento: string;
-  estado: number;
-};
-
 export const FormGestionProyectos = () => {
-  const [data, setData] = useState<Apartamento[]>([]);
+  const [data, setData] = useState<any>({});
   const [loading, setLoading] = useState(false);
-  const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(null);
+  const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
+    null
+  );
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
     setLoading(true);
-    getProyectoDetalle(Number(id)).then(({ data: { data } }) => {
+    getProyectoDetalleGestion(Number(id)).then(({ data: { data } }) => {
       setData(data);
       setLoading(false);
     });
   }, [id]);
 
-  const torresUnicas = Array.from(new Set(data.map((apto) => apto.torre)));
-
-  const dataFiltrada = torreSeleccionada
-    ? data.filter((d) => d.torre === torreSeleccionada)
-    : [];
-
-  const pisos = dataFiltrada.reduce((acc: any, apto) => {
-    const { piso, apartamento, estado } = apto;
-    if (!acc[piso]) acc[piso] = [];
-    acc[piso].push({ apartamento, estado });
-    return acc;
-  }, {});
+  const torresUnicas = Object.keys(data);
 
   return (
     <div style={{ padding: 24 }}>
@@ -59,37 +43,58 @@ export const FormGestionProyectos = () => {
           />
 
           {torreSeleccionada && (
-            <Card title={`Torre ${torreSeleccionada}`}>
-              {Object.entries(pisos)
-                .sort((a, b) => Number(b[0]) - Number(a[0])) // Piso más alto primero
-                .map(([piso, aptos]: any) => (
-                  <div key={piso} style={{ marginBottom: 10 }}>
-                    <strong>Piso {piso}</strong>
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 8,
-                        marginTop: 4,
-                      }}
+            <div>
+              <Title level={4}>Torre {torreSeleccionada}</Title>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
+                {Object.entries(data[torreSeleccionada] || {}).map(
+                  ([proceso, contenido]: any) => (
+                    <Card
+                      key={proceso}
+                      title={`${proceso} - ${
+                        contenido.nombre_proceso || "Proceso"
+                      }`}
+                      style={{ flex: "1 1 calc(50% - 16px)" }}
                     >
-                      {aptos.map((apt: any, i: number) => (
-                        <div
-                          key={i}
-                          style={{
-                            backgroundColor: apt.estado === 1 ? "green" : "gray",
-                            color: "white",
-                            padding: "4px 8px",
-                            borderRadius: 4,
-                          }}
-                        >
-                          Apto {apt.apartamento}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-            </Card>
+                      {Object.entries(contenido.pisos || {})
+                        .sort((a, b) => Number(b[0]) - Number(a[0]))
+                        .map(([piso, aptos]: any) => (
+                          <div key={piso} style={{ marginBottom: 10 }}>
+                            <strong>Piso {piso}</strong>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexWrap: "wrap",
+                                gap: 8,
+                                marginTop: 4,
+                              }}
+                            >
+                              {aptos.map((apt: any, i: number) => (
+                                <Button
+                                  key={i}
+                                  style={{
+                                    backgroundColor:
+                                      apt.estado === "2"
+                                        ? "green"
+                                        : apt.estado === "1"
+                                        ? "#fb8674"
+                                        : "gray",
+                                    color: "white",
+                                    padding: "4px 8px",
+                                    borderRadius: 4,
+                                  }}
+                                >
+                                  {apt.consecutivo}
+                                </Button>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                    </Card>
+                  )
+                )}
+              </div>
+            </div>
           )}
         </>
       )}

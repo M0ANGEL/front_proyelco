@@ -8,10 +8,8 @@ import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
-import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteAmCliente } from "@/services/administraClientes/AdministrarClientesApi";
-import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
+import { getGestionProyecto, IniciarProyecto } from "@/services/proyectos/gestionProyectoAPI";
 
 interface DataType {
   key: number;
@@ -21,7 +19,8 @@ interface DataType {
   encargado_id: string;
   descripcion_proyecto: string;
   fecha_inicio: string;
-  codigo_contrato: string;
+  fecha_ini_proyecto: string;
+  codigo_proyecto: string;
   torres: string;
   cant_pisos: string;
   apt: string;
@@ -41,8 +40,6 @@ const ListGestionProyectos = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getSessionVariable } = useSessionStorage();
-  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
@@ -59,11 +56,12 @@ const ListGestionProyectos = () => {
           usuario_crea_id: categoria.usuario_crea_id,
           descripcion_proyecto: categoria.descripcion_proyecto,
           fecha_inicio: categoria.fecha_inicio,
-          codigo_contrato: categoria.codigo_contrato,
+          codigo_proyecto: categoria.codigo_proyecto,
           torres: categoria.torres,
           cant_pisos: categoria.cant_pisos,
           apt: categoria.apt,
           pisoCambiarProceso: categoria.pisoCambiarProceso,
+          fecha_ini_proyecto: categoria.fecha_ini_proyecto,
           nombre_tipo: categoria.nombre_tipo,
           emp_nombre: categoria.emp_nombre,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
@@ -88,10 +86,10 @@ const ListGestionProyectos = () => {
     setDataSource(filterTable);
   };
 
-  //cambio de estado
+  //iniciar proyecto
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    DeleteAmCliente(id)
+    IniciarProyecto(id)
       .then(() => {
         fetchCategorias();
       })
@@ -121,8 +119,8 @@ const ListGestionProyectos = () => {
     },
     {
       title: "Codigo Proyecto",
-      dataIndex: "codigo_contrato",
-      key: "codigo_contrato",
+      dataIndex: "codigo_proyecto",
+      key: "codigo_proyecto",
     },
     {
       title: "Cliente",
@@ -154,30 +152,30 @@ const ListGestionProyectos = () => {
     },
     {
       title: "Estado Proyecto",
-      dataIndex: "estado",
-      key: "estado",
+      dataIndex: "fecha_ini_proyecto",
+      key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key; estado: string }) => {
+      render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
         let estadoString = "";
         let color;
-        if (record.estado === "1") {
-          estadoString = "ACTIVO";
+        if (record.fecha_ini_proyecto !== null) {
+          estadoString = "PROCESO";
           color = "green";
         } else {
-          estadoString = "INACTIVO";
-          color = "red";
+          estadoString = "INICIAR";
+          color = "#00a9e4";
         }
         return (
           <Popconfirm
-            title="¿Desea cambiar el estado?"
+            title="¿Desea inicar el proyecto?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
           >
             <ButtonTag
               color={color}
-              disabled={!Number(record.estado === "1") ? false : true}
+              disabled={!Number(record.fecha_ini_proyecto !== null) ? false : true}
             >
-              <Tooltip title="Cambiar estado">
+              <Tooltip title="Iniciar Proyecto">
                 <Tag
                   color={color}
                   key={estadoString}

@@ -6,7 +6,10 @@ import { Props } from "./types";
 const { Text } = Typography;
 const { Panel } = Collapse;
 
-export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) => {
+export const DatosFacturacion = ({
+  selectTipoProyecto,
+  selectUSuarios,
+}: Props) => {
   const methods = useFormContext();
 
   const tipoObra = useWatch({
@@ -21,6 +24,11 @@ export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) 
 
   const pisosPorTorre = useWatch({
     name: "bloques",
+    control: methods.control,
+  });
+
+  const cantPisos = useWatch({
+    name: "cant_pisos",
     control: methods.control,
   });
 
@@ -165,17 +173,64 @@ export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) 
               value: true,
               message: "Pisos por proceso es requerido",
             },
+            validate: (value) => {
+              const val = parseInt(value);
+              if (isNaN(val)) return "Debe ingresar un número";
+
+              if (tipoObra === 0) {
+                // SIMÉTRICO
+                const totalPisos = parseInt(cantPisos);
+                if (!totalPisos || isNaN(totalPisos)) {
+                  return "Primero ingrese cantidad de pisos";
+                }
+                if (val > totalPisos) {
+                  return "No puede ser mayor a la cantidad de pisos";
+                }
+              } else if (tipoObra === 1) {
+                // PERSONALIZADO
+                const pisosMinimos = pisosPorTorre
+                  ?.map((t) => parseInt(t?.pisos))
+                  .filter((p) => !isNaN(p));
+                if (!pisosMinimos || pisosMinimos.length === 0) {
+                  return "Primero ingrese la cantidad de pisos en cada torre";
+                }
+                const minPisos = Math.min(...pisosMinimos);
+                if (val > minPisos) {
+                  return `No puede ser mayor que el piso mínimo entre torres (${minPisos})`;
+                }
+              }
+
+              return true;
+            },
           }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Pisos Cambio Proceso:">
-              <Input {...field} status={error && "error"} placeholder="00" />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
+          render={({ field, fieldState: { error } }) => {
+            // Validar si el campo debe estar deshabilitado
+            const disabledSimetrico =
+              tipoObra === 0 && (!cantPisos || isNaN(parseInt(cantPisos)));
+            const pisosMinimos = pisosPorTorre
+              ?.map((t) => parseInt(t?.pisos))
+              .filter((p) => !isNaN(p));
+            const disabledPersonalizado =
+              tipoObra === 1 && (!pisosMinimos || pisosMinimos.length === 0);
+            const isDisabled = disabledSimetrico || disabledPersonalizado;
+
+            return (
+              <StyledFormItem required label="Pisos Cambio Proceso:">
+                <Input
+                  {...field}
+                  status={error && "error"}
+                  placeholder="00"
+                  type="number"
+                  disabled={isDisabled }
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            );
+          }}
         />
       </Col>
 
-       {/* usuario asignado */}
+      {/* usuario asignado */}
       <Col xs={24} sm={8}>
         <Controller
           name="encargado_id"
@@ -199,7 +254,6 @@ export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) 
           )}
         />
       </Col>
-
 
       {/* Tipo Proyecto */}
       <Col xs={24} sm={6}>
@@ -313,7 +367,10 @@ export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) 
                 },
               }}
               render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cantidad Apartamentos por Piso:">
+                <StyledFormItem
+                  required
+                  label="Cantidad Apartamentos por Piso:"
+                >
                   <Input
                     {...field}
                     placeholder="00"
@@ -357,26 +414,6 @@ export const DatosFacturacion = ({ selectTipoProyecto, selectUSuarios }: Props) 
               )}
             />
           </Col>
-
-          {/* envio de diferenciador */}
-          <Controller
-            name="op1"
-            control={methods.control}
-            rules={{
-              required: {
-                value: false,
-                message: "Op es requerida",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <Input
-                style={{ display: "none" }}
-                {...field}
-                status={error && "error"}
-                value={2}
-              />
-            )}
-          />
         </>
       )}
 

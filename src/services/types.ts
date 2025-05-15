@@ -5668,12 +5668,13 @@ export interface Proyectos {
   encargado_id: string;
   descripcion_proyecto: string;
   fecha_inicio: string;
-  codigo_contrato: string;
+  codigo_proyecto: string;
   torres: string;
   cant_pisos: string;
   apt: string;
   pisoCambiarProceso: string;
   estado: string;
+  fecha_ini_proyecto: string;
   nombre_tipo: string;
   emp_nombre: string;
   created_at: string;

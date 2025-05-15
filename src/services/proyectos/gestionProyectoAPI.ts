@@ -18,6 +18,8 @@ export const crearProcePro = async (data: any): Promise<any> => {
   });
 };
 
+
+
 //ver el proceso por id
 export const getProcesoProye = async (id: React.Key): Promise<any> => {
   return await client.get<any>(`procesos-proyectos/${id}`, {
@@ -32,9 +34,16 @@ export const updateProcesoProyec = async (data: any, id: any): Promise<any> => {
   });
 };
 
-//cambiar el estado de la categoria 
-export const DeleteAmCliente = async ( id: any): Promise<any> => {
-  return await client.delete<any>(`admin-clientes/${id}`, {
+//Iniciar Proyecto 
+export const IniciarProyecto = async ( id: any): Promise<any> => {
+  return await client.delete<any>(`gestion-proyectos/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//detalle del proyecto
+export const getProyectoDetalleGestion = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`gestion-proyectos-detalle/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
