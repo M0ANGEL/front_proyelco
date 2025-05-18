@@ -47,3 +47,42 @@ export const getProyectoDetalleGestion = async (id: React.Key): Promise<any> => 
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+//detalle del proyecto
+export const habilitarTorre = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`gestio-habilitar-torre/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+export const IniciarTorre = async (data: any): Promise<any> => {
+  return await client.post<any>("gestion-iniciar-torre", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//detalle del proyecto
+export const InfoProyecto = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`info-proyecto/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+//confirmar apartamento 
+export const confirmarAptGestion = async ( id: any): Promise<any> => {
+  return await client.get<any>(`gestion-confirmar-apartamento/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//confirmar apartamento 
+export const confirmarValidacionApt = async ( data: any): Promise<any> => {
+  return await client.post<any>(`gestion-confirmar-validar`, data,{
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+

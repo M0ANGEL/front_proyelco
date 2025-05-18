@@ -9,7 +9,7 @@ export const GestionProyectoRoutes = () => {
     <RoutesWithNotFound>
       <Route element={<AuthGuard />}>
         <Route path="/" element={<ListGestionProyectos />} />
-        <Route path="/gestionar/:id" element={<FormGestionProyectos />} />
+        <Route path="/:id" element={<FormGestionProyectos />} />
       </Route>
     </RoutesWithNotFound>
   );

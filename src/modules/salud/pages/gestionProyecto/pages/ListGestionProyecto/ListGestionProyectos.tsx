@@ -202,7 +202,7 @@ const ListGestionProyectos = () => {
       render: (_, record: { key: React.Key }) => {
         return (
           <Tooltip title="Gestionar">
-            <Link to={`${location.pathname}/gestionar/${record.key}`}>
+            <Link to={`${location.pathname}/${record.key}`}>
               <Button icon={<EditOutlined />} type="primary" />
             </Link>
           </Tooltip>
