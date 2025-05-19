@@ -9,7 +9,10 @@ import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsu
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import dayjs from "dayjs";
-import { getGestionProyecto, IniciarProyecto } from "@/services/proyectos/gestionProyectoAPI";
+import {
+  getGestionProyecto,
+  IniciarProyecto,
+} from "@/services/proyectos/gestionProyectoAPI";
 
 interface DataType {
   key: number;
@@ -173,7 +176,9 @@ const ListGestionProyectos = () => {
           >
             <ButtonTag
               color={color}
-              disabled={!Number(record.fecha_ini_proyecto !== null) ? false : true}
+              disabled={
+                !Number(record.fecha_ini_proyecto !== null) ? false : true
+              }
             >
               <Tooltip title="Iniciar Proyecto">
                 <Tag
@@ -196,14 +201,20 @@ const ListGestionProyectos = () => {
     },
     {
       title: "Acciones",
-      dataIndex: "acciones",
-      key: "acciones",
+      dataIndex: "fecha_ini_proyecto",
+      key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key }) => {
+      render: (_, record: { key: React.Key ; fecha_ini_proyecto: string}) => {
         return (
-          <Tooltip title="Gestionar">
+          <Tooltip title={record.fecha_ini_proyecto === null ?  "Inicia el proyecto para Gestionar" : "Gestionar" }>
             <Link to={`${location.pathname}/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
+              <Button
+                disabled={
+                  !Number(record.fecha_ini_proyecto === null) ? false : true
+                }
+                icon={<EditOutlined />}
+                type="primary"
+              />
             </Link>
           </Tooltip>
         );

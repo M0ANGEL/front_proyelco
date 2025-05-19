@@ -26,8 +26,6 @@ import {
   getProyectos,
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
-import { ModalProcesoProyecto } from "../../components";
-import Item from "antd/es/list/Item";
 
 const { Text } = Typography;
 
@@ -39,8 +37,6 @@ export const ListConvenios = () => {
   const [searchValue, setSearchValue] = useState("");
 
   /* modal de proceso proyecto */
-  const [modalVisible, setModalVisible] = useState(false);
-  const [proyectoIdActivo, setProyectoIdActivo] = useState<number | null>(null);
 
   const location = useLocation();
 
@@ -55,7 +51,7 @@ export const ListConvenios = () => {
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,
-          nombre: convenio.descripcion_proyecto,
+          nombre: convenio.nombre,
           razon_soc: convenio.emp_nombre,
           estado: convenio.estado.toString(),
           fec_ini: convenio.fecha_inicio,
@@ -158,13 +154,22 @@ export const ListConvenios = () => {
                     </Link>
                   }
                   description={
-                    <Typography.Text
-                      className="razon-soc"
-                      strong
-                      style={{ color: "#FF8C00" }}
-                    >
-                      <span>CLIENTE: {item.razon_soc}</span>
-                    </Typography.Text>
+                    <>
+                      <Typography.Text
+                        className="razon-soc"
+                        strong
+                        style={{ color: "#FF8C00" }}
+                      >
+                        <span>CLIENTE: {item.razon_soc}</span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text
+                        className="nombre"
+                        strong
+                      >
+                        <span>ENCARGADO: {item.nombre}</span>
+                      </Typography.Text>
+                    </>
                   }
                 />
                 <div className="card-content">
@@ -198,20 +203,18 @@ export const ListConvenios = () => {
                   <div className="status-container">
                     {/* aqui abrir el modal del procesos del proyecto */}
                     <Tooltip title="Ver Proceso Proyecto">
-                      <ButtonTag
-                        onClick={() => {
-                          setProyectoIdActivo(item.key); 
-                          setModalVisible(true);
-                        }}
-                         style={{
-                          padding: 5,
-                          borderRadius: 8,
-                          width: 40,
-                        }}
-                        type="primary"
-                      >
-                        <AiOutlineExpandAlt />
-                      </ButtonTag>
+                      <Link to={`${location.pathname}/proceso/${item.key}`}>
+                        <ButtonTag
+                          style={{
+                            padding: 5,
+                            borderRadius: 8,
+                            width: 40,
+                          }}
+                          type="primary"
+                        >
+                          <AiOutlineExpandAlt />
+                        </ButtonTag>
+                      </Link>
                     </Tooltip>
                   </div>
                 </div>
@@ -245,15 +248,6 @@ export const ListConvenios = () => {
           }}
         />
       </StyledCard>
-
-      {/* modal */}
-      {modalVisible && proyectoIdActivo && (
-        <ModalProcesoProyecto
-          visible={modalVisible}
-          onClose={() => setModalVisible(false)}
-          proyectoId={proyectoIdActivo}
-        />
-      )}
     </>
   );
 };

@@ -15,7 +15,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Convenio } from "@/services/types";
-import { getProcesosProyectos, getTipoProyectos, getUsersProyecto } from "@/services/salud/conveniosTipoAPI";
+import {
+  getProcesosProyectos,
+  getTipoProyectos,
+  getUsersProyecto,
+} from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
   LoadingOutlined,
@@ -32,7 +36,10 @@ import {
   Tabs,
   notification,
 } from "antd";
-import { crearProyecto, getProyectoID } from "@/services/proyectos/proyectosAPI";
+import {
+  crearProyecto,
+  getProyectoID,
+} from "@/services/proyectos/proyectosAPI";
 
 const { Text } = Typography;
 
@@ -45,9 +52,7 @@ export const FormConvenios = () => {
     SelectProps["options"]
   >([]);
 
-    const [USuarios, selectUSuarios] = useState<
-    SelectProps["options"]
-  >([]);
+  const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
 
   const [convenio, setConvenio] = useState<Convenio>();
   const [loader, setLoader] = useState<boolean>(false);
@@ -95,7 +100,7 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-    //llamado de usuarios para asignar poryecto  77 
+  //llamado de usuarios para asignar poryecto  77
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
@@ -114,7 +119,6 @@ export const FormConvenios = () => {
       })
       .finally(() => setLoader(false));
   }, []);
-
 
   useEffect(() => {
     if (id) {
@@ -151,8 +155,6 @@ export const FormConvenios = () => {
         nit: null,
       });
     }
-
-    
   }, [id]);
 
   const onFinish = (data: any) => {
@@ -213,13 +215,13 @@ export const FormConvenios = () => {
               for (const error of errores) {
                 notification.open({
                   type: "error",
-                  message: error,
+                  message: data.message,
                 });
               }
             } else {
               notification.open({
                 type: "error",
-                message: response.data.message,
+                  message: "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
               });
             }
             setLoader(false);

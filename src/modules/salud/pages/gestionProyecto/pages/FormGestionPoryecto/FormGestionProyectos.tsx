@@ -8,9 +8,9 @@ import {
   notification,
   Row,
   Col,
-  Space,
   Modal,
   Badge,
+  Popconfirm,
 } from "antd";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -445,58 +445,100 @@ export const FormGestionProyectos = () => {
                                           : "Apartamento no habilitado"
                                       }
                                     >
-                                      <Button
-                                        style={{
-                                          minWidth: "40px",
-                                          height: "32px",
-                                          padding: "0 8px",
-                                          borderRadius: "6px",
-                                          border: "none",
-                                          background:
-                                            apt.estado === "2"
-                                              ? "linear-gradient(135deg, #4caf50, #66bb6a)"
-                                              : apt.estado === "1"
-                                              ? "linear-gradient(135deg, #1890ff, #36cfc9)"
-                                              : "linear-gradient(135deg, #f0f0f0, #d9d9d9)",
-                                          color: "white",
-                                          fontWeight: 500,
-                                          boxShadow:
-                                            "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                          display: "flex",
-                                          alignItems: "center",
-                                          justifyContent: "center",
-                                          cursor:
-                                            apt.estado === "1"
-                                              ? "pointer"
-                                              : "default",
-                                          opacity: apt.estado === "0" ? 0.6 : 1,
-                                          position: "relative",
-                                        }}
-                                        disabled={apt.estado !== "1"}
-                                        onClick={() =>
-                                          confirmarApt(
-                                            apt.id,
-                                            contenido.orden_proceso
-                                          )
-                                        }
-                                      >
-                                        {apt.consecutivo}
-                                        {necesitaValidacion &&
-                                          !estaValidado && (
-                                            <span
-                                              style={{
-                                                position: "absolute",
-                                                top: -2,
-                                                right: -2,
-                                                background: "#ff4d4f",
-                                                borderRadius: "50%",
-                                                width: 8,
-                                                height: 8,
-                                                border: "2px solid #fff",
-                                              }}
-                                            />
-                                          )}
-                                      </Button>
+                                      {apt.estado === "1" ? (
+                                        <Popconfirm
+                                          title="¿Estás seguro de que deseas confirmar este APT?"
+                                          onConfirm={() =>
+                                            confirmarApt(
+                                              apt.id,
+                                              contenido.orden_proceso
+                                            )
+                                          }
+                                          okText="Sí"
+                                          cancelText="No"
+                                        >
+                                          <Button
+                                            style={{
+                                              minWidth: "40px",
+                                              height: "32px",
+                                              padding: "0 8px",
+                                              borderRadius: "6px",
+                                              border: "none",
+                                              background:
+                                                "linear-gradient(135deg, #1890ff, #36cfc9)",
+                                              color: "white",
+                                              fontWeight: 500,
+                                              boxShadow:
+                                                "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                              display: "flex",
+                                              alignItems: "center",
+                                              justifyContent: "center",
+                                              cursor: "pointer",
+                                              position: "relative",
+                                            }}
+                                          >
+                                            {apt.consecutivo}
+                                            {necesitaValidacion &&
+                                              !estaValidado && (
+                                                <span
+                                                  style={{
+                                                    position: "absolute",
+                                                    top: -2,
+                                                    right: -2,
+                                                    background: "#ff4d4f",
+                                                    borderRadius: "50%",
+                                                    width: 8,
+                                                    height: 8,
+                                                    border: "2px solid #fff",
+                                                  }}
+                                                />
+                                              )}
+                                          </Button>
+                                        </Popconfirm>
+                                      ) : (
+                                        <Button
+                                          style={{
+                                            minWidth: "40px",
+                                            height: "32px",
+                                            padding: "0 8px",
+                                            borderRadius: "6px",
+                                            border: "none",
+                                            background:
+                                              apt.estado === "2"
+                                                ? "linear-gradient(135deg, #4caf50, #66bb6a)"
+                                                : "linear-gradient(135deg, #f0f0f0, #d9d9d9)",
+                                            color: "white",
+                                            fontWeight: 500,
+                                            boxShadow:
+                                              "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            cursor: "default",
+                                            opacity:
+                                              apt.estado === "0" ? 0.6 : 1,
+                                            position: "relative",
+                                          }}
+                                          disabled
+                                        >
+                                          {apt.consecutivo}
+                                          {necesitaValidacion &&
+                                            !estaValidado && (
+                                              <span
+                                                style={{
+                                                  position: "absolute",
+                                                  top: -2,
+                                                  right: -2,
+                                                  background: "#ff4d4f",
+                                                  borderRadius: "50%",
+                                                  width: 8,
+                                                  height: 8,
+                                                  border: "2px solid #fff",
+                                                }}
+                                              />
+                                            )}
+                                        </Button>
+                                      )}
                                     </Tooltip>
                                   ))}
                                 </div>
@@ -516,19 +558,14 @@ export const FormGestionProyectos = () => {
       {/* Modal de Validación */}
       <Modal
         visible={modalVisible}
-        title="Validar proceso"
+        title={"Validar proceso" + " " + procesoAValidar?.nombre_proceso}
         onOk={handleValidarProceso}
         onCancel={() => setModalVisible(false)}
         okText="Validar"
         cancelText="Cancelar"
       >
         <p>
-          ¿Deseas validar el proceso{" "}
-          <strong>{procesoAValidar?.nombre_proceso}</strong>?
-        </p>
-        <br />
-        <p>
-          ¿Debes confirmar esta validacion{" "}
+          ¿Confirmas que esta validacion se cumple:{" "}
           <strong>{procesoAValidar?.text_validacion}</strong>?
         </p>
       </Modal>
