@@ -1,2 +1,0 @@
-export {ListProcesos} from "./ListProcesos";
-

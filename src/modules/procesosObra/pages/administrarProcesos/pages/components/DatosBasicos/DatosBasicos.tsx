@@ -18,7 +18,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
       await getTipoProyectos().then(({ data: { data } }) => {
         setselectTipoProyecto(
           data.map((item) => ({
-            value: item.id,
+            value: item.id.toString(),
             label: `(${item.id}) ${item.nombre_tipo}`,
           }))
         );
@@ -32,18 +32,17 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
   useEffect(() => {
     //si tenemos datos en categoria agregamos a metho los datos
     if (TkCategoria) {
-      methods.setValue("proceso_nombre", TkCategoria?.emp_nombre);
-      methods.setValue("nit", TkCategoria?.nit);
-    } else {
-      /*  methods.setValue('estado', '1') */
-    }
+      methods.setValue("tipoPoryecto_id", TkCategoria?.tipoPoryecto_id.toString());
+      methods.setValue("nombre_proceso", TkCategoria?.nombre_proceso);
+      
+    } 
   }, [TkCategoria]);
   return (
     <Row gutter={24}>
       {/* Tipo Proyecto */}
       <Col xs={24} sm={12}>
         <Controller
-          name="tipoProyecto_id"
+          name="tipoPoryecto_id"
           control={methods.control}
           rules={{
             required: {
@@ -68,7 +67,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
       {/* nombre del proceso */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
-          name="proceso_nombre"
+          name="nombre_proceso"
           control={methods.control}
           rules={{
             required: {

@@ -19,6 +19,7 @@ export const ListSubmenu = () => {
   useEffect(() => {
     fetchSubMenus();
   }, []);
+  const [loadin, setLoadin] = useState(true)
 
   const fetchSubMenus = () => {
     getSubMenus().then(({ data }) => {
@@ -31,6 +32,7 @@ export const ListSubmenu = () => {
       });
       setInitialData(submenus);
       setDataSource(submenus);
+      setLoadin(false);
     });
   };
 
@@ -94,7 +96,7 @@ export const ListSubmenu = () => {
           size="small"
           dataSource={dataSource == null ? initialData : dataSource}
           columns={columns}
-          loading={initialData.length == 0 ? true : false}
+          loading={loadin}
           pagination={{
             total: initialData?.length,
             showSizeChanger: true,

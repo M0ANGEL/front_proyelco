@@ -71,7 +71,7 @@ export const ListUsuarios = () => {
           username: user.username,
           rol: user.rol,
           last_login: dayjs(user?.last_login).format("DD-MM-YYYY HH:mm"), //cambio del formato de la hora
-          estado: user.estado,
+          estado: user.estado.toString(),
         };
       });
       setLoadingRow([]);

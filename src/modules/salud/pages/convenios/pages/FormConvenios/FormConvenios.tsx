@@ -6,13 +6,19 @@ import {
   getConvenio,
   updateConvenio,
 } from "@/services/salud/conveniosAPI";
-import { DatosBasicos, DatosFacturacion } from "../../components";
+import {
+  DatosBasicos,
+  DatosConfigProyecto,
+  DatosFacturacion,
+} from "../../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Convenio } from "@/services/types";
 import {
+  getProcesosProyectos,
   getTipoProyectos,
+  getUsersProyecto,
 } from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
@@ -30,15 +36,24 @@ import {
   Tabs,
   notification,
 } from "antd";
+import {
+  crearProyecto,
+  getProyectoID,
+} from "@/services/proyectos/proyectosAPI";
 
 const { Text } = Typography;
 
 export const FormConvenios = () => {
-
   const [selectTipoProyecto, setselectTipoProyecto] = useState<
     SelectProps["options"]
   >([]);
 
+  const [selectTipoProcesos, setselectTipoProcesos] = useState<
+    SelectProps["options"]
+  >([]);
+
+  const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
+  const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
 
   const [convenio, setConvenio] = useState<Convenio>();
   const [loader, setLoader] = useState<boolean>(false);
@@ -46,6 +61,7 @@ export const FormConvenios = () => {
   const navigate = useNavigate();
   const control = useForm();
 
+  //llamado a tipo de proyectps
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
@@ -65,18 +81,85 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
+  //llamado a procesos proyectps
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getProcesosProyectos().then(({ data: { data } }) => {
+        setselectTipoProcesos(
+          data.map((item) => ({
+            value: item.id,
+            label: item.nombre_proceso,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
+  //llamado de usuarios para asignar poryecto
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getUsersProyecto().then(({ data: { data } }) => {
+        selectUSuarios(
+          data.map((item) => ({
+            value: item.id,
+            label: item.nombre,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
+  // //llamado de usuarios para asignar poryecto
+  // useEffect(() => {
+  //   setLoader(true);
+  //   const fetchSelects = async () => {
+  //     await getUsersProyecto().then(({ data: { data } }) => {
+  //       selectIngeniero(
+  //         data.map((item) => ({
+  //           value: item.id,
+  //           label: item.nombre,
+  //         }))
+  //       );
+  //     });
+  //   };
+  //   fetchSelects()
+  //     .catch((error) => {
+  //       console.error(error);
+  //     })
+  //     .finally(() => setLoader(false));
+  // }, []);
+
   useEffect(() => {
     if (id) {
-      getConvenio(id).then(({ data: { data } }) => {
+      getProyectoID(id).then(({ data: { data } }) => {
         setConvenio(data);
         control.reset({
-          estado: parseInt(data.estado),
-          bloques: JSON.parse(data.bodegas),
-          codigo_contrato: data.codigo_contrato,
-          emp_nombre: data.emp_nombre,
-          descripcion: data.descripcion,
+          // tipoProyecto_id: data.tipoProyecto_id.toString(),
+          tipoProyecto_id: parseInt(data.tipoProyecto_id),
+
+          cliente_id: data.cliente_id.toString(),
+          usuario_crea_id: data.usuario_crea_id.toString(),
+          descripcion_proyecto: data.descripcion_proyecto,
           fecha_inicio: dayjs(data.fecha_inicio),
+          codigo_contrato: data.codigo_contrato,
           torres: data.torres,
+          cant_pisos: data.cant_pisos,
+          apt: data.apt,
+          estado: data.estado.toString(),
+          bloques: JSON.parse(data.bodegas),
+          emp_nombre: data.emp_nombre,
           nit: data.nit,
         });
       });
@@ -101,7 +184,7 @@ export const FormConvenios = () => {
       updateConvenio(data, id)
         .then(() => {
           notification.success({
-            message: "Convenio actualizado con éxito!",
+            message: "Proyecto actualizado con éxito!",
           });
           setTimeout(() => {
             navigate("..");
@@ -132,10 +215,10 @@ export const FormConvenios = () => {
           }
         );
     } else {
-      crearConvenio(data)
+      crearProyecto(data)
         .then(() => {
           notification.success({
-            message: "Convenio creado con éxito!",
+            message: "Proyecto creado con éxito!",
           });
           setTimeout(() => {
             navigate(-1);
@@ -153,13 +236,14 @@ export const FormConvenios = () => {
               for (const error of errores) {
                 notification.open({
                   type: "error",
-                  message: error,
+                  message: data.message,
                 });
               }
             } else {
               notification.open({
                 type: "error",
-                message: response.data.message,
+                message:
+                  "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
               });
             }
             setLoader(false);
@@ -242,10 +326,7 @@ export const FormConvenios = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: (
-                      <DatosBasicos
-                      />
-                    ),
+                    children: <DatosBasicos />,
                   },
                   {
                     key: "2",
@@ -264,7 +345,8 @@ export const FormConvenios = () => {
                     ),
                     children: (
                       <DatosFacturacion
-                      selectTipoProyecto={selectTipoProyecto}
+                        selectTipoProyecto={selectTipoProyecto}
+                        selectUSuarios={USuarios}
                       />
                     ),
                     forceRender: true,
@@ -285,8 +367,8 @@ export const FormConvenios = () => {
                       </Space>
                     ),
                     children: (
-                      <DatosFacturacion
-                        selectTipoProyecto={selectTipoProyecto}
+                      <DatosConfigProyecto
+                        selectTipoProcesos={selectTipoProcesos}
                       />
                     ),
                     forceRender: true,

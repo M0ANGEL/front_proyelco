@@ -5644,6 +5644,7 @@ export interface ResponseProcesosProyectos {
 export interface ProcesosProyectos {
   id: number;
   tipoPoryecto_id: string;
+  nombre_tipo: string;
   estado: string;
   nombre_proceso: number;
   id_user: string;
@@ -5652,3 +5653,46 @@ export interface ProcesosProyectos {
   updated_at: string;
 }
 
+/* type de proyectos */
+export interface ResponseProyectos {
+  data: {
+    status: string;
+    data: Proyectos[];
+  };
+}
+export interface Proyectos {
+  id: number;
+  tipoPoryecto_id: string;
+  cliente_id: string;
+  usuario_crea_id: string;
+  encargado_id: string;
+  descripcion_proyecto: string;
+  fecha_inicio: string;
+  codigo_proyecto: string;
+  torres: string;
+  cant_pisos: string;
+  apt: string;
+  pisoCambiarProceso: string;
+  estado: string;
+  fecha_ini_proyecto: string;
+  nombre_tipo: string;
+  emp_nombre: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+/* info proyectos dashboard */
+export interface ResponseInfoProyectosDash {
+  data: {
+    status: string;
+    data: InfoProyectosDash[];
+  };
+}
+export interface InfoProyectosDash {
+  proyectosActivos: string;
+  proyectosInactivos: string;
+  proyectosTerminados: string;
+  clientesInactivos: string;
+  clientesActivos: string;
+}

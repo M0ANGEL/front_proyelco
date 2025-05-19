@@ -1,15 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "../client";
-import { ResponseStatistics, Statistics } from "../types";
+import { ResponseInfoProyectosDash } from "../types";
 
-export const getStatistics = async (
-  bodega_id: string,
-  empresa_id: string
-): Promise<ResponseStatistics> => {
-  return await client.get<{
-    data: Statistics;
-    status: string;
-  }>(`statistics?bodega=${bodega_id}&empresa=${empresa_id}`, {
+//llamar todas los clientes usaremos Am = para identificar que es de adminisracion
+export const infoCartDash = async (): Promise<ResponseInfoProyectosDash> => {
+  return await client.get("info-dashboard-card", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+

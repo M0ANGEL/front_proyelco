@@ -2,25 +2,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
-  getBodegasSebthi,
   validarUsuario,
 } from "@/services/maestras/maestrasAPI";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
-import { getAliados } from "@/services/aliados/aliadosAPI";
 import { useEffect, useState } from "react";
 import { Usuario } from "../../types";
 import {
-  SelectProps,
+  // SelectProps,
   Typography,
   Select,
   Input,
   Col,
   Row,
 } from "antd";
-import { getFuentes } from "@/services/maestras/fuentesAPI";
-import { getTkProcesos } from "@/services/tickets/procesosAPI";
-import { getPerfilesHorarios } from "@/services/horarios-sistema/horariosAPI";
+// import { getTkProcesos } from "@/services/tickets/procesosAPI";
+// import { getPerfilesHorarios } from "@/services/horarios-sistema/horariosAPI";
 
 const { Text } = Typography;
 
@@ -33,61 +30,41 @@ export const DatosBasicos = ({ usuario }: Props) => {
   const [timer, setTimer] = useState<any>(null);
   const methods = useFormContext();
   //procesos
-  const [selectProcesos, setSelectProcesos] = useState<SelectProps["options"]>(
-    []
-  );
+  // const [selectProcesos, setSelectProcesos] = useState<SelectProps["options"]>(
+  //   []
+  // );
   //perfiles hora
-  const [selectPerfilesHorario, setSelectPerfilesHorario] = useState<
-    SelectProps["options"]
-  >([]);
+  // const [selectPerfilesHorario, setSelectPerfilesHorario] = useState<
+  //   SelectProps["options"]
+  // >([]);
 
   //llamado a procesos
-  useEffect(() => {
-    getTkProcesos().then(({ data: { data } }) => {
-      const Procesos = data.map((item) => ({
-        label: item.nombre_proceso,
-        value: item.id,
-      }));
-      setSelectProcesos(Procesos);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getTkProcesos().then(({ data: { data } }) => {
+  //     const Procesos = data.map((item) => ({
+  //       label: item.nombre_proceso,
+  //       value: item.id,
+  //     }));
+  //     setSelectProcesos(Procesos);
+  //   });
+  // }, []);
 
   /* llamado de perfiles asignar horario */
-  useEffect(() => {
-    getPerfilesHorarios().then(({ data: { data } }) => {
-      const perfiles = data.map((item) => ({
-        label: item.nombre_perfil,
-        value: item.id,
-      }));
-      setSelectPerfilesHorario(perfiles);
-    });
-  }, []);
+  // useEffect(() => {
+  //   getPerfilesHorarios().then(({ data: { data } }) => {
+  //     const perfiles = data.map((item) => ({
+  //       label: item.nombre_perfil,
+  //       value: item.id,
+  //     }));
+  //     setSelectPerfilesHorario(perfiles);
+  //   });
+  // }, []);
 
 
   useEffect(() => {
     methods.setValue("rol", methods.watch("rol"));
   }, [methods.watch("rol")]);
 
-  useEffect(() => {
-    getBodegasSebthi().then(({ data: { data } }) => {
-      setSelectBodegas(
-        data.map((bodega) => ({ value: bodega.id, label: bodega.bod_nombre }))
-      );
-    });
-    getAliados().then(({ data: { data } }) => {
-      setSelectAliado(
-        data.map((aliado) => ({ value: aliado.id, label: aliado.aldo_nombre }))
-      );
-    });
-    getFuentes().then(({ data: { data } }) => {
-      setSelectFuentes(
-        data.map((fuente) => ({
-          value: fuente.id.toString(),
-          label: `${fuente.prefijo} - ${fuente.descripcion}`,
-        }))
-      );
-    });
-  }, []);
 
   useEffect(() => {
     usuario?.user ? setPhoneValue(usuario.user.telefono) : "";
@@ -103,7 +80,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: usuario.user.username,
             password: "",
             correo: usuario.user.correo,
-            proceso_id: usuario.user.proceso_id,
+            // proceso_id: usuario.user.proceso_id,
             // has_limite_reportes: parseInt(usuario.user.has_limite_reportes),
             moderador_tickets: usuario.user.moderador_tickets,
             horario_id: usuario.user.horario_id,
@@ -117,15 +94,12 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: null,
             password: "",
             correo: null,
-            proceso_id: null,
+            // proceso_id: null,
             moderador_tickets: 0,
             horario_id: [],
           }
     );
-
-    if (usuario && usuario.aliado.length > 0) {
-      methods.setValue("aliado_id", usuario.aliado[0].id_aliado);
-    }
+   
   }, [usuario]);
 
   const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -267,7 +241,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
                 </StyledFormItem>
               )}
             />
-            <Controller
+            {/* <Controller
               name="proceso_id"
               control={methods.control}
               rules={{
@@ -302,9 +276,9 @@ export const DatosBasicos = ({ usuario }: Props) => {
                   <Text type="danger">{error?.message}</Text>
                 </StyledFormItem>
               )}
-            />
+            /> */}
           </Col>
-          <Col xs={24} sm={20} style={{ width: "100%" }}>
+          {/* <Col xs={24} sm={20} style={{ width: "100%" }}>
             <Controller
               name="horario_id"
               control={methods.control}
@@ -339,7 +313,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
                 </StyledFormItem>
               )}
             />
-          </Col>
+          </Col> */}
         </Row>
       </Col>
       <Col xs={24} md={12}>

@@ -97,46 +97,6 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
     });
   };
 
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log(user);
-      
-  //     const perfil = user.perfiles.find(
-  //       (perfil) => perfil.id_empresa === getSessionVariable(KEY_EMPRESA)
-  //     );
-  //     const data = perfil!.menu.map((modulo) => {
-  //       if (modulo.children) {
-  //         const children = modulo.children.map((menu) => {
-  //           if (menu.children) {
-  //             const children = menu.children.map((submenu) => {
-  //               if (submenu.children) {
-  //                 return submenu;
-  //               } else {
-  //                 return { ...submenu, onClick: onMenuClick };
-  //               }
-  //             });
-  //             return { ...menu, children };
-  //           } else {
-  //             return { ...menu, onClick: onMenuClick };
-  //           }
-  //         });
-  //         return {
-  //           ...modulo,
-  //           children,
-  //           icon: moduleIcons.find(({ cod }) => cod == modulo.cod_modulo)?.icon,
-  //         };
-  //       } else {
-  //         return {
-  //           ...modulo,
-  //           onClick: onMenuClick,
-  //           icon: moduleIcons.find(({ cod }) => cod == modulo.cod_modulo)?.icon,
-  //         };
-  //       }
-  //     });
-  //     setItems(data);
-  //   }
-  // }, [user]);
-
   useEffect(() => {
     if (!user) {
       setItems([]);

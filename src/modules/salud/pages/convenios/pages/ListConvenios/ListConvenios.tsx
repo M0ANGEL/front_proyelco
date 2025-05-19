@@ -1,39 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { FaFileDownload } from "react-icons/fa";
 import { useState, useEffect } from "react";
-import fileDownload from "js-file-download";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
-import {
-  getReportConvenios,
-  setStatusConvenio,
-  getConvenios,
-} from "@/services/salud/conveniosAPI";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
 import "./CustomList.css";
-import {
-  CheckCircleFilled,
-  LoadingOutlined,
-  SyncOutlined,
-  EditFilled,
-} from "@ant-design/icons";
+import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
   Popconfirm,
   Typography,
   Tooltip,
   Button,
-  Switch,
   Input,
   Card,
   List,
-  Spin,
   Col,
   Row,
   Tag,
+  Switch,
 } from "antd";
+import {
+  DeleteProyecto,
+  getProyectos,
+} from "@/services/proyectos/proyectosAPI";
+import { AiOutlineExpandAlt } from "react-icons/ai";
 
 const { Text } = Typography;
 
@@ -43,6 +35,9 @@ export const ListConvenios = () => {
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
   const [loadingRep, setLoadingRep] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
+
+  /* modal de proceso proyecto */
+
   const location = useLocation();
 
   useEffect(() => {
@@ -51,15 +46,15 @@ export const ListConvenios = () => {
 
   const fetchConvenios = () => {
     setLoadingRep(true);
-    getConvenios().then(({ data: { data } }) => {
-      console.log(data);
+    getProyectos().then(({ data: { data } }) => {
+      // console.log(data);
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,
-          nombre: convenio.descripcion,
-          razon_soc: convenio.razon_soc,
-          estado: convenio.estado,
-          fec_ini: convenio.fec_ini,
+          nombre: convenio.nombre,
+          razon_soc: convenio.emp_nombre,
+          estado: convenio.estado.toString(),
+          fec_ini: convenio.fecha_inicio,
           fec_fin: convenio.fec_fin,
         };
       });
@@ -71,7 +66,7 @@ export const ListConvenios = () => {
 
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    setStatusConvenio(id)
+    DeleteProyecto(id)
       .then(() => {
         fetchConvenios();
       })
@@ -108,7 +103,7 @@ export const ListConvenios = () => {
   return (
     <>
       <StyledCard
-        title={"Lista de convenios"}
+        title={"Lista de Proyectos"}
         extra={
           <Link to={`${location.pathname}/create`}>
             <Button type="primary">Crear</Button>
@@ -121,31 +116,6 @@ export const ListConvenios = () => {
               <Input placeholder="Buscar" onChange={handleSearch} />
             </SearchBar>
           </Col>
-          {/* <Col xs={24} sm={6} style={{ marginBottom: 20 }}>
-            <Spin
-              spinning={loadingRep}
-              indicator={<LoadingOutlined spin style={{ color: "white" }} />}
-            >
-              <Button
-                type="primary"
-                onClick={() => {
-                  setLoadingRep(true);
-                  getReportConvenios()
-                    .then(({ data }) => {
-                      fileDownload(data, "ReporteConvenios.xlsx");
-                    })
-                    .finally(() => {
-                      setLoadingRep(false);
-                    });
-                }}
-                icon={<FaFileDownload />}
-                block
-                style={{ background: "#5fb15f" }}
-              >
-                Informe
-              </Button>
-            </Spin>
-          </Col>
           <Col xs={24} sm={6} style={{ marginBottom: 20 }}>
             <Switch
               checkedChildren="Mostrar Activos"
@@ -153,7 +123,7 @@ export const ListConvenios = () => {
               checked={showActiveConvenios}
               onChange={toggleConvenioList}
             />
-          </Col> */}
+          </Col>
         </Row>
         <List
           grid={{
@@ -184,13 +154,22 @@ export const ListConvenios = () => {
                     </Link>
                   }
                   description={
-                    <Typography.Text
-                      className="razon-soc"
-                      strong
-                      style={{ color: "#FF8C00" }}
-                    >
-                      {item.razon_soc}
-                    </Typography.Text>
+                    <>
+                      <Typography.Text
+                        className="razon-soc"
+                        strong
+                        style={{ color: "#FF8C00" }}
+                      >
+                        <span>CLIENTE: {item.razon_soc}</span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text
+                        className="nombre"
+                        strong
+                      >
+                        <span>ENCARGADO: {item.nombre}</span>
+                      </Typography.Text>
+                    </>
                   }
                 />
                 <div className="card-content">
@@ -221,6 +200,23 @@ export const ListConvenios = () => {
                       </ButtonTag>
                     </Popconfirm>
                   </div>
+                  <div className="status-container">
+                    {/* aqui abrir el modal del procesos del proyecto */}
+                    <Tooltip title="Ver Proceso Proyecto">
+                      <Link to={`${location.pathname}/proceso/${item.key}`}>
+                        <ButtonTag
+                          style={{
+                            padding: 5,
+                            borderRadius: 8,
+                            width: 40,
+                          }}
+                          type="primary"
+                        >
+                          <AiOutlineExpandAlt />
+                        </ButtonTag>
+                      </Link>
+                    </Tooltip>
+                  </div>
                 </div>
                 <div className="card-footer">
                   <Typography.Text type="secondary">
@@ -228,10 +224,12 @@ export const ListConvenios = () => {
                     <br></br>
                     {item.fec_ini}
                   </Typography.Text>
+
+                  {/* aqui traer calculo del procentaje del proyecto */}
                   <Typography.Text type="secondary">
-                    <span className="footer-label">Fecha de fin:</span>{" "}
+                    <span className="footer-label">Porcentaje Proyecto</span>{" "}
                     <br></br>
-                    {item.fec_fin}
+                    {/* {item.fec_fin} */} 10%
                   </Typography.Text>
                 </div>
               </Card>

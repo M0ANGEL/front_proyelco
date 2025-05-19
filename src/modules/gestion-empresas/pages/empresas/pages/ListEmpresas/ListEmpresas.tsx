@@ -30,7 +30,7 @@ export const ListEmpresas = () => {
           nombre: empresa.emp_nombre,
           nit: empresa.nit,
           direccion: empresa.direccion,
-          estado: empresa.estado,
+          estado: empresa.estado.toString(),
         };
       });
       setInitialData(empresas);

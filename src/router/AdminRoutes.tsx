@@ -3,7 +3,6 @@ import { GestionEmpresasRoutes } from "@/modules/gestion-empresas";
 import { RoutesWithNotFound } from "@/modules/common/components";
 import { AdminUsuariosRoutes } from "@/modules/admin-usuarios";
 import { AdminTercerosRoutes } from "@/modules/admin-terceros";
-import { AdminBodegasRoutes } from "@/modules/admin-bodegas";
 import { ConfigSisRoutes } from "@/modules/config-sistema";
 import { LogSistemaRoutes } from "@/modules/logs-sistema";
 import { DashboardLayout } from "@/modules/common/layout";
@@ -31,10 +30,6 @@ export const AdminRoutes = () => {
             <Route
               path={"configuraciondelsistema/*"}
               element={<ConfigSisRoutes />}
-            />
-            <Route
-              path={"administraciondebodegas/*"}
-              element={<AdminBodegasRoutes />}
             />
             <Route path={"proyectos/*"} element={<SaludRoutes />} />
             <Route path={"terceros/*"} element={<AdminTercerosRoutes />} />

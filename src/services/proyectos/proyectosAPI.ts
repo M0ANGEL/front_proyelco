@@ -9,16 +9,24 @@ export const getProcesosProyecto = async (): Promise<ResponseProcesosProyectos> 
   });
 };
 
+//llamar todas los proyectos get
+export const getProyectos = async (): Promise<ResponseProcesosProyectos> => {
+  return await client.get("administracion-proyectos", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
 //crear la categoria
-export const crearAmCliente = async (data: any): Promise<any> => {
-  return await client.post<any>("admin-clientes", data, {
+export const crearProyecto = async (data: any): Promise<any> => {
+  return await client.post<any>("administracion-proyectos", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
 //ver de la categoria por id
-export const getAmcliente = async (id: React.Key): Promise<any> => {
-  return await client.get<any>(`admin-clientes/${id}`, {
+export const getProyectoID = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`administracion-proyectos/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
@@ -31,8 +39,15 @@ export const updateAmCliente = async (data: any, id: any): Promise<any> => {
 };
 
 //cambiar el estado de la categoria 
-export const DeleteAmCliente = async ( id: any): Promise<any> => {
-  return await client.delete<any>(`admin-clientes/${id}`, {
+export const DeleteProyecto = async ( id: any): Promise<any> => {
+  return await client.delete<any>(`administracion-proyectos/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//ver de la categoria por id
+export const getProyectoDetalle = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`administracion-proyectos-detalle/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { getPerfiles } from "@/services/maestras/perfilesAPI";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -38,13 +37,15 @@ export const DatosPerfiles = ({ usuario }: Props) => {
     getPerfiles()
       .then(({ data }) => {
         let perfiles: DataType[] = [];
-        console.log(data);
-        
 
-        if (usuario) {
-          const perfilesUsu = usuario.perfiles.map((perfil) => {
+        if (usuario !== undefined) {
+          const perfilesUsu = usuario?.perfiles?.map((perfil) => {
             const perfilesEmp = data
-              .filter((value) => value.id_empresa === perfil.perfil.id_empresa && value.estado == "1" )
+              .filter(
+                (value) =>
+                  value.id_empresa === perfil.perfil.id_empresa &&
+                  value.estado == "1"
+              )
               .map((value) => ({
                 value: value.id.toString(),
                 label: value.nom_perfil,
@@ -67,7 +68,10 @@ export const DatosPerfiles = ({ usuario }: Props) => {
               .getValues("empresas")
               .map((empresa: string) => {
                 const perfilesEmp = data
-                  .filter((perfil) => perfil.id_empresa === empresa && perfil.estado=="1")
+                  .filter(
+                    (perfil) =>
+                      perfil.id_empresa === empresa && perfil.estado == "1"
+                  )
                   .map((perfil) => ({
                     value: perfil.id.toString(),
                     label: perfil.nom_perfil,
@@ -82,7 +86,7 @@ export const DatosPerfiles = ({ usuario }: Props) => {
               });
           }
 
-          const valoresNoRepetidos = perfilesUsu.filter(
+          const valoresNoRepetidos = perfilesUsu?.filter(
             (perfilUsu: DataType) => {
               return !perfilesForm.some(
                 (perfilForm: DataType) =>
@@ -91,7 +95,7 @@ export const DatosPerfiles = ({ usuario }: Props) => {
             }
           );
 
-          const valoresRepetido = perfilesUsu.filter((perfilUsu: DataType) => {
+          const valoresRepetido = perfilesUsu?.filter((perfilUsu: DataType) => {
             return perfilesForm.some(
               (perfilForm: DataType) =>
                 perfilForm.id_empresa === perfilUsu.id_empresa
@@ -100,14 +104,14 @@ export const DatosPerfiles = ({ usuario }: Props) => {
 
           const valoresNoRepetidosArreglo2 = perfilesForm.filter(
             (perfilForm: DataType) => {
-              return !perfilesUsu.some(
+              return !perfilesUsu?.some(
                 (perfilUsu: DataType) =>
                   perfilUsu.id_empresa === perfilForm.id_empresa
               );
             }
           );
 
-          perfiles = valoresNoRepetidos.concat(
+          perfiles = valoresNoRepetidos?.concat(
             valoresRepetido?.concat(valoresNoRepetidosArreglo2)
           );
           console.log(
@@ -118,12 +122,16 @@ export const DatosPerfiles = ({ usuario }: Props) => {
         } else {
           perfiles = methods.getValues("empresas").map((empresa: string) => {
             const perfilesEmp = data
-              .filter((perfil) => perfil.id_empresa === empresa && perfil.estado=="1")
+              .filter(
+                (perfil) =>
+                  perfil.id_empresa === empresa && perfil.estado == "1"
+              )
               .map((perfil) => ({
                 value: perfil.id.toString(),
                 label: perfil.nom_perfil,
                 data: perfil,
               }));
+
             return {
               id_empresa: empresa,
               nom_empresa: perfilesEmp.at(0)?.data.empresa.emp_nombre,
@@ -148,7 +156,7 @@ export const DatosPerfiles = ({ usuario }: Props) => {
           placement: "bottomRight",
         });
       });
-  }, [usuario, methods.watch("empresas"), methods.watch("bodegas")]);
+  }, [usuario, methods.watch("empresas")]);
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { Row, Col,notification } from "antd";
+import { Row, Col, notification, Image } from "antd";
 import { LoginCard, LoginLayout, LoginTitle } from "./styled";
 import { useState } from "react";
 import { Notification } from "./types";
@@ -21,15 +21,19 @@ export const LoginPage = () => {
       duration: duration,
     });
   };
-  
+
   return (
     <>
       {contextHolder}
       <LoginLayout>
         <Row gutter={[16, 16]}>
           <Col md={12} xs={24}>
-            <LoginCard>
-              <LoginTitle level={2}>PROYELCO</LoginTitle>
+            <LoginCard
+              title={
+                <Image src="./logo_dash1.png" preview={false} width={300}  style={{marginBottom:20}}/>
+              }
+            >
+              {/* <LoginTitle level={2}>PROYELCO</LoginTitle> */}
               <FormLogin
                 onPushNotification={(data: Notification) =>
                   pushNotification(data)

@@ -11,9 +11,7 @@ import { useEffect, useState } from "react";
 import {
   updateUsuario,
   crearUsuario,
-  getEmpresas,
   getUsuario,
-  getBodegas,
 } from "@/services/maestras/maestrasAPI";
 import { Usuario } from "../../types";
 import {
@@ -43,10 +41,8 @@ export const FormUsuarios = () => {
   const control = useForm({
     defaultValues: {
       empresas: [],
-      bodegas: [],
       cargos: [],
       perfiles: [],
-      documentos: [],
     },
   });
 
@@ -83,7 +79,6 @@ export const FormUsuarios = () => {
   const onFinish: SubmitHandler<any> = async (data) => {
     data = transformToUpperCase(data, ["nombre"]);
     setLoaderSave(true);
-    data.has_bodegas = data.has_bodegas ? 1 : 0;
     if (usuario) {
       updateUsuario(data, id)
         .then(({ data }) => {
@@ -118,10 +113,7 @@ export const FormUsuarios = () => {
             });
             setLoaderSave(false);
           });
-      } else {
-        setLoaderSave(false);
-        control.setError("bodegas", { message: "Bodegas es requerido" });
-      }
+      } 
     }
   };
 

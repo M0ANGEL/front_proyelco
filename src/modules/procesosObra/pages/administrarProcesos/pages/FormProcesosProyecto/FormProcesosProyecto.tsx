@@ -20,7 +20,7 @@ import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { AmClientes } from "@/services/types";
 import { DatosBasicos } from "../components/DatosBasicos";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
-import { crearAmCliente, getAmcliente, updateAmCliente } from "@/services/administraClientes/AdministrarClientesApi";
+import { crearProcePro, getProcesoProye, updateProcesoProyec } from "@/services/proyectos/procesosProyectoAPI";
 
 const { Text } = Typography;
 
@@ -36,7 +36,7 @@ export const FormProcesosProyecto = () => {
   useEffect(() => {
     //si hay un id ejecutamos una consulta para traer datos de esa categoria
     if (id) {
-      getAmcliente(id).then(({ data }) => {
+      getProcesoProye(id).then(({ data }) => {
         setCategoria(data);
         setLoaderSave(false);
       });
@@ -65,7 +65,7 @@ export const FormProcesosProyecto = () => {
     setLoaderSave(true);
 
     if (categoria) {
-      updateAmCliente(data, id)
+      updateProcesoProyec(data, id)
         .then(() => {
           pushNotification({ title: "CLiente actualizado con éxito!" });
           setTimeout(() => {
@@ -95,9 +95,9 @@ export const FormProcesosProyecto = () => {
           setLoaderSave(false);
         });
     } else {
-      crearAmCliente(data)
+      crearProcePro(data)
         .then(() => {
-          pushNotification({ title: "Cliente creado con éxito!" });
+          pushNotification({ title: "Proceso creado con éxito!" });
           setTimeout(() => {
             navigate(-1);
           }, 800);

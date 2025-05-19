@@ -36,7 +36,7 @@ export const ListPerfiles = () => {
           key: perfil.id,
           nombre: perfil.nom_perfil,
           descripcion: perfil.desc_perfil,
-          estado: perfil.estado,
+          estado: perfil.estado.toString(),
         };
       });
       setInitialData(perfiles);

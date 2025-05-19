@@ -30,7 +30,7 @@ export const ListModulo = () => {
           cod_modulo: modulo.cod_modulo,
           nom_modulo: modulo.nom_modulo,
           desc_modulo: modulo.desc_modulo,
-          estado: modulo.estado,
+          estado: modulo.estado.toString(),
         };
       });
       setInitialData(modulos);

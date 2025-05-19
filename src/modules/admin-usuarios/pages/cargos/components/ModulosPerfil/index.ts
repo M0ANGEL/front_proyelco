@@ -1,0 +1,1 @@
+export { ModulosPerfil } from "./ModulosPerfil";

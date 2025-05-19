@@ -19,7 +19,7 @@ export const DatosBasicos = ({ modulo }: Props) => {
             cod_modulo: modulo.cod_modulo,
             nom_modulo: modulo.nom_modulo,
             desc_modulo: modulo.desc_modulo,
-            estado: modulo.estado,
+            estado: modulo.estado.toString(),
           }
         : {
             cod_modulo: null,
