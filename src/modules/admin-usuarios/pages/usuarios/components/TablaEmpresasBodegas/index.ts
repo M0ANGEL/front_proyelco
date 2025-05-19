@@ -1,1 +1,0 @@
-export { TablaEmpresasBodegas } from "./TablaEmpresasBodegas";

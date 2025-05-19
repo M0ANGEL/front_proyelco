@@ -53,6 +53,7 @@ export const FormConvenios = () => {
   >([]);
 
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
+  const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
 
   const [convenio, setConvenio] = useState<Convenio>();
   const [loader, setLoader] = useState<boolean>(false);
@@ -100,7 +101,7 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  //llamado de usuarios para asignar poryecto  77
+  //llamado de usuarios para asignar poryecto
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
@@ -119,6 +120,26 @@ export const FormConvenios = () => {
       })
       .finally(() => setLoader(false));
   }, []);
+
+  // //llamado de usuarios para asignar poryecto
+  // useEffect(() => {
+  //   setLoader(true);
+  //   const fetchSelects = async () => {
+  //     await getUsersProyecto().then(({ data: { data } }) => {
+  //       selectIngeniero(
+  //         data.map((item) => ({
+  //           value: item.id,
+  //           label: item.nombre,
+  //         }))
+  //       );
+  //     });
+  //   };
+  //   fetchSelects()
+  //     .catch((error) => {
+  //       console.error(error);
+  //     })
+  //     .finally(() => setLoader(false));
+  // }, []);
 
   useEffect(() => {
     if (id) {
@@ -221,7 +242,8 @@ export const FormConvenios = () => {
             } else {
               notification.open({
                 type: "error",
-                  message: "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
+                message:
+                  "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
               });
             }
             setLoader(false);

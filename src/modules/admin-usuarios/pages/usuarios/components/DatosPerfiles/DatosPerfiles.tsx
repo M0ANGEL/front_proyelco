@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { getPerfiles } from "@/services/maestras/perfilesAPI";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -38,7 +37,6 @@ export const DatosPerfiles = ({ usuario }: Props) => {
     getPerfiles()
       .then(({ data }) => {
         let perfiles: DataType[] = [];
-        console.log(data);
 
         if (usuario !== undefined) {
           const perfilesUsu = usuario?.perfiles?.map((perfil) => {
@@ -122,7 +120,6 @@ export const DatosPerfiles = ({ usuario }: Props) => {
             valoresNoRepetidosArreglo2
           );
         } else {
-
           perfiles = methods.getValues("empresas").map((empresa: string) => {
             const perfilesEmp = data
               .filter(

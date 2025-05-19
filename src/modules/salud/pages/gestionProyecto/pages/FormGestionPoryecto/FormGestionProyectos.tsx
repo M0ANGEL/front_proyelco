@@ -13,7 +13,7 @@ import {
   Popconfirm,
 } from "antd";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import {
   confirmarAptGestion,
   getProyectoDetalleGestion,
@@ -21,6 +21,8 @@ import {
   IniciarTorre,
   confirmarValidacionApt,
 } from "@/services/proyectos/gestionProyectoAPI";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+
 
 const { Title, Text } = Typography;
 
@@ -200,6 +202,13 @@ export const FormGestionProyectos = () => {
         minHeight: "100vh",
       }}
     >
+      <div style={{ marginBottom: 15, textAlign: "right" }}>
+        <Link to="../" relative="path">
+          <Button danger type="primary" icon={<ArrowLeftOutlined />}>
+            Volver
+          </Button>
+        </Link>
+      </div>
       {/* Header Section */}
       <div
         style={{

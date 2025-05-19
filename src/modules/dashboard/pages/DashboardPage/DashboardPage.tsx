@@ -2,194 +2,73 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Col, Row, Space, Spin } from "antd";
 import CountUp from "react-countup";
-import { GiHandTruck } from "react-icons/gi";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { StadisticTitle, StyledCardDashBoard, StyledStadistic } from "./styled";
 import { useEffect, useState } from "react";
 import { DashboardInfo } from "./types";
-import { getStatistics } from "@/services/dashboard/statisticsAPI";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { infoCartDash } from "@/services/dashboard/statisticsAPI";
 import { LoadingOutlined } from "@ant-design/icons";
-import { KEY_BODEGA, KEY_EMPRESA } from "@/config/api";
-import { BsCapsulePill } from "react-icons/bs";
 import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { getTotalAlertas } from "@/services/gestion-humana/alertasContratosAPI";
-import { KEY_ROL } from "@/config/api";
-import { BsEmojiSunglassesFill } from "react-icons/bs";
-import { MdWorkHistory } from "react-icons/md";
-import { FaHospital } from "react-icons/fa";
-import { IoDocumentAttach } from "react-icons/io5";
-import { FaUsers } from "react-icons/fa";
+import { AiOutlineTeam, AiTwotoneHome } from "react-icons/ai";
 
 const cardsBgColors: Array<string> = [
   "#fc5d36",
   "#48b9ea",
   "#90c641",
   "#ffcd32",
-  "#bd79e7",
+  "#7ead1c",
 ];
 
 export const DashboardPage = () => {
   const [cards, setCards] = useState<DashboardInfo[]>([]);
-  const { getSessionVariable } = useSessionStorage(); 
-  const user_rol = getSessionVariable(KEY_ROL);
   const navigate = useNavigate();
 
-  const fetchTotalAlertas = () => {
-
-    getTotalAlertas().then(({ data: { data } }) => {
-
-      if (['gh_bienestar'].includes(user_rol)) {
-        setCards([
-          {
-            title: "DOTACIÓN ANUAL",
-            icon: <FaUsers />,
-            value: data.totalEmpleadosPorDotacion,
-            link: "/gestionhumana/dotaciones/empleados",
-            permiso: true,
-            bgColor: cardsBgColors[0],
-          },
-          {
-            title: "DOTACIÓN PERIODO PRUEBA",
-            icon: <MdWorkHistory />,
-            value: data.totalPeriodoPruebaDotacion,
-            link: "/gestionhumana/dotaciones/empleados",
-            permiso: true,
-            bgColor: cardsBgColors[1],
-          },
-          {
-            title: "INCAPACIDADES SIN RADICAR",
-            icon: <FaHospital />,
-            value: data.totalIncapacidadesSinRadicar,
-            link: "/gestionhumana/incapacidades",
-            permiso: true,
-            bgColor: cardsBgColors[2],
-          },
-          {
-            title: "INCAPACIDADES SIN PAGAR",
-            icon: <FaHospital />,
-            value: data.totalIcapacidadesSinPagar,
-            link: "/gestionhumana/incapacidades",
-            permiso: true,
-            bgColor: cardsBgColors[4],
-          },
-        ])
-      } else {
-        setCards([
-          {
-            title: "VACACIONES PENDIENTES",
-            icon: <BsEmojiSunglassesFill />,
-            value: data.totalVacaciones,
-            link: "/gestionhumana/vacaciones",
-            permiso: true,
-            bgColor: cardsBgColors[0],
-          },
-          {
-            title: "PERIODOS DE PRUEBA",
-            icon: <MdWorkHistory />,
-            value: data.totalPeriodosDeprueba,
-            link: "/gestionhumana/empleados",
-            permiso: true,
-            bgColor: cardsBgColors[1],
-          },
-          {
-            title: "CONTRATOS POR FINALIZAR",
-            icon: <IoDocumentAttach />,
-            value: data.totalContratosPorFianalizar,
-            link: "/gestionhumana/empleados",
-            permiso: ['gh_admin',].includes(user_rol),
-            bgColor: cardsBgColors[3],
-          },
-          {
-            title: "INCAPACIDADES SIN RADICAR",
-            icon: <FaHospital />,
-            value: data.totalIncapacidadesSinRadicar,
-            link: "/gestionhumana/incapacidades",
-            permiso: true,
-            bgColor: cardsBgColors[2],
-          },
-          {
-            title: "INCAPACIDADES SIN PAGAR",
-            icon: <FaHospital />,
-            value: data.totalIcapacidadesSinPagar,
-            link: "/gestionhumana/incapacidades",
-            permiso: true,
-            bgColor: cardsBgColors[4],
-          },
-        ]);
-      }
-    });
-  }
-  
   useEffect(() => {
-
-    if (['gh_admin', 'gh_auxiliar', 'gh_consulta', 'gh_bienestar'].includes(user_rol)) {
-      fetchTotalAlertas();
-    } else {
-      getStatistics(
-        getSessionVariable(KEY_BODEGA),
-        getSessionVariable(KEY_EMPRESA)
-      ).then(({ data: { data } }) => {
-        setCards([
-          {
-            title: "VENCIMIENTOS",
-            icon: <FaRegCalendarXmark />,
-            value: data.productos,
-            link: "/controldevencimientos/vencimientos",
-            permiso: data.permisos.vencimientos,
-            bgColor: cardsBgColors[0],
-          },
-          {
-            title: "OC PENDIENTES",
-            icon: <LiaFileInvoiceDollarSolid />,
-            value: data.ordenes_compra,
-            link: "/documentos/entradas/oc",
-            permiso: data.permisos.orden_compra,
-            bgColor: cardsBgColors[3],
-          },
-          {
-            title: "PENDIENTES DISPENSACIÓN",
-            icon: <BsCapsulePill />,
-            value: data.dis_pendientes,
-            link: "/documentos/salidas/pen",
-            permiso: data.permisos.pendientes,
-            bgColor: cardsBgColors[2],
-          },
-          {
-            title: "TRASLADOS SIN ACEPTAR",
-            icon: (
-              <>
-                <GiHandTruck />
-                <span style={{ fontSize: 30 }}>
-                  <FaArrowUp />
-                </span>
-              </>
-            ),
-            value: data.traslados_destino,
-            link: "/documentos/traslados/trs",
-            permiso: data.permisos.traslado_salida,
-            bgColor: cardsBgColors[3],
-          },
-          {
-            title: "TRASLADOS POR ACEPTAR",
-            icon: (
-              <>
-                <GiHandTruck />
-                <span style={{ fontSize: 30 }}>
-                  <FaArrowDown />
-                </span>
-              </>
-            ),
-            value: data.traslados_origen,
-            link: "/documentos/traslados/trp",
-            permiso: data.permisos.traslado_pendiente,
-            bgColor: cardsBgColors[1],
-          },
-        ]);
-      });
-    }
+    infoCartDash().then(({ data: { data } }) => {
+      setCards([
+        {
+          title: "PROYECTOS CREADOS",
+          icon: <AiTwotoneHome />,
+          value: data.proyectosActivos,
+          link: "/controldevencimientos/vencimientos",
+          // permiso: data.permisos.vencimientos,
+          bgColor: cardsBgColors[0],
+        },
+        {
+          title: "PROYECTOS INACTIVOS",
+          icon: <AiTwotoneHome />,
+          value: data.proyectosInactivos,
+          link: "/documentos/entradas/oc",
+          // permiso: data.permisos.orden_compra,
+          bgColor: cardsBgColors[1],
+        },
+        {
+          title: "PROYECTOS TERMINADOS",
+          icon: <AiTwotoneHome />,
+          value: data.proyectosTerminados,
+          link: "/documentos/entradas/oc",
+          // permiso: data.permisos.orden_compra,
+          bgColor: cardsBgColors[2],
+        },
+        {
+          title: "CLIENTES ACTIVOS",
+          icon: <AiOutlineTeam />,
+          value: data.clientesActivos,
+          link: "/documentos/entradas/oc",
+          // permiso: data.permisos.orden_compra,
+          bgColor: cardsBgColors[3],
+        },
+        {
+          title: "CLIENTES INACTIVOS",
+          icon: <AiOutlineTeam />,
+          value: data.clientesInactivos,
+          link: "/documentos/entradas/oc",
+          // permiso: data.permisos.orden_compra,
+          bgColor: cardsBgColors[4],
+        },
+      ]);
+    });
   }, []);
 
   const goTo = (link: string, value: number, permiso: boolean) => {

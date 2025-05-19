@@ -111,35 +111,6 @@ export const DatosFacturacion = ({
                     )}
                   />
                 </Col>
-
-                {/* <Col xs={24} sm={12}>
-                  <Controller
-                    name={`bloques[${i}].apt`}
-                    control={methods.control}
-                    rules={{
-                      required: {
-                        value: true,
-                        message: "Cantidad de apartamentos requerida",
-                      },
-                      pattern: {
-                        value: /^[0-9]+$/,
-                        message: "Solo se permiten números",
-                      },
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <StyledFormItem required label="Cantidad Total de Apartamentos">
-                        <Input
-                          {...field}
-                          placeholder="Solo número"
-                          type="number"
-                          status={error && "error"}
-                        />
-                        <Text type="danger">{error?.message}</Text>
-                      </StyledFormItem>
-                    )}
-                  />
-                </Col> */}
-
                 {inputsPorPiso}
               </Row>
             </Panel>
@@ -221,7 +192,7 @@ export const DatosFacturacion = ({
                   status={error && "error"}
                   placeholder="00"
                   type="number"
-                  disabled={isDisabled }
+                  disabled={isDisabled}
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
@@ -247,13 +218,38 @@ export const DatosFacturacion = ({
                 {...field}
                 status={error && "error"}
                 options={selectUSuarios}
-                placeholder="Tipo de Proyecto"
+                placeholder="Encargado"
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
           )}
         />
       </Col>
+
+       {/* ingeniero encargado del proyecto 
+      <Col xs={24} sm={8}>
+        <Controller
+          name="ingeniero_id"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Usuario asignado de proyecto es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Ingeniero Encargado:">
+              <Select
+                {...field}
+                status={error && "error"}
+                options={selectUSuarios}
+                placeholder="Ingeniero Encargado"
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col> */}
 
       {/* Tipo Proyecto */}
       <Col xs={24} sm={6}>

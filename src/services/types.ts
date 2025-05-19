@@ -5680,3 +5680,19 @@ export interface Proyectos {
   created_at: string;
   updated_at: string;
 }
+
+
+/* info proyectos dashboard */
+export interface ResponseInfoProyectosDash {
+  data: {
+    status: string;
+    data: InfoProyectosDash[];
+  };
+}
+export interface InfoProyectosDash {
+  proyectosActivos: string;
+  proyectosInactivos: string;
+  proyectosTerminados: string;
+  clientesInactivos: string;
+  clientesActivos: string;
+}

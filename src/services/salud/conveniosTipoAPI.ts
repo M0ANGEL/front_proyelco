@@ -83,9 +83,16 @@ export const getCLientesNIT= async (): Promise<ResponseAmClientes> => {
   });
 };
 
-//llamado de los tipos de proyectos 
+//llamado de usuarios para proyecto
 export const getUsersProyecto = async (): Promise<ResponseTipoProyectos> => {
   return await client.get<{ data: any; status: string }>(`usuarios-proyectos`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//llamado de los ingenieros de obras
+export const getIngenieros = async (): Promise<ResponseTipoProyectos> => {
+  return await client.get<{ data: any; status: string }>(`ingenieros-proyectos`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
