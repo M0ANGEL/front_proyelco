@@ -1,23 +1,19 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
-import dotenv from "dotenv";
 
 export default defineConfig(({ mode }) => {
-  const isProduction = mode === 'production';
+  const env = loadEnv(mode, process.cwd()); // 👈 Carga correctamente .env, .env.production, etc.
+
   return {
-    server: {
-      host: true,
-    },
     plugins: [react()],
     resolve: {
       alias: {
         "@": resolve(__dirname, "src"),
       },
     },
-    base: "",
     build: {
-      outDir: isProduction ? 'dist/prod' : 'dist/dev',
+      outDir: mode === 'production' ? 'dist/prod' : 'dist/dev',
       rollupOptions: {
         output: {
           entryFileNames: `assets/[name]-[hash].js`,
@@ -27,7 +23,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      "process.env": JSON.stringify(dotenv.config().parsed),
+      'import.meta.env': JSON.stringify(env), // 👈 ESTO es lo que hace funcionar VITE_API_HOST
     },
   };
 });
