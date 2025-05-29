@@ -1,1 +1,0 @@
-export { DatosCargos } from "./DatosCargos";

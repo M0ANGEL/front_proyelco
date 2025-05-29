@@ -1,10 +1,11 @@
 import { getPerfiles } from "@/services/maestras/perfilesAPI";
-import { Controller, useFieldArray, useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Perfil } from "@/services/types";
-import { Usuario } from "../../types";
-import { Col, Input, List, Row, Select, Typography, notification } from "antd";
+import { Col, Row, Select, SelectProps, Typography } from "antd";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
+import { getEmpresas } from "@/services/maestras/empresasAPI";
+import { getCargos } from "@/services/maestras/cargosAPI";
+import { Usuario } from "../../types";
 
 const { Text } = Typography;
 
@@ -12,194 +13,165 @@ interface Props {
   usuario?: Usuario;
 }
 
-interface DataType {
-  id_empresa: string;
-  nom_empresa: string;
-  id_perfil: string;
-  perfiles: {
-    value: string;
-    label: string;
-    data: Perfil;
-  }[];
-}
-
 export const DatosPerfiles = ({ usuario }: Props) => {
   const methods = useFormContext();
-  const [api, contextHolder] = notification.useNotification();
-  const [empPerfiles, setEmpPerfiles] = useState<DataType[]>([]);
-  const fieldArray = useFieldArray({
-    control: methods.control,
-    name: "perfiles",
-  });
+  const [selectEmpresa, setSelectEmpresa] = useState<SelectProps["options"]>(
+    []
+  );
+  const [selectCargos, setSelectCargos] = useState<SelectProps["options"]>([]);
+  const [selectPperfiles, setSelectPperfiles] = useState<
+    SelectProps["options"]
+  >([]);
 
   useEffect(() => {
-    setEmpPerfiles([]);
-    getPerfiles()
-      .then(({ data }) => {
-        let perfiles: DataType[] = [];
+    //si tenemos datos en categoria agregamos a metho los datos
+    if (usuario) {
+      methods.setValue("empresas", usuario?.empresas?.[0]?.id_empresa);
+      methods.setValue("perfiles", usuario?.perfiles?.[0]?.id_perfil);
+      methods.setValue("cargos", usuario?.cargos?.[0]?.id_cargo);
 
-        if (usuario !== undefined) {
-          const perfilesUsu = usuario?.perfiles?.map((perfil) => {
-            const perfilesEmp = data
-              .filter(
-                (value) =>
-                  value.id_empresa === perfil.perfil.id_empresa &&
-                  value.estado == "1"
-              )
-              .map((value) => ({
-                value: value.id.toString(),
-                label: value.nom_perfil,
-                data: value,
-              }));
-            return {
-              id_empresa: perfil.perfil.id_empresa,
-              nom_empresa: perfil.perfil.empresa.emp_nombre,
-              perfiles: perfilesEmp,
-              id_perfil: perfil.id_perfil,
-            };
-          });
+      fetchEmpresa();
+      fetchPerfiles();
+      fetchCargos();
+    } else {
+      fetchEmpresa();
+      fetchPerfiles();
+      fetchCargos();
+    }
+  }, [usuario]);
 
-          let perfilesForm: DataType[] = [];
-          if (
-            methods.getValues("empresas") &&
-            methods.getValues("bodegas").length > 0
-          ) {
-            perfilesForm = methods
-              .getValues("empresas")
-              .map((empresa: string) => {
-                const perfilesEmp = data
-                  .filter(
-                    (perfil) =>
-                      perfil.id_empresa === empresa && perfil.estado == "1"
-                  )
-                  .map((perfil) => ({
-                    value: perfil.id.toString(),
-                    label: perfil.nom_perfil,
-                    data: perfil,
-                  }));
-                return {
-                  id_empresa: empresa,
-                  nom_empresa: perfilesEmp.at(0)?.data.empresa.emp_nombre,
-                  perfiles: perfilesEmp,
-                  id_perfil: "",
-                };
-              });
-          }
+  //llamada empres
+  const fetchEmpresa = () => {
+    getEmpresas().then(({ data }) => {
+      const categoriasPadres = data.data.map((item) => ({
+        label: item.emp_nombre,
+        value: item.id,
+      }));
+      setSelectEmpresa(categoriasPadres);
+    });
+  };
 
-          const valoresNoRepetidos = perfilesUsu?.filter(
-            (perfilUsu: DataType) => {
-              return !perfilesForm.some(
-                (perfilForm: DataType) =>
-                  perfilForm.id_empresa === perfilUsu.id_empresa
-              );
-            }
-          );
+  //llamada perfiles
+  const fetchPerfiles = () => {
+    getPerfiles().then(({ data }) => {
+      const categoriasPadres = data.map((item) => ({
+        label: item.nom_perfil,
+        value: item.id,
+      }));
+      setSelectPperfiles(categoriasPadres);
+    });
+  };
 
-          const valoresRepetido = perfilesUsu?.filter((perfilUsu: DataType) => {
-            return perfilesForm.some(
-              (perfilForm: DataType) =>
-                perfilForm.id_empresa === perfilUsu.id_empresa
-            );
-          });
-
-          const valoresNoRepetidosArreglo2 = perfilesForm.filter(
-            (perfilForm: DataType) => {
-              return !perfilesUsu?.some(
-                (perfilUsu: DataType) =>
-                  perfilUsu.id_empresa === perfilForm.id_empresa
-              );
-            }
-          );
-
-          perfiles = valoresNoRepetidos?.concat(
-            valoresRepetido?.concat(valoresNoRepetidosArreglo2)
-          );
-          console.log(
-            valoresNoRepetidos,
-            valoresRepetido,
-            valoresNoRepetidosArreglo2
-          );
-        } else {
-          perfiles = methods.getValues("empresas").map((empresa: string) => {
-            const perfilesEmp = data
-              .filter(
-                (perfil) =>
-                  perfil.id_empresa === empresa && perfil.estado == "1"
-              )
-              .map((perfil) => ({
-                value: perfil.id.toString(),
-                label: perfil.nom_perfil,
-                data: perfil,
-              }));
-
-            return {
-              id_empresa: empresa,
-              nom_empresa: perfilesEmp.at(0)?.data.empresa.emp_nombre,
-              perfiles: perfilesEmp,
-              id_perfil: "",
-            };
-          });
-        }
-
-        fieldArray.replace(
-          perfiles.map((item: DataType) => ({
-            id_empresa: item.id_empresa,
-            id_perfil: item.id_perfil != "" ? item.id_perfil : "",
-          }))
-        );
-        setEmpPerfiles(perfiles);
-      })
-      .catch((error) => {
-        api["error"]({
-          message: error.code,
-          description: error.message,
-          placement: "bottomRight",
-        });
-      });
-  }, [usuario, methods.watch("empresas")]);
+  //llamada cargos
+  const fetchCargos = () => {
+    getCargos().then(({ data }) => {
+      const categoriasPadres = data.data.map((item) => ({
+        label: item.nombre,
+        value: item.id,
+      }));
+      setSelectCargos(categoriasPadres);
+    });
+  };
 
   return (
     <>
-      {contextHolder}
-      <List
-        dataSource={empPerfiles}
-        bordered={false}
-        loading={empPerfiles?.length > 0 ? false : true}
-        renderItem={(item, index) => (
-          <Row style={{ padding: 10 }} gutter={12} key={index}>
-            <Col xs={24} sm={12}>
-              <StyledFormItem label="Empresa:">
-                <Input value={item.nom_empresa} readOnly />
+      <Row style={{ padding: 10 }} gutter={12}>
+        {/* campo selecion de empresa */}
+        <Col xs={24} sm={8}>
+          <Controller
+            name="empresas"
+            control={methods.control}
+            rules={{
+              required: {
+                value: true, //validacion diamica si es o no olbigatoriaaa jaja
+                message: "La empresa es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Empresa">
+                <Select
+                  {...field}
+                  showSearch
+                  allowClear
+                  options={selectEmpresa}
+                  placeholder={
+                    selectEmpresa?.length
+                      ? "Selecciona la empresa"
+                      : "HAY PROBEMAS PARA MOSTRAR EMPRESAS"
+                  }
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                />
+                <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
-            </Col>
-            <Col xs={24} sm={12}>
-              <Controller
-                control={methods.control}
-                name={`perfiles.${index}.id_perfil`}
-                rules={{
-                  required: { value: true, message: "Campo requerido" },
-                }}
-                render={({ field, fieldState: { error } }) => (
-                  <StyledFormItem label="Perfil:">
-                    <Select
-                      {...field}
-                      showSearch
-                      placeholder="Seleccione perfil"
-                      options={item.perfiles}
-                      style={{ width: "100%" }}
-                      status={error && "error"}
-                      filterOption={(input, option) =>
-                        (option?.label ?? "").includes(input)
-                      }
-                    />
-                    <Text type="danger">{error?.message}</Text>
-                  </StyledFormItem>
-                )}
-              />
-            </Col>
-          </Row>
-        )}
-      />
+            )}
+          />
+        </Col>
+
+        {/* campo selecion de perfil */}
+        <Col xs={24} sm={8}>
+          <Controller
+            name="perfiles"
+            control={methods.control}
+            rules={{
+              required: {
+                value: true,
+                message: "El perfil es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Perfil">
+                <Select
+                  {...field}
+                  showSearch
+                  allowClear
+                  options={selectPperfiles}
+                  placeholder={
+                    selectPperfiles?.length
+                      ? "Selecciona un perfil"
+                      : "HAY PROBLEMAS PARA MOSTRAR PERFILES"
+                  }
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col>
+
+        {/* campo selecion cargo */}
+        <Col xs={24} sm={8}>
+          <Controller
+            name="cargos"
+            control={methods.control}
+            rules={{
+              required: {
+                value: true,
+                message: "El cargo es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Cargo">
+                <Select
+                  {...field}
+                  showSearch
+                  allowClear
+                  options={selectCargos}
+                  placeholder={
+                    selectCargos?.length
+                      ? "Selecciona un cargo"
+                      : "HAY PROBLEMAS PARA MOSTRAR CARGOS"
+                  }
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col>
+      </Row>
     </>
   );
 };

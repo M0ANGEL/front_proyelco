@@ -6,7 +6,6 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
-import { DatosCargos } from "../../components/DatosCargos";
 import { useEffect, useState } from "react";
 import {
   updateUsuario,
@@ -195,22 +194,8 @@ export const FormUsuarios = () => {
                   {
                     key: "2",
                     label: <Text>Perfiles</Text>,
-                    children: <DatosPerfiles usuario={usuario} />,
-                  },
-                  {
-                    key: "3",
-                    label: (
-                      <Text
-                        type={
-                          Object.keys(control.formState.errors).length > 0
-                            ? "danger"
-                            : undefined
-                        }
-                      >
-                        Cargos
-                      </Text>
-                    ),
-                    children: <DatosCargos usuario={usuario} />,
+                    children: <DatosPerfiles usuario={usuario}/>,
+                    
                   },
                 ]}
                 animated

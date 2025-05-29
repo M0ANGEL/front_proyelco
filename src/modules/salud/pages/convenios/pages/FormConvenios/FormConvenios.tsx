@@ -2,8 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
-  crearConvenio,
-  getConvenio,
   updateConvenio,
 } from "@/services/salud/conveniosAPI";
 import {
@@ -16,6 +14,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Convenio } from "@/services/types";
 import {
+  getIngenieros,
   getProcesosProyectos,
   getTipoProyectos,
   getUsersProyecto,
@@ -121,25 +120,25 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  // //llamado de usuarios para asignar poryecto
-  // useEffect(() => {
-  //   setLoader(true);
-  //   const fetchSelects = async () => {
-  //     await getUsersProyecto().then(({ data: { data } }) => {
-  //       selectIngeniero(
-  //         data.map((item) => ({
-  //           value: item.id,
-  //           label: item.nombre,
-  //         }))
-  //       );
-  //     });
-  //   };
-  //   fetchSelects()
-  //     .catch((error) => {
-  //       console.error(error);
-  //     })
-  //     .finally(() => setLoader(false));
-  // }, []);
+  // llamado de usuarios para asignar poryecto
+   useEffect(() => {
+     setLoader(true);
+     const fetchSelects = async () => {
+       await getIngenieros().then(({ data: { data } }) => {
+         selectIngeniero(
+           data.map((item) => ({
+             value: item.id,
+             label: item.nombre,
+           }))
+         );
+       });
+     };
+     fetchSelects()
+       .catch((error) => {
+         console.error(error);
+       })
+       .finally(() => setLoader(false));
+   }, []);
 
   useEffect(() => {
     if (id) {
@@ -347,6 +346,7 @@ export const FormConvenios = () => {
                       <DatosFacturacion
                         selectTipoProyecto={selectTipoProyecto}
                         selectUSuarios={USuarios}
+                        selectIngeniero={Ingeniero}
                       />
                     ),
                     forceRender: true,

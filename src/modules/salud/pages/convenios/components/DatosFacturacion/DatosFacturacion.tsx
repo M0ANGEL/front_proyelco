@@ -9,6 +9,7 @@ const { Panel } = Collapse;
 export const DatosFacturacion = ({
   selectTipoProyecto,
   selectUSuarios,
+  selectIngeniero
 }: Props) => {
   const methods = useFormContext();
 
@@ -202,7 +203,7 @@ export const DatosFacturacion = ({
       </Col>
 
       {/* usuario asignado */}
-      <Col xs={24} sm={8}>
+      <Col xs={24} sm={6}>
         <Controller
           name="encargado_id"
           control={methods.control}
@@ -226,8 +227,8 @@ export const DatosFacturacion = ({
         />
       </Col>
 
-       {/* ingeniero encargado del proyecto 
-      <Col xs={24} sm={8}>
+      {/*  ingeniero encargado del proyecto  */}
+      <Col xs={24} sm={6}>
         <Controller
           name="ingeniero_id"
           control={methods.control}
@@ -242,14 +243,14 @@ export const DatosFacturacion = ({
               <Select
                 {...field}
                 status={error && "error"}
-                options={selectUSuarios}
+                options={selectIngeniero}
                 placeholder="Ingeniero Encargado"
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
           )}
         />
-      </Col> */}
+      </Col>
 
       {/* Tipo Proyecto */}
       <Col xs={24} sm={6}>
@@ -383,7 +384,7 @@ export const DatosFacturacion = ({
       {/* Personalizada */}
       {tipoObra === 1 && (
         <>
-          <Col xs={24} sm={12}>
+          <Col xs={24} sm={4}>
             <Controller
               name="torres"
               control={methods.control}

@@ -2,8 +2,10 @@ import { Convenio } from "@/services/types";
 
 export interface DataType {
   key: number;
-  nombre: string;
-  razon_soc: string;
+  nombreIngeniero: string;
+  nombreEncargado: string;
+  descripcion_proyecto: string;
+  emp_nombre: string;
   fec_ini: Date;
   fec_fin: Date;
   estado: string;

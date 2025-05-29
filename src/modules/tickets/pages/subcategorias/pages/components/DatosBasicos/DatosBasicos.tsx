@@ -398,6 +398,7 @@ export const DatosBasicos = ({ TkSubCategoria }: Props) => {
           )}
         />
       </Col>
+      
       {/* campo de tiempo en ejecucion */}
       <Col xs={24} sm={4} style={{ width: "100%" }}>
         <Controller

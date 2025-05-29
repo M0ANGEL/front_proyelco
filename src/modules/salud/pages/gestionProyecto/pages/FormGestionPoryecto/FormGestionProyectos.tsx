@@ -23,7 +23,6 @@ import {
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
-
 const { Title, Text } = Typography;
 
 export const FormGestionProyectos = () => {
@@ -141,7 +140,7 @@ export const FormGestionProyectos = () => {
     } catch (error: any) {
       notification.error({
         message: "Error al confirmar apartamento",
-        description: error.message,
+        description: error.response.data.message,
         placement: "topRight",
       });
     }
@@ -149,14 +148,17 @@ export const FormGestionProyectos = () => {
 
   const handleValidarProceso = async () => {
     if (!procesoAValidar || !torreSeleccionada) return;
+        console.log('pollo--1');
+
 
     try {
       const response = await confirmarValidacionApt({
         torre: torreSeleccionada,
         orden_proceso: procesoAValidar.orden_proceso,
+        proyecto: infoProyecto.id,
       });
 
-      if (response.data.success) {
+      if (response.status) {
         notification.success({
           message: response.data.message,
           placement: "topRight",
@@ -164,27 +166,19 @@ export const FormGestionProyectos = () => {
         setModalVisible(false);
         LlamadoData();
       } else {
-        // Mostrar mensaje de error detallado
-        let description = "";
-        if (response.data.details) {
-          if (response.data.details.pisos_requeridos) {
-            description = `El Proceso ${response.data.details.proceso_incompleto} requiere completar ${response.data.details.pisos_requeridos} pisos (actual: ${response.data.details.pisos_completados})`;
-          } else if (response.data.details.ultimo_piso) {
-            description = `El Piso ${response.data.details.ultimo_piso} del Proceso ${response.data.details.proceso_incompleto} no está completo`;
-          }
-        }
-
+        
         notification.error({
           message: response.data.message,
-          description: description,
           placement: "topRight",
-          duration: 5, // Mostrar por más tiempo
+          duration: 5,
         });
       }
     } catch (error: any) {
+      console.log(error.response);
+
       notification.error({
         message: "Error al validar proceso",
-        description: error.message,
+        description: error.response.data.message,
         placement: "topRight",
       });
     }
@@ -203,7 +197,7 @@ export const FormGestionProyectos = () => {
       }}
     >
       <div style={{ marginBottom: 15, textAlign: "right" }}>
-        <Link to="../" relative="path">
+        <Link to=".." relative="path">
           <Button danger type="primary" icon={<ArrowLeftOutlined />}>
             Volver
           </Button>

@@ -51,8 +51,10 @@ export const ListConvenios = () => {
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,
-          nombre: convenio.nombre,
-          razon_soc: convenio.emp_nombre,
+          nombreEncargado: convenio.nombreEncargado,
+          nombreIngeniero: convenio.nombreIngeniero,
+          descripcion_proyecto: convenio.descripcion_proyecto,
+          emp_nombre: convenio.emp_nombre,
           estado: convenio.estado.toString(),
           fec_ini: convenio.fecha_inicio,
           fec_fin: convenio.fec_fin,
@@ -146,7 +148,7 @@ export const ListConvenios = () => {
                       className="title-link"
                     >
                       <span className="title-text">
-                        {item.nombre.toUpperCase()}
+                        {item.descripcion_proyecto.toUpperCase()}
                       </span>
                       <span className="title-icon">
                         <EditFilled style={{ color: "#FF8C00" }} />
@@ -160,14 +162,21 @@ export const ListConvenios = () => {
                         strong
                         style={{ color: "#FF8C00" }}
                       >
-                        <span>CLIENTE: {item.razon_soc}</span>
+                        <span>CLIENTE: {item.emp_nombre}</span>
                       </Typography.Text>
                       <br />
                       <Typography.Text
                         className="nombre"
                         strong
                       >
-                        <span>ENCARGADO: {item.nombre}</span>
+                        <span>ING DE OBRA: {item.nombreIngeniero.toUpperCase()}</span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text
+                        className="nombre"
+                        strong
+                      >
+                        <span>ENCARGADO: {item.nombreEncargado.toUpperCase()}</span>
                       </Typography.Text>
                     </>
                   }
