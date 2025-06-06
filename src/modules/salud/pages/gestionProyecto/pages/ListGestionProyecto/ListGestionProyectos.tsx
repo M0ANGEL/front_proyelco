@@ -7,7 +7,6 @@ import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmp
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import dayjs from "dayjs";
 import {
   getGestionProyecto,
@@ -132,27 +131,27 @@ const ListGestionProyectos = () => {
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
 
-    {
-      title: "Cant Torres",
-      dataIndex: "torres",
-      key: "torres",
-      sorter: (a, b) => a.torres.localeCompare(b.torres),
-      align: "center",
-    },
-    {
-      title: "Cant Pisos",
-      dataIndex: "cant_pisos",
-      key: "cant_pisos",
-      sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
-      align: "center",
-    },
-    {
-      title: "Cant Apt",
-      dataIndex: "apt",
-      key: "apt",
-      sorter: (a, b) => a.apt.localeCompare(b.apt),
-      align: "center",
-    },
+    // {
+    //   title: "Cant Torres",
+    //   dataIndex: "torres",
+    //   key: "torres",
+    //   sorter: (a, b) => a.torres.localeCompare(b.torres),
+    //   align: "center",
+    // },
+    // {
+    //   title: "Cant Pisos x torre",
+    //   dataIndex: "cant_pisos",
+    //   key: "cant_pisos",
+    //   sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
+    //   align: "center",
+    // },
+    // {
+    //   title: "Cant Apt x piso",
+    //   dataIndex: "apt",
+    //   key: "apt",
+    //   sorter: (a, b) => a.apt.localeCompare(b.apt),
+    //   align: "center",
+    // },
     {
       title: "Estado Proyecto",
       dataIndex: "fecha_ini_proyecto",
@@ -227,11 +226,6 @@ const ListGestionProyectos = () => {
   return (
     <StyledCard
       title={"Lista de Proyectos Asignados"}
-      // extra={
-      //   <Link to={`${location.pathname}/gestionar`}>
-      //     <Button type="primary">Crear</Button>
-      //   </Link>
-      // }
     >
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />

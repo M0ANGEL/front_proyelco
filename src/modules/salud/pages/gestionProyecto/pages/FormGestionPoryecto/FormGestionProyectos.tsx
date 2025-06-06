@@ -20,6 +20,7 @@ import {
   InfoProyecto,
   IniciarTorre,
   confirmarValidacionApt,
+  confirmarPisosXDia,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 
@@ -42,6 +43,15 @@ export const FormGestionProyectos = () => {
       setInfoProyecto(data);
     });
   }, [id]);
+
+  // manejo de estado para activar pisos por dia
+  useEffect(() => {
+    if (torreSeleccionada !== null) {
+      if(torreYaIniciada()){
+        confirmarPisosDia();
+      }
+    }
+  }, [torreSeleccionada]);
 
   const LlamadoData = () => {
     setLoading(true);
@@ -134,6 +144,7 @@ export const FormGestionProyectos = () => {
         notification.success({
           message: "Apartamento confirmado",
           placement: "topRight",
+          duration: 4,
         });
       }
       LlamadoData();
@@ -142,14 +153,38 @@ export const FormGestionProyectos = () => {
         message: "Error al confirmar apartamento",
         description: error.response.data.message,
         placement: "topRight",
+        duration: 4,
       });
+    }
+  };
+
+  // confirmar pisos x dia segun proceso completado
+  const confirmarPisosDia = async () => {
+    try {
+      const response = await confirmarPisosXDia({
+        proyecto_id: infoProyecto.id,
+        torre: torreSeleccionada,
+      });
+
+      notification.success({
+        message: response.data.message,
+        placement: "topRight",
+        duration: 2,
+      });
+    } catch (error: any) {
+      notification.error({
+        message: "Error al validar pisos por dia",
+        description: error.response.data.message,
+        placement: "topRight",
+        duration: 3,
+      });
+    } finally {
+      LlamadoData();
     }
   };
 
   const handleValidarProceso = async () => {
     if (!procesoAValidar || !torreSeleccionada) return;
-        console.log('pollo--1');
-
 
     try {
       const response = await confirmarValidacionApt({
@@ -162,11 +197,11 @@ export const FormGestionProyectos = () => {
         notification.success({
           message: response.data.message,
           placement: "topRight",
+          duration: 5,
         });
         setModalVisible(false);
         LlamadoData();
       } else {
-        
         notification.error({
           message: response.data.message,
           placement: "topRight",
@@ -180,6 +215,7 @@ export const FormGestionProyectos = () => {
         message: "Error al validar proceso",
         description: error.response.data.message,
         placement: "topRight",
+        duration: 5,
       });
     }
   };
@@ -346,8 +382,8 @@ export const FormGestionProyectos = () => {
               <Row gutter={[24, 24]}>
                 {Object.entries(data[torreSeleccionada] || {}).map(
                   ([procesoKey, contenido]: any) => {
-                    const necesitaValidacion = contenido.validacion === 1;
-                    const estaValidado = contenido.estado_validacion === 1;
+                    const necesitaValidacion = Number(contenido.validacion) === 1;
+                    const estaValidado = Number(contenido.estado_validacion) === 1;
 
                     return (
                       <Col
@@ -376,7 +412,7 @@ export const FormGestionProyectos = () => {
                               {necesitaValidacion && !estaValidado && (
                                 <Badge
                                   status="error"
-                                  text="Requiere validación"
+                                  text={!estaValidado ? "Proceso validado" : "Requiere validación"}
                                 />
                               )}
                             </div>
@@ -442,7 +478,7 @@ export const FormGestionProyectos = () => {
                                       key={apt.id}
                                       title={
                                         apt.estado === "2"
-                                          ? "Apt Confirmado para este proceso"
+                                          ? "Apartamento Confirmado"
                                           : apt.estado === "1"
                                           ? "Apartamento Habilitado"
                                           : "Apartamento no habilitado"

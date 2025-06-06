@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  updateConvenio,
-} from "@/services/salud/conveniosAPI";
+import { updateConvenio } from "@/services/salud/conveniosAPI";
 import {
   DatosBasicos,
   DatosConfigProyecto,
@@ -12,7 +10,7 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Convenio } from "@/services/types";
+import { Proyectos } from "@/services/types";
 import {
   getIngenieros,
   getProcesosProyectos,
@@ -53,8 +51,7 @@ export const FormConvenios = () => {
 
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
   const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
-
-  const [convenio, setConvenio] = useState<Convenio>();
+  const [convenio, setConvenio] = useState<Proyectos>();
   const [loader, setLoader] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -100,7 +97,7 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  //llamado de usuarios para asignar poryecto
+  //llamado de usuarios rol encargado de obra para asignar poryecto
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
@@ -120,59 +117,59 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  // llamado de usuarios para asignar poryecto
-   useEffect(() => {
-     setLoader(true);
-     const fetchSelects = async () => {
-       await getIngenieros().then(({ data: { data } }) => {
-         selectIngeniero(
-           data.map((item) => ({
-             value: item.id,
-             label: item.nombre,
-           }))
-         );
-       });
-     };
-     fetchSelects()
-       .catch((error) => {
-         console.error(error);
-       })
-       .finally(() => setLoader(false));
-   }, []);
+  // llamado de usuarios rol ingenieros para asignar poryecto
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getIngenieros().then(({ data: { data } }) => {
+        selectIngeniero(
+          data.map((item) => ({
+            value: item.id,
+            label: item.nombre,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
 
   useEffect(() => {
     if (id) {
       getProyectoID(id).then(({ data: { data } }) => {
         setConvenio(data);
         control.reset({
-          // tipoProyecto_id: data.tipoProyecto_id.toString(),
-          tipoProyecto_id: parseInt(data.tipoProyecto_id),
-
-          cliente_id: data.cliente_id.toString(),
-          usuario_crea_id: data.usuario_crea_id.toString(),
-          descripcion_proyecto: data.descripcion_proyecto,
-          fecha_inicio: dayjs(data.fecha_inicio),
-          codigo_contrato: data.codigo_contrato,
-          torres: data.torres,
-          cant_pisos: data.cant_pisos,
-          apt: data.apt,
-          estado: data.estado.toString(),
-          bloques: JSON.parse(data.bodegas),
-          emp_nombre: data.emp_nombre,
-          nit: data.nit,
+          tipoProyecto_id: data?.tipoProyecto_id?.toString(),
+          cliente_id: data?.cliente_id?.toString(),
+          usuario_crea_id: data?.usuario_crea_id?.toString(),
+          encargado_id: data?.encargado_id?.toString(),
+          ingeniero_id: data?.ingeniero_id?.toString(),
+          descripcion_proyecto: data?.descripcion_proyecto,
+          fecha_inicio: dayjs(data?.fecha_inicio),
+          codigo_proyecto: data?.codigo_proyecto,
+          torres: data?.torres,
+          cant_pisos: data?.cant_pisos,
+          apt: data?.apt,
+          estado: data?.estado,
         });
       });
     } else {
       control.reset({
-        estado: 1,
-        bloques: [],
-        codigo_contrato: null,
-        descripcion: "",
-        emp_nombre: "",
-        fecha_inicio: null,
         tipoProyecto_id: null,
+        cliente_id: null,
+        usuario_crea_id: null,
+        encargado_id: null,
+        ingeniero_id: null,
+        descripcion_proyecto: "",
+        fecha_inicio: "",
+        codigo_proyecto: "",
         torres: null,
-        nit: null,
+        cant_pisos: null,
+        apt: null,
+        estado: "1",
       });
     }
   }, [id]);

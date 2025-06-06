@@ -86,3 +86,10 @@ export const confirmarValidacionApt = async ( data: any): Promise<any> => {
 };
 
 
+//confirmar pisos por dia 
+export const confirmarPisosXDia = async ( data: any): Promise<any> => {
+  return await client.post<any>(`activacionXdia`, data,{
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+

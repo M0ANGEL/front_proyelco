@@ -20,7 +20,6 @@ export const DatosBasicos = () => {
   const [openModalTerceros, setOpenModalTerceros] = useState<boolean>(false);
   const methods = useFormContext();
 
-  const tipoId = methods.watch("regimen_conv");
 
   return (
     <>
@@ -77,8 +76,8 @@ export const DatosBasicos = () => {
                 <Select
                   {...field}
                   options={[
-                    { value: 1, label: "ACTIVO" },
-                    { value: 0, label: "INACTIVO" },
+                    { value: "1", label: "ACTIVO" },
+                    { value: "0", label: "INACTIVO" },
                   ]}
                   status={error && "error"}
                   disabled={true}
@@ -97,7 +96,6 @@ export const DatosBasicos = () => {
                 icon={<SearchOutlined />}
                 style={{ width: 50 }}
                 onClick={() => setOpenModalTerceros(true)}
-                disabled={Boolean(tipoId)}
               />
               <Controller
                 name="nit"
@@ -164,7 +162,7 @@ export const DatosBasicos = () => {
         {/* nombre del proyecto */}
         <Col xs={24} sm={24} md={12}>
           <Controller
-            name="descripcion"
+            name="descripcion_proyecto"
             control={methods.control}
             rules={{
               required: {
@@ -180,7 +178,6 @@ export const DatosBasicos = () => {
                   maxLength={150}
                   placeholder="Descripción"
                   status={error && "error"}
-                  disabled={Boolean(tipoId)}
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>
