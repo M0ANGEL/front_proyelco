@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { Card, Radio } from "antd";
+import { Card, Input, Radio } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import TextArea from "antd/es/input/TextArea";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
@@ -11,6 +11,7 @@ interface Tipo {
   tipoValidacion?: string;
   valor?: string;
   requiereValidacion?: "si" | "no";
+  numCambioProceso?: string;
 }
 
 interface Props {
@@ -61,10 +62,22 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
 
       if (source.droppableId === "disponibles") {
         setDisponibles(newSource);
+
+        // Forzar que el primer proceso no requiera validación
+        if (newDest.length > 0) {
+          newDest[0].requiereValidacion = "no";
+        }
+
         setConfirmados(newDest);
         onChangeTipos(newDest);
       } else {
         setDisponibles(newDest);
+
+        // Forzar que el primer proceso no requiera validación
+        if (newSource.length > 0) {
+          newSource[0].requiereValidacion = "no";
+        }
+
         setConfirmados(newSource);
         onChangeTipos(newSource);
       }
@@ -79,7 +92,6 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
     const nuevos = [...confirmados];
     nuevos[index][campo] = nuevoValor;
 
-    // Si marca "no", borrar el texto anterior
     if (campo === "requiereValidacion" && nuevoValor === "no") {
       nuevos[index].valor = "";
     }
@@ -123,10 +135,10 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                       )
                     }
                     value={tipo.requiereValidacion}
-                    disabled={tipo.requiereValidacion === "no"}
+                    disabled={index === 0} // Deshabilitar si es el primer proceso
                   >
                     <Radio value="si">Sí</Radio>
-                    <Radio value="no">No</Radio> 
+                    <Radio value="no">No</Radio>
                   </Radio.Group>
                 </StyledFormItem>
 
@@ -153,6 +165,58 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                           }}
                           value={field.value}
                           status={error ? "error" : ""}
+                        />
+                      </StyledFormItem>
+                    )}
+                  />
+                )}
+
+                {/* Mostrar numCambioProceso desde el segundo proceso */}
+                {/* {index > 0 && (
+                  <Controller
+                    name={`procesos[${index}].numCambioProceso`}
+                    control={methods.control}
+                    render={({ field }) => (
+                      <StyledFormItem
+                        required
+                        label="Número de cambio de proceso"
+                      >
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Ingrese el número"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            actualizarCampo(index, "numCambioProceso", e.target.value);
+                          }}
+                          value={field.value}
+                        />
+                      </StyledFormItem>
+                    )}
+                  />
+                )} */}
+                {index > 0 && index !== confirmados.length - 1 && (
+                  <Controller
+                    name={`procesos[${index}].numCambioProceso`}
+                    control={methods.control}
+                    render={({ field }) => (
+                      <StyledFormItem
+                        required
+                        label="Número de cambio de proceso"
+                      >
+                        <Input
+                          {...field}
+                          type="number"
+                          placeholder="Ingrese el número"
+                          onChange={(e) => {
+                            field.onChange(e);
+                            actualizarCampo(
+                              index,
+                              "numCambioProceso",
+                              e.target.value
+                            );
+                          }}
+                          value={field.value}
                         />
                       </StyledFormItem>
                     )}
