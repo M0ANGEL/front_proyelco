@@ -172,7 +172,7 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                 )}
 
                 {/* Mostrar numCambioProceso desde el segundo proceso */}
-                {/* {index > 0 && (
+                {index > 0 && (
                   <Controller
                     name={`procesos[${index}].numCambioProceso`}
                     control={methods.control}
@@ -194,8 +194,8 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                       </StyledFormItem>
                     )}
                   />
-                )} */}
-                {index > 0 && index !== confirmados.length - 1 && (
+                )}
+                {/* {index > 0 && index !== confirmados.length - 1 && (
                   <Controller
                     name={`procesos[${index}].numCambioProceso`}
                     control={methods.control}
@@ -221,7 +221,7 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                       </StyledFormItem>
                     )}
                   />
-                )}
+                )} */}
               </>
             )}
           </Card>
@@ -242,7 +242,7 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                 flex: 1,
                 padding: 8,
                 background: "#fafafa",
-                border: "1px solid #d9d9d9",
+                border: "1px solidrgb(172, 168, 168)",
                 borderRadius: 8,
               }}
             >

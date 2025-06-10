@@ -2,6 +2,7 @@ import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Alert, Col, Collapse, Input, Row, Select, Typography } from "antd";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Props } from "./types";
+import { useParams } from "react-router-dom";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -9,7 +10,7 @@ const { Panel } = Collapse;
 export const DatosFacturacion = ({
   selectTipoProyecto,
   selectUSuarios,
-  selectIngeniero
+  selectIngeniero,
 }: Props) => {
   const methods = useFormContext();
 
@@ -32,6 +33,8 @@ export const DatosFacturacion = ({
     name: "cant_pisos",
     control: methods.control,
   });
+
+  const { id } = useParams<{ id: string }>();
 
   const renderPersonalizada = () => {
     const bloques = [];
@@ -252,78 +255,26 @@ export const DatosFacturacion = ({
         />
       </Col>
 
-      {/* Tipo Proyecto */}
-      <Col xs={24} sm={6}>
-        <Controller
-          name="tipoProyecto_id"
-          control={methods.control}
-          rules={{
-            required: {
-              value: true,
-              message: "Tipo de proyecto es requerido",
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Tipo Proyecto:">
-              <Select
-                {...field}
-                status={error && "error"}
-                options={selectTipoProyecto}
-                placeholder="Tipo de Proyecto"
-              />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
-        />
-      </Col>
-
-      {/* Tipo Obra */}
-      <Col xs={24} sm={6}>
-        <Controller
-          name="tipo_obra"
-          control={methods.control}
-          rules={{
-            required: {
-              value: true,
-              message: "Tipo de obra es requerido",
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Tipo de Obra">
-              <Select
-                {...field}
-                options={[
-                  { value: 1, label: "Personalizada" },
-                  { value: 0, label: "Simétrica" },
-                ]}
-                status={error && "error"}
-                placeholder="Selecciona tipo de obra"
-              />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
-        />
-      </Col>
-
-      {/* Simétrica */}
-      {tipoObra === 0 && (
+      {!id && (
         <>
-          <Col xs={24} sm={12}>
+          {/* Tipo Proyecto */}
+          <Col xs={24} sm={6}>
             <Controller
-              name="torres"
+              name="tipoProyecto_id"
               control={methods.control}
               rules={{
                 required: {
                   value: true,
-                  message: "Cantidad de torres requerida",
+                  message: "Tipo de proyecto es requerido",
                 },
               }}
               render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cantidad Torres:">
-                  <Input
+                <StyledFormItem required label="Tipo Proyecto:">
+                  <Select
                     {...field}
-                    placeholder="00"
                     status={error && "error"}
+                    options={selectTipoProyecto}
+                    placeholder="Tipo de Proyecto"
                   />
                   <Text type="danger">{error?.message}</Text>
                 </StyledFormItem>
@@ -331,91 +282,147 @@ export const DatosFacturacion = ({
             />
           </Col>
 
-          <Col xs={24} sm={12}>
+          {/* Tipo Obra */}
+          <Col xs={24} sm={6}>
             <Controller
-              name="cant_pisos"
+              name="tipo_obra"
               control={methods.control}
               rules={{
                 required: {
                   value: true,
-                  message: "Cantidad de pisos requerida",
+                  message: "Tipo de obra es requerido",
                 },
               }}
               render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cantidad Pisos:">
-                  <Input
+                <StyledFormItem required label="Tipo de Obra">
+                  <Select
                     {...field}
-                    placeholder="00"
+                    options={[
+                      { value: 1, label: "Personalizada" },
+                      { value: 0, label: "Simétrica" },
+                    ]}
                     status={error && "error"}
+                    placeholder="Selecciona tipo de obra"
                   />
                   <Text type="danger">{error?.message}</Text>
                 </StyledFormItem>
               )}
             />
           </Col>
-          <Col xs={24} sm={12}>
-            <Controller
-              name="apt"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Cantidad de apartamentos requerida",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem
-                  required
-                  label="Cantidad Apartamentos por Piso:"
-                >
-                  <Input
-                    {...field}
-                    placeholder="00"
-                    status={error && "error"}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
+
+          {/* Simétrica */}
+          {tipoObra === 0 && (
+            <>
+              <Col xs={24} sm={12}>
+                <Controller
+                  name="torres"
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Cantidad de torres requerida",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem required label="Cantidad Torres:">
+                      <Input
+                        {...field}
+                        placeholder="00"
+                        status={error && "error"}
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <Controller
+                  name="cant_pisos"
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Cantidad de pisos requerida",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem required label="Cantidad Pisos:">
+                      <Input
+                        {...field}
+                        placeholder="00"
+                        status={error && "error"}
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+              <Col xs={24} sm={12}>
+                <Controller
+                  name="apt"
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Cantidad de apartamentos requerida",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem
+                      required
+                      label="Cantidad Apartamentos por Piso:"
+                    >
+                      <Input
+                        {...field}
+                        placeholder="00"
+                        status={error && "error"}
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+            </>
+          )}
+
+          {/* Personalizada */}
+          {tipoObra === 1 && (
+            <>
+              <Col xs={24} sm={4}>
+                <Controller
+                  name="torres"
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Cantidad de torres requerida",
+                    },
+                    pattern: {
+                      value: /^[0-9]+$/,
+                      message: "Solo se permiten números",
+                    },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem required label="Cantidad Torres:">
+                      <Input
+                        {...field}
+                        placeholder="Solo número"
+                        type="number"
+                        status={error && "error"}
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+            </>
+          )}
+
+          {/* Renderización personalizada */}
+          {tipoObra === 1 && cantidadTorres && renderPersonalizada()}
         </>
       )}
-
-      {/* Personalizada */}
-      {tipoObra === 1 && (
-        <>
-          <Col xs={24} sm={4}>
-            <Controller
-              name="torres"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Cantidad de torres requerida",
-                },
-                pattern: {
-                  value: /^[0-9]+$/,
-                  message: "Solo se permiten números",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cantidad Torres:">
-                  <Input
-                    {...field}
-                    placeholder="Solo número"
-                    type="number"
-                    status={error && "error"}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-        </>
-      )}
-
-      {/* Renderización personalizada */}
-      {tipoObra === 1 && cantidadTorres && renderPersonalizada()}
     </Row>
   );
 };

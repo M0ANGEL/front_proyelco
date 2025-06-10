@@ -58,6 +58,7 @@ export const ListConvenios = () => {
           estado: convenio.estado.toString(),
           fec_ini: convenio.fecha_inicio,
           fec_fin: convenio.fec_fin,
+          codigo_proyecto: convenio.codigo_proyecto,
         };
       });
       setInitialData(convenios);
@@ -143,17 +144,23 @@ export const ListConvenios = () => {
               <Card className="custom-card">
                 <List.Item.Meta
                   title={
-                    <Link
-                      to={`${location.pathname}/edit/${item.key}`}
-                      className="title-link"
-                    >
+                    item.estado == "1" ? (
+                      <Link
+                        to={`${location.pathname}/edit/${item.key}`}
+                        className="title-link"
+                      >
+                        <span className="title-text">
+                          {item.descripcion_proyecto.toUpperCase()}
+                        </span>
+                        <span className="title-icon">
+                          <EditFilled style={{ color: "#FF8C00" }} />
+                        </span>
+                      </Link>
+                    ) : (
                       <span className="title-text">
                         {item.descripcion_proyecto.toUpperCase()}
                       </span>
-                      <span className="title-icon">
-                        <EditFilled style={{ color: "#FF8C00" }} />
-                      </span>
-                    </Link>
+                    )
                   }
                   description={
                     <>
@@ -165,18 +172,26 @@ export const ListConvenios = () => {
                         <span>CLIENTE: {item.emp_nombre}</span>
                       </Typography.Text>
                       <br />
-                      <Typography.Text
-                        className="nombre"
-                        strong
-                      >
-                        <span>ING DE OBRA: {item.nombreIngeniero.toUpperCase()}</span>
+                      <Typography.Text className="nombre" strong>
+                        <span>
+                          ING DE OBRA: {item.nombreIngeniero.toUpperCase()}
+                        </span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text className="nombre" strong>
+                        <span>
+                          ENCARGADO: {item.nombreEncargado.toUpperCase()}
+                        </span>
                       </Typography.Text>
                       <br />
                       <Typography.Text
-                        className="nombre"
+                        className="codigo_proyecto"
                         strong
+                        style={{ color: "red" }}
                       >
-                        <span>ENCARGADO: {item.nombreEncargado.toUpperCase()}</span>
+                        <span>
+                          CODIGO PROYECTO: {item.codigo_proyecto.toUpperCase()}
+                        </span>
                       </Typography.Text>
                     </>
                   }

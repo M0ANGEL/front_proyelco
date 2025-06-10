@@ -51,3 +51,11 @@ export const getProyectoDetalle = async (id: React.Key): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+//actualizar la categoria
+export const updateProyecto = async (data: any, id: any): Promise<any> => {
+  return await client.put<any>(`administracion-proyectos/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

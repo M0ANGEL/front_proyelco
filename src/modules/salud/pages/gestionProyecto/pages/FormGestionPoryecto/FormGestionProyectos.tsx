@@ -385,6 +385,8 @@ export const FormGestionProyectos = () => {
                     const necesitaValidacion = Number(contenido.validacion) === 1;
                     const estaValidado = Number(contenido.estado_validacion) === 1;
 
+                    
+
                     return (
                       <Col
                         xs={24}
@@ -409,10 +411,10 @@ export const FormGestionProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
-                              {necesitaValidacion && !estaValidado && (
+                              {necesitaValidacion &&  (
                                 <Badge
                                   status="error"
-                                  text={!estaValidado ? "Proceso validado" : "Requiere validación"}
+                                  text={estaValidado ? "Proceso validado" : "Requiere validación"}
                                 />
                               )}
                             </div>
@@ -421,7 +423,7 @@ export const FormGestionProyectos = () => {
                             borderRadius: "16px",
                             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
                             border: "none",
-                            background: "rgba(255, 255, 255, 0.8)",
+                            background: "rgba(226, 226, 226, 0.8)",
                             backdropFilter: "blur(8px)",
                             height: "100%",
                           }}
@@ -459,7 +461,7 @@ export const FormGestionProyectos = () => {
                                   strong
                                   style={{
                                     display: "block",
-                                    marginBottom: "12px",
+                                    marginBottom: "10px",
                                     color: "#595959",
                                     fontSize: "15px",
                                   }}
@@ -545,7 +547,7 @@ export const FormGestionProyectos = () => {
                                             background:
                                               apt.estado === "2"
                                                 ? "linear-gradient(135deg, #4caf50, #66bb6a)"
-                                                : "linear-gradient(135deg, #f0f0f0, #d9d9d9)",
+                                                : "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))",
                                             color: "white",
                                             fontWeight: 500,
                                             boxShadow:
@@ -554,15 +556,15 @@ export const FormGestionProyectos = () => {
                                             alignItems: "center",
                                             justifyContent: "center",
                                             cursor: "default",
-                                            opacity:
-                                              apt.estado === "0" ? 0.6 : 1,
+                                            // opacity:
+                                            //   apt.estado === "0" ? 0.6 : 1,
                                             position: "relative",
                                           }}
                                           disabled
                                         >
                                           {apt.consecutivo}
                                           {necesitaValidacion &&
-                                            !estaValidado && (
+                                            /* !estaValidado && */ (
                                               <span
                                                 style={{
                                                   position: "absolute",

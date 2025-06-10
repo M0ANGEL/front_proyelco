@@ -36,6 +36,7 @@ import {
 import {
   crearProyecto,
   getProyectoID,
+  updateProyecto,
 } from "@/services/proyectos/proyectosAPI";
 
 const { Text } = Typography;
@@ -104,7 +105,7 @@ export const FormConvenios = () => {
       await getUsersProyecto().then(({ data: { data } }) => {
         selectUSuarios(
           data.map((item) => ({
-            value: item.id,
+            value: item.id.toString(),
             label: item.nombre,
           }))
         );
@@ -124,7 +125,7 @@ export const FormConvenios = () => {
       await getIngenieros().then(({ data: { data } }) => {
         selectIngeniero(
           data.map((item) => ({
-            value: item.id,
+            value: item.id.toString(),
             label: item.nombre,
           }))
         );
@@ -139,7 +140,7 @@ export const FormConvenios = () => {
 
   useEffect(() => {
     if (id) {
-      getProyectoID(id).then(({ data: { data } }) => {
+      getProyectoID(id).then(( { data } ) => {
         setConvenio(data);
         control.reset({
           tipoProyecto_id: data?.tipoProyecto_id?.toString(),
@@ -147,13 +148,15 @@ export const FormConvenios = () => {
           usuario_crea_id: data?.usuario_crea_id?.toString(),
           encargado_id: data?.encargado_id?.toString(),
           ingeniero_id: data?.ingeniero_id?.toString(),
+          emp_nombre: data?.emp_nombre?.toString(),
+          nit: data?.nit?.toString(),
           descripcion_proyecto: data?.descripcion_proyecto,
           fecha_inicio: dayjs(data?.fecha_inicio),
           codigo_proyecto: data?.codigo_proyecto,
           torres: data?.torres,
           cant_pisos: data?.cant_pisos,
           apt: data?.apt,
-          estado: data?.estado,
+          estado: data?.estado?.toString(),
         });
       });
     } else {
@@ -177,7 +180,7 @@ export const FormConvenios = () => {
   const onFinish = (data: any) => {
     setLoader(true);
     if (convenio) {
-      updateConvenio(data, id)
+      updateProyecto(data, id)
         .then(() => {
           notification.success({
             message: "Proyecto actualizado con éxito!",
@@ -232,14 +235,13 @@ export const FormConvenios = () => {
               for (const error of errores) {
                 notification.open({
                   type: "error",
-                  message: data.message,
+                  message: error,
                 });
               }
             } else {
-              notification.open({
+               notification.open({
                 type: "error",
-                message:
-                  "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
+                message: response.data.message,
               });
             }
             setLoader(false);
@@ -348,28 +350,55 @@ export const FormConvenios = () => {
                     ),
                     forceRender: true,
                   },
-                  {
-                    key: "3",
-                    label: (
-                      <Space>
-                        <Text
-                          type={
-                            Object.keys(control.formState.errors).length > 0
-                              ? "danger"
-                              : undefined
-                          }
-                        >
-                          Configurar Proyecto
-                        </Text>
-                      </Space>
-                    ),
-                    children: (
-                      <DatosConfigProyecto
-                        selectTipoProcesos={selectTipoProcesos}
-                      />
-                    ),
-                    forceRender: true,
-                  },
+                  // {
+                  //   key: "3",
+                  //   label: (
+                  //     <Space>
+                  //       <Text
+                  //         type={
+                  //           Object.keys(control.formState.errors).length > 0
+                  //             ? "danger"
+                  //             : undefined
+                  //         }
+                  //       >
+                  //         Configurar Proyecto
+                  //       </Text>
+                  //     </Space>
+                  //   ),
+                  //   children: (
+                  //     <DatosConfigProyecto
+                  //       selectTipoProcesos={selectTipoProcesos}
+                  //     />
+                  //   ),
+                  //   forceRender: true,
+                  // },
+                  ...(!id
+                    ? [
+                        {
+                          key: "3",
+                          label: (
+                            <Space>
+                              <Text
+                                type={
+                                  Object.keys(control.formState.errors).length >
+                                  0
+                                    ? "danger"
+                                    : undefined
+                                }
+                              >
+                                Configurar Proyecto
+                              </Text>
+                            </Space>
+                          ),
+                          children: (
+                            <DatosConfigProyecto
+                              selectTipoProcesos={selectTipoProcesos}
+                            />
+                          ),
+                          forceRender: true,
+                        },
+                      ]
+                    : []),
                 ]}
                 animated
               />

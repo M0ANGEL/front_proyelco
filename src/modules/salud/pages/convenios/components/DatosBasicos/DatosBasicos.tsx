@@ -167,11 +167,11 @@ export const DatosBasicos = () => {
             rules={{
               required: {
                 value: true,
-                message: "Descripción es requerido",
+                message: "Nombre del Proyecto es requerido",
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Descripción:">
+              <StyledFormItem required label="Nombre del Proyecto:">
                 <Input
                   showCount
                   {...field}
