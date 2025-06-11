@@ -9,6 +9,8 @@ export interface DataType {
   fec_ini: Date;
   fec_fin: Date;
   estado: string;
+  porcentaje: string;
+  avance: string;
 }
 
 export interface Pagination {

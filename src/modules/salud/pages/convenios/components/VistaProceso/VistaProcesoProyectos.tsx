@@ -20,6 +20,7 @@ const { Title, Text } = Typography;
 
 export const VistaProcesoProyectos = () => {
   const [data, setData] = useState<any>({});
+  const [porcetanjeTorre, setPorcetanjeTorre] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
     null
@@ -36,13 +37,17 @@ export const VistaProcesoProyectos = () => {
 
   const LlamadoData = () => {
     setLoading(true);
-    getProyectoDetalleGestion(Number(id)).then(({ data: { data } }) => {
-      setData(data);
+    getProyectoDetalleGestion(Number(id)).then(({ data/* : { data }  */}) => {
+      setData(data.data);
+      setPorcetanjeTorre(data.torreResumen);
       setLoading(false);
     });
   };
 
   const torresUnicas = Object.keys(data);
+
+  console.log(data);
+  
 
   return (
     <div
@@ -181,6 +186,7 @@ export const VistaProcesoProyectos = () => {
                   ></span>
                   Torre {torreSeleccionada}
                 </Title>
+                <span style={{color:'blue'}}> <b>Atraso de Torre: {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %</b> </span>
               </div>
 
               <Row gutter={[24, 24]}>
@@ -213,6 +219,7 @@ export const VistaProcesoProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
+                              <span style={{color:'blue'}}>Atraso del proceso: {contenido.porcentaje_atraso}%</span>
                             </div>
                           }
                           style={{

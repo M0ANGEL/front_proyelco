@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
-import { DataType } from "./types";
+import {  DataType } from "./types";
 import "./CustomList.css";
 import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
@@ -59,6 +59,8 @@ export const ListConvenios = () => {
           fec_ini: convenio.fecha_inicio,
           fec_fin: convenio.fec_fin,
           codigo_proyecto: convenio.codigo_proyecto,
+          porcentaje: convenio.porcentaje,
+          avance: convenio.avance,
         };
       });
       setInitialData(convenios);
@@ -249,11 +251,17 @@ export const ListConvenios = () => {
                     {item.fec_ini}
                   </Typography.Text>
 
-                  {/* aqui traer calculo del procentaje del proyecto */}
+                  {/* aqui traer calculo del procentaje de atrazo de la obra, calculo en el backend */}
                   <Typography.Text type="secondary">
-                    <span className="footer-label">Porcentaje Proyecto</span>{" "}
+                    <span className="footer-label">Atraso del Proyecto</span>{" "}
                     <br></br>
-                    {/* {item.fec_fin} */} 10%
+                    <span style={{color: 'blue'}}> <b>%{item.porcentaje}</b> </span>
+                  </Typography.Text>
+                   {/* aqui traer calculo del procentaje de avance de la obra, calculo en el backend */}
+                  <Typography.Text type="secondary">
+                    <span className="footer-label">Avance del Proyecto</span>{" "}
+                    <br></br>
+                    <span style={{color: 'green'}}> <b>%{item.avance}</b> </span>
                   </Typography.Text>
                 </div>
               </Card>

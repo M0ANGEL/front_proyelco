@@ -30,6 +30,8 @@ interface DataType {
   estado: string;
   nombre_tipo: string;
   emp_nombre: string;
+  porcentaje: string;
+  avance: string;
   created_at: string;
   updated_at: string;
 }
@@ -66,6 +68,8 @@ const ListGestionProyectos = () => {
           fecha_ini_proyecto: categoria.fecha_ini_proyecto,
           nombre_tipo: categoria.nombre_tipo,
           emp_nombre: categoria.emp_nombre,
+          porcentaje: categoria.porcentaje,
+          avance: categoria.avance,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -105,29 +109,50 @@ const ListGestionProyectos = () => {
       title: "Fecha Creacion",
       dataIndex: "created_at",
       key: "created_at",
+      align: "center",
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       fixed: "left",
     },
     {
       title: "Tipo Proyecto",
       dataIndex: "nombre_tipo",
+      align: "center",
       key: "nombre_tipo",
       sorter: (a, b) => a.nombre_tipo.localeCompare(b.nombre_tipo),
+    },
+    {
+      title: "Atraso Proyecto",
+      dataIndex: "porcentaje",
+      key: "porcentaje",
+      align: "center",
+      sorter: (a, b) => a.porcentaje.localeCompare(b.porcentaje),
+      render: (porcentaje) => <Tag color="blue">{porcentaje}%</Tag>,
+    },
+     {
+      title: "Avance del Proyecto",
+      dataIndex: "avance",
+      key: "avance",
+      align: "center",
+      sorter: (a, b) => a.avance.localeCompare(b.avance),
+      render: (avance) => <Tag color="green">{avance}%</Tag>,
     },
     {
       title: "Descripcion",
       dataIndex: "descripcion_proyecto",
       key: "descripcion_proyecto",
+      align: "center",
     },
     {
       title: "Codigo Proyecto",
       dataIndex: "codigo_proyecto",
       key: "codigo_proyecto",
+      align: "center",
     },
     {
       title: "Cliente",
       dataIndex: "emp_nombre",
       key: "emp_nombre",
+      align: "center",
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
 
@@ -203,9 +228,15 @@ const ListGestionProyectos = () => {
       dataIndex: "fecha_ini_proyecto",
       key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key ; fecha_ini_proyecto: string}) => {
+      render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
         return (
-          <Tooltip title={record.fecha_ini_proyecto === null ?  "Inicia el proyecto para Gestionar" : "Gestionar" }>
+          <Tooltip
+            title={
+              record.fecha_ini_proyecto === null
+                ? "Inicia el proyecto para Gestionar"
+                : "Gestionar"
+            }
+          >
             <Link to={`${location.pathname}/${record.key}`}>
               <Button
                 disabled={
@@ -224,9 +255,7 @@ const ListGestionProyectos = () => {
   ];
 
   return (
-    <StyledCard
-      title={"Lista de Proyectos Asignados"}
-    >
+    <StyledCard title={"Lista de Proyectos Asignados"}>
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />
       </SearchBar>

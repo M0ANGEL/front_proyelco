@@ -5677,6 +5677,8 @@ export interface Proyectos {
   fecha_ini_proyecto: string;
   nombre_tipo: string;
   emp_nombre: string;
+  porcentaje: string;
+  avance: string;
   created_at: string;
   updated_at: string;
 }
