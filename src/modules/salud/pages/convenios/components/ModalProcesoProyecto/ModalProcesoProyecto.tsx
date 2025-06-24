@@ -24,9 +24,11 @@ export const ModalProcesoProyecto = ({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     getProyectoDetalle(proyectoId).then(({ data: { data } }) => {
       setData(data);
     });
+    setLoading(false);
   }, [visible, proyectoId]);
 
   // Agrupar por torre > piso > apartamentos

@@ -1,0 +1,1 @@
+export {TalentoHumanoPages} from './TalentoHumanoPages'

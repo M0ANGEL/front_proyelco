@@ -1,57 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "../client";
 import {
-  ResponseCoberturaPlanBeneficios,
-  ResponseModalidadContrato,
-  CoberturaPlanBeneficios,
-  ResponseConvenioTipo,
-  ResponseTipoConsulta,
-  ResponseListapreCli,
-  ModalidadContrato,
-  ResponseTerceros,
-  ConvenioTipo,
-  ListaPrecios,
-  TipoConsulta,
   ResponseAmClientes,
   ResponseTipoProyectos,
 } from "../types";
 
-export const getTipoConvenio = async (): Promise<ResponseConvenioTipo> => {
-  return await client.get<{ data: ConvenioTipo[]; status: string }>(
-    `tipo-convenio`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
-
-export const getCoberPlanB =
-  async (): Promise<ResponseCoberturaPlanBeneficios> => {
-    return await client.get<{
-      data: CoberturaPlanBeneficios[];
-      status: string;
-    }>(`cober-planb`, {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    });
-  };
-
-export const getModContrato = async (): Promise<ResponseModalidadContrato> => {
-  return await client.get<{ data: ModalidadContrato[]; status: string }>(
-    `mod-contrato`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
-
-export const getTipoConsulta = async (): Promise<ResponseTipoConsulta> => {
-  return await client.get<{ data: TipoConsulta[]; status: string }>(
-    `tipo-consulta`,
-    {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-    }
-  );
-};
 
 //llamado de los tipos de proyectos 
 export const getTipoProyectos = async (): Promise<ResponseTipoProyectos> => {
@@ -93,6 +46,15 @@ export const getUsersProyecto = async (): Promise<ResponseTipoProyectos> => {
 //llamado de los ingenieros de obras
 export const getIngenieros = async (): Promise<ResponseTipoProyectos> => {
   return await client.get<{ data: any; status: string }>(`ingenieros-proyectos`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+
+//llamado de los usuarios para notificacion de porcentajes de obras
+export const getUsuariosCorreo = async (): Promise<ResponseTipoProyectos> => {
+  return await client.get<{ data: any; status: string }>(`usuario-correos`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

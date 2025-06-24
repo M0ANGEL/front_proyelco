@@ -33,7 +33,6 @@ export const ListConvenios = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
-  const [loadingRep, setLoadingRep] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
 
   /* modal de proceso proyecto */
@@ -45,7 +44,6 @@ export const ListConvenios = () => {
   }, []);
 
   const fetchConvenios = () => {
-    setLoadingRep(true);
     getProyectos().then(({ data: { data } }) => {
       // console.log(data);
       const convenios = data.map((convenio: any) => {
@@ -65,7 +63,6 @@ export const ListConvenios = () => {
       });
       setInitialData(convenios);
       setLoadingRow([]);
-      setLoadingRep(false);
     });
   };
 

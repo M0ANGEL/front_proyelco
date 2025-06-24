@@ -48,7 +48,7 @@ export const FormGestionProyectos = () => {
   // manejo de estado para activar pisos por dia
   useEffect(() => {
     if (torreSeleccionada !== null) {
-      if(torreYaIniciada()){
+      if (torreYaIniciada()) {
         confirmarPisosDia();
       }
     }
@@ -130,10 +130,16 @@ export const FormGestionProyectos = () => {
 
       if (response.data.needs_validation) {
         // Encontrar el proceso que necesita validación
-        const proceso = Object.values(data[torreSeleccionada]).find(
-          (p: any) =>
-            p.orden_proceso === (response.data.next_process || ordenProceso)
-        );
+        // const proceso = Object.values(data[torreSeleccionada]).find(
+        //   (p: any) =>
+        //     p.orden_proceso === (response.data.next_process || ordenProceso)
+        // );
+        const proceso = torreSeleccionada
+          ? Object.values(data[torreSeleccionada] || {}).find(
+              (p: any) =>
+                p.orden_proceso === (response.data.next_process || ordenProceso)
+            )
+          : undefined;
 
         if (proceso) {
           setProcesoAValidar({
@@ -379,14 +385,22 @@ export const FormGestionProyectos = () => {
                   ></span>
                   Torre {torreSeleccionada}
                 </Title>
-                <span style={{color:'blue'}}> <b>Atraso de Torre: {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %</b> </span>
+                <span style={{ color: "blue" }}>
+                  {" "}
+                  <b>
+                    Atraso de Torre:{" "}
+                    {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %
+                  </b>{" "}
+                </span>
               </div>
 
               <Row gutter={[24, 24]}>
                 {Object.entries(data[torreSeleccionada] || {}).map(
                   ([procesoKey, contenido]: any) => {
-                    const necesitaValidacion = Number(contenido.validacion) === 1;
-                    const estaValidado = Number(contenido.estado_validacion) === 1;
+                    const necesitaValidacion =
+                      Number(contenido.validacion) === 1;
+                    const estaValidado =
+                      Number(contenido.estado_validacion) === 1;
 
                     return (
                       <Col
@@ -412,11 +426,18 @@ export const FormGestionProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
-                              <span style={{color:'blue'}}>Atraso del proceso: {contenido.porcentaje_atraso}%</span>
-                              {necesitaValidacion &&  (
+                              <span style={{ color: "blue" }}>
+                                Atraso del proceso:{" "}
+                                {contenido.porcentaje_atraso}%
+                              </span>
+                              {necesitaValidacion && (
                                 <Badge
                                   status="error"
-                                  text={estaValidado ? "Proceso validado" : "Requiere validación"}
+                                  text={
+                                    estaValidado
+                                      ? "Proceso validado"
+                                      : "Requiere validación"
+                                  }
                                 />
                               )}
                             </div>
@@ -565,21 +586,20 @@ export const FormGestionProyectos = () => {
                                           disabled
                                         >
                                           {apt.consecutivo}
-                                          {necesitaValidacion &&
-                                            /* !estaValidado && */ (
-                                              <span
-                                                style={{
-                                                  position: "absolute",
-                                                  top: -2,
-                                                  right: -2,
-                                                  background: "#ff4d4f",
-                                                  borderRadius: "50%",
-                                                  width: 8,
-                                                  height: 8,
-                                                  border: "2px solid #fff",
-                                                }}
-                                              />
-                                            )}
+                                          {necesitaValidacion && (
+                                            /* !estaValidado && */ <span
+                                              style={{
+                                                position: "absolute",
+                                                top: -2,
+                                                right: -2,
+                                                background: "#ff4d4f",
+                                                borderRadius: "50%",
+                                                width: 8,
+                                                height: 8,
+                                                border: "2px solid #fff",
+                                              }}
+                                            />
+                                          )}
                                         </Button>
                                       )}
                                     </Tooltip>

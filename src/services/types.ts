@@ -5620,7 +5620,7 @@ export interface MaUsuariosRegistrados {
 export interface ResponseTipoProyectos {
   data: {
     status: string;
-    data: MaFarmacias[];
+    data: TipoProyectos[];
   };
 }
 
@@ -5697,4 +5697,120 @@ export interface InfoProyectosDash {
   proyectosTerminados: string;
   clientesInactivos: string;
   clientesActivos: string;
+}
+
+export interface ResponsePapeleria {
+  data: {
+    status: string;
+    data: Papeleria[];
+  };
+}
+export interface Papeleria {
+  id: number;
+  codigo_insumo: string;
+  insumo_descripcion: string;
+  unidad: string;
+  mat_requerido: string;
+  agrupacion_descripcion: string;
+  nombre_tercero: string;
+  prefijo: string;
+  fecha_pedido: string;
+  punto_envio: string;
+  created_at: string;
+  updated_at: string;
+}
+
+//fin papeleria
+
+
+
+
+/* type de datos categorias */
+export interface ResponseProveedores {
+  data: {
+    status: string;
+    data: Proveedores[];
+  };
+}
+export interface Proveedores {
+  id: number;
+  nombre: string;
+  correo: string;
+  estado: number;
+  ciudad: string;
+  telefono: string;
+  created_at: string;
+  updated_at: string;
+}
+
+//compras
+
+export interface ResponsePapeleria {
+  data: {
+    status: string;
+    data: Papeleria[];
+  };
+}
+export interface Papeleria {
+  id: number;
+  codigo_insumo: string;
+  insumo_descripcion: string;
+  unidad: string;
+  mat_requerido: string;
+  agrupacion_descripcion: string;
+  nombre_tercero: string;
+  prefijo: string;
+  fecha_pedido: string;
+  punto_envio: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+/* type de datos personal */
+export interface ResponsePersonales {
+  data: {
+    status: string;
+    data: Personales[];
+  };
+}
+export interface Personales {
+  id: number;
+  nombres: string;
+  apellidos: string;
+  cedula: number;
+  estado: string;
+  telefono: string;
+  cargo_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+/* type de datos asistencias obras */
+export interface ResponseAsistencia {
+  data: {
+    status: string;
+    data: Asistencia[];
+  };
+}
+export interface Asistencia {
+  id: number;
+  personal_id: string;
+  proyecto_id: string;
+  usuario_asigna: number;
+  usuario_confirma: string;
+  confirmacion: string;
+  detalle: string;
+  fecha_programacion: string;
+  fecha_confirmacion: string;
+  cargo: string;
+  nombres: string;
+  apellidos: string;
+  cedula: string;
+  usurioConfirma: string;
+  descripcion_proyecto: string;
+  created_at: string;
+  activo?: string;  //columna virtual
+  updated_at: string;
+  created_at_string: string;
 }

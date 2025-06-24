@@ -4,7 +4,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillControl, AiOutlineBarChart, AiOutlineUsergroupAdd } from "react-icons/ai";
+import { AiFillControl, AiOutlineBarChart, AiOutlineUsergroupAdd, AiTwotoneProject } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -39,7 +39,7 @@ import {
   LiaTerminalSolid,
   LiaBarcodeSolid,
 } from "react-icons/lia";
-import { MdGroup, MdOutlineAddHomeWork } from "react-icons/md";
+import { MdGroup, MdLocalGroceryStore, MdOutlineAddHomeWork } from "react-icons/md";
 import { IoTicketOutline } from "react-icons/io5";
 
 interface Props {
@@ -77,6 +77,8 @@ const moduleIcons = [
   { cod: "MA", icon: <TfiAlarmClock /> },
   { cod: "CLI", icon: <HiUserGroup /> },
   { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
+  { cod: "COMPA", icon: <MdLocalGroceryStore /> },
+  { cod: "TH", icon: <AiTwotoneProject /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {

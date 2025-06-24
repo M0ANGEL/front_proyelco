@@ -13,13 +13,16 @@ import {
   Col,
   Row,
 } from "antd";
+import { Props } from "./types";
+import { Tooltip } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
-export const DatosBasicos = () => {
+export const DatosBasicos = ({ usuariosCorreo }: Props) => {
   const [openModalTerceros, setOpenModalTerceros] = useState<boolean>(false);
-  const methods = useFormContext();
 
+  const methods = useFormContext();
 
   return (
     <>
@@ -58,7 +61,6 @@ export const DatosBasicos = () => {
             )}
           />
         </Col>
-
         {/* estado proyecto */}
         <Col xs={24} sm={12} md={6}>
           <Controller
@@ -158,7 +160,6 @@ export const DatosBasicos = () => {
             </Text>
           </StyledFormItem>
         </Col>
-
         {/* nombre del proyecto */}
         <Col xs={24} sm={24} md={12}>
           <Controller
@@ -184,9 +185,8 @@ export const DatosBasicos = () => {
             )}
           />
         </Col>
-
-          {/* codigo proyecto */}
-        <Col xs={24} sm={12} md={12}>
+        {/* codigo proyecto */}
+        <Col xs={24} sm={12} md={4}>
           <Controller
             name="codigo_proyecto"
             control={methods.control}
@@ -204,6 +204,106 @@ export const DatosBasicos = () => {
                   maxLength={20}
                   placeholder="00"
                   status={error && "error"}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col>
+        {/* usuarioas para envio de correo */}
+        {/* <Col xs={24} sm={8}>
+          <Controller
+            name="usuarios_autorizados"
+            control={methods.control}
+            rules={{
+              required: {
+                value: false, //validacion diamica si es o no olbigatoriaaa jaja
+                message: "El usuario es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Usuario Notificacion">
+                <Select
+                  mode="multiple" // Permite seleccionar varios valores
+                  {...field}
+                  showSearch
+                  allowClear
+                  options={usuariosCorreo} // Opciones predefinidas
+                  placeholder={"Selecciona uno o más usuarios"}
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    field.onChange(value); //acomular valores
+                  }}
+                  tokenSeparators={[","]}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toString()
+                      .toLowerCase()
+                      .localeCompare(
+                        (optionB?.label ?? "").toString().toLowerCase()
+                      )
+                  }
+                  filterOption={(input, option) =>
+                    (option?.label?.toString() ?? "")
+                      .toLowerCase()
+                      .includes(input.toString().toLowerCase())
+                  }
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col> */}
+        <Col xs={24} sm={8}>
+          <Controller
+            name="usuarios_notificacion"
+            control={methods.control}
+            rules={{
+              required: {
+                value: false, // Validación dinámica
+                message: "El usuario es requerido",
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem
+                label={
+                  <span>
+                    Usuarios Notificación{" "}
+                    <Tooltip title="Aquí seleccionas los usuarios que recibirán la notificación por correo sobre los cambio de progreso de los proyectos. ( TENER ENCUENTA, SI EL USUARIO NO TIENEN CORREO EN EL SISTEMA NO SE PODRA ENVIAR LA NOTIFICACION )">
+                      <InfoCircleOutlined
+                        style={{ color: "#faad14", cursor: "pointer" }}
+                      />
+                    </Tooltip>
+                  </span>
+                }
+              >
+                <Select
+                  mode="multiple" // Permite seleccionar varios valores
+                  {...field}
+                  showSearch
+                  allowClear
+                  options={usuariosCorreo} // Opciones predefinidas
+                  placeholder={"Selecciona uno o más usuarios"}
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                  onChange={(value) => {
+                    field.onChange(value); //acomular valores
+                  }}
+                  tokenSeparators={[","]}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "")
+                      .toString()
+                      .toLowerCase()
+                      .localeCompare(
+                        (optionB?.label ?? "").toString().toLowerCase()
+                      )
+                  }
+                  filterOption={(input, option) =>
+                    (option?.label?.toString() ?? "")
+                      .toLowerCase()
+                      .includes(input.toString().toLowerCase())
+                  }
                 />
                 <Text type="danger">{error?.message}</Text>
               </StyledFormItem>

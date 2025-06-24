@@ -1,0 +1,1 @@
+export {ComprasRoutes} from './ComprasRoutes'

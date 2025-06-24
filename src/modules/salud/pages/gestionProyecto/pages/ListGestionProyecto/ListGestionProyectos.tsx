@@ -3,7 +3,7 @@ import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
 // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
+import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
@@ -58,6 +58,7 @@ const ListGestionProyectos = () => {
           estado: categoria.estado.toString(),
           cliente_id: categoria.cliente_id,
           usuario_crea_id: categoria.usuario_crea_id,
+          encargado_id: categoria.encargado_id,
           descripcion_proyecto: categoria.descripcion_proyecto,
           fecha_inicio: categoria.fecha_inicio,
           codigo_proyecto: categoria.codigo_proyecto,

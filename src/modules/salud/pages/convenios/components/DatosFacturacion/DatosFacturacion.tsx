@@ -29,10 +29,6 @@ export const DatosFacturacion = ({
     control: methods.control,
   });
 
-  const cantPisos = useWatch({
-    name: "cant_pisos",
-    control: methods.control,
-  });
 
   const { id } = useParams<{ id: string }>();
 
@@ -138,72 +134,30 @@ export const DatosFacturacion = ({
 
   return (
     <Row gutter={[12, 6]}>
-      {/* pisos para cambio de proceso
-      <Col xs={24} sm={4}>
+      {/* apt para activacion por dia   */}
+       <Col xs={24} sm={4}>
         <Controller
-          name="pisosCambiarProceso"
+          name="activador_pordia_apt"
           control={methods.control}
           rules={{
             required: {
               value: true,
-              message: "Pisos por proceso es requerido",
-            },
-            validate: (value) => {
-              const val = parseInt(value);
-              if (isNaN(val)) return "Debe ingresar un número";
-
-              if (tipoObra === 0) {
-                // SIMÉTRICO
-                const totalPisos = parseInt(cantPisos);
-                if (!totalPisos || isNaN(totalPisos)) {
-                  return "Primero ingrese cantidad de pisos";
-                }
-                if (val > totalPisos) {
-                  return "No puede ser mayor a la cantidad de pisos";
-                }
-              } else if (tipoObra === 1) {
-                // PERSONALIZADO
-                const pisosMinimos = pisosPorTorre
-                  ?.map((t) => parseInt(t?.pisos))
-                  .filter((p) => !isNaN(p));
-                if (!pisosMinimos || pisosMinimos.length === 0) {
-                  return "Primero ingrese la cantidad de pisos en cada torre";
-                }
-                const minPisos = Math.min(...pisosMinimos);
-                if (val > minPisos) {
-                  return `No puede ser mayor que el piso mínimo entre torres (${minPisos})`;
-                }
-              }
-
-              return true;
+              message: "Numero de activacion de apt por dia es requerido",
             },
           }}
-          render={({ field, fieldState: { error } }) => {
-            // Validar si el campo debe estar deshabilitado
-            const disabledSimetrico =
-              tipoObra === 0 && (!cantPisos || isNaN(parseInt(cantPisos)));
-            const pisosMinimos = pisosPorTorre
-              ?.map((t) => parseInt(t?.pisos))
-              .filter((p) => !isNaN(p));
-            const disabledPersonalizado =
-              tipoObra === 1 && (!pisosMinimos || pisosMinimos.length === 0);
-            const isDisabled = disabledSimetrico || disabledPersonalizado;
-
-            return (
-              <StyledFormItem required label="Pisos Cambio Proceso:">
-                <Input
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Activacion por dia:">
+               <Input
                   {...field}
                   status={error && "error"}
                   placeholder="00"
                   type="number"
-                  disabled={isDisabled}
                 />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            );
-          }}
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
         />
-      </Col> */}
+      </Col>
 
       {/* usuario asignado */}
       <Col xs={24} sm={6}>
@@ -258,7 +212,7 @@ export const DatosFacturacion = ({
       {!id && (
         <>
           {/* Tipo Proyecto */}
-          <Col xs={24} sm={6}>
+          <Col xs={24} sm={4}>
             <Controller
               name="tipoProyecto_id"
               control={methods.control}
@@ -283,7 +237,7 @@ export const DatosFacturacion = ({
           </Col>
 
           {/* Tipo Obra */}
-          <Col xs={24} sm={6}>
+          <Col xs={24} sm={4}>
             <Controller
               name="tipo_obra"
               control={methods.control}

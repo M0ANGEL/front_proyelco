@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { updateConvenio } from "@/services/salud/conveniosAPI";
 import {
   DatosBasicos,
   DatosConfigProyecto,
@@ -16,6 +15,7 @@ import {
   getProcesosProyectos,
   getTipoProyectos,
   getUsersProyecto,
+  getUsuariosCorreo,
 } from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
@@ -49,6 +49,10 @@ export const FormConvenios = () => {
   const [selectTipoProcesos, setselectTipoProcesos] = useState<
     SelectProps["options"]
   >([]);
+
+  const [usuariosCorreo, setUsuariosCorreo] = useState<SelectProps["options"]>(
+    []
+  );
 
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
   const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
@@ -138,9 +142,29 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
+  //llamado de usuarios para correo de obra
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getUsuariosCorreo().then(({ data: { data } }) => {
+        setUsuariosCorreo(
+          data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nombre,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
   useEffect(() => {
     if (id) {
-      getProyectoID(id).then(( { data } ) => {
+      getProyectoID(id).then(({ data }) => {
         setConvenio(data);
         control.reset({
           tipoProyecto_id: data?.tipoProyecto_id?.toString(),
@@ -157,6 +181,8 @@ export const FormConvenios = () => {
           cant_pisos: data?.cant_pisos,
           apt: data?.apt,
           estado: data?.estado?.toString(),
+          activador_pordia_apt: data?.activador_pordia_apt?.toString(),
+          usuarios_notificacion: JSON.parse(data?.usuarios_notificacion),
         });
       });
     } else {
@@ -239,7 +265,7 @@ export const FormConvenios = () => {
                 });
               }
             } else {
-               notification.open({
+              notification.open({
                 type: "error",
                 message: response.data.message,
               });
@@ -324,7 +350,7 @@ export const FormConvenios = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: <DatosBasicos />,
+                    children: <DatosBasicos usuariosCorreo={usuariosCorreo} />,
                   },
                   {
                     key: "2",
