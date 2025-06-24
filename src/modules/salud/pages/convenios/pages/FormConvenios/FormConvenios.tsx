@@ -2,11 +2,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
-  crearConvenio,
-  getConvenio,
-  updateConvenio,
-} from "@/services/salud/conveniosAPI";
-import {
   DatosBasicos,
   DatosConfigProyecto,
   DatosFacturacion,
@@ -14,11 +9,13 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { Convenio } from "@/services/types";
+import { Proyectos } from "@/services/types";
 import {
+  getIngenieros,
   getProcesosProyectos,
   getTipoProyectos,
   getUsersProyecto,
+  getUsuariosCorreo,
 } from "@/services/salud/conveniosTipoAPI";
 import {
   ArrowLeftOutlined,
@@ -39,6 +36,7 @@ import {
 import {
   crearProyecto,
   getProyectoID,
+  updateProyecto,
 } from "@/services/proyectos/proyectosAPI";
 
 const { Text } = Typography;
@@ -52,10 +50,13 @@ export const FormConvenios = () => {
     SelectProps["options"]
   >([]);
 
+  const [usuariosCorreo, setUsuariosCorreo] = useState<SelectProps["options"]>(
+    []
+  );
+
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
   const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
-
-  const [convenio, setConvenio] = useState<Convenio>();
+  const [convenio, setConvenio] = useState<Proyectos>();
   const [loader, setLoader] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -101,14 +102,14 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  //llamado de usuarios para asignar poryecto
+  //llamado de usuarios rol encargado de obra para asignar poryecto
   useEffect(() => {
     setLoader(true);
     const fetchSelects = async () => {
       await getUsersProyecto().then(({ data: { data } }) => {
         selectUSuarios(
           data.map((item) => ({
-            value: item.id,
+            value: item.id.toString(),
             label: item.nombre,
           }))
         );
@@ -121,59 +122,83 @@ export const FormConvenios = () => {
       .finally(() => setLoader(false));
   }, []);
 
-  // //llamado de usuarios para asignar poryecto
-  // useEffect(() => {
-  //   setLoader(true);
-  //   const fetchSelects = async () => {
-  //     await getUsersProyecto().then(({ data: { data } }) => {
-  //       selectIngeniero(
-  //         data.map((item) => ({
-  //           value: item.id,
-  //           label: item.nombre,
-  //         }))
-  //       );
-  //     });
-  //   };
-  //   fetchSelects()
-  //     .catch((error) => {
-  //       console.error(error);
-  //     })
-  //     .finally(() => setLoader(false));
-  // }, []);
+  // llamado de usuarios rol ingenieros para asignar poryecto
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getIngenieros().then(({ data: { data } }) => {
+        selectIngeniero(
+          data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nombre,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
+
+  //llamado de usuarios para correo de obra
+  useEffect(() => {
+    setLoader(true);
+    const fetchSelects = async () => {
+      await getUsuariosCorreo().then(({ data: { data } }) => {
+        setUsuariosCorreo(
+          data.map((item) => ({
+            value: item.id.toString(),
+            label: item.nombre,
+          }))
+        );
+      });
+    };
+    fetchSelects()
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => setLoader(false));
+  }, []);
 
   useEffect(() => {
     if (id) {
-      getProyectoID(id).then(({ data: { data } }) => {
+      getProyectoID(id).then(({ data }) => {
         setConvenio(data);
         control.reset({
-          // tipoProyecto_id: data.tipoProyecto_id.toString(),
-          tipoProyecto_id: parseInt(data.tipoProyecto_id),
-
-          cliente_id: data.cliente_id.toString(),
-          usuario_crea_id: data.usuario_crea_id.toString(),
-          descripcion_proyecto: data.descripcion_proyecto,
-          fecha_inicio: dayjs(data.fecha_inicio),
-          codigo_contrato: data.codigo_contrato,
-          torres: data.torres,
-          cant_pisos: data.cant_pisos,
-          apt: data.apt,
-          estado: data.estado.toString(),
-          bloques: JSON.parse(data.bodegas),
-          emp_nombre: data.emp_nombre,
-          nit: data.nit,
+          tipoProyecto_id: data?.tipoProyecto_id?.toString(),
+          cliente_id: data?.cliente_id?.toString(),
+          usuario_crea_id: data?.usuario_crea_id?.toString(),
+          encargado_id: data?.encargado_id?.toString(),
+          ingeniero_id: data?.ingeniero_id?.toString(),
+          emp_nombre: data?.emp_nombre?.toString(),
+          nit: data?.nit?.toString(),
+          descripcion_proyecto: data?.descripcion_proyecto,
+          fecha_inicio: dayjs(data?.fecha_inicio),
+          codigo_proyecto: data?.codigo_proyecto,
+          torres: data?.torres,
+          cant_pisos: data?.cant_pisos,
+          apt: data?.apt,
+          estado: data?.estado?.toString(),
+          activador_pordia_apt: data?.activador_pordia_apt?.toString(),
+          usuarios_notificacion: JSON.parse(data?.usuarios_notificacion),
         });
       });
     } else {
       control.reset({
-        estado: 1,
-        bloques: [],
-        codigo_contrato: null,
-        descripcion: "",
-        emp_nombre: "",
-        fecha_inicio: null,
         tipoProyecto_id: null,
+        cliente_id: null,
+        usuario_crea_id: null,
+        encargado_id: null,
+        ingeniero_id: null,
+        descripcion_proyecto: "",
+        fecha_inicio: "",
+        codigo_proyecto: "",
         torres: null,
-        nit: null,
+        cant_pisos: null,
+        apt: null,
+        estado: "1",
       });
     }
   }, [id]);
@@ -181,7 +206,7 @@ export const FormConvenios = () => {
   const onFinish = (data: any) => {
     setLoader(true);
     if (convenio) {
-      updateConvenio(data, id)
+      updateProyecto(data, id)
         .then(() => {
           notification.success({
             message: "Proyecto actualizado con éxito!",
@@ -236,14 +261,13 @@ export const FormConvenios = () => {
               for (const error of errores) {
                 notification.open({
                   type: "error",
-                  message: data.message,
+                  message: error,
                 });
               }
             } else {
               notification.open({
                 type: "error",
-                message:
-                  "No se puede crear el proyecto, se debe confirmar las validaciones de los procesos",
+                message: response.data.message,
               });
             }
             setLoader(false);
@@ -326,7 +350,7 @@ export const FormConvenios = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: <DatosBasicos />,
+                    children: <DatosBasicos usuariosCorreo={usuariosCorreo} />,
                   },
                   {
                     key: "2",
@@ -347,32 +371,60 @@ export const FormConvenios = () => {
                       <DatosFacturacion
                         selectTipoProyecto={selectTipoProyecto}
                         selectUSuarios={USuarios}
+                        selectIngeniero={Ingeniero}
                       />
                     ),
                     forceRender: true,
                   },
-                  {
-                    key: "3",
-                    label: (
-                      <Space>
-                        <Text
-                          type={
-                            Object.keys(control.formState.errors).length > 0
-                              ? "danger"
-                              : undefined
-                          }
-                        >
-                          Configurar Proyecto
-                        </Text>
-                      </Space>
-                    ),
-                    children: (
-                      <DatosConfigProyecto
-                        selectTipoProcesos={selectTipoProcesos}
-                      />
-                    ),
-                    forceRender: true,
-                  },
+                  // {
+                  //   key: "3",
+                  //   label: (
+                  //     <Space>
+                  //       <Text
+                  //         type={
+                  //           Object.keys(control.formState.errors).length > 0
+                  //             ? "danger"
+                  //             : undefined
+                  //         }
+                  //       >
+                  //         Configurar Proyecto
+                  //       </Text>
+                  //     </Space>
+                  //   ),
+                  //   children: (
+                  //     <DatosConfigProyecto
+                  //       selectTipoProcesos={selectTipoProcesos}
+                  //     />
+                  //   ),
+                  //   forceRender: true,
+                  // },
+                  ...(!id
+                    ? [
+                        {
+                          key: "3",
+                          label: (
+                            <Space>
+                              <Text
+                                type={
+                                  Object.keys(control.formState.errors).length >
+                                  0
+                                    ? "danger"
+                                    : undefined
+                                }
+                              >
+                                Configurar Proyecto
+                              </Text>
+                            </Space>
+                          ),
+                          children: (
+                            <DatosConfigProyecto
+                              selectTipoProcesos={selectTipoProcesos}
+                            />
+                          ),
+                          forceRender: true,
+                        },
+                      ]
+                    : []),
                 ]}
                 animated
               />

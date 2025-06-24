@@ -1,4 +1,4 @@
-# SebThi Frontend
+# Proyelco Frontend
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.com/develop_farmart/sebthi-frontend.git
+git remote add origin https://gitlab.com/proyelco-frontend.git
 git branch -M main
 git push -uf origin main
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.com/develop_farmart/sebthi-frontend/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.com/proyelco-frontend/-/settings/integrations)
 
 ## Collaborate with your team
 

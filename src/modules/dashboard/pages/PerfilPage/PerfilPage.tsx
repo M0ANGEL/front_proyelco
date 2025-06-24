@@ -195,8 +195,6 @@ export const PerfilPage = () => {
             <Space direction="vertical" align="center">
               <Title level={3}>{user?.nombre}</Title>
               <Text>Identificación : {user?.cedula}</Text>
-              <Text>Cargo : {cargoInf?.descripcion}</Text>
-              <Text>Bodega : {bodegaInf?.bod_nombre}</Text>
               <Text>
                 Último login:{" "}
                 <Text type="success" code>
@@ -207,6 +205,7 @@ export const PerfilPage = () => {
               </Text>
             </Space>
           </Col>
+          
           <Col xs={24} md={9}>
             <Spin spinning={loader} indicator={<LoadingOutlined spin />}>
               <Form

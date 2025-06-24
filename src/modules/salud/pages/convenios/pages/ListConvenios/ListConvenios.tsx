@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
-import { DataType } from "./types";
+import {  DataType } from "./types";
 import "./CustomList.css";
 import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
@@ -33,7 +33,6 @@ export const ListConvenios = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
-  const [loadingRep, setLoadingRep] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState("");
 
   /* modal de proceso proyecto */
@@ -45,22 +44,25 @@ export const ListConvenios = () => {
   }, []);
 
   const fetchConvenios = () => {
-    setLoadingRep(true);
     getProyectos().then(({ data: { data } }) => {
       // console.log(data);
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,
-          nombre: convenio.nombre,
-          razon_soc: convenio.emp_nombre,
+          nombreEncargado: convenio.nombreEncargado,
+          nombreIngeniero: convenio.nombreIngeniero,
+          descripcion_proyecto: convenio.descripcion_proyecto,
+          emp_nombre: convenio.emp_nombre,
           estado: convenio.estado.toString(),
           fec_ini: convenio.fecha_inicio,
           fec_fin: convenio.fec_fin,
+          codigo_proyecto: convenio.codigo_proyecto,
+          porcentaje: convenio.porcentaje,
+          avance: convenio.avance,
         };
       });
       setInitialData(convenios);
       setLoadingRow([]);
-      setLoadingRep(false);
     });
   };
 
@@ -141,17 +143,23 @@ export const ListConvenios = () => {
               <Card className="custom-card">
                 <List.Item.Meta
                   title={
-                    <Link
-                      to={`${location.pathname}/edit/${item.key}`}
-                      className="title-link"
-                    >
+                    item.estado == "1" ? (
+                      <Link
+                        to={`${location.pathname}/edit/${item.key}`}
+                        className="title-link"
+                      >
+                        <span className="title-text">
+                          {item.descripcion_proyecto.toUpperCase()}
+                        </span>
+                        <span className="title-icon">
+                          <EditFilled style={{ color: "#FF8C00" }} />
+                        </span>
+                      </Link>
+                    ) : (
                       <span className="title-text">
-                        {item.nombre.toUpperCase()}
+                        {item.descripcion_proyecto.toUpperCase()}
                       </span>
-                      <span className="title-icon">
-                        <EditFilled style={{ color: "#FF8C00" }} />
-                      </span>
-                    </Link>
+                    )
                   }
                   description={
                     <>
@@ -160,14 +168,29 @@ export const ListConvenios = () => {
                         strong
                         style={{ color: "#FF8C00" }}
                       >
-                        <span>CLIENTE: {item.razon_soc}</span>
+                        <span>CLIENTE: {item.emp_nombre}</span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text className="nombre" strong>
+                        <span>
+                          ING DE OBRA: {item.nombreIngeniero.toUpperCase()}
+                        </span>
+                      </Typography.Text>
+                      <br />
+                      <Typography.Text className="nombre" strong>
+                        <span>
+                          ENCARGADO: {item.nombreEncargado.toUpperCase()}
+                        </span>
                       </Typography.Text>
                       <br />
                       <Typography.Text
-                        className="nombre"
+                        className="codigo_proyecto"
                         strong
+                        style={{ color: "red" }}
                       >
-                        <span>ENCARGADO: {item.nombre}</span>
+                        <span>
+                          CODIGO PROYECTO: {item.codigo_proyecto.toUpperCase()}
+                        </span>
                       </Typography.Text>
                     </>
                   }
@@ -225,11 +248,17 @@ export const ListConvenios = () => {
                     {item.fec_ini}
                   </Typography.Text>
 
-                  {/* aqui traer calculo del procentaje del proyecto */}
+                  {/* aqui traer calculo del procentaje de atrazo de la obra, calculo en el backend */}
                   <Typography.Text type="secondary">
-                    <span className="footer-label">Porcentaje Proyecto</span>{" "}
+                    <span className="footer-label">Atraso del Proyecto</span>{" "}
                     <br></br>
-                    {/* {item.fec_fin} */} 10%
+                    <span style={{color: 'blue'}}> <b>%{item.porcentaje}</b> </span>
+                  </Typography.Text>
+                   {/* aqui traer calculo del procentaje de avance de la obra, calculo en el backend */}
+                  <Typography.Text type="secondary">
+                    <span className="footer-label">Avance del Proyecto</span>{" "}
+                    <br></br>
+                    <span style={{color: 'green'}}> <b>%{item.avance}</b> </span>
                   </Typography.Text>
                 </div>
               </Card>

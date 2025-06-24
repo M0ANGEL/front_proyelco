@@ -11,6 +11,8 @@ import { Route } from "react-router-dom";
 import { GlobalProvider } from "./GlobalContext";
 import { AdministrarClientesRoutes } from "@/modules/clientes/routes";
 import { AdministrarProcesosProyectoRoutes } from "@/modules/procesosObra/routes";
+import { TalentoHumanoRoutes } from "@/modules/talento-humano";
+import { ComprasRoutes } from "@/modules/compras";
 
 export const AdminRoutes = () => {
   return (
@@ -42,6 +44,9 @@ export const AdminRoutes = () => {
               path={"configuracionproyectos/*"}
               element={<AdministrarProcesosProyectoRoutes />}
             />
+             <Route path={"compras/*"} element={<ComprasRoutes />} />
+            <Route path={"modulodetalentohumano/*"} element={<TalentoHumanoRoutes />} />
+
 
             {/* <Route path={"aliados/*"} element={<AliadosRoutes />} />
 

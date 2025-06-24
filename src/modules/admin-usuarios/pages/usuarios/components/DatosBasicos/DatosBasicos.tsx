@@ -9,15 +9,12 @@ import { Controller, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Usuario } from "../../types";
 import {
-  // SelectProps,
   Typography,
   Select,
   Input,
   Col,
   Row,
 } from "antd";
-// import { getTkProcesos } from "@/services/tickets/procesosAPI";
-// import { getPerfilesHorarios } from "@/services/horarios-sistema/horariosAPI";
 
 const { Text } = Typography;
 
@@ -29,37 +26,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
   const [phoneValue, setPhoneValue] = useState<string>("");
   const [timer, setTimer] = useState<any>(null);
   const methods = useFormContext();
-  //procesos
-  // const [selectProcesos, setSelectProcesos] = useState<SelectProps["options"]>(
-  //   []
-  // );
-  //perfiles hora
-  // const [selectPerfilesHorario, setSelectPerfilesHorario] = useState<
-  //   SelectProps["options"]
-  // >([]);
-
-  //llamado a procesos
-  // useEffect(() => {
-  //   getTkProcesos().then(({ data: { data } }) => {
-  //     const Procesos = data.map((item) => ({
-  //       label: item.nombre_proceso,
-  //       value: item.id,
-  //     }));
-  //     setSelectProcesos(Procesos);
-  //   });
-  // }, []);
-
-  /* llamado de perfiles asignar horario */
-  // useEffect(() => {
-  //   getPerfilesHorarios().then(({ data: { data } }) => {
-  //     const perfiles = data.map((item) => ({
-  //       label: item.nombre_perfil,
-  //       value: item.id,
-  //     }));
-  //     setSelectPerfilesHorario(perfiles);
-  //   });
-  // }, []);
-
 
   useEffect(() => {
     methods.setValue("rol", methods.watch("rol"));
@@ -80,10 +46,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: usuario.user.username,
             password: "",
             correo: usuario.user.correo,
-            // proceso_id: usuario.user.proceso_id,
-            // has_limite_reportes: parseInt(usuario.user.has_limite_reportes),
-            moderador_tickets: usuario.user.moderador_tickets,
-            horario_id: usuario.user.horario_id,
           }
         : {
             nombre: null,
@@ -94,9 +56,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: null,
             password: "",
             correo: null,
-            // proceso_id: null,
-            moderador_tickets: 0,
-            horario_id: [],
           }
     );
    
@@ -241,79 +200,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
                 </StyledFormItem>
               )}
             />
-            {/* <Controller
-              name="proceso_id"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: false,
-                  message: "El proceso es obligatorio",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Proceso">
-                  <Select
-                    {...field}
-                    showSearch
-                    allowClear
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "")
-                        .toString()
-                        .toLowerCase()
-                        .localeCompare(
-                          (optionB?.label ?? "").toString().toLowerCase()
-                        )
-                    }
-                    filterOption={(input, option) =>
-                      (option?.label?.toString() ?? "")
-                        .toLowerCase()
-                        .includes(input.toString().toLowerCase())
-                    }
-                    options={selectProcesos}
-                    status={error && "error"}
-                  />
-
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            /> */}
           </Col>
-          {/* <Col xs={24} sm={20} style={{ width: "100%" }}>
-            <Controller
-              name="horario_id"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "El Tipo de horario es requerido",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Tipo de Horario:" labelCol={{ span: 24 }}>
-                  <Select
-                    {...field}
-                    showSearch
-                    allowClear
-                    filterSort={(optionA, optionB) =>
-                      (optionA?.label ?? "")
-                        .toString()
-                        .toLowerCase()
-                        .localeCompare(
-                          (optionB?.label ?? "").toString().toLowerCase()
-                        )
-                    }
-                    filterOption={(input, option) =>
-                      (option?.label?.toString() ?? "")
-                        .toLowerCase()
-                        .includes(input.toString().toLowerCase())
-                    }
-                    options={selectPerfilesHorario}
-                  />{" "}
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col> */}
         </Row>
       </Col>
       <Col xs={24} md={12}>
@@ -340,7 +227,9 @@ export const DatosBasicos = ({ usuario }: Props) => {
                     }
                     options={[
                       { value: "administrador", label: "Administrador" },
-                      { value: "usuario", label: "Usuario" },
+                      { value: "Gerente", label: "Gerente" },
+                      { value: "Ingeniero", label: "Ingeniero" },
+                      { value: "Encargado Obras", label: "Encargado Obras" },
                     ]}
                     status={error && "error"}
                   />
@@ -429,88 +318,6 @@ export const DatosBasicos = ({ usuario }: Props) => {
           </Col>
         </Row>
       </Col>
-      {/* <Col span={24}>
-        <Row gutter={[12, 12]}>
-          <Col xs={24} md={12}>
-            <Controller
-              name="has_limite_reportes"
-              control={methods.control}
-              render={({ field }) => (
-                <StyledFormItem
-                  extra={
-                    <Text type="secondary" style={{ fontSize: 11 }}>
-                      Este campo se le habilita a los usuarios que van a tener
-                      limite de 1 día para generar los reportes.
-                    </Text>
-                  }
-                >
-                  <Checkbox
-                    {...field}
-                    checked={methods.getValues("has_limite_reportes")}
-                  >
-                    ¿Habilitar límite de reportes a 1 día?
-                  </Checkbox>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-          <Col xs={24} sm={12} style={{ width: "100%" }}>
-            <Controller
-              name="moderador_tickets"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "moderador",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem
-                >
-                  <Checkbox
-                    {...field}
-                    checked={methods.getValues("moderador_tickets") === "1"}
-                    onChange={(e) =>
-                      field.onChange(e.target.checked ? "1" : "0")
-                    }
-                  >
-                    Moderador Tickets
-                  </Checkbox>
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-          <Col xs={24} sm={12} style={{ width: "100%" }}>
-            <Controller
-              name="can_config_telefono"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Configuración de telefono",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem
-                 
-                >
-                  <Checkbox
-                    {...field}
-                    checked={methods.getValues("can_config_telefono") === "1"}
-                    onChange={(e) =>
-                      field.onChange(e.target.checked ? "1" : "0")
-                    }
-                  >
-                    Configuración de telefono
-                  </Checkbox>
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-        </Row>
-      </Col> */}
     </Row>
   );
 };

@@ -1,0 +1,1 @@
+export {FormPersonal } from './FormPersonal'

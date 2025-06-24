@@ -1,1 +1,1 @@
-export { VistaProcesoProyectos} from './VIstaProcesoProyectos'
+export { VistaProcesoProyectos} from './VistaProcesoProyectos'

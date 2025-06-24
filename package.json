@@ -1,8 +1,8 @@
 {
-  "name": "sebthi-frontend",
+  "name": "proyelco-frontend",
   "private": false,
   "version": "1.7.172",
-  "homepage": "http://186.86.25.46/sebthi3.0-frontend/",
+  "homepage": "http://190.8.176.58/proyelco-frontend/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

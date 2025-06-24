@@ -13,6 +13,7 @@ import {
 import { HorariosRoutes } from "../pages/horas_sistema";
 import { HorariosTemporalesRoutes } from "../pages/horas_sistema_temporales/routes/HorariosTemporalesRoutes";
 import { ReporteLogHorariosRouter } from "../pages/reporteHorarios";
+import { CargueMasivosRoute } from "../pages/carguesMasivos";
 
 export const ConfigSisRoutes = () => {
   return (
@@ -33,6 +34,10 @@ export const ConfigSisRoutes = () => {
         <Route
           path="/configuracion/*"
           element={<ConfiguracionRoutes />}
+        />
+          <Route
+          path="/cargue-masivo/*"
+          element={<CargueMasivosRoute />}
         />
       </Route>
     </RoutesWithNotFound>

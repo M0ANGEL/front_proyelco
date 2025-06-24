@@ -3,11 +3,10 @@ import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
 // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
+import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import dayjs from "dayjs";
 import {
   getGestionProyecto,
@@ -31,6 +30,8 @@ interface DataType {
   estado: string;
   nombre_tipo: string;
   emp_nombre: string;
+  porcentaje: string;
+  avance: string;
   created_at: string;
   updated_at: string;
 }
@@ -57,6 +58,7 @@ const ListGestionProyectos = () => {
           estado: categoria.estado.toString(),
           cliente_id: categoria.cliente_id,
           usuario_crea_id: categoria.usuario_crea_id,
+          encargado_id: categoria.encargado_id,
           descripcion_proyecto: categoria.descripcion_proyecto,
           fecha_inicio: categoria.fecha_inicio,
           codigo_proyecto: categoria.codigo_proyecto,
@@ -67,6 +69,8 @@ const ListGestionProyectos = () => {
           fecha_ini_proyecto: categoria.fecha_ini_proyecto,
           nombre_tipo: categoria.nombre_tipo,
           emp_nombre: categoria.emp_nombre,
+          porcentaje: categoria.porcentaje,
+          avance: categoria.avance,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -106,53 +110,74 @@ const ListGestionProyectos = () => {
       title: "Fecha Creacion",
       dataIndex: "created_at",
       key: "created_at",
+      align: "center",
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       fixed: "left",
     },
     {
       title: "Tipo Proyecto",
       dataIndex: "nombre_tipo",
+      align: "center",
       key: "nombre_tipo",
       sorter: (a, b) => a.nombre_tipo.localeCompare(b.nombre_tipo),
+    },
+    {
+      title: "Atraso Proyecto",
+      dataIndex: "porcentaje",
+      key: "porcentaje",
+      align: "center",
+      sorter: (a, b) => a.porcentaje.localeCompare(b.porcentaje),
+      render: (porcentaje) => <Tag color="blue">{porcentaje}%</Tag>,
+    },
+     {
+      title: "Avance del Proyecto",
+      dataIndex: "avance",
+      key: "avance",
+      align: "center",
+      sorter: (a, b) => a.avance.localeCompare(b.avance),
+      render: (avance) => <Tag color="green">{avance}%</Tag>,
     },
     {
       title: "Descripcion",
       dataIndex: "descripcion_proyecto",
       key: "descripcion_proyecto",
+      align: "center",
     },
     {
       title: "Codigo Proyecto",
       dataIndex: "codigo_proyecto",
       key: "codigo_proyecto",
+      align: "center",
     },
     {
       title: "Cliente",
       dataIndex: "emp_nombre",
       key: "emp_nombre",
+      align: "center",
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
 
-    {
-      title: "Cant Torres",
-      dataIndex: "torres",
-      key: "torres",
-      sorter: (a, b) => a.torres.localeCompare(b.torres),
-      align: "center",
-    },
-    {
-      title: "Cant Pisos",
-      dataIndex: "cant_pisos",
-      key: "cant_pisos",
-      sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
-      align: "center",
-    },
-    {
-      title: "Cant Apt",
-      dataIndex: "apt",
-      key: "apt",
-      sorter: (a, b) => a.apt.localeCompare(b.apt),
-      align: "center",
-    },
+    // {
+    //   title: "Cant Torres",
+    //   dataIndex: "torres",
+    //   key: "torres",
+    //   sorter: (a, b) => a.torres.localeCompare(b.torres),
+    //   align: "center",
+    // },
+    // {
+    //   title: "Cant Pisos x torre",
+    //   dataIndex: "cant_pisos",
+    //   key: "cant_pisos",
+    //   sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
+    //   align: "center",
+    // },
+    // {
+    //   title: "Cant Apt x piso",
+    //   dataIndex: "apt",
+    //   key: "apt",
+    //   sorter: (a, b) => a.apt.localeCompare(b.apt),
+    //   align: "center",
+    // },
     {
       title: "Estado Proyecto",
       dataIndex: "fecha_ini_proyecto",
@@ -204,9 +229,15 @@ const ListGestionProyectos = () => {
       dataIndex: "fecha_ini_proyecto",
       key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key ; fecha_ini_proyecto: string}) => {
+      render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
         return (
-          <Tooltip title={record.fecha_ini_proyecto === null ?  "Inicia el proyecto para Gestionar" : "Gestionar" }>
+          <Tooltip
+            title={
+              record.fecha_ini_proyecto === null
+                ? "Inicia el proyecto para Gestionar"
+                : "Gestionar"
+            }
+          >
             <Link to={`${location.pathname}/${record.key}`}>
               <Button
                 disabled={
@@ -225,14 +256,7 @@ const ListGestionProyectos = () => {
   ];
 
   return (
-    <StyledCard
-      title={"Lista de Proyectos Asignados"}
-      // extra={
-      //   <Link to={`${location.pathname}/gestionar`}>
-      //     <Button type="primary">Crear</Button>
-      //   </Link>
-      // }
-    >
+    <StyledCard title={"Lista de Proyectos Asignados"}>
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />
       </SearchBar>
