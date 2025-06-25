@@ -38,7 +38,7 @@ export const DeleteAsistencia = async ( id: any): Promise<any> => {
 };
 
 //llamar todos los proyectos activos
-export const getTkProyectos = async (): Promise<ResponseProyectos> => {
+export const getProyectosCambioObra = async (): Promise<ResponseProyectos> => {
   return await client.get("proyectos-activos", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
@@ -62,6 +62,16 @@ export const confirmarAsistencia = async (data: any): Promise<any> => {
 //confirmar no asistencia
 export const confirmarNoAsistencia = async (data: any): Promise<any> => {
   return await client.post<any>("no-asistencias-empleado", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+
+
+//confirmar no asistencia
+export const CambioProyectoAsistencia = async (data: any): Promise<any> => {
+  return await client.post<any>("cambio-Proyecto-Asistencia", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

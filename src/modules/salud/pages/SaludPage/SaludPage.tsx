@@ -1,3 +1,3 @@
 export const SaludPage = () => {
-  return <>SaludPage</>;
+  return <>Gestion</>;
 };

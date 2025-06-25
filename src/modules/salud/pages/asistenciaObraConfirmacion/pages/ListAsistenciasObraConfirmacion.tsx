@@ -15,6 +15,7 @@ import { SearchBar } from "./styled";
 import { DataType } from "./types";
 import { getAsistenciasConfirmar } from "@/services/talento-humano/confirmarAsistenciasAPI";
 import dayjs, { Dayjs } from "dayjs";
+import { ModalCambioProyecto } from "./ModalCambioProyecto";
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -29,12 +30,14 @@ export const ListAsistenciasObraConfirmacion = () => {
   const [selectedPrefijo, setSelectedPrefijo] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState<string>("");
   const [prefijos, setPrefijos] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     fetchAsistencias();
   }, []);
 
   const fetchAsistencias = () => {
+    setLoading(true);
     getAsistenciasConfirmar().then(({ data: { data } }) => {
       const DataPapeleria = data.map((data) => {
         return {
@@ -49,6 +52,8 @@ export const ListAsistenciasObraConfirmacion = () => {
           fecha_confirmacion: data?.fecha_confirmacion,
           detalle: data?.detalle,
           cedula: data?.cedula,
+          proyecto_id: data?.proyecto_id,
+          personal_id: data?.personal_id,
           activo: data?.activo ? data?.activo.toString() : "",
           created_at: dayjs(data?.created_at),
           updated_at: dayjs(data?.updated_at),
@@ -63,6 +68,7 @@ export const ListAsistenciasObraConfirmacion = () => {
       setInitialData(DataPapeleria);
       setDataSource(DataPapeleria);
       setPrefijos(uniqueProyecto);
+      setLoading(false);
     });
   };
 
@@ -230,11 +236,18 @@ export const ListAsistenciasObraConfirmacion = () => {
         } else {
           // Modal de asistencia pendiente por confirmar
           return (
-            <ModalAsistencias
-              dataTicket={record}
-              fetchList={() => getAsistenciasConfirmar()}
-              pushNotification={pushNotification}
-            />
+            <>
+              <ModalAsistencias
+                dataTicket={record}
+                fetchList={() => fetchAsistencias()}
+                pushNotification={pushNotification}
+              />
+              <ModalCambioProyecto
+                dataTicket={record}
+                fetchList={() => fetchAsistencias()}
+                pushNotification={pushNotification}
+              />
+            </>
           );
         }
       },
@@ -279,6 +292,7 @@ export const ListAsistenciasObraConfirmacion = () => {
           >
             <Table
               className="custom-table"
+              loading={loading}
               rowKey={(record) => record.key}
               size="small"
               dataSource={registros}
