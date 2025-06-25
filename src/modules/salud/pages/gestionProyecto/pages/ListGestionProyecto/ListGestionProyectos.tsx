@@ -12,6 +12,7 @@ import {
   getGestionProyecto,
   IniciarProyecto,
 } from "@/services/proyectos/gestionProyectoAPI";
+import { ModalInforme } from "./ModalInforme";
 
 interface DataType {
   key: number;
@@ -32,6 +33,9 @@ interface DataType {
   emp_nombre: string;
   porcentaje: string;
   avance: string;
+  avance_pisos: string;
+  total_apartamentos: string;
+  apartamentos_realizados: string;
   created_at: string;
   updated_at: string;
 }
@@ -64,13 +68,16 @@ const ListGestionProyectos = () => {
           codigo_proyecto: categoria.codigo_proyecto,
           torres: categoria.torres,
           cant_pisos: categoria.cant_pisos,
+          avance_pisos: categoria.avance_pisos,
           apt: categoria.apt,
           pisoCambiarProceso: categoria.pisoCambiarProceso,
           fecha_ini_proyecto: categoria.fecha_ini_proyecto,
           nombre_tipo: categoria.nombre_tipo,
           emp_nombre: categoria.emp_nombre,
-          porcentaje: categoria.porcentaje,
+          porcentaje: categoria.porcentaje.toString(),
           avance: categoria.avance,
+          total_apartamentos: categoria.total_apartamentos,
+          apartamentos_realizados: categoria.apartamentos_realizados,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -129,7 +136,7 @@ const ListGestionProyectos = () => {
       sorter: (a, b) => a.porcentaje.localeCompare(b.porcentaje),
       render: (porcentaje) => <Tag color="blue">{porcentaje}%</Tag>,
     },
-     {
+    {
       title: "Avance del Proyecto",
       dataIndex: "avance",
       key: "avance",
@@ -231,23 +238,26 @@ const ListGestionProyectos = () => {
       align: "center",
       render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
         return (
-          <Tooltip
-            title={
-              record.fecha_ini_proyecto === null
-                ? "Inicia el proyecto para Gestionar"
-                : "Gestionar"
-            }
-          >
-            <Link to={`${location.pathname}/${record.key}`}>
-              <Button
-                disabled={
-                  !Number(record.fecha_ini_proyecto === null) ? false : true
-                }
-                icon={<EditOutlined />}
-                type="primary"
-              />
-            </Link>
-          </Tooltip>
+          <>
+            <Tooltip
+              title={
+                record.fecha_ini_proyecto === null
+                  ? "Inicia el proyecto para Gestionar"
+                  : "Gestionar"
+              }
+            >
+              <Link to={`${location.pathname}/${record.key}`}>
+                <Button
+                  disabled={
+                    !Number(record.fecha_ini_proyecto === null) ? false : true
+                  }
+                  icon={<EditOutlined />}
+                  type="primary"
+                />
+              </Link>
+            </Tooltip>
+            <ModalInforme proyecto={record} />
+          </>
         );
       },
       fixed: "right",

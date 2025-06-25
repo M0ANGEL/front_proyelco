@@ -127,7 +127,7 @@ export const ModalAsistencias = ({
     <>
       <Tooltip title="Confirma asistencia del empleado a la obra">
         <Button type="primary" onClick={showLoading} size="small">
-          CONFIRMAR ASISTENCIA
+          CONFIRMAR
         </Button>
       </Tooltip>
 

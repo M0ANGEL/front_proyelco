@@ -5679,6 +5679,9 @@ export interface Proyectos {
   emp_nombre: string;
   porcentaje: string;
   avance: string;
+  avance_pisos: string;
+   total_apartamentos: string;
+  apartamentos_realizados: string;
   created_at: string;
   updated_at: string;
 }

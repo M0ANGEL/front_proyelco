@@ -23,6 +23,8 @@ import {
   confirmarPisosXDia,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
+import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const { Title, Text } = Typography;
 
@@ -37,6 +39,8 @@ export const FormGestionProyectos = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [procesoAValidar, setProcesoAValidar] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     LlamadoData();
@@ -332,7 +336,11 @@ export const FormGestionProyectos = () => {
                   type="primary"
                   size="large"
                   onClick={iniciarTorre}
-                  disabled={!torreSeleccionada || torreYaIniciada()}
+                  disabled={
+                    !torreSeleccionada ||
+                    torreYaIniciada() ||
+                    !["Encargado Obras"].includes(user_rol)
+                  }
                   style={{
                     background: torreYaIniciada() ? "#52c41a" : "#1890ff",
                     border: "none",
@@ -426,6 +434,7 @@ export const FormGestionProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
+                              <span style={{ color: "blue" }}>{contenido.apartamentos_realizados} / {contenido.total_apartamentos} </span>
                               <span style={{ color: "blue" }}>
                                 Atraso del proceso:{" "}
                                 {contenido.porcentaje_atraso}%
@@ -460,7 +469,10 @@ export const FormGestionProyectos = () => {
                           extra={
                             necesitaValidacion &&
                             !estaValidado && (
-                              <Button
+                                <Button
+                                disabled={
+                                  !["Encargado Obras"].includes(user_rol)
+                                }
                                 type="primary"
                                 size="small"
                                 onClick={() => {
@@ -473,6 +485,7 @@ export const FormGestionProyectos = () => {
                               >
                                 Validar
                               </Button>
+                              
                             )
                           }
                         >
@@ -511,6 +524,11 @@ export const FormGestionProyectos = () => {
                                     >
                                       {apt.estado === "1" ? (
                                         <Popconfirm
+                                          disabled={
+                                            !["Encargado Obras"].includes(
+                                              user_rol
+                                            )
+                                          }
                                           title="¿Estás seguro de que deseas confirmar este APT?"
                                           onConfirm={() =>
                                             confirmarApt(

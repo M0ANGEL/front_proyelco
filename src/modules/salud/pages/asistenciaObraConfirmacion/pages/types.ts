@@ -18,6 +18,7 @@ export interface DataType {
   created_at: string;
   activo?: string;
   updated_at: string;
+  personal_id: string;
   created_at_string: string;
   }
 

@@ -13,6 +13,7 @@ import { AdministrarClientesRoutes } from "@/modules/clientes/routes";
 import { AdministrarProcesosProyectoRoutes } from "@/modules/procesosObra/routes";
 import { TalentoHumanoRoutes } from "@/modules/talento-humano";
 import { ComprasRoutes } from "@/modules/compras";
+import { TickestRoutes } from "@/modules/tickets";
 
 export const AdminRoutes = () => {
   return (
@@ -46,12 +47,13 @@ export const AdminRoutes = () => {
             />
              <Route path={"compras/*"} element={<ComprasRoutes />} />
             <Route path={"modulodetalentohumano/*"} element={<TalentoHumanoRoutes />} />
+            <Route path={"tickets/*"} element={<TickestRoutes />} />
+
 
 
             {/* <Route path={"aliados/*"} element={<AliadosRoutes />} />
 
             <Route path={"gestionhumana/*"} element={<GestionHumanaRoutes />} />
-            <Route path={"tickets/*"} element={<TickestRoutes />} />
             <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
           </Route>
         </RoutesWithNotFound>

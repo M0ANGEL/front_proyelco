@@ -93,3 +93,10 @@ export const confirmarPisosXDia = async ( data: any): Promise<any> => {
   });
 };
 
+//full detalle del proyecto
+export const Proyectodetallado = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`InformeDetalladoProyectos/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
