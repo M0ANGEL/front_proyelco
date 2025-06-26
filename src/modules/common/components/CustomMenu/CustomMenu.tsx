@@ -78,7 +78,7 @@ const moduleIcons = [
   { cod: "CLI", icon: <HiUserGroup /> },
   { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
   { cod: "COMPA", icon: <MdLocalGroceryStore /> },
-  { cod: "TH", icon: <AiTwotoneProject /> },
+  { cod: "CA", icon: <AiTwotoneProject /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
