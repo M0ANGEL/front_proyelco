@@ -46,7 +46,7 @@ export const AdminRoutes = () => {
               element={<AdministrarProcesosProyectoRoutes />}
             />
              <Route path={"compras/*"} element={<ComprasRoutes />} />
-            <Route path={"modulodetalentohumano/*"} element={<TalentoHumanoRoutes />} />
+            <Route path={"cronogramaasistencias/*"} element={<TalentoHumanoRoutes />} />
             <Route path={"tickets/*"} element={<TickestRoutes />} />
 
 

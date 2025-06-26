@@ -25,6 +25,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 
 const { Title, Text } = Typography;
 
@@ -36,11 +37,14 @@ export const FormGestionProyectos = () => {
     null
   );
   const [infoProyecto, setInfoProyecto] = useState<any>({});
+  const [cantidadPisos, setCantidadPisos] = useState<any>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [procesoAValidar, setProcesoAValidar] = useState<any>(null);
   const { id } = useParams<{ id: string }>();
   const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
+
+  const [pisoSeleccionado, setPisoSeleccionado] = useState(null);
 
   useEffect(() => {
     LlamadoData();
@@ -63,6 +67,7 @@ export const FormGestionProyectos = () => {
     getProyectoDetalleGestion(Number(id)).then(({ data }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
+      setCantidadPisos(data.torreResumen);
       setLoading(false);
     });
   };
@@ -203,6 +208,7 @@ export const FormGestionProyectos = () => {
         torre: torreSeleccionada,
         orden_proceso: procesoAValidar.orden_proceso,
         proyecto: infoProyecto.id,
+        piso: pisoSeleccionado,
       });
 
       if (response.status) {
@@ -221,8 +227,6 @@ export const FormGestionProyectos = () => {
         });
       }
     } catch (error: any) {
-      console.log(error.response);
-
       notification.error({
         message: "Error al validar proceso",
         description: error.response.data.message,
@@ -231,6 +235,22 @@ export const FormGestionProyectos = () => {
       });
     }
   };
+
+  console.log(cantidadPisos);
+
+  const OpcionesValidacion = [];
+
+  if (cantidadPisos[torreSeleccionada ? torreSeleccionada : 1]) {
+    const totalPisos =
+      cantidadPisos[torreSeleccionada ? torreSeleccionada : 1].total_pisos;
+
+    for (let i = 1; i <= totalPisos; i++) {
+      OpcionesValidacion.push({
+        label: `Piso ${i}`,
+        value: i,
+      });
+    }
+  }
 
   const torresUnicas = Object.keys(data);
 
@@ -434,21 +454,30 @@ export const FormGestionProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
-                              <span style={{ color: "blue" }}>{contenido.apartamentos_realizados} / {contenido.total_apartamentos} </span>
+                              <span style={{ color: "blue" }}>
+                                {contenido.apartamentos_realizados} /{" "}
+                                {contenido.total_apartamentos}{" "}
+                              </span>
                               <span style={{ color: "blue" }}>
                                 Atraso del proceso:{" "}
                                 {contenido.porcentaje_atraso}%
                               </span>
-                              {necesitaValidacion && (
-                                <Badge
+                              {/* {necesitaValidacion && (
+                               <>
+                                {/* <Badge
                                   status="error"
                                   text={
                                     estaValidado
                                       ? "Proceso validado"
                                       : "Requiere validación"
                                   }
+                                /> 
+                                <Badge
+                                  status="error"
+                                  text={"Requiere validación"}
                                 />
-                              )}
+                               </>
+                              )} */}
                             </div>
                           }
                           style={{
@@ -467,12 +496,12 @@ export const FormGestionProyectos = () => {
                             padding: "16px 24px",
                           }}
                           extra={
-                            necesitaValidacion &&
-                            !estaValidado && (
-                                <Button
+                            necesitaValidacion && (
+                              /* !estaValidado && */ <Button
                                 disabled={
                                   !["Encargado Obras"].includes(user_rol)
                                 }
+                                style={{ marginLeft: 15 }}
                                 type="primary"
                                 size="small"
                                 onClick={() => {
@@ -483,9 +512,9 @@ export const FormGestionProyectos = () => {
                                   setModalVisible(true);
                                 }}
                               >
-                                Validar
+                                {/* Validar */}
+                                <AiOutlineCheckCircle />
                               </Button>
-                              
                             )
                           }
                         >
@@ -644,11 +673,26 @@ export const FormGestionProyectos = () => {
         onCancel={() => setModalVisible(false)}
         okText="Validar"
         cancelText="Cancelar"
+        okButtonProps={{ disabled: !pisoSeleccionado }} // ← aquí la magia
       >
         <p>
           ¿Confirmas que esta validacion se cumple:{" "}
-          <strong>{procesoAValidar?.text_validacion}</strong>?
+          <strong>{procesoAValidar?.text_validacion.toUpperCase()}</strong>?
         </p>
+
+        <p>
+          <span style={{ color: "blue" }}>
+            Selecciona el piso que cumple con esta condición y valídalo para
+            poder activarlo.
+          </span>
+        </p>
+
+        <Select
+          style={{ width: "100%" }}
+          options={OpcionesValidacion}
+          value={pisoSeleccionado}
+          onChange={setPisoSeleccionado}
+        />
       </Modal>
     </div>
   );
