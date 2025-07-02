@@ -5,27 +5,22 @@ import {
   Typography,
   Button,
   Tooltip,
-  notification,
   Row,
   Col,
-  Modal,
-  Badge,
   Popconfirm,
+  notification,
 } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
-  confirmarAptGestion,
+  cambioestadoAptAnulacion,
   getProyectoDetalleGestion,
   InfoProyecto,
-  IniciarTorre,
-  confirmarValidacionApt,
-  confirmarPisosXDia,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
-import { AiOutlineCheckCircle } from "react-icons/ai";
+import ModalAnulacion from "../components/ModalAnulacion";
 
 const { Title, Text } = Typography;
 
@@ -37,14 +32,17 @@ export const FormGestionProyectos = () => {
     null
   );
   const [infoProyecto, setInfoProyecto] = useState<any>({});
-  const [cantidadPisos, setCantidadPisos] = useState<any>({});
   const [modalVisible, setModalVisible] = useState(false);
-  const [procesoAValidar, setProcesoAValidar] = useState<any>(null);
+  const [aptSeleccionado, setAptSeleccionado] = useState<{
+    id: string;
+    orden: number;
+    consecutivo: number;
+    proceso: string;
+  } | null>(null);
+
   const { id } = useParams<{ id: string }>();
   const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
-
-  const [pisoSeleccionado, setPisoSeleccionado] = useState(null);
 
   useEffect(() => {
     LlamadoData();
@@ -53,21 +51,11 @@ export const FormGestionProyectos = () => {
     });
   }, [id]);
 
-  // manejo de estado para activar pisos por dia
-  useEffect(() => {
-    if (torreSeleccionada !== null) {
-      if (torreYaIniciada()) {
-        confirmarPisosDia();
-      }
-    }
-  }, [torreSeleccionada]);
-
   const LlamadoData = () => {
     setLoading(true);
     getProyectoDetalleGestion(Number(id)).then(({ data }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
-      setCantidadPisos(data.torreResumen);
       setLoading(false);
     });
   };
@@ -93,164 +81,54 @@ export const FormGestionProyectos = () => {
     return false;
   };
 
-  const iniciarTorre = async () => {
-    if (!torreSeleccionada) {
-      notification.error({
-        message: "Debes seleccionar una torre antes de iniciar.",
-        placement: "topRight",
-      });
-      return;
-    }
+  const AnularPiso = (
+    aptId: string,
+    ordenProceso: number,
+    consecutivo: number,
+    proceso: string
+  ) => {
+    setAptSeleccionado({
+      id: aptId,
+      orden: ordenProceso,
+      consecutivo,
+      proceso,
+    });
+    setModalVisible(true);
+  };
 
-    if (torreYaIniciada()) {
-      notification.error({
-        message:
-          "Esta torre ya ha sido iniciada (tiene apartamentos confirmados o habilitados).",
-        placement: "topRight",
-      });
-      return;
-    }
+  const EnvioAnulacion = (detalle: string) => {
+    setLoading(true);
+    if (!aptSeleccionado) return;
 
-    const dataIniciarTorre = {
-      proyecto: id,
-      torre: torreSeleccionada,
+    const datos = {
+      aptId: aptSeleccionado.id,
+      ordenProceso: aptSeleccionado.orden,
+      detalle,
     };
 
-    try {
-      await IniciarTorre(dataIniciarTorre);
-      notification.success({
-        message: "Torre iniciada exitosamente",
-        placement: "topRight",
-      });
-    } catch (error: any) {
-      notification.error({
-        message: "Error al iniciar torre",
-        description: error?.response?.data?.message || error.message,
-        placement: "topRight",
-      });
-    } finally {
-      LlamadoData();
-    }
-  };
-
-  const confirmarApt = async (aptId: string, ordenProceso: number) => {
-    try {
-      const response = await confirmarAptGestion(aptId);
-
-      if (response.data.needs_validation) {
-        // Encontrar el proceso que necesita validación
-        // const proceso = Object.values(data[torreSeleccionada]).find(
-        //   (p: any) =>
-        //     p.orden_proceso === (response.data.next_process || ordenProceso)
-        // );
-        const proceso = torreSeleccionada
-          ? Object.values(data[torreSeleccionada] || {}).find(
-              (p: any) =>
-                p.orden_proceso === (response.data.next_process || ordenProceso)
-            )
-          : undefined;
-
-        if (proceso) {
-          setProcesoAValidar({
-            ...proceso,
-            orden_proceso: response.data.next_process || ordenProceso,
-          });
-          setModalVisible(true);
-        }
-      } else {
+    cambioestadoAptAnulacion(datos)
+      .then(() => {
         notification.success({
-          message: "Apartamento confirmado",
+          message: "El cambio de estado fue realizado",
           placement: "topRight",
-          duration: 4,
+          duration: 2,
         });
-      }
-      LlamadoData();
-    } catch (error: any) {
-      notification.error({
-        message: "Error al confirmar apartamento",
-        description: error.response.data.message,
-        placement: "topRight",
-        duration: 4,
-      });
-    }
-  };
-
-  // confirmar pisos x dia segun proceso completado
-  const confirmarPisosDia = async () => {
-    try {
-      const response = await confirmarPisosXDia({
-        proyecto_id: infoProyecto.id,
-        torre: torreSeleccionada,
-      });
-
-      notification.success({
-        message: response.data.message,
-        placement: "topRight",
-        duration: 2,
-      });
-    } catch (error: any) {
-      notification.error({
-        message: "Error al validar pisos por dia",
-        description: error.response.data.message,
-        placement: "topRight",
-        duration: 3,
-      });
-    } finally {
-      LlamadoData();
-    }
-  };
-
-  const handleValidarProceso = async () => {
-    if (!procesoAValidar || !torreSeleccionada) return;
-
-    try {
-      const response = await confirmarValidacionApt({
-        torre: torreSeleccionada,
-        orden_proceso: procesoAValidar.orden_proceso,
-        proyecto: infoProyecto.id,
-        piso: pisoSeleccionado,
-      });
-
-      if (response.status) {
+      })
+      .catch((err) => {
         notification.success({
-          message: response.data.message,
+          message: "El cambio de estado fue realizado" + err,
           placement: "topRight",
-          duration: 5,
+          duration: 2,
         });
-        setModalVisible(false);
+      })
+      .finally(() => {
+        setLoading(false);
         LlamadoData();
-      } else {
-        notification.error({
-          message: response.data.message,
-          placement: "topRight",
-          duration: 5,
-        });
-      }
-    } catch (error: any) {
-      notification.error({
-        message: "Error al validar proceso",
-        description: error.response.data.message,
-        placement: "topRight",
-        duration: 5,
       });
-    }
+
+    setModalVisible(false);
+    setAptSeleccionado(null);
   };
-
-  console.log(cantidadPisos);
-
-  const OpcionesValidacion = [];
-
-  if (cantidadPisos[torreSeleccionada ? torreSeleccionada : 1]) {
-    const totalPisos =
-      cantidadPisos[torreSeleccionada ? torreSeleccionada : 1].total_pisos;
-
-    for (let i = 1; i <= totalPisos; i++) {
-      OpcionesValidacion.push({
-        label: `Piso ${i}`,
-        value: i,
-      });
-    }
-  }
 
   const torresUnicas = Object.keys(data);
 
@@ -355,7 +233,6 @@ export const FormGestionProyectos = () => {
                 <Button
                   type="primary"
                   size="large"
-                  onClick={iniciarTorre}
                   disabled={
                     !torreSeleccionada ||
                     torreYaIniciada() ||
@@ -425,11 +302,6 @@ export const FormGestionProyectos = () => {
               <Row gutter={[24, 24]}>
                 {Object.entries(data[torreSeleccionada] || {}).map(
                   ([procesoKey, contenido]: any) => {
-                    const necesitaValidacion =
-                      Number(contenido.validacion) === 1;
-                    const estaValidado =
-                      Number(contenido.estado_validacion) === 1;
-
                     return (
                       <Col
                         xs={24}
@@ -462,22 +334,6 @@ export const FormGestionProyectos = () => {
                                 Atraso del proceso:{" "}
                                 {contenido.porcentaje_atraso}%
                               </span>
-                              {/* {necesitaValidacion && (
-                               <>
-                                {/* <Badge
-                                  status="error"
-                                  text={
-                                    estaValidado
-                                      ? "Proceso validado"
-                                      : "Requiere validación"
-                                  }
-                                /> 
-                                <Badge
-                                  status="error"
-                                  text={"Requiere validación"}
-                                />
-                               </>
-                              )} */}
                             </div>
                           }
                           style={{
@@ -495,28 +351,6 @@ export const FormGestionProyectos = () => {
                           bodyStyle={{
                             padding: "16px 24px",
                           }}
-                          extra={
-                            necesitaValidacion && (
-                              /* !estaValidado && */ <Button
-                                disabled={
-                                  !["Encargado Obras"].includes(user_rol)
-                                }
-                                style={{ marginLeft: 15 }}
-                                type="primary"
-                                size="small"
-                                onClick={() => {
-                                  setProcesoAValidar({
-                                    ...contenido,
-                                    orden_proceso: procesoKey,
-                                  });
-                                  setModalVisible(true);
-                                }}
-                              >
-                                {/* Validar */}
-                                <AiOutlineCheckCircle />
-                              </Button>
-                            )
-                          }
                         >
                           {Object.entries(contenido.pisos || {})
                             .sort((a, b) => Number(b[0]) - Number(a[0]))
@@ -551,18 +385,20 @@ export const FormGestionProyectos = () => {
                                           : "Apartamento no habilitado"
                                       }
                                     >
-                                      {apt.estado === "1" ? (
+                                      {apt.estado === "2" ? (
                                         <Popconfirm
                                           disabled={
-                                            !["Encargado Obras"].includes(
+                                            !["Ingeniero Obra"].includes(
                                               user_rol
                                             )
                                           }
-                                          title="¿Estás seguro de que deseas confirmar este APT?"
+                                          title="¿Estás seguro de que deseas anular este APT?"
                                           onConfirm={() =>
-                                            confirmarApt(
+                                            AnularPiso(
                                               apt.id,
-                                              contenido.orden_proceso
+                                              contenido.orden_proceso,
+                                              apt.consecutivo,
+                                              contenido.nombre_proceso
                                             )
                                           }
                                           okText="Sí"
@@ -576,7 +412,9 @@ export const FormGestionProyectos = () => {
                                               borderRadius: "6px",
                                               border: "none",
                                               background:
-                                                "linear-gradient(135deg, #1890ff, #36cfc9)",
+                                                apt.estado === "2"
+                                                  ? "linear-gradient(135deg, #4caf50, #66bb6a)"
+                                                  : "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))",
                                               color: "white",
                                               fontWeight: 500,
                                               boxShadow:
@@ -589,21 +427,6 @@ export const FormGestionProyectos = () => {
                                             }}
                                           >
                                             {apt.consecutivo}
-                                            {necesitaValidacion &&
-                                              !estaValidado && (
-                                                <span
-                                                  style={{
-                                                    position: "absolute",
-                                                    top: -2,
-                                                    right: -2,
-                                                    background: "#ff4d4f",
-                                                    borderRadius: "50%",
-                                                    width: 8,
-                                                    height: 8,
-                                                    border: "2px solid #fff",
-                                                  }}
-                                                />
-                                              )}
                                           </Button>
                                         </Popconfirm>
                                       ) : (
@@ -615,8 +438,8 @@ export const FormGestionProyectos = () => {
                                             borderRadius: "6px",
                                             border: "none",
                                             background:
-                                              apt.estado === "2"
-                                                ? "linear-gradient(135deg, #4caf50, #66bb6a)"
+                                              apt.estado === "1"
+                                                ? "linear-gradient(135deg, #1890ff, #36cfc9)"
                                                 : "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))",
                                             color: "white",
                                             fontWeight: 500,
@@ -626,27 +449,11 @@ export const FormGestionProyectos = () => {
                                             alignItems: "center",
                                             justifyContent: "center",
                                             cursor: "default",
-                                            // opacity:
-                                            //   apt.estado === "0" ? 0.6 : 1,
                                             position: "relative",
                                           }}
                                           disabled
                                         >
                                           {apt.consecutivo}
-                                          {necesitaValidacion && (
-                                            /* !estaValidado && */ <span
-                                              style={{
-                                                position: "absolute",
-                                                top: -2,
-                                                right: -2,
-                                                background: "#ff4d4f",
-                                                borderRadius: "50%",
-                                                width: 8,
-                                                height: 8,
-                                                border: "2px solid #fff",
-                                              }}
-                                            />
-                                          )}
                                         </Button>
                                       )}
                                     </Tooltip>
@@ -665,35 +472,15 @@ export const FormGestionProyectos = () => {
         </>
       )}
 
-      {/* Modal de Validación */}
-      <Modal
+      <ModalAnulacion
         visible={modalVisible}
-        title={"Validar proceso" + " " + procesoAValidar?.nombre_proceso}
-        onOk={handleValidarProceso}
-        onCancel={() => setModalVisible(false)}
-        okText="Validar"
-        cancelText="Cancelar"
-        okButtonProps={{ disabled: !pisoSeleccionado }} // ← aquí la magia
-      >
-        <p>
-          ¿Confirmas que esta validacion se cumple:{" "}
-          <strong>{procesoAValidar?.text_validacion.toUpperCase()}</strong>?
-        </p>
-
-        <p>
-          <span style={{ color: "blue" }}>
-            Selecciona el piso que cumple con esta condición y valídalo para
-            poder activarlo.
-          </span>
-        </p>
-
-        <Select
-          style={{ width: "100%" }}
-          options={OpcionesValidacion}
-          value={pisoSeleccionado}
-          onChange={setPisoSeleccionado}
-        />
-      </Modal>
+        infoApt={aptSeleccionado}
+        onConfirm={EnvioAnulacion}
+        onCancel={() => {
+          setModalVisible(false);
+          setAptSeleccionado(null);
+        }}
+      />
     </div>
   );
 };

@@ -100,3 +100,11 @@ export const Proyectodetallado = async (id: React.Key): Promise<any> => {
   });
 };
 
+//anulacion de apt(cambio de estado a 0 con detalle)
+export const cambioestadoAptAnulacion = async (data: any): Promise<any> => {
+  return await client.post<any>("CambioEstadosApt-anulacion", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
