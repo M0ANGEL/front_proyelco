@@ -15,7 +15,7 @@ export default defineConfig(({ mode }) => {
         "@": resolve(__dirname, "src"),
       },
     },
-    base: "/", /* estaba asi " "  pero se dejo "/" por falla del servidor  */
+    base: "/", 
     build: {
       outDir: isProduction ? 'dist/prod' : 'dist/dev',
       rollupOptions: {
