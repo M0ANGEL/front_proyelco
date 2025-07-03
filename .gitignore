@@ -23,6 +23,6 @@ dist-ssr
 *.sw?
 
 src/test*
-.env.*
+# .env.*
 
 .codegpt/*
