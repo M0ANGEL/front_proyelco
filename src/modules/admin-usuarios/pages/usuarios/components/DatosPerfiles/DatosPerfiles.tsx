@@ -24,19 +24,14 @@ export const DatosPerfiles = ({ usuario }: Props) => {
   >([]);
 
   useEffect(() => {
+    fetchEmpresa();
+    fetchPerfiles();
+    fetchCargos();
     //si tenemos datos en categoria agregamos a metho los datos
     if (usuario) {
       methods.setValue("empresas", usuario?.empresas?.[0]?.id_empresa);
       methods.setValue("perfiles", usuario?.perfiles?.[0]?.id_perfil);
       methods.setValue("cargos", usuario?.cargos?.[0]?.id_cargo);
-
-      fetchEmpresa();
-      fetchPerfiles();
-      fetchCargos();
-    } else {
-      fetchEmpresa();
-      fetchPerfiles();
-      fetchCargos();
     }
   }, [usuario]);
 
