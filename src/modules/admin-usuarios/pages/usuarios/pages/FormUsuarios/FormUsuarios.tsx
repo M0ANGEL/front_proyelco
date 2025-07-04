@@ -112,7 +112,7 @@ export const FormUsuarios = () => {
             });
             setLoaderSave(false);
           });
-      } 
+      }
     }
   };
 
@@ -194,8 +194,8 @@ export const FormUsuarios = () => {
                   {
                     key: "2",
                     label: <Text>Perfiles</Text>,
-                    children: <DatosPerfiles usuario={usuario}/>,
-                    
+                    children: <DatosPerfiles usuario={usuario} />,
+                    forceRender: true, //hace que ejecute
                   },
                 ]}
                 animated

@@ -1,12 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
-  getReportUsuarios,
   getUsuarios,
   setStatusUser,
-  getReportUsuariosPermisos,
-  getReportPerfilesModulos,
 } from "@/services/maestras/maestrasAPI";
 import {
   Button,
@@ -14,7 +9,6 @@ import {
   Input,
   Popconfirm,
   Row,
-  Spin,
   Table,
   Tag,
   Tooltip,
@@ -23,10 +17,8 @@ import {
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { SyncOutlined, LoadingOutlined, EditOutlined } from "@ant-design/icons";
+import { SyncOutlined, EditOutlined } from "@ant-design/icons";
 import { ButtonTag } from "./styled";
-import fileDownload from "js-file-download";
-import { FaFileDownload } from "react-icons/fa";
 import { SearchBar } from "../../../perfiles/pages/ListPerfiles/styled";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_EMPRESA } from "@/config/api";
@@ -46,7 +38,7 @@ interface DataType {
 }
 
 export const ListUsuarios = () => {
-  const [loadingRep, setLoadingRep] = useState<boolean>(false);
+  // const [loadingRep, setLoadingRep] = useState<boolean>(false);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [initialData, setInitialData] = useState<DataType[]>([]);
@@ -197,12 +189,12 @@ export const ListUsuarios = () => {
         }
       >
         <Row gutter={12}>
-          <Col xs={24} sm={14}>
+          <Col xs={24} sm={24}>
             <SearchBar>
               <Input placeholder="Buscar" onChange={handleSearch} />
             </SearchBar>
           </Col>
-          <Col xs={24} sm={5} style={{ marginBottom: 20 }}>
+          {/* <Col xs={24} sm={5} style={{ marginBottom: 20 }}>
             <Spin
               spinning={loadingRep}
               indicator={<LoadingOutlined spin style={{ color: "white" }} />}
@@ -276,7 +268,7 @@ export const ListUsuarios = () => {
                 Informe Perfiles-Modulos
               </Button>
             </Spin>
-          </Col>
+          </Col> */}
         </Row>
         <Table
           className="custom-table"
