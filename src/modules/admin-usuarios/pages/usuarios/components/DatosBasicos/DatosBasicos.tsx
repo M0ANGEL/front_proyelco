@@ -226,11 +226,13 @@ export const DatosBasicos = ({ usuario }: Props) => {
                         .includes(input.toString().toLowerCase())
                     }
                     options={[
-                      { value: "administrador", label: "Administrador" },
+                      { value: "Administrador", label: "Administrador" },
+                      { value: "Administrador TI", label: "Administrador TI" },
                       { value: "Gerente", label: "Gerente" },
                       { value: "Ingeniero Obra", label: "Ingeniero Obra" },
                       { value: "Encargado Obras", label: "Encargado Obras" },
                       { value: "Directora Proyectos", label: "Directora Proyectos" },
+                      { value: "Talento Humano", label: "Talento Humano" },
                     ]}
                     status={error && "error"}
                   />
