@@ -514,9 +514,9 @@ export const FormEncargadoObra = () => {
                             extra={
                               necesitaValidacion && (
                                 <Button
-                                  disabled={
-                                    !["Encargado Obras"].includes(user_rol)
-                                  }
+                                  // disabled={
+                                  //   !["Encargado Obras"].includes(user_rol)
+                                  // }
                                   style={{ marginLeft: 15 }}
                                   type="primary"
                                   size="small"
@@ -569,11 +569,11 @@ export const FormEncargadoObra = () => {
                                         >
                                           {apt.estado === "1" ? (
                                             <Popconfirm
-                                              disabled={
-                                                !["Encargado Obras"].includes(
-                                                  user_rol
-                                                )
-                                              }
+                                              // disabled={
+                                              //   !["Encargado Obras"].includes(
+                                              //     user_rol
+                                              //   )
+                                              // }
                                               title="¿Estás seguro de que deseas confirmar este APT?"
                                               onConfirm={() =>
                                                 confirmarApt(
