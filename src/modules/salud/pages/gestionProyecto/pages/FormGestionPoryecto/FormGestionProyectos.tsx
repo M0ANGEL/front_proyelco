@@ -217,13 +217,25 @@ export const FormGestionProyectos = () => {
           >
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} sm={12} md={8} lg={6}>
-                <Select
+                {/* <Select
                   placeholder="Seleccione una torre"
                   style={{ width: "100%" }}
                   onChange={setTorreSeleccionada}
                   value={torreSeleccionada}
                   options={torresUnicas.map((torre) => ({
                     label: `Torre ${torre}`,
+                    value: torre,
+                  }))}
+                  size="large"
+                /> */}
+                <Select
+                  placeholder="Seleccione una torre"
+                  style={{ width: "100%" }}
+                  onChange={setTorreSeleccionada}
+                  value={torreSeleccionada}
+                  options={torresUnicas.map((torre) => ({
+                    label:
+                      porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
                     value: torre,
                   }))}
                   size="large"
@@ -288,7 +300,10 @@ export const FormGestionProyectos = () => {
                       borderRadius: "3px",
                     }}
                   ></span>
-                  Torre {torreSeleccionada}
+                  {/* Torre {torreSeleccionada} */}
+                  Torre:{" "}
+                  {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
+                    `Torre ${torreSeleccionada}`}
                 </Title>
                 <span style={{ color: "blue" }}>
                   {" "}

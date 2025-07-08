@@ -180,6 +180,7 @@ export const FormConvenios = () => {
           torres: data?.torres,
           cant_pisos: data?.cant_pisos,
           apt: data?.apt,
+          minimoApt: data?.minimoApt,
           estado: data?.estado?.toString(),
           activador_pordia_apt: data?.activador_pordia_apt?.toString(),
           usuarios_notificacion: JSON.parse(data?.usuarios_notificacion),
@@ -199,6 +200,7 @@ export const FormConvenios = () => {
         cant_pisos: null,
         apt: null,
         estado: "1",
+        minimoApt: "",
       });
     }
   }, [id]);

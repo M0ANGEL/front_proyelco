@@ -33,8 +33,12 @@ export const FormEncargadoObra = () => {
   const [data, setData] = useState<any>({});
   const [porcetanjeTorre, setPorcetanjeTorre] = useState<any>({});
   const [loading, setLoading] = useState(false);
-  const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(null);
-  const [procesoSeleccionado, setProcesoSeleccionado] = useState<string | null>(null);
+  const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
+    null
+  );
+  const [procesoSeleccionado, setProcesoSeleccionado] = useState<string | null>(
+    null
+  );
   const [infoProyecto, setInfoProyecto] = useState<any>({});
   const [cantidadPisos, setCantidadPisos] = useState<any>({});
   const [modalVisible, setModalVisible] = useState(false);
@@ -165,29 +169,29 @@ export const FormEncargadoObra = () => {
     }
   };
 
-  const confirmarPisosDia = async () => {
-    try {
-      const response = await confirmarPisosXDia({
-        proyecto_id: infoProyecto.id,
-        torre: torreSeleccionada,
-      });
+  // const confirmarPisosDia = async () => {
+  //   try {
+  //     const response = await confirmarPisosXDia({
+  //       proyecto_id: infoProyecto.id,
+  //       torre: torreSeleccionada,
+  //     });
 
-      notification.success({
-        message: response.data.message,
-        placement: "topRight",
-        duration: 2,
-      });
-    } catch (error: any) {
-      notification.error({
-        message: "Error al validar pisos por dia",
-        description: error.response.data.message,
-        placement: "topRight",
-        duration: 3,
-      });
-    } finally {
-      LlamadoData();
-    }
-  };
+  //     notification.success({
+  //       message: response.data.message,
+  //       placement: "topRight",
+  //       duration: 2,
+  //     });
+  //   } catch (error: any) {
+  //     notification.error({
+  //       message: "Error al validar pisos por dia",
+  //       description: error.response.data.message,
+  //       placement: "topRight",
+  //       duration: 3,
+  //     });
+  //   } finally {
+  //     LlamadoData();
+  //   }
+  // };
 
   const handleValidarProceso = async () => {
     if (!procesoAValidar || !torreSeleccionada) return;
@@ -240,19 +244,23 @@ export const FormEncargadoObra = () => {
   }
 
   const torresUnicas = Object.keys(data);
-  const procesosDeTorre = torreSeleccionada ? Object.entries(data[torreSeleccionada] || {}) : [];
+  const procesosDeTorre = torreSeleccionada
+    ? Object.entries(data[torreSeleccionada] || {})
+    : [];
 
   // Función para filtrar APTs con estado 1 o 2
   const filtrarApts = (pisos: any) => {
     const pisosFiltrados: any = {};
-    
+
     Object.entries(pisos || {}).forEach(([piso, aptos]: any) => {
-      const aptosFiltrados = aptos.filter((apt: any) => apt.estado === "1" || apt.estado === "2");
+      const aptosFiltrados = aptos.filter(
+        (apt: any) => apt.estado === "1" || apt.estado === "2"
+      );
       if (aptosFiltrados.length > 0) {
         pisosFiltrados[piso] = aptosFiltrados;
       }
     });
-    
+
     return pisosFiltrados;
   };
 
@@ -341,13 +349,25 @@ export const FormEncargadoObra = () => {
           >
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} sm={12} md={8} lg={6}>
-                <Select
+                {/* <Select
                   placeholder="Seleccione una torre"
                   style={{ width: "100%" }}
                   onChange={setTorreSeleccionada}
                   value={torreSeleccionada}
                   options={torresUnicas.map((torre) => ({
                     label: `Torre ${torre}`,
+                    value: torre,
+                  }))}
+                  size="large"
+                /> */}
+                <Select
+                  placeholder="Seleccione una torre"
+                  style={{ width: "100%" }}
+                  onChange={setTorreSeleccionada}
+                  value={torreSeleccionada}
+                  options={torresUnicas.map((torre) => ({
+                    label:
+                      porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
                     value: torre,
                   }))}
                   size="large"
@@ -428,7 +448,8 @@ export const FormEncargadoObra = () => {
                       borderRadius: "3px",
                     }}
                   ></span>
-                  Torre {torreSeleccionada}
+                  {/* Torre {torreSeleccionada} */}
+                  Torre: {porcetanjeTorre[torreSeleccionada]?.nombre_torre || `Torre ${torreSeleccionada}`}
                 </Title>
                 <span style={{ color: "blue" }}>
                   {" "}
@@ -436,12 +457,13 @@ export const FormEncargadoObra = () => {
                     Atraso de Torre:{" "}
                     {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %
                   </b>{" "}
-                </span> <br />
+                </span>{" "}
+                <br />
                 <span style={{ color: "red" }}>
                   {" "}
                   <b>
                     Cantidad de pisos:{"  "}
-                    {cantidadPisos[torreSeleccionada]?.total_pisos} 
+                    {cantidadPisos[torreSeleccionada]?.total_pisos}
                   </b>{" "}
                 </span>
               </div>
@@ -449,18 +471,21 @@ export const FormEncargadoObra = () => {
               {procesoSeleccionado ? (
                 <Row gutter={[24, 24]}>
                   {procesosDeTorre
-                    .filter(([procesoKey]) => procesoKey === procesoSeleccionado)
+                    .filter(
+                      ([procesoKey]) => procesoKey === procesoSeleccionado
+                    )
                     .map(([procesoKey, contenido]: any) => {
                       const necesitaValidacion =
                         Number(contenido.validacion) === 1;
                       const estaValidado =
                         Number(contenido.estado_validacion) === 1;
-                      
+
                       // Filtrar pisos que tienen APTs con estado 1 o 2
                       const pisosFiltrados = filtrarApts(contenido.pisos);
-                      
+
                       // Verificar si hay APTs disponibles
-                      const hayAptsDisponibles = Object.keys(pisosFiltrados).length > 0;
+                      const hayAptsDisponibles =
+                        Object.keys(pisosFiltrados).length > 0;
 
                       return (
                         <Col
@@ -514,9 +539,9 @@ export const FormEncargadoObra = () => {
                             extra={
                               necesitaValidacion && (
                                 <Button
-                                  disabled={
-                                    !["Encargado Obras"].includes(user_rol)
-                                  }
+                                  // disabled={
+                                  //   !["Encargado Obras"].includes(user_rol)
+                                  // }
                                   style={{ marginLeft: 15 }}
                                   type="primary"
                                   size="small"
@@ -537,7 +562,10 @@ export const FormEncargadoObra = () => {
                               Object.entries(pisosFiltrados)
                                 .sort((a, b) => Number(b[0]) - Number(a[0]))
                                 .map(([piso, aptos]: any) => (
-                                  <div key={piso} style={{ marginBottom: "20px" }}>
+                                  <div
+                                    key={piso}
+                                    style={{ marginBottom: "20px" }}
+                                  >
                                     <Text
                                       strong
                                       style={{
@@ -569,11 +597,11 @@ export const FormEncargadoObra = () => {
                                         >
                                           {apt.estado === "1" ? (
                                             <Popconfirm
-                                              disabled={
-                                                !["Encargado Obras"].includes(
-                                                  user_rol
-                                                )
-                                              }
+                                              // disabled={
+                                              //   !["Encargado Obras"].includes(
+                                              //     user_rol
+                                              //   )
+                                              // }
                                               title="¿Estás seguro de que deseas confirmar este APT?"
                                               onConfirm={() =>
                                                 confirmarApt(
@@ -616,7 +644,8 @@ export const FormEncargadoObra = () => {
                                                         borderRadius: "50%",
                                                         width: 8,
                                                         height: 8,
-                                                        border: "2px solid #fff",
+                                                        border:
+                                                          "2px solid #fff",
                                                       }}
                                                     />
                                                   )}
