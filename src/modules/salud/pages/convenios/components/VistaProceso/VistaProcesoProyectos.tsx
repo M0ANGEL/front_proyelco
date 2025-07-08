@@ -37,7 +37,7 @@ export const VistaProcesoProyectos = () => {
 
   const LlamadoData = () => {
     setLoading(true);
-    getProyectoDetalleGestion(Number(id)).then(({ data/* : { data }  */}) => {
+    getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
       setLoading(false);
@@ -45,9 +45,6 @@ export const VistaProcesoProyectos = () => {
   };
 
   const torresUnicas = Object.keys(data);
-
-  console.log(data);
-  
 
   return (
     <div
@@ -135,13 +132,25 @@ export const VistaProcesoProyectos = () => {
           >
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} sm={12} md={8} lg={6}>
-                <Select
+                {/* <Select
                   placeholder="Seleccione una torre"
                   style={{ width: "100%" }}
                   onChange={setTorreSeleccionada}
                   value={torreSeleccionada}
                   options={torresUnicas.map((torre) => ({
                     label: `Torre ${torre}`,
+                    value: torre,
+                  }))}
+                  size="large"
+                /> */}
+                <Select
+                  placeholder="Seleccione una torre"
+                  style={{ width: "100%" }}
+                  onChange={setTorreSeleccionada}
+                  value={torreSeleccionada}
+                  options={torresUnicas.map((torre) => ({
+                    label:
+                      porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
                     value: torre,
                   }))}
                   size="large"
@@ -184,9 +193,18 @@ export const VistaProcesoProyectos = () => {
                       borderRadius: "3px",
                     }}
                   ></span>
-                  Torre {torreSeleccionada}
+                  {/* Torre {torreSeleccionada} */}
+                  Torre:{" "}
+                  {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
+                    `Torre ${torreSeleccionada}`}
                 </Title>
-                <span style={{color:'blue'}}> <b>Atraso de Torre: {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %</b> </span>
+                <span style={{ color: "blue" }}>
+                  {" "}
+                  <b>
+                    Atraso de Torre:{" "}
+                    {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %
+                  </b>{" "}
+                </span>
               </div>
 
               <Row gutter={[24, 24]}>
@@ -219,7 +237,10 @@ export const VistaProcesoProyectos = () => {
                                 {procesoKey} -{" "}
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
-                              <span style={{color:'blue'}}>Atraso del proceso: {contenido.porcentaje_atraso}%</span>
+                              <span style={{ color: "blue" }}>
+                                Atraso del proceso:{" "}
+                                {contenido.porcentaje_atraso}%
+                              </span>
                             </div>
                           }
                           style={{
@@ -287,9 +308,12 @@ export const VistaProcesoProyectos = () => {
                                       >
                                         <Button
                                           style={{
-                                            minWidth: "40px",
-                                            height: "32px",
-                                            padding: "0 8px",
+                                            width: "60px", // o el ancho que tú desees
+                                            height: "36px",
+                                            padding: 0,
+                                            // minWidth: "40px",
+                                            // height: "32px",
+                                            // padding: "0 8px",
                                             borderRadius: "6px",
                                             border: "none",
                                             background: getBackgroundColor(),
