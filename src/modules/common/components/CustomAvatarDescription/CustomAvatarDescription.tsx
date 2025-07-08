@@ -61,7 +61,7 @@ export const CustomAvatarDescription = ({
       onPushNotification({
         type: "warning",
         description:
-          "Se cerrará la sesión ya que no posees acceso a esta bodega o se encuentra inactiva.",
+          "Se cerrará la sesión ya que no posees acceso o se encuentra inactiva.",
       });
       setTimeout(() => {
         onLogout();
@@ -129,7 +129,7 @@ export const CustomAvatarDescription = ({
                   {shotName ? <Text>{user?.nombre}</Text> : null}
 
                   <Text strong keyboard>
-                    {"Empresa: Proyelco "  /* bodega?.bodega.bod_nombre */}
+                    {"Empresa: Proyelco "}
                   </Text>
                 </>
               ) : (
