@@ -187,7 +187,11 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
                           placeholder="Ingrese el número"
                           onChange={(e) => {
                             field.onChange(e);
-                            actualizarCampo(index, "numCambioProceso", e.target.value);
+                            actualizarCampo(
+                              index,
+                              "numCambioProceso",
+                              e.target.value
+                            );
                           }}
                           value={field.value}
                         />

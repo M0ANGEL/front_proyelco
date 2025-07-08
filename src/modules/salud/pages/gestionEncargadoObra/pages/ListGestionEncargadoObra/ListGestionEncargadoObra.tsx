@@ -13,6 +13,8 @@ import {
   IniciarProyecto,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ModalInforme } from "./ModalInforme";
+import { KEY_ROL } from "@/config/api";
+import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 
 interface DataType {
   key: number;
@@ -48,6 +50,8 @@ const ListGestionEncargadoObra = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
@@ -202,6 +206,7 @@ const ListGestionEncargadoObra = () => {
         }
         return (
           <Popconfirm
+            disabled={!["Encargado Obras"].includes(user_rol)}
             title="¿Desea inicar el proyecto?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
