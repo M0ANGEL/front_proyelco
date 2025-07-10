@@ -14,6 +14,7 @@ import { AdministrarProcesosProyectoRoutes } from "@/modules/procesosObra/routes
 import { TalentoHumanoRoutes } from "@/modules/talento-humano";
 import { ComprasRoutes } from "@/modules/compras";
 import { TickestRoutes } from "@/modules/tickets";
+import { DashboarsdRoutes } from "@/modules/graficasDashboard/routes/DashboarsdRoutes";
 
 export const AdminRoutes = () => {
   return (
@@ -48,6 +49,7 @@ export const AdminRoutes = () => {
              <Route path={"compras/*"} element={<ComprasRoutes />} />
             <Route path={"cronogramaasistencias/*"} element={<TalentoHumanoRoutes />} />
             <Route path={"tickets/*"} element={<TickestRoutes />} />
+            <Route path={"dashboards/*"} element={<DashboarsdRoutes />} />
 
 
 
