@@ -295,7 +295,7 @@ export const VistaProcesoProyectos = () => {
                                         return "linear-gradient(135deg, #1890ff, #36cfc9)";
                                       if (apt.estado === "2")
                                         return "linear-gradient(135deg, #4caf50, #66bb6a)";
-                                      return "linear-gradient(135deg, #f0f0f0, #d9d9d9)";
+                                      return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
                                     };
 
                                     const opacity =

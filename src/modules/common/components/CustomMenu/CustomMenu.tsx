@@ -8,7 +8,7 @@ import { AiFillControl, AiOutlineBarChart, AiOutlineUsergroupAdd, AiTwotoneProje
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { RiBillLine } from "react-icons/ri";
+import { RiBillLine, RiDashboardLine } from "react-icons/ri";
 import { UserData } from "@/services/types";
 import { KEY_EMPRESA } from "@/config/api";
 import Link from "antd/es/typography/Link";
@@ -79,6 +79,7 @@ const moduleIcons = [
   { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
   { cod: "COMPA", icon: <MdLocalGroceryStore /> },
   { cod: "CA", icon: <AiTwotoneProject /> },
+  { cod: "DSH", icon: <RiDashboardLine  /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {

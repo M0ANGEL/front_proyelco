@@ -20,7 +20,6 @@ import {
   InfoProyecto,
   IniciarTorre,
   confirmarValidacionApt,
-  confirmarPisosXDia,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
