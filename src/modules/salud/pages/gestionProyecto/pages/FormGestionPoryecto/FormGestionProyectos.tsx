@@ -402,11 +402,11 @@ export const FormGestionProyectos = () => {
                                     >
                                       {apt.estado === "2" ? (
                                         <Popconfirm
-                                          disabled={
+                                          disabled/* ={
                                             !["Ingeniero Obra"].includes(
                                               user_rol
                                             )
-                                          }
+                                          } */
                                           title="¿Estás seguro de que deseas anular este APT?"
                                           onConfirm={() =>
                                             AnularPiso(
