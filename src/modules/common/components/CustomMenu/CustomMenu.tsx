@@ -1,10 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-/* eslint-disable react-hooks/exhaustive-deps */
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillControl, AiOutlineBarChart, AiOutlineUsergroupAdd, AiTwotoneProject } from "react-icons/ai";
+import { AiOutlineBarChart, AiTwotoneProject } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -155,10 +152,10 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
       theme={{
         components: {
           Menu: {
-            colorBgContainer: "#0b287c", //azul
+            colorBgContainer: "#1976d2", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#f1c40f", //color de texto selecionado
-            itemHoverBg: "#081a63",  //azul de hover
+            itemSelectedColor: "#a5a5a5ff", //color de texto selecionado
+            itemHoverBg: "#0967a7",  //azul de hover
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
             itemActiveBg: "#FFFFFF",

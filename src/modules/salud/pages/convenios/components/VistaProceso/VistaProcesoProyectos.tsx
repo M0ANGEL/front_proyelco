@@ -238,6 +238,10 @@ export const VistaProcesoProyectos = () => {
                                 {contenido.nombre_proceso || "Proceso"}
                               </span>
                               <span style={{ color: "blue" }}>
+                                {contenido.apartamentos_realizados} /{" "}
+                                {contenido.total_apartamentos}{" "}
+                              </span>
+                              <span style={{ color: "blue" }}>
                                 Atraso del proceso:{" "}
                                 {contenido.porcentaje_atraso}%
                               </span>
