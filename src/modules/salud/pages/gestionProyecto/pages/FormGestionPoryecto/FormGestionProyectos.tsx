@@ -421,9 +421,12 @@ export const FormGestionProyectos = () => {
                                         >
                                           <Button
                                             style={{
-                                              minWidth: "40px",
-                                              height: "32px",
-                                              padding: "0 8px",
+                                                width: "60px", // o el ancho que tú desees
+                                            height: "36px",
+                                            padding: 0,
+                                              // minWidth: "40px",
+                                              // height: "32px",
+                                              // padding: "0 8px",
                                               borderRadius: "6px",
                                               border: "none",
                                               background:

@@ -388,7 +388,7 @@ export const DashboardLayout = () => {
               scrollbarWidth: "thin",
               scrollbarGutter: "stable",
               transition: ".6s all",
-              backgroundColor: "#0b287c", //color sidebar
+              backgroundColor: "#1976d2", //color sidebar
               zIndex: 0,
             }}
           >
