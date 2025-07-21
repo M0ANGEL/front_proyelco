@@ -5817,3 +5817,92 @@ export interface Asistencia {
   updated_at: string;
   created_at_string: string;
 }
+
+// tipos daschboar grafica
+
+export interface ResponseProject {
+  data: {
+    status: string;
+    data: Project[];
+  };
+}
+export interface Project {
+  id: number;
+  tipoProyecto_id: number;
+  cliente_id: number;
+  usuario_crea_id: number;
+  encargado_id: number;
+  ingeniero_id: number;
+  descripcion_proyecto: string;
+  fecha_inicio: string;
+  codigo_proyecto: string;
+  torres: number;
+  cant_pisos: number;
+  apt: number;
+  pisosCambiarProceso: number;
+  usuarios_notificacion: null | string;
+  estado: number;
+  activador_pordia_apt: number;
+  fecha_ini_proyecto: string;
+  created_at: string;
+  updated_at: string;
+  minimoApt: string;
+  nombre_tipo: string;
+  nombre: string;
+  emp_nombre: string;
+  porcentaje: number;
+  avance: number;
+}
+
+export interface Apartment {
+  id: number;
+  apartamento: string;
+  consecutivo: string;
+  estado: string;
+}
+
+export interface Process {
+  nombre_proceso: string;
+  text_validacion: null | string;
+  estado_validacion: number;
+  validacion: number;
+  pisos: {
+    [floor: string]: Apartment[];
+  };
+  total_apartamentos: number;
+  apartamentos_atraso: number;
+  apartamentos_realizados: number;
+  porcentaje_atraso: number;
+  porcentaje_avance: number;
+}
+
+export interface Tower {
+  [processId: string]: Process;
+}
+
+export interface ProjectDetail {
+  [towerId: string]: Tower;
+}
+
+export interface TowerSummary {
+  nombre_torre: string;
+  total_atraso: number;
+  total_realizados: number;
+  porcentaje_atraso: number;
+  porcentaje_avance: number;
+  serial_avance: string;
+  total_pisos: number;
+}
+
+export interface ProjectDetailResponse {
+  status: string;
+  data: ProjectDetail;
+  torreResumen: {
+    [towerId: string]: TowerSummary;
+  };
+}
+
+export interface ProjectsResponse {
+  status: string;
+  data: Project[];
+}
