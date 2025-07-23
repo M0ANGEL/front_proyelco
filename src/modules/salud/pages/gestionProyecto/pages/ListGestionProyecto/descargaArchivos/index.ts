@@ -1,0 +1,1 @@
+export {DescargarInforme} from './DescargarInforme'
