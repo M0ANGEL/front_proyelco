@@ -316,6 +316,21 @@ export const DatosFacturacion = ({
                 status={error && "error"}
                 options={selectUSuarios}
                 placeholder="Encargado"
+                showSearch
+                allowClear
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? "")
+                    .toString()
+                    .toLowerCase()
+                    .localeCompare(
+                      (optionB?.label ?? "").toString().toLowerCase()
+                    )
+                }
+                filterOption={(input, option) =>
+                  (option?.label?.toString() ?? "")
+                    .toLowerCase()
+                    .includes(input.toString().toLowerCase())
+                }
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
@@ -341,6 +356,21 @@ export const DatosFacturacion = ({
                 status={error && "error"}
                 options={selectIngeniero}
                 placeholder="Ingeniero Encargado"
+                showSearch
+                allowClear
+                filterSort={(optionA, optionB) =>
+                  (optionA?.label ?? "")
+                    .toString()
+                    .toLowerCase()
+                    .localeCompare(
+                      (optionB?.label ?? "").toString().toLowerCase()
+                    )
+                }
+                filterOption={(input, option) =>
+                  (option?.label?.toString() ?? "")
+                    .toLowerCase()
+                    .includes(input.toString().toLowerCase())
+                }
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>

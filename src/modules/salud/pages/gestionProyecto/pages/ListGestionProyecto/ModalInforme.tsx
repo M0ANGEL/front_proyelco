@@ -2,6 +2,8 @@ import { Button, Modal, Tooltip, Table, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { Proyectodetallado } from "@/services/proyectos/gestionProyectoAPI";
+import { GreenButton } from "@/modules/common/components/ExportExcel/styled";
+import { DescargarInforme } from "./descargaArchivos";
 
 interface DataId {
   proyecto: DataTypeA;
@@ -22,6 +24,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
   const [reporte, setReporte] = useState<ReporteFila[]>([]);
   const [torres, setTorres] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [IdProyecto, setIdProyecto] = useState<number>(0);
 
   const showLoading = () => {
     setOpen(true);
@@ -35,8 +38,10 @@ export const ModalInforme = ({ proyecto }: DataId) => {
           if (data.success) {
             setReporte(data.data.reporte);
             setTorres(data.data.torres);
+            setIdProyecto(data.data.proyecto_id);
           }
         })
+
         .catch((error) => {
           console.error("Error cargando informe detallado", error);
         })
@@ -45,6 +50,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
         });
     }
   }, [open]);
+
 
   const columns = [
     {
@@ -55,7 +61,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
     },
     ...torres.map((torre) => ({
       title: `Torre ${torre}`,
-      dataIndex: `torre_${torre}`,
+      dataIndex: torre,
       key: `torre_${torre}`,
     })),
     {
@@ -95,14 +101,17 @@ export const ModalInforme = ({ proyecto }: DataId) => {
         {loading ? (
           <Spin />
         ) : (
-          <Table
-            dataSource={reporte}
-            columns={columns}
-            pagination={false}
-            rowKey="proceso"
-            bordered
-            scroll={{ x: true }}
-          />
+          <>
+            <Table
+              dataSource={reporte}
+              columns={columns}
+              pagination={false}
+              rowKey="proceso"
+              bordered
+              scroll={{ x: true }}
+            />
+            <DescargarInforme id={IdProyecto} />
+          </>
         )}
       </Modal>
     </>
