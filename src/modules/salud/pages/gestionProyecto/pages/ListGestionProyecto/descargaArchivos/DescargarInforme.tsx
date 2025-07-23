@@ -1,7 +1,6 @@
 import { GreenButton } from "@/modules/common/components/ExportExcel/styled";
 import { ExportInformeExcelProyecto } from "@/services/proyectos/descargarExcelesAPI";
 import { notification, Tooltip } from "antd";
-import { MdOutlineFileDownload } from "react-icons/md";
 import { saveAs } from "file-saver";
 import { ImFileExcel } from "react-icons/im";
 
