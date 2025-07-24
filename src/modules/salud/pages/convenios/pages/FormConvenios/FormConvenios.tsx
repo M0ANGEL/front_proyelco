@@ -427,6 +427,29 @@ export const FormConvenios = () => {
                         },
                       ]
                     : []),
+                    {
+                    key: "4",
+                    label: (
+                      <Space>
+                        <Text
+                          type={
+                            Object.keys(control.formState.errors).length > 0
+                              ? "danger"
+                              : undefined
+                          }
+                        >
+                          Extras del Proyecto
+                        </Text>
+                      </Space>
+                    ),
+                    // children: (
+                    //   <DatosFacturacion
+                    //     selectTipoProyecto={selectTipoProyecto}
+                    //     selectUSuarios={USuarios}
+                    //     selectIngeniero={Ingeniero}
+                    //   />
+                    // ),
+                  },
                 ]}
                 animated
               />

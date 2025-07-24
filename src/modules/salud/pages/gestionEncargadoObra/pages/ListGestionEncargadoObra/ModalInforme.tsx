@@ -55,7 +55,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
     },
     ...torres.map((torre) => ({
       title: `Torre ${torre}`,
-      dataIndex: `torre_${torre}`,
+      dataIndex: torre,
       key: `torre_${torre}`,
     })),
     {
