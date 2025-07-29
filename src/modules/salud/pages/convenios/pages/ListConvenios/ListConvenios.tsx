@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
-import {  DataType } from "./types";
+import { DataType } from "./types";
 import "./CustomList.css";
 import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
@@ -45,12 +45,11 @@ export const ListConvenios = () => {
 
   const fetchConvenios = () => {
     getProyectos().then(({ data: { data } }) => {
-      // console.log(data);
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,
-          nombreEncargado: convenio.nombreEncargado,
-          nombreIngeniero: convenio.nombreIngeniero,
+          nombreEncargado: (convenio.nombresEncargados || []).join(", "),
+          nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
           descripcion_proyecto: convenio.descripcion_proyecto,
           emp_nombre: convenio.emp_nombre,
           estado: convenio.estado.toString(),
@@ -173,13 +172,13 @@ export const ListConvenios = () => {
                       <br />
                       <Typography.Text className="nombre" strong>
                         <span>
-                          ING DE OBRA: {item.nombreIngeniero.toUpperCase()}
+                          INGENIEROS: {item.nombreIngeniero.toUpperCase()}
                         </span>
                       </Typography.Text>
                       <br />
                       <Typography.Text className="nombre" strong>
                         <span>
-                          ENCARGADO: {item.nombreEncargado.toUpperCase()}
+                          ENCARGADOS: {item.nombreEncargado.toUpperCase()}
                         </span>
                       </Typography.Text>
                       <br />
@@ -252,13 +251,19 @@ export const ListConvenios = () => {
                   <Typography.Text type="secondary">
                     <span className="footer-label">Atraso del Proyecto</span>{" "}
                     <br></br>
-                    <span style={{color: 'blue'}}> <b>%{item.porcentaje}</b> </span>
+                    <span style={{ color: "blue" }}>
+                      {" "}
+                      <b>%{item.porcentaje}</b>{" "}
+                    </span>
                   </Typography.Text>
-                   {/* aqui traer calculo del procentaje de avance de la obra, calculo en el backend */}
+                  {/* aqui traer calculo del procentaje de avance de la obra, calculo en el backend */}
                   <Typography.Text type="secondary">
                     <span className="footer-label">Avance del Proyecto</span>{" "}
                     <br></br>
-                    <span style={{color: 'green'}}> <b>%{item.avance}</b> </span>
+                    <span style={{ color: "green" }}>
+                      {" "}
+                      <b>%{item.avance}</b>{" "}
+                    </span>
                   </Typography.Text>
                 </div>
               </Card>

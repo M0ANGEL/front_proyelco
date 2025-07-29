@@ -39,7 +39,6 @@ const ListProcesosProyecto = () => {
     fetchCategorias();
   }, []);
 
-  
   const fetchCategorias = () => {
     getProcesosProyecto().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
@@ -48,7 +47,7 @@ const ListProcesosProyecto = () => {
           nombre_tipo: categoria.nombre_tipo,
           tipoPoryecto_id: categoria.tipoPoryecto_id,
           // estado: categoria.estado.toString(),
-          estado:"1",
+          estado: "1",
           nombre_proceso: categoria.nombre_proceso,
           nombre: categoria.nombre,
           id_user: categoria.id_user,
@@ -97,7 +96,10 @@ const ListProcesosProyecto = () => {
       title: "Nombre Proceso",
       dataIndex: "nombre_proceso",
       key: "nombre_proceso",
+      render: (text: string) =>
+        text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(),
     },
+
     {
       title: "Usuario Creo",
       dataIndex: "nombre",
@@ -157,7 +159,11 @@ const ListProcesosProyecto = () => {
         return (
           <Tooltip title="Editar">
             <Link to={`${location.pathname}/edit/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
+              <Button
+                disabled={!["administrador"].includes(user_rol)}
+                icon={<EditOutlined />}
+                type="primary"
+              />
             </Link>
           </Tooltip>
         );

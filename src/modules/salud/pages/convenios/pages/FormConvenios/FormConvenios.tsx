@@ -170,8 +170,6 @@ export const FormConvenios = () => {
           tipoProyecto_id: data?.tipoProyecto_id?.toString(),
           cliente_id: data?.cliente_id?.toString(),
           usuario_crea_id: data?.usuario_crea_id?.toString(),
-          encargado_id: data?.encargado_id?.toString(),
-          ingeniero_id: data?.ingeniero_id?.toString(),
           emp_nombre: data?.emp_nombre?.toString(),
           nit: data?.nit?.toString(),
           descripcion_proyecto: data?.descripcion_proyecto,
@@ -184,6 +182,8 @@ export const FormConvenios = () => {
           estado: data?.estado?.toString(),
           activador_pordia_apt: data?.activador_pordia_apt?.toString(),
           usuarios_notificacion: JSON.parse(data?.usuarios_notificacion),
+          encargado_id: JSON.parse(data?.encargado_id),
+          ingeniero_id: JSON.parse(data?.ingeniero_id),
         });
       });
     } else {
@@ -378,28 +378,6 @@ export const FormConvenios = () => {
                     ),
                     forceRender: true,
                   },
-                  // {
-                  //   key: "3",
-                  //   label: (
-                  //     <Space>
-                  //       <Text
-                  //         type={
-                  //           Object.keys(control.formState.errors).length > 0
-                  //             ? "danger"
-                  //             : undefined
-                  //         }
-                  //       >
-                  //         Configurar Proyecto
-                  //       </Text>
-                  //     </Space>
-                  //   ),
-                  //   children: (
-                  //     <DatosConfigProyecto
-                  //       selectTipoProcesos={selectTipoProcesos}
-                  //     />
-                  //   ),
-                  //   forceRender: true,
-                  // },
                   ...(!id
                     ? [
                         {
@@ -427,29 +405,29 @@ export const FormConvenios = () => {
                         },
                       ]
                     : []),
-                    {
-                    key: "4",
-                    label: (
-                      <Space>
-                        <Text
-                          type={
-                            Object.keys(control.formState.errors).length > 0
-                              ? "danger"
-                              : undefined
-                          }
-                        >
-                          Extras del Proyecto
-                        </Text>
-                      </Space>
-                    ),
-                    // children: (
-                    //   <DatosFacturacion
-                    //     selectTipoProyecto={selectTipoProyecto}
-                    //     selectUSuarios={USuarios}
-                    //     selectIngeniero={Ingeniero}
-                    //   />
-                    // ),
-                  },
+                  // {
+                  //   key: "4",
+                  //   label: (
+                  //     <Space>
+                  //       <Text
+                  //         type={
+                  //           Object.keys(control.formState.errors).length > 0
+                  //             ? "danger"
+                  //             : undefined
+                  //         }
+                  //       >
+                  //         Extras del Proyecto
+                  //       </Text>
+                  //     </Space>
+                  //   ),
+                  //   // children: (
+                  //   //   <DatosFacturacion
+                  //   //     selectTipoProyecto={selectTipoProyecto}
+                  //   //     selectUSuarios={USuarios}
+                  //   //     selectIngeniero={Ingeniero}
+                  //   //   />
+                  //   // ),
+                  // },
                 ]}
                 animated
               />
