@@ -312,6 +312,7 @@ export const DatosFacturacion = ({
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Encargado Proyecto:">
               <Select
+                mode="multiple"
                 {...field}
                 status={error && "error"}
                 options={selectUSuarios}
@@ -352,6 +353,7 @@ export const DatosFacturacion = ({
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Ingeniero Encargado:">
               <Select
+                mode="multiple"
                 {...field}
                 status={error && "error"}
                 options={selectIngeniero}
