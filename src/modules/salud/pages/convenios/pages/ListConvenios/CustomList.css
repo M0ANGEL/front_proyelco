@@ -1,70 +1,69 @@
 /*.custom-card {
     border: 1px solid #ba9df4;
     /*background-color: #e6a15c;*/
-    
-    
-    
-  /*}*/
 
-  .custom-card {
-    border: 1px solid #e8e8e8;
-    border-radius: 6px;
-    padding: 16px;
-    background-color: #f5f5f5;
-  }
-  
-  .card-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .status-container {
-    margin-right: 8px;
-  }
-  
-  .date-container {
-    text-align: left;
-  }
-  
-  .date-label {
-    margin-top: 8px;
-    font-size: 14px;
-    color: #888888;
-  }
-  
-  .card-footer {
-    margin-top: 16px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .footer-label {
-    font-weight: bold;
-    margin-right: 8px;
-  }
+/*}*/
 
-  .title-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-  }
-  
-  .title-icon {
-    margin-left: 8px;
-  }
-  
-  .title-text {
-    font-size: 14px;
-    /*color: black;*/
-    transition: color 0.3s;
-  }
-  
-  .title-link:hover .title-text {
-    color: #FF8C00;
-    text-decoration: underline;
-  }
-  
-  
-  
+.custom-card {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  padding: 16px;
+  background-color: #f5f5f5;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-container {
+  margin-right: 8px;
+}
+
+.date-container {
+  text-align: left;
+}
+
+.date-label {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #888888;
+}
+
+.card-footer {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-label {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.title-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.title-icon {
+  margin-left: 8px;
+}
+
+.title-text {
+  font-size: 14px;
+  /*color: black;*/
+  transition: color 0.3s;
+}
+
+.title-link:hover .title-text {
+  color: #ff8c00;
+  text-decoration: underline;
+}

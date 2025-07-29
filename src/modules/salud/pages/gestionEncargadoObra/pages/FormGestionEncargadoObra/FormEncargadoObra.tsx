@@ -215,7 +215,7 @@ export const FormEncargadoObra = () => {
         notification.error({
           message: response.data.message,
           placement: "topRight",
-          duration: 5,
+          duration: 12,
         });
       }
     } catch (error: any) {
@@ -223,7 +223,7 @@ export const FormEncargadoObra = () => {
         message: "Error al validar proceso",
         description: error.response.data.message,
         placement: "topRight",
-        duration: 5,
+        duration: 12,
       });
     }
   };
@@ -448,7 +448,9 @@ export const FormEncargadoObra = () => {
                     }}
                   ></span>
                   {/* Torre {torreSeleccionada} */}
-                  Torre: {porcetanjeTorre[torreSeleccionada]?.nombre_torre || `Torre ${torreSeleccionada}`}
+                  Torre:{" "}
+                  {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
+                    `Torre ${torreSeleccionada}`}
                 </Title>
                 <span style={{ color: "blue" }}>
                   {" "}
@@ -538,9 +540,12 @@ export const FormEncargadoObra = () => {
                             extra={
                               necesitaValidacion && (
                                 <Button
-                                  // disabled={
-                                  //   !["Encargado Obras"].includes(user_rol)
-                                  // }
+                                  disabled={
+                                    !(
+                                      torreYaIniciada() &&
+                                      ["Encargado Obras"].includes(user_rol)
+                                    )
+                                  }
                                   style={{ marginLeft: 15 }}
                                   type="primary"
                                   size="small"
@@ -596,11 +601,11 @@ export const FormEncargadoObra = () => {
                                         >
                                           {apt.estado === "1" ? (
                                             <Popconfirm
-                                              // disabled={
-                                              //   !["Encargado Obras"].includes(
-                                              //     user_rol
-                                              //   )
-                                              // }
+                                              disabled={
+                                                !["Encargado Obras"].includes(
+                                                  user_rol
+                                                )
+                                              }
                                               title="¿Estás seguro de que deseas confirmar este APT?"
                                               onConfirm={() =>
                                                 confirmarApt(
@@ -698,7 +703,7 @@ export const FormEncargadoObra = () => {
                                 ))
                             ) : (
                               <Empty
-                                description="No hay apartamentos disponibles en este momento (estado 1 o 2)"
+                                description="No hay apartamentos disponibles en este momento"
                                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                               />
                             )}

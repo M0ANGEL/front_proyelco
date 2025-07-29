@@ -206,16 +206,14 @@ const ListGestionProyectos = () => {
         }
         return (
           <Popconfirm
-            disabled={!["Encargado Obras"].includes(user_rol)}
+            disabled
             title="¿Desea inicar el proyecto?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
           >
             <ButtonTag
               color={color}
-              disabled={
-                !Number(record.fecha_ini_proyecto !== null) ? false : true
-              }
+              disabled
             >
               <Tooltip title="Iniciar Proyecto">
                 <Tag
