@@ -11,7 +11,6 @@ const { Text } = Typography;
 export const ListarDocumentos = ({ documentos, privilegios, tab }: Props) => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const location = useLocation();
-  console.log(documentos)
   useEffect(() => {
     const data: DataType[] = documentos.map((item) => {
       const fecha = new Date(item.created_at);
@@ -22,7 +21,6 @@ export const ListarDocumentos = ({ documentos, privilegios, tab }: Props) => {
       // Formatear la fecha en el formato deseado (por ejemplo, DD/MM/YYYY)
       const fechaFormateada = `${dia < 10 ? '0' + dia : dia}/${mes < 10 ? '0' + mes : mes}/${año}`;
 
-      console.log("docus=> ", documentos)
       return {
         key: item.id,
         trs_id: item.trs_id,
@@ -33,7 +31,6 @@ export const ListarDocumentos = ({ documentos, privilegios, tab }: Props) => {
         user_acepta: item.user_acepta,
       };
     });
-    console.log(privilegios)
     setDataSource(data);
   }, [documentos]);
 

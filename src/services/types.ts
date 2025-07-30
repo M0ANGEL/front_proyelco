@@ -5859,6 +5859,10 @@ export interface Apartment {
   apartamento: string;
   consecutivo: string;
   estado: string;
+  nombre: string;
+  fecha_fin: string;
+  fecha_habilitado: string;
+  piso: string;
 }
 
 export interface Process {

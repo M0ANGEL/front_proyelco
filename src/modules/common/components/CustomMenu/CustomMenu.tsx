@@ -103,8 +103,6 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
       return;
     }
   
-    console.log(user);
-    
     const empresaId = getSessionVariable(KEY_EMPRESA);
     const perfil = user.perfiles.find(p => Number(p.id_empresa) === Number(empresaId));
   

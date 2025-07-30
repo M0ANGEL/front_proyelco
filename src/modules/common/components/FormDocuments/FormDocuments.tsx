@@ -978,7 +978,6 @@ export const FormDocuments = () => {
           message: "Solo se admite el formato .xlsx",
         });
       }
-      console.log(isExcel);
       return isExcel;
     },
     onChange(info) {
