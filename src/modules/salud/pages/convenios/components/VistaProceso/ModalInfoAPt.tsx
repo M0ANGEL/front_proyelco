@@ -16,6 +16,8 @@ export const ModalInfoApt = ({
 }: ModalInfoAptProps) => {
   if (!isOpen) return null;
 
+  console.log(selectedApt);
+
   return (
     <div
       style={{
@@ -67,18 +69,24 @@ export const ModalInfoApt = ({
 
               <div style={{ marginBottom: "15px" }}>
                 {/* confirmador */}
-                <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
-                  <strong
-                    style={{
-                      color: "#333",
-                      display: "inline-block",
-                      width: "150px",
-                    }}
+                {selectedApt.nombre ? (
+                  <p
+                    style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}
                   >
-                    Quien Confirmó:
-                  </strong>{" "}
-                  {selectedApt.nombre || "--"}
-                </p>
+                    <strong
+                      style={{
+                        color: "#333",
+                        display: "inline-block",
+                        width: "150px",
+                      }}
+                    >
+                      Quien Confirmó:
+                    </strong>{" "}
+                    {selectedApt.nombre || "--"}
+                  </p>
+                ) : (
+                  ""
+                )}
                 {/* consecutivo */}
                 <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
                   <strong
@@ -93,7 +101,7 @@ export const ModalInfoApt = ({
                   {selectedApt.consecutivo}
                 </p>
                 {/* torre */}
-                <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
+                {/* <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
                   <strong
                     style={{
                       color: "#333",
@@ -104,7 +112,7 @@ export const ModalInfoApt = ({
                     Torre:
                   </strong>{" "}
                   {selectedApt.torre}
-                </p>
+                </p> */}
                 {/* piso */}
                 <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
                   <strong
@@ -117,19 +125,6 @@ export const ModalInfoApt = ({
                     Piso:
                   </strong>{" "}
                   {selectedApt.piso}
-                </p>
-                {/* apartamento */}
-                <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
-                  <strong
-                    style={{
-                      color: "#333",
-                      display: "inline-block",
-                      width: "150px",
-                    }}
-                  >
-                    Apartamento:
-                  </strong>{" "}
-                  {selectedApt.apartamento}
                 </p>
                 {/* estado */}
                 <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
@@ -161,9 +156,51 @@ export const ModalInfoApt = ({
                       fontWeight: "bold",
                     }}
                   >
-                    {selectedApt.estado}
+                    {selectedApt.estado == "2"
+                      ? "Completado"
+                      : selectedApt.estado == "1"
+                      ? "Habilitado"
+                      : "No habilitado"}
                   </span>
                 </p>
+                {/* fecha habilitado */}
+                {selectedApt.estado === "1" || selectedApt.estado === "2" ? (
+                  <p
+                    style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}
+                  >
+                    <strong
+                      style={{
+                        color: "#333",
+                        display: "inline-block",
+                        width: "150px",
+                      }}
+                    >
+                      Fecha Habilitado:
+                    </strong>{" "}
+                    {selectedApt.fecha_habilitado}
+                  </p>
+                ) : (
+                  ""
+                )}
+                {/* fecha de confirmacion */}
+                {selectedApt.estado == "2" ? (
+                  <p
+                    style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}
+                  >
+                    <strong
+                      style={{
+                        color: "#333",
+                        display: "inline-block",
+                        width: "150px",
+                      }}
+                    >
+                      Fecha Terminado:
+                    </strong>{" "}
+                    {selectedApt.fecha_fin}
+                  </p>
+                ) : (
+                  ""
+                )}
               </div>
 
               <button
