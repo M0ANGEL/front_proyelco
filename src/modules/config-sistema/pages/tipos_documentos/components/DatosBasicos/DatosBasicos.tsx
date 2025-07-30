@@ -16,7 +16,6 @@ export const DatosBasicos = ({ tipoDocumento, empresas, grupos }: Props) => {
 
   useEffect(() => {
 
-    console.log(tipoDocumento)
     methods.reset(
       tipoDocumento
         ? {

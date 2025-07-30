@@ -36,7 +36,6 @@ export const ModalProductos = ({ open, setOpen, onSetDataSource, listPrice, onUp
   useEffect(() => {
     let total = 0;
     selectRows.forEach((producto) => {
-      console.log(producto)
       total += parseFloat(producto.valor);
     });
     setValorTotal(total);
@@ -44,7 +43,6 @@ export const ModalProductos = ({ open, setOpen, onSetDataSource, listPrice, onUp
 
   const fetchProductos = (value: string, bodega_id: string) => {
     setLoaderTable(true);
-    console.log(listPrice)
     getProductxLotes(value, bodega_id).then(({ data: { data } }) => {
 
       const productos = data.map((producto) => {

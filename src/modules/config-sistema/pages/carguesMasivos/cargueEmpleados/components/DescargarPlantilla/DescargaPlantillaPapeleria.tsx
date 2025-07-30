@@ -24,7 +24,6 @@ export const DescargaPlantillaPapeleria = () => {
       });
     })
     .catch((err) => {
-      console.log(err);
   
       // ❌ 
       notification.error({

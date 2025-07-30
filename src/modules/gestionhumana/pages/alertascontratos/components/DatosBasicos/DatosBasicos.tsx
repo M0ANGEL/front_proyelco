@@ -16,7 +16,6 @@ export const DatosBasicos = ({ alertaContrato }: Props) => {
     fetchTipoContratos()
 
     if (alertaContrato) {
-      console.log('alerta contrato', alertaContrato)
       methods.setValue('dias', alertaContrato?.dias)
       methods.setValue('descripcion', alertaContrato?.descripcion)
       methods.setValue('tipo_contrato', alertaContrato?.contrato_laborale_id)
