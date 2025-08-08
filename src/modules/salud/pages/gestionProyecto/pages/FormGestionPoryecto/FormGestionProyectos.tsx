@@ -217,17 +217,6 @@ export const FormGestionProyectos = () => {
           >
             <Row gutter={[16, 16]} align="middle">
               <Col xs={24} sm={12} md={8} lg={6}>
-                {/* <Select
-                  placeholder="Seleccione una torre"
-                  style={{ width: "100%" }}
-                  onChange={setTorreSeleccionada}
-                  value={torreSeleccionada}
-                  options={torresUnicas.map((torre) => ({
-                    label: `Torre ${torre}`,
-                    value: torre,
-                  }))}
-                  size="large"
-                /> */}
                 <Select
                   placeholder="Seleccione una torre"
                   style={{ width: "100%" }}
@@ -300,7 +289,6 @@ export const FormGestionProyectos = () => {
                       borderRadius: "3px",
                     }}
                   ></span>
-                  {/* Torre {torreSeleccionada} */}
                   Torre:{" "}
                   {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
                     `Torre ${torreSeleccionada}`}
@@ -421,19 +409,19 @@ export const FormGestionProyectos = () => {
                                         >
                                           <Button
                                             style={{
-                                                width: "60px", // o el ancho que tú desees
-                                            height: "36px",
-                                            padding: 0,
-                                              // minWidth: "40px",
-                                              // height: "32px",
-                                              // padding: "0 8px",
+                                              width: "60px", // o el ancho que tú desees
+                                              height: "36px",
+                                              padding: 0,
                                               borderRadius: "6px",
                                               border: "none",
-                                              background:
-                                                apt.estado === "2"
-                                                  ? "linear-gradient(135deg, #4caf50, #66bb6a)"
-                                                  : "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))",
-                                              color: "white",
+                                              background: apt.eb
+                                                ? "linear-gradient(135deg, #ffffff, #fbfaf9ff)" // Blanco si tiene EB
+                                                : apt.estado === "2"
+                                                ? "linear-gradient(135deg, #4caf50, #66bb6a)" // Verde (estado 2)
+                                                : apt.estado === "1"
+                                                ? "linear-gradient(135deg, #1890ff, #36cfc9)" // Azul (estado 1)
+                                                : "linear-gradient(135deg, rgb(0, 0, 0), rgb(54, 54, 54))", // Gris oscuro por defecto
+                                              color: apt.eb ? "black" : "white",
                                               fontWeight: 500,
                                               boxShadow:
                                                 "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -450,19 +438,19 @@ export const FormGestionProyectos = () => {
                                       ) : (
                                         <Button
                                           style={{
-                                             width: "60px", // o el ancho que tú desees
+                                            width: "60px", // o el ancho que tú desees
                                             height: "36px",
                                             padding: 0,
-                                            // minWidth: "40px",
-                                            // height: "32px",
-                                            // padding: "0 8px",
                                             borderRadius: "6px",
                                             border: "none",
-                                            background:
-                                              apt.estado === "1"
-                                                ? "linear-gradient(135deg, #1890ff, #36cfc9)"
-                                                : "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))",
-                                            color: "white",
+                                            background: apt.eb
+                                              ? "linear-gradient(135deg, #ffffffff, #fbfaf9ff)" // Blanco si tiene EB
+                                              : apt.estado === "2"
+                                              ? "linear-gradient(135deg, #4caf50, #66bb6a)" // Verde (estado 2)
+                                              : apt.estado === "1"
+                                              ? "linear-gradient(135deg, #1890ff, #36cfc9)" // Azul (estado 1)
+                                              : "linear-gradient(135deg, rgb(0, 0, 0), rgb(54, 54, 54))", // Gris oscuro por defecto
+                                            color: apt.eb ? "black" : "white",
                                             fontWeight: 500,
                                             boxShadow:
                                               "0 2px 4px rgba(0, 0, 0, 0.1)",
