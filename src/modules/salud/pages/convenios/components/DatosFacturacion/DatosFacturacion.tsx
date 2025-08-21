@@ -4,13 +4,14 @@ import {
   Col,
   Collapse,
   Input,
+  InputNumber,
   Row,
   Select,
   Tooltip,
   Typography,
 } from "antd";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { Props } from "./types";
+import { Proceso, Props } from "./types";
 import { useParams } from "react-router-dom";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
@@ -21,6 +22,7 @@ export const DatosFacturacion = ({
   selectTipoProyecto,
   selectUSuarios,
   selectIngeniero,
+  procesos,
 }: Props) => {
   const methods = useFormContext();
 
@@ -416,6 +418,53 @@ export const DatosFacturacion = ({
           )}
         />
       </Col>
+
+      {id && (
+        <>
+          {/* foreach de procesos */}
+          {procesos?.map((proceso: Proceso, index: number) => (
+            <Col xs={24} sm={4} key={proceso.proceso}>
+              <Controller
+                name={`procesos[${index}]`} // 👈 controlamos el objeto completo
+                control={methods.control}
+                defaultValue={{
+                  proceso: proceso.proceso, // fijo desde tu data
+                  numero: proceso.numero ?? "", // editable en el input
+                }}
+                rules={{
+                  validate: (value) => {
+                    if (!value?.numero) return "Número es requerido";
+                    if (!/^[0-9]+$/.test(value.numero))
+                      return "Solo números permitidos";
+                    return true;
+                  },
+                }}
+                render={({ field, fieldState: { error } }) => (
+                  <StyledFormItem
+                    required
+                    label={`Proceso ${proceso.nombre_proceso}`}
+                  >
+                    <InputNumber
+                      value={field.value?.numero}
+                      onChange={(val) =>
+                        field.onChange({
+                          ...field.value,
+                          numero: val, // se actualiza al escribir
+                          proceso: proceso.proceso, // se mantiene el id del proceso
+                        })
+                      }
+                      placeholder="Número de proceso"
+                      status={error ? "error" : ""}
+                      style={{ width: "100%" }}
+                    />
+                    <Text type="danger">{error?.message}</Text>
+                  </StyledFormItem>
+                )}
+              />
+            </Col>
+          ))}
+        </>
+      )}
 
       {!id && (
         <>

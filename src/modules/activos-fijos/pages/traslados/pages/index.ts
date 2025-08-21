@@ -1,0 +1,6 @@
+export {TrasladarActivosAdmin} from "./TrasladarActivosAdmin"
+export {AceptarTraslados} from "./AceptarTraslados"
+export {TrasladosActivosPage} from "./TrasladosActivosPage"
+export {TrasladarActivos} from "./TrasladarActivos"
+export {MesajeroActivos} from "./MesajeroActivos"
+export {TrasladarPendientesActivosAdmin} from "./TrasladarPendientesActivosAdmin"

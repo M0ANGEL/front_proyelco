@@ -1,0 +1,1 @@
+export {ListBodegaAreas} from './ListBodegaAreas'

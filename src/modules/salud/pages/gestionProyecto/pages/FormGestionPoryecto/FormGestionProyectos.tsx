@@ -415,7 +415,7 @@ export const FormGestionProyectos = () => {
                                               borderRadius: "6px",
                                               border: "none",
                                               background: apt.eb
-                                                ? "linear-gradient(135deg, #ffffff, #fbfaf9ff)" // Blanco si tiene EB
+                                                ? "linear-gradient(135deg, #ffffff, #FCE8CA)" // Blanco si tiene EB
                                                 : apt.estado === "2"
                                                 ? "linear-gradient(135deg, #4caf50, #66bb6a)" // Verde (estado 2)
                                                 : apt.estado === "1"
@@ -444,7 +444,7 @@ export const FormGestionProyectos = () => {
                                             borderRadius: "6px",
                                             border: "none",
                                             background: apt.eb
-                                              ? "linear-gradient(135deg, #ffffffff, #fbfaf9ff)" // Blanco si tiene EB
+                                              ? "linear-gradient(135deg, #ffffffff, #FCE8CA)" // Blanco si tiene EB
                                               : apt.estado === "2"
                                               ? "linear-gradient(135deg, #4caf50, #66bb6a)" // Verde (estado 2)
                                               : apt.estado === "1"

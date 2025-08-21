@@ -5,6 +5,7 @@ const HOST_TK = import.meta.env.VITE_API_HOST_TK;
 export const BASE_URL_TK = HOST_TK + "api/"; /* tk = tickets */
 const HOST_MARCACION = import.meta.env.VITE_API_HOST_MARCACION;
 export const BASE_URL = HOST + "api/";
+export const BASE_URL_IMAGENES = HOST;
 export const BASE_URL_GESTION = HOST_GESTION + "api/"
 export const BASE_URL_REP = HOST_REP + "reportes/";
 export const FILES_URL = HOST + "storage/";

@@ -1,0 +1,6 @@
+export * from './ActivosPage'
+export * from './categoriasActivos'
+export * from './subCategoriasActivos'
+export * from './crearActivos'
+export * from './misActivos'
+export * from './traslados'

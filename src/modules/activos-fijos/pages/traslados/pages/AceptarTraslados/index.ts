@@ -1,0 +1,1 @@
+export {AceptarTraslados} from "./AceptarTraslados"

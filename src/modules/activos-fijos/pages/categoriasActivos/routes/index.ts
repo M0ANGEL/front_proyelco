@@ -1,0 +1,1 @@
+export {CategoriasActivosRoutes} from './CategoriasActivosRoutes'
