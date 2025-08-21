@@ -5184,7 +5184,7 @@ export interface TkCategoria {
 }
 
 
-/* type de datos categorias */
+/* type de datos */
 export interface ResponseAmClientes {
   data: {
     status: string;
@@ -5909,4 +5909,89 @@ export interface ProjectDetailResponse {
 export interface ProjectsResponse {
   status: string;
   data: Project[];
+}
+
+//activos fijos 
+
+export interface ResponseBodegas_areas{
+  data: {
+    status: string;
+    data: Bodegas_Areas[];
+  };
+}
+export interface Bodegas_Areas {
+  id: number;
+  direccion: string;
+  estado: string;
+  id_user: string;
+  nombre: string;
+  created_at: string;
+  updated_at: string;
+  usuario: string;
+}
+
+export interface ResponseActivosCategoria{
+  data: {
+    status: string;
+    data: ActivosCategoria[];
+  };
+}
+export interface ActivosCategoria {
+  id: number;
+  prefijo: string;
+  descripcion: string;
+  estado: string;
+  id_user: string;
+  nombre: string;
+  usuario: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ResponseActivosSubCategoria{
+  data: {
+    status: string;
+    data: ActivosSubCategoria[];
+  };
+}
+export interface ActivosSubCategoria {
+  id: number;
+  descripcion: string;
+  estado: string;
+  id_user: string;
+  nombre: string;
+  usuario: string;
+  categoria: string;
+  categoria_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ResponseActivosS{
+  data: {
+    status: string;
+    data: ActivosData[];
+  };
+}
+export interface ActivosData {
+  id: number;
+  key: number;
+  numero_activo: string;
+  categoria_id: string;
+  subcategoria_id: string;
+  descripcion: string;
+  ubicacion_actual_id: string;
+  valor: string;
+  fecha_fin_garantia: string;
+  condicion: string;
+  updated_at: string;
+  created_at: string;
+  marca: string;
+  serial: string;
+  observacion: string;
+  estado: string;
+  usuario: string;
+  categoria: string;
+  subcategoria: string;
+  bodega_actual: string;
 }

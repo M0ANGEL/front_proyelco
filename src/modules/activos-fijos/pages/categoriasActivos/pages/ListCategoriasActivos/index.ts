@@ -1,0 +1,1 @@
+export {ListCategoriasActivos} from './ListCategoriasActivos'

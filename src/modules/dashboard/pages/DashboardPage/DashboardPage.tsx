@@ -2,15 +2,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Col, Row, Space, Spin } from "antd";
 import CountUp from "react-countup";
-import { FaRegCalendarXmark } from "react-icons/fa6";
 import { StadisticTitle, StyledCardDashBoard, StyledStadistic } from "./styled";
 import { useEffect, useState } from "react";
 import { DashboardInfo } from "./types";
 import { infoCartDash } from "@/services/dashboard/statisticsAPI";
 import { LoadingOutlined } from "@ant-design/icons";
-import { LiaFileInvoiceDollarSolid } from "react-icons/lia";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineTeam, AiTwotoneHome } from "react-icons/ai";
+import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const cardsBgColors: Array<string> = [
   "#fc5d36",
@@ -23,51 +23,116 @@ const cardsBgColors: Array<string> = [
 export const DashboardPage = () => {
   const [cards, setCards] = useState<DashboardInfo[]>([]);
   const navigate = useNavigate();
+  const { getSessionVariable } = useSessionStorage();
+
+  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     infoCartDash().then(({ data: { data } }) => {
-      setCards([
-        {
-          title: "PROYECTOS CREADOS",
-          icon: <AiTwotoneHome />,
-          value: data.proyectosActivos,
-          link: "/controldevencimientos/vencimientos",
-          // permiso: data.permisos.vencimientos,
-          bgColor: cardsBgColors[0],
-        },
-        {
-          title: "PROYECTOS INACTIVOS",
-          icon: <AiTwotoneHome />,
-          value: data.proyectosInactivos,
-          link: "/documentos/entradas/oc",
-          // permiso: data.permisos.orden_compra,
-          bgColor: cardsBgColors[1],
-        },
-        {
-          title: "PROYECTOS TERMINADOS",
-          icon: <AiTwotoneHome />,
-          value: data.proyectosTerminados,
-          link: "/documentos/entradas/oc",
-          // permiso: data.permisos.orden_compra,
-          bgColor: cardsBgColors[2],
-        },
-        {
-          title: "CLIENTES ACTIVOS",
-          icon: <AiOutlineTeam />,
-          value: data.clientesActivos,
-          link: "/documentos/entradas/oc",
-          // permiso: data.permisos.orden_compra,
-          bgColor: cardsBgColors[3],
-        },
-        {
-          title: "CLIENTES INACTIVOS",
-          icon: <AiOutlineTeam />,
-          value: data.clientesInactivos,
-          link: "/documentos/entradas/oc",
-          // permiso: data.permisos.orden_compra,
-          bgColor: cardsBgColors[4],
-        },
-      ]);
+      let cardsArray: DashboardInfo[] = [];
+
+      switch (user_rol) {
+        case "Encargado Obras":
+          cardsArray = [
+            {
+              title: "PROYECTOS ASIGNADOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosActivos,
+              link: "/proyectos/gestion-encargado-obra",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+          ];
+          break;
+
+        case "Ingeniero Obra":
+          cardsArray = [
+            {
+              title: "PROYECTOS ASIGNADOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosActivos,
+              link: "/proyectos/gestion-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+            {
+              title: "PROYECTOS INACTIVOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosInactivos,
+              link: "/documentos/entradas/oc",
+              permiso: true,
+              bgColor: cardsBgColors[1],
+            },
+            {
+              title: "PROYECTOS TERMINADOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosTerminados,
+              link: "/documentos/entradas/oc",
+              permiso: true,
+              bgColor: cardsBgColors[2],
+            },
+            {
+              title: "CLIENTES ACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesActivos,
+              link: "/documentos/entradas/oc",
+              permiso: true,
+              bgColor: cardsBgColors[3],
+            },
+            {
+              title: "CLIENTES INACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesInactivos,
+              link: "/documentos/entradas/oc",
+              permiso: true,
+              bgColor: cardsBgColors[4],
+            },
+          ];
+          break;
+
+        case "Directora Proyectos":
+          cardsArray = [
+            {
+              title: "PROYECTOS CREADOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosActivos,
+              link: "/administrar-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+            {
+              title: "PROYECTOS INACTIVOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosInactivos,
+              link: "/administrar-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[1],
+            },
+            {
+              title: "CLIENTES ACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesActivos,
+              link: "/clientes/administrar-clientes",
+              permiso: true,
+              bgColor: cardsBgColors[3],
+            },
+            {
+              title: "CLIENTES INACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesInactivos,
+              link: "/clientes/administrar-clientes",
+              permiso: true,
+              bgColor: cardsBgColors[4],
+            },
+          ];
+          break;
+
+        default:
+          cardsArray = [];
+          break;
+      }
+
+      setCards(cardsArray);
     });
   }, []);
 
@@ -78,46 +143,44 @@ export const DashboardPage = () => {
   };
 
   return (
-    <>
-      <StyledCardDashBoard>
-        {cards.length === 0 ? (
-          <Space style={{ width: "100%", textAlign: "center" }}>
-            <Spin size="large" indicator={<LoadingOutlined spin />} />
-          </Space>
-        ) : (
-          <Row justify={"start"} gutter={[16, 16]} style={{ marginInline: 12 }}>
-            {cards.map(
-              ({ title, icon, value, bgColor, link, permiso }, index) => (
-                <Col
-                  xs={24}
-                  md={index >= 2 ? 8 : 12}
-                  lg={index <= 2 ? 8 : 12}
-                  xl={index === 2 ? 4 : 5}
-                  key={`Col-${index}`}
+    <StyledCardDashBoard>
+      {cards.length === 0 ? (
+        <Space style={{ width: "100%", textAlign: "center" }}>
+          <Spin size="large" indicator={<LoadingOutlined spin />} />
+        </Space>
+      ) : (
+        <Row justify={"start"} gutter={[16, 16]} style={{ marginInline: 12 }}>
+          {cards.map(
+            ({ title, icon, value, bgColor, link, permiso }, index) => (
+              <Col
+                xs={24}
+                md={index >= 2 ? 8 : 12}
+                lg={index <= 2 ? 8 : 12}
+                xl={index === 2 ? 4 : 5}
+                key={`Col-${index}`}
+              >
+                <Card
+                  bordered={false}
+                  style={{
+                    backgroundColor: bgColor,
+                    cursor: link && value > 0 && permiso ? "pointer" : "auto",
+                  }}
+                  key={`Card-${index}`}
+                  onClick={() => goTo(link, value, permiso)}
                 >
-                  <Card
-                    bordered={false}
-                    style={{
-                      backgroundColor: bgColor,
-                      cursor: link && value > 0 && permiso ? "pointer" : "auto",
-                    }}
-                    key={`Card-${index}`}
-                    onClick={() => goTo(link, value, permiso)}
-                  >
-                    <StyledStadistic
-                      title={<StadisticTitle>{title}</StadisticTitle>}
-                      value={value}
-                      formatter={(value: any) => <CountUp end={value} />}
-                      prefix={icon}
-                      key={`Stats-${index}`}
-                    />
-                  </Card>
-                </Col>
-              )
-            )}
-          </Row>
-        )}
-      </StyledCardDashBoard>
-    </>
+                  <StyledStadistic
+                    title={<StadisticTitle>{title}</StadisticTitle>}
+                    value={value}
+                    formatter={(value: any) => <CountUp end={value} />}
+                    prefix={icon}
+                    key={`Stats-${index}`}
+                  />
+                </Card>
+              </Col>
+            )
+          )}
+        </Row>
+      )}
+    </StyledCardDashBoard>
   );
 };

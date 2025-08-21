@@ -1,0 +1,1 @@
+export { TrasladarActivosAdmin } from "./TrasladarActivosAdmin";

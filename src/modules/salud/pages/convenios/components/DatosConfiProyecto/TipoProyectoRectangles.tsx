@@ -24,10 +24,54 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
   const [confirmados, setConfirmados] = useState<Tipo[]>([]);
   const methods = useFormContext();
 
+  // useEffect(() => {
+  //   setDisponibles(tipos);
+  //   setConfirmados([]);
+  // }, [tipos]);
+
   useEffect(() => {
-    setDisponibles(tipos);
-    setConfirmados([]);
-  }, [tipos]);
+  // orden definido por ti
+  const labelsPreSeleccionados = [
+    "fundida",
+    "destapada",
+    "prolongacion",
+    "alambrada",
+    "apartaeda",
+    "pruebas",
+    "retie",
+    "ritel",
+    "entrega",
+
+  ];
+
+  // armar confirmados en el mismo orden que la lista
+  const preSeleccionados: Tipo[] = [];
+  labelsPreSeleccionados.forEach((label, i) => {
+    const encontrado = tipos.find(
+      (t) => t.label.toLowerCase() === label.toLowerCase()
+    );
+    if (encontrado) {
+      preSeleccionados.push({
+        ...encontrado,
+        requiereValidacion: i === 0 ? "no" : undefined, // primero sin validación
+      });
+    }
+  });
+
+  // el resto queda disponible
+  const restantes = tipos.filter(
+    (t) => !labelsPreSeleccionados.includes(t.label.toLowerCase())
+  );
+
+  setConfirmados(preSeleccionados);
+  setDisponibles(restantes);
+
+  onChangeTipos(preSeleccionados);
+
+  // 👇 solo una vez al inicio, no se vuelve a ejecutar
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [tipos]);
+
 
   const handleDragEnd = (result: any) => {
     const { source, destination } = result;

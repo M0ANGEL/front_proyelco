@@ -41,6 +41,16 @@ import {
 
 const { Text } = Typography;
 
+type Proceso = {
+  proyecto_id: number;
+  numero: string;
+  proceso: string;
+  nombre_proceso: string;
+};
+
+
+
+
 export const FormConvenios = () => {
   const [selectTipoProyecto, setselectTipoProyecto] = useState<
     SelectProps["options"]
@@ -53,6 +63,9 @@ export const FormConvenios = () => {
   const [usuariosCorreo, setUsuariosCorreo] = useState<SelectProps["options"]>(
     []
   );
+
+const [dataProcesos, setDataProcesos] = useState<Proceso[]>([]);
+
 
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
   const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
@@ -167,24 +180,26 @@ export const FormConvenios = () => {
       getProyectoID(id).then(({ data }) => {
         setConvenio(data);
         control.reset({
-          tipoProyecto_id: data?.tipoProyecto_id?.toString(),
-          cliente_id: data?.cliente_id?.toString(),
-          usuario_crea_id: data?.usuario_crea_id?.toString(),
-          emp_nombre: data?.emp_nombre?.toString(),
-          nit: data?.nit?.toString(),
-          descripcion_proyecto: data?.descripcion_proyecto,
-          fecha_inicio: dayjs(data?.fecha_inicio),
-          codigo_proyecto: data?.codigo_proyecto,
-          torres: data?.torres,
-          cant_pisos: data?.cant_pisos,
-          apt: data?.apt,
-          minimoApt: data?.minimoApt,
-          estado: data?.estado?.toString(),
-          activador_pordia_apt: data?.activador_pordia_apt?.toString(),
-          usuarios_notificacion: JSON.parse(data?.usuarios_notificacion),
-          encargado_id: JSON.parse(data?.encargado_id),
-          ingeniero_id: JSON.parse(data?.ingeniero_id),
+          tipoProyecto_id: data?.proyecto.tipoProyecto_id?.toString(),
+          cliente_id: data?.proyecto.cliente_id?.toString(),
+          usuario_crea_id: data?.proyecto.usuario_crea_id?.toString(),
+          emp_nombre: data?.proyecto.emp_nombre?.toString(),
+          nit: data?.proyecto.nit?.toString(),
+          descripcion_proyecto: data?.proyecto.descripcion_proyecto,
+          fecha_inicio: dayjs(data?.proyecto.fecha_inicio),
+          codigo_proyecto: data?.proyecto.codigo_proyecto,
+          torres: data?.proyecto.torres,
+          cant_pisos: data?.proyecto.cant_pisos,
+          apt: data?.proyecto.apt,
+          minimoApt: data?.proyecto.minimoApt,
+          estado: data?.proyecto.estado?.toString(),
+          activador_pordia_apt: data?.proyecto.activador_pordia_apt?.toString(),
+          usuarios_notificacion: JSON.parse(data?.proyecto.usuarios_notificacion),
+          encargado_id: JSON.parse(data?.proyecto.encargado_id),
+          ingeniero_id: JSON.parse(data?.proyecto.ingeniero_id),
+          proceso: data.procesos,
         });
+        setDataProcesos(data.procesos)
       });
     } else {
       control.reset({
@@ -374,6 +389,7 @@ export const FormConvenios = () => {
                         selectTipoProyecto={selectTipoProyecto}
                         selectUSuarios={USuarios}
                         selectIngeniero={Ingeniero}
+                        procesos={dataProcesos}
                       />
                     ),
                     forceRender: true,
