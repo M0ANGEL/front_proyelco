@@ -1,0 +1,1 @@
+export { TrasladarActivos } from "./TrasladarActivos";

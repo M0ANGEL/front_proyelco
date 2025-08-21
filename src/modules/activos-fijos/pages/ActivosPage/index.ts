@@ -1,0 +1,1 @@
+export {ActivosPages} from  './ActivosPages'

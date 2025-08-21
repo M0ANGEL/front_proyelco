@@ -1,0 +1,1 @@
+export {FormCategoriasActivos} from './FormCategoriasActivos'

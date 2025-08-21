@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiOutlineBarChart, AiTwotoneProject } from "react-icons/ai";
+import { AiFillBank, AiOutlineBarChart, AiTwotoneProject } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -77,6 +77,7 @@ const moduleIcons = [
   { cod: "COMPA", icon: <MdLocalGroceryStore /> },
   { cod: "CA", icon: <AiTwotoneProject /> },
   { cod: "DSH", icon: <RiDashboardLine  /> },
+  { cod: "ACTIV", icon: <AiFillBank /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {

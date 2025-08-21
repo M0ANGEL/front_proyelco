@@ -1,0 +1,1 @@
+export {FormBodegaAreas} from './FormBodegaAreas'
