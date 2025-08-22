@@ -36,12 +36,11 @@ export const TipoProyectoRectangles = ({ tipos, onChangeTipos }: Props) => {
     "destapada",
     "prolongacion",
     "alambrada",
-    "apartaeda",
+    "aparateada",
     "pruebas",
     "retie",
     "ritel",
     "entrega",
-
   ];
 
   // armar confirmados en el mismo orden que la lista
