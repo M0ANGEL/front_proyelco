@@ -1,1 +1,0 @@
-export { DatosConfigProyecto } from "./DatosConfigProyecto";
