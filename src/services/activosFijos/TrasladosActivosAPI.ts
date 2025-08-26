@@ -54,3 +54,18 @@ export const getActiHistorico = async (): Promise<ResponseActivosS> => {
   });
 };
 
+
+//Solicitar Traslados de otras bodegas
+export const getActiSolicitar = async (): Promise<ResponseActivosS> => {
+  return await client.get("solicitar-activos", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+//crear traslados
+export const envioSolicitudActivo = async (data: any): Promise<any> => {
+  return await client.post<any>("envio-solicitud-activo", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

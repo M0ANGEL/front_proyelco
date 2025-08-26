@@ -1,0 +1,1 @@
+export { SolicitarTraslado } from "./SolicitarTraslado";

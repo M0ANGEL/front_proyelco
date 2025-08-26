@@ -136,6 +136,7 @@ export const ListConvenios = () => {
                 />
               </Col>
             </Row>
+
             <List
               grid={{
                 gutter: 10,
@@ -149,151 +150,182 @@ export const ListConvenios = () => {
               dataSource={filterConvenios()}
               renderItem={(item: any) => (
                 <List.Item key={item.key}>
-                  <Card className="custom-card">
-                    <List.Item.Meta
-                      title={
-                        item.estado == "1" ? (
-                          <Link
-                            to={`${location.pathname}/edit/${item.key}`}
-                            className="title-link"
-                          >
-                            <span className="title-text">
-                              {item.descripcion_proyecto.toUpperCase()}
-                            </span>
-                            <span className="title-icon">
-                              <EditFilled style={{ color: "#FF8C00" }} />
-                            </span>
-                          </Link>
-                        ) : (
-                          <span className="title-text">
-                            {item.descripcion_proyecto.toUpperCase()}
-                          </span>
-                        )
-                      }
-                      description={
-                        <>
-                          <Typography.Text
-                            className="razon-soc"
-                            strong
-                            style={{ color: "#FF8C00" }}
-                          >
-                            <span>CLIENTE: {item.emp_nombre}</span>
-                          </Typography.Text>
-                          <br />
-                          <Typography.Text className="nombre" strong>
-                            <span>
-                              INGENIEROS: {item.nombreIngeniero.toUpperCase()}
-                            </span>
-                          </Typography.Text>
-                          <br />
-                          <Typography.Text className="nombre" strong>
-                            <span>
-                              ENCARGADOS: {item.nombreEncargado.toUpperCase()}
-                            </span>
-                          </Typography.Text>
-                          <br />
-                          <Typography.Text
-                            className="codigo_proyecto"
-                            strong
-                            style={{ color: "red" }}
-                          >
-                            <span>
-                              CODIGO PROYECTO:{" "}
-                              {item.codigo_proyecto.toUpperCase()}
-                            </span>
-                          </Typography.Text>
-                        </>
-                      }
-                    />
-                    <div className="card-content">
-                      <div className="status-container">
-                        <Popconfirm
-                          title="¿Desea cambiar el estado?"
-                          onConfirm={() => handleStatus(item.key)}
-                          placement="left"
-                        >
-                          <ButtonTag className="custom-button-tag">
-                            <Tooltip title="Cambiar estado">
-                              <Tag
-                                color={item.estado === "1" ? "green" : "red"}
-                                key={item.estado}
-                                icon={
-                                  loadingRow.includes(item.key) ? (
-                                    <SyncOutlined spin />
-                                  ) : (
-                                    <CheckCircleFilled
-                                      style={{ color: "#a5eea0" }}
-                                    />
-                                  )
-                                }
-                              >
-                                {item.estado === "1" ? "ACTIVO" : "INACTIVO"}
-                              </Tag>
-                            </Tooltip>
-                          </ButtonTag>
-                        </Popconfirm>
-                      </div>
-                      <div className="status-container">
-                        {/* aqui abrir el modal del procesos del proyecto */}
-                        <Tooltip title="Ver Proceso Proyecto">
-                          <Link to={`${location.pathname}/proceso/${item.key}`}>
-                            <ButtonTag
-                              style={{
-                                padding: 5,
-                                borderRadius: 8,
-                                width: 40,
-                              }}
-                              type="primary"
-                            >
-                              <AiOutlineExpandAlt />
-                            </ButtonTag>
-                          </Link>
-                        </Tooltip>
-                      </div>
-                    </div>
-                    <div className="card-footer">
-                      <Typography.Text type="secondary">
-                        <span className="footer-label">Fecha de inicio:</span>{" "}
-                        <br></br>
-                        {item.fec_ini}
-                      </Typography.Text>
+                  <Card className="custom-card pastel-theme">
+                    <div className="card-content-wrapper">
+                      {/* Sección izquierda con gráficos circulares */}
+                      <div className="progress-section">
+                        <div className="circle-progress-container">
+                          <div className="circle-progress-wrapper">
+                            <div className="circle-progress">
+                              <div
+                                className="circle-progress-fill"
+                                style={{
+                                  background: `conic-gradient(#97D8B4 ${item.avance}%, #F0F0F0 ${item.avance}% 100%)`,
+                                }}
+                              ></div>
+                              <div className="circle-progress-text">
+                                <span>{item.avance}%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <span className="circle-progress-label">Avance</span>
+                        </div>
 
-                      {/* aqui traer calculo del procentaje de atrazo de la obra, calculo en el backend */}
-                      <Typography.Text type="secondary">
-                        <span className="footer-label">
-                          Atraso del Proyecto
-                        </span>{" "}
-                        <br></br>
-                        <span style={{ color: "blue" }}>
-                          {" "}
-                          <b>%{item.porcentaje}</b>{" "}
-                        </span>
-                      </Typography.Text>
-                      {/* aqui traer calculo del procentaje de avance de la obra, calculo en el backend */}
-                      <Typography.Text type="secondary">
-                        <span className="footer-label">
-                          Avance del Proyecto
-                        </span>{" "}
-                        <br></br>
-                        <span style={{ color: "green" }}>
-                          {" "}
-                          <b>%{item.avance}</b>{" "}
-                        </span>
-                      </Typography.Text>
+                        <div className="circle-progress-container">
+                          <div className="circle-progress-wrapper">
+                            <div className="circle-progress">
+                              <div
+                                className="circle-progress-fill"
+                                style={{
+                                  background: `conic-gradient(#FFB7B7 ${item.porcentaje}%, #F0F0F0 ${item.porcentaje}% 100%)`,
+                                }}
+                              ></div>
+                              <div className="circle-progress-text">
+                                <span>{item.porcentaje}%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <span className="circle-progress-label">Atraso</span>
+                        </div>
+                      </div>
+
+                      {/* Sección derecha con información */}
+                      <div className="info-section">
+                        <List.Item.Meta
+                          title={
+                            item.estado == "1" ? (
+                              <Link
+                                to={`${location.pathname}/edit/${item.key}`}
+                                className="title-link"
+                              >
+                                <span className="title-text">
+                                  {item.descripcion_proyecto.toUpperCase()}
+                                </span>
+                                <span className="title-icon">
+                                  <EditFilled style={{ color: "#FFB380" }} />
+                                </span>
+                              </Link>
+                            ) : (
+                              <span className="title-text">
+                                {item.descripcion_proyecto.toUpperCase()}
+                              </span>
+                            )
+                          }
+                          description={
+                            <>
+                              <Typography.Text
+                                className="razon-soc"
+                                strong
+                                style={{ color: "#FFB380" }}
+                              >
+                                <span>CLIENTE: {item.emp_nombre}</span>
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text className="nombre" strong>
+                                <span>
+                                  INGENIEROS:{" "}
+                                  {item.nombreIngeniero.toUpperCase()}
+                                </span>
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text className="nombre" strong>
+                                <span>
+                                  ENCARGADOS:{" "}
+                                  {item.nombreEncargado.toUpperCase()}
+                                </span>
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text
+                                className="codigo_proyecto"
+                                strong
+                                style={{ color: "#FF9D9D" }}
+                              >
+                                <span>
+                                  CODIGO PROYECTO:{" "}
+                                  {item.codigo_proyecto.toUpperCase()}
+                                </span>
+                              </Typography.Text>
+                            </>
+                          }
+                        />
+                        <div className="actions-container">
+                          <div className="status-container">
+                            <Popconfirm
+                              title="¿Desea cambiar el estado?"
+                              onConfirm={() => handleStatus(item.key)}
+                              placement="left"
+                            >
+                              <ButtonTag className="custom-button-tag">
+                                <Tooltip title="Cambiar estado">
+                                  <Tag
+                                    color={
+                                      item.estado === "1"
+                                        ? "#C2E5C2"
+                                        : "#FFCCCB"
+                                    }
+                                    key={item.estado}
+                                    style={{
+                                      color:
+                                        item.estado === "1"
+                                          ? "#2E8B57"
+                                          : "#D32F2F",
+                                      border: "none",
+                                    }}
+                                    icon={
+                                      loadingRow.includes(item.key) ? (
+                                        <SyncOutlined spin />
+                                      ) : (
+                                        <CheckCircleFilled
+                                          style={{
+                                            color:
+                                              item.estado === "1"
+                                                ? "#2E8B57"
+                                                : "#D32F2F",
+                                          }}
+                                        />
+                                      )
+                                    }
+                                  >
+                                    {item.estado === "1"
+                                      ? "ACTIVO"
+                                      : "INACTIVO"}
+                                  </Tag>
+                                </Tooltip>
+                              </ButtonTag>
+                            </Popconfirm>
+                          </div>
+                          <div className="status-container">
+                            <Tooltip title="Ver Proceso Proyecto">
+                              <Link
+                                to={`${location.pathname}/proceso/${item.key}`}
+                              >
+                                <ButtonTag
+                                  style={{
+                                    padding: 5,
+                                    borderRadius: 8,
+                                    width: 40,
+                                    backgroundColor: "#B5EAD7",
+                                    border: "none",
+                                    color: "#2C5F2D",
+                                  }}
+                                >
+                                  <AiOutlineExpandAlt />
+                                </ButtonTag>
+                              </Link>
+                            </Tooltip>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </Card>
                 </List.Item>
               )}
               pagination={{
-                pageSize: 10,
-                hideOnSinglePage: true,
-                showTotal: (total: number) => {
-                  return (
-                    <>
-                      <Text>Total Registros: {total}</Text>
-                    </>
-                  );
-                },
+                pageSize: 8, // cantidad de cards por página
+                showSizeChanger: true, // permite cambiar el tamaño de página
+                pageSizeOptions: ["4", "8", "12", "20"], // opciones de items por página
+                showTotal: (total: number, range: [number, number]) =>
+                  `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
               }}
             />
           </>
