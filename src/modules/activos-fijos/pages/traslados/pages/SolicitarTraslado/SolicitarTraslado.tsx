@@ -1,17 +1,15 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { Button, Input, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
-import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
-import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
-import { FormTraslados } from "../formTraslados/FormTraslados";
-import { getActiActivosSalida } from "@/services/activosFijos/TrasladosActivosAPI";
+import {
+  getActiSolicitar,
+} from "@/services/activosFijos/TrasladosActivosAPI";
+import { SolicitarForm } from "./SolicitarForm";
 
 interface DataType {
   key: number;
@@ -33,25 +31,22 @@ interface DataType {
   usuario: string;
   categoria: string;
   subcategoria: string;
-  solicitud: string;
 }
 
 const { Text } = Typography;
 
-export const TrasladarActivos = () => {
+export const SolicitarTraslado = () => {
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getSessionVariable } = useSessionStorage();
-  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
   }, []);
 
   const fetchCategorias = () => {
-    getActiActivosSalida().then(({ data: { data } }) => {
+    getActiSolicitar().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
@@ -62,7 +57,7 @@ export const TrasladarActivos = () => {
           usuario: categoria.usuario,
           categoria: categoria.categoria,
           bodega_actual: categoria.bodega_actual,
-          solicitud: categoria.solicitud,
+          descripcion: categoria.descripcion,
           subcategoria: categoria.subcategoria,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -89,19 +84,14 @@ export const TrasladarActivos = () => {
     setDataSource(filterTable);
   };
 
-  //cambio de estado
-  const handleStatus = (id: React.Key) => {
-    setLoadingRow([...loadingRow, id]);
-    DeleteActiActivos(id)
-      .then(() => {
-        fetchCategorias();
-      })
-      .catch(() => {
-        setLoadingRow([]);
-      });
-  };
 
   const columns: ColumnsType<DataType> = [
+    {
+      title: "Ubicacion",
+      dataIndex: "bodega_actual",
+      key: "bodega_actual",
+      render: (text) => text?.toUpperCase(),
+    },
     {
       title: "Categoria",
       dataIndex: "categoria",
@@ -154,59 +144,10 @@ export const TrasladarActivos = () => {
       title: "Numero Activo",
       dataIndex: "numero_activo",
       key: "numero_activo",
+      align: "center",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
     },
 
-    {
-      title: "Valor",
-      dataIndex: "valor",
-      key: "valor",
-      sorter: (a, b) => a.valor.localeCompare(b.valor),
-    },
-    {
-      title: "Estado",
-      dataIndex: "estado",
-      key: "estado",
-      align: "center",
-      render: (_, record: { key: React.Key; estado: string }) => {
-        let estadoString = "";
-        let color;
-        if (record.estado === "1") {
-          estadoString = "ACTIVO";
-          color = "green";
-        } else {
-          estadoString = "INACTIVO";
-          color = "red";
-        }
-        return (
-          <Popconfirm
-            title="¿Desea cambiar el estado?"
-            onConfirm={() => handleStatus(record.key)}
-            placement="left"
-          >
-            <ButtonTag
-              color={color}
-              disabled={!["administrador"].includes(user_rol)}
-            >
-              <Tooltip title="Cambiar estado">
-                <Tag
-                  color={color}
-                  key={estadoString}
-                  icon={
-                    loadingRow.includes(record.key) ? (
-                      <SyncOutlined spin />
-                    ) : null
-                  }
-                >
-                  {estadoString.toUpperCase()}
-                </Tag>
-              </Tooltip>
-            </ButtonTag>
-          </Popconfirm>
-        );
-      },
-      sorter: (a, b) => a.estado.localeCompare(b.estado),
-    },
     {
       title: "Acciones",
       dataIndex: "acciones",
@@ -214,7 +155,7 @@ export const TrasladarActivos = () => {
       align: "center",
       render: (_, record) => (
         <>
-          <FormTraslados data={record} fetchList={() => fetchCategorias()} />
+          <SolicitarForm data={record} fetchList={() => fetchCategorias()} />
         </>
       ),
     },
@@ -222,7 +163,7 @@ export const TrasladarActivos = () => {
 
   return (
     <StyledCard
-      title={"Lista de mis Activos"}
+      title={"Solicitar Activos"}
       extra={
         <Link to=".." relative="path">
           <Button danger type="primary" icon={<ArrowLeftOutlined />}>
@@ -251,7 +192,6 @@ export const TrasladarActivos = () => {
           },
         }}
         bordered
-        rowClassName={(record) => (record.solicitud ? "red-row" : "")}
       />
     </StyledCard>
   );

@@ -36,3 +36,11 @@ export const DeleteActiBodegas = async ( id: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+//llamar todas las obras activas
+export const getActiObras = async (): Promise<ResponseBodegas_areas> => {
+  return await client.get("bodega-areas-obras", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

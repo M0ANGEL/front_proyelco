@@ -7,13 +7,11 @@ import {
   Tooltip,
   Row,
   Col,
+  Progress,
+  Modal,
 } from "antd";
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import {
-  getProyectoDetalleGestion,
-  InfoProyecto,
-} from "@/services/proyectos/gestionProyectoAPI";
+import { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Apartment } from "@/services/types";
 import { detalleApt } from "@/services/graficasDashboard/proyectosAPI";
@@ -22,48 +20,34 @@ import { ModalInfoApt } from "./ModalInfoAPt";
 const { Title, Text } = Typography;
 
 export const VistaProcesoProyectos = () => {
-  const [data, setData] = useState<any>({});
-  const [porcetanjeTorre, setPorcetanjeTorre] = useState<any>({});
-  const [loading, setLoading] = useState(false);
+  // 📌 Recibimos los datos que envía ResumenTorres
+  const { state } = useLocation();
+  const { data, porcetanjeTorre, infoProyecto, id, torre } = state || {};
+
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
-    null
+    torre
   );
-  const [infoProyecto, setInfoProyecto] = useState<any>({});
-  const { id } = useParams<{ id: string }>();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedApt, setSelectedApt] = useState<Apartment | null>(null);
   const [loadingModal, setLoadingModal] = useState(false);
 
-  useEffect(() => {
-    LlamadoData();
-    InfoProyecto(Number(id)).then(({ data: { data } }) => {
-      setInfoProyecto(data);
-    });
-  }, [id]);
-
-  const LlamadoData = () => {
-    setLoading(true);
-    getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
-      setData(data.data);
-      setPorcetanjeTorre(data.torreResumen);
-      setLoading(false);
-    });
-  };
+  //modal de info de proceos
+  const [modalProcesosOpen, setModalProcesosOpen] = useState(false);
 
   const handleAptClick = async (aptId: number) => {
-    setLoadingModal(true); // Inicia el loading
-    setModalOpen(true); // Abrimos el modal para que se vea el spinner
-
+    setLoadingModal(true);
+    setModalOpen(true);
     try {
       const { data } = await detalleApt({ id: aptId });
       setSelectedApt(data.data);
     } catch (err) {
       console.error(err);
     } finally {
-      setLoadingModal(false); // Quitamos el loading al terminar
+      setLoadingModal(false);
     }
   };
-  const torresUnicas = Object.keys(data);
+
+  const torresUnicas = Object.keys(data || {});
 
   return (
     <>
@@ -77,7 +61,7 @@ export const VistaProcesoProyectos = () => {
         }}
       >
         <div style={{ marginBottom: 15, textAlign: "right" }}>
-          <Link to="../.." relative="path">
+          <Link to=".." relative="path">
             <Button danger type="primary" icon={<ArrowLeftOutlined />}>
               Volver
             </Button>
@@ -122,276 +106,280 @@ export const VistaProcesoProyectos = () => {
           </Text>
         </div>
 
-        {loading ? (
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              height: "300px",
-              background: "rgba(255, 255, 255, 0.7)",
-              borderRadius: "16px",
-              backdropFilter: "blur(4px)",
-            }}
-          >
-            <Spin size="large" />
-          </div>
-        ) : (
-          <>
-            {/* Tower Selection Card */}
-            <Card
+        {/* Selección de Torre */}
+        {/* <Card
+          style={{
+            marginBottom: "32px",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+            border: "none",
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(8px)",
+            position: "sticky",
+            top: 60,
+            zIndex: 100,
+          }}
+        >
+          <Row gutter={[16, 16]} align="middle">
+            <Col xs={24} sm={12} md={8} lg={6}>
+              <Select
+                placeholder="Seleccione una torre"
+                style={{ width: "100%" }}
+                onChange={setTorreSeleccionada}
+                value={torreSeleccionada}
+                options={torresUnicas.map((torre) => ({
+                  label:
+                    porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
+                  value: torre,
+                }))}
+                size="large"
+              />
+            </Col>
+          </Row>
+
+          aqui ejemplo, destapada: 8%
+          prolongacion: 6%
+        </Card> */}
+
+        <Card
+          style={{
+            marginBottom: "32px",
+            borderRadius: "16px",
+            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+            border: "none",
+            background: "rgba(255, 255, 255, 0.8)",
+            backdropFilter: "blur(8px)",
+            position: "sticky",
+            top: 60,
+            zIndex: 100,
+          }}
+        >
+          <Row gutter={[16, 16]} align="middle">
+            {/* Columna izquierda: Select */}
+            <Col xs={24} sm={12} md={8} lg={6}>
+              <Select
+                placeholder="Seleccione una torre"
+                style={{ width: "100%" }}
+                onChange={setTorreSeleccionada}
+                value={torreSeleccionada}
+                options={torresUnicas.map((torre) => ({
+                  label:
+                    porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
+                  value: torre,
+                }))}
+                size="large"
+              />
+            </Col>
+
+            <Col xs={24} sm={12} md={16} lg={18} style={{ textAlign: "right" }}>
+              {torreSeleccionada && (
+                <Button
+                  type="primary"
+                  onClick={() => setModalProcesosOpen(true)}
+                >
+                  Ver Procesos y % de Atraso
+                </Button>
+              )}
+            </Col>
+          </Row>
+        </Card>
+
+        {/* Render procesos de la torre */}
+        {torreSeleccionada && (
+          <div>
+            <div
               style={{
-                marginBottom: "32px",
-                borderRadius: "16px",
-                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-                border: "none",
                 background: "rgba(255, 255, 255, 0.8)",
                 backdropFilter: "blur(8px)",
+                padding: "16px 24px",
+                borderRadius: "12px",
+                marginBottom: "24px",
+                display: "inline-block",
+                boxShadow: "0 2px 12px rgba(0, 0, 0, 0.05)",
               }}
-              bodyStyle={{ padding: "24px" }}
             >
-              <Row gutter={[16, 16]} align="middle">
-                <Col xs={24} sm={12} md={8} lg={6}>
-                  {/* <Select
-                  placeholder="Seleccione una torre"
-                  style={{ width: "100%" }}
-                  onChange={setTorreSeleccionada}
-                  value={torreSeleccionada}
-                  options={torresUnicas.map((torre) => ({
-                    label: `Torre ${torre}`,
-                    value: torre,
-                  }))}
-                  size="large"
-                /> */}
-                  <Select
-                    placeholder="Seleccione una torre"
-                    style={{ width: "100%" }}
-                    onChange={setTorreSeleccionada}
-                    value={torreSeleccionada}
-                    options={torresUnicas.map((torre) => ({
-                      label:
-                        porcetanjeTorre[torre]?.nombre_torre ||
-                        `Torre ${torre}`,
-                      value: torre,
-                    }))}
-                    size="large"
-                  />
-                </Col>
-              </Row>
-            </Card>
-
-            {torreSeleccionada && (
-              <div>
-                <div
+              <Title
+                level={4}
+                style={{
+                  margin: 0,
+                  color: "#1a1a1a",
+                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
+              >
+                <span
                   style={{
-                    background: "rgba(255, 255, 255, 0.8)",
-                    backdropFilter: "blur(8px)",
-                    padding: "16px 24px",
-                    borderRadius: "12px",
-                    marginBottom: "24px",
                     display: "inline-block",
-                    boxShadow: "0 2px 12px rgba(0, 0, 0, 0.05)",
+                    width: "6px",
+                    height: "24px",
+                    background: "linear-gradient(to bottom, #ff7c5c, #ff9a3c)",
+                    borderRadius: "3px",
                   }}
-                >
-                  <Title
-                    level={4}
-                    style={{
-                      margin: 0,
-                      color: "#1a1a1a",
-                      fontWeight: 500,
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        display: "inline-block",
-                        width: "6px",
-                        height: "24px",
-                        background:
-                          "linear-gradient(to bottom, #ff7c5c, #ff9a3c)",
-                        borderRadius: "3px",
-                      }}
-                    ></span>
-                    {/* Torre {torreSeleccionada} */}
-                    Torre:{" "}
-                    {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
-                      `Torre ${torreSeleccionada}`}
-                  </Title>
-                  <span style={{ color: "blue" }}>
-                    {" "}
-                    <b>
-                      Atraso de Torre:{" "}
-                      {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %
-                    </b>{" "}
-                  </span>
-                </div>
+                ></span>
+                Torre:{" "}
+                {porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
+                  `Torre ${torreSeleccionada}`}
+              </Title>
+              <span style={{ color: "blue" }}>
+                <b>
+                  Atraso de Torre:{" "}
+                  {porcetanjeTorre[torreSeleccionada]?.porcentaje_atraso} %
+                </b>
+              </span>
+            </div>
 
-                <Row gutter={[24, 24]}>
-                  {Object.entries(data[torreSeleccionada] || {}).map(
-                    ([procesoKey, contenido]: any) => {
-                      const necesitaValidacion = contenido.validacion === 1;
-                      const estaValidado = contenido.estado_validacion === 1;
+            <Row gutter={[24, 24]}>
+              {Object.entries(data[torreSeleccionada] || {}).map(
+                ([procesoKey, contenido]: any) => {
+                  const necesitaValidacion = contenido.validacion === 1;
+                  const estaValidado = contenido.estado_validacion === 1;
 
-                      return (
-                        <Col
-                          xs={24}
-                          sm={24}
-                          md={12}
-                          lg={12}
-                          xl={12}
-                          key={procesoKey}
-                        >
-                          <Card
-                            title={
+                  return (
+                    <Col
+                      xs={24}
+                      sm={24}
+                      md={12}
+                      lg={12}
+                      xl={12}
+                      key={procesoKey}
+                    >
+                      <Card
+                        title={
+                          <div
+                            style={{
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                            }}
+                          >
+                            <span style={{ fontWeight: 500, color: "#1a1a1a" }}>
+                              {procesoKey} -{" "}
+                              {contenido.nombre_proceso || "Proceso"}
+                            </span>
+                            <span style={{ color: "blue" }}>
+                              {contenido.apartamentos_realizados} /{" "}
+                              {contenido.total_apartamentos}
+                            </span>
+                            <span style={{ color: "blue" }}>
+                              Atraso del proceso: {contenido.porcentaje_atraso}%
+                            </span>
+                          </div>
+                        }
+                        style={{
+                          borderRadius: "16px",
+                          boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
+                          border: "none",
+                          background: "rgba(255, 255, 255, 0.8)",
+                          backdropFilter: "blur(8px)",
+                          height: "100%",
+                        }}
+                        headStyle={{
+                          borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+                          padding: "16px 24px",
+                        }}
+                        bodyStyle={{
+                          padding: "16px 24px",
+                        }}
+                      >
+                        {Object.entries(contenido.pisos || {})
+                          .sort((a, b) => Number(b[0]) - Number(a[0]))
+                          .map(([piso, aptos]: any) => (
+                            <div key={piso} style={{ marginBottom: "20px" }}>
+                              <Text
+                                strong
+                                style={{
+                                  display: "block",
+                                  marginBottom: "12px",
+                                  color: "#595959",
+                                  fontSize: "15px",
+                                }}
+                              >
+                                Piso {piso}
+                              </Text>
                               <div
                                 style={{
                                   display: "flex",
-                                  justifyContent: "space-between",
-                                  alignItems: "center",
+                                  flexWrap: "wrap",
+                                  gap: "8px",
                                 }}
                               >
-                                <span
-                                  style={{ fontWeight: 500, color: "#1a1a1a" }}
-                                >
-                                  {procesoKey} -{" "}
-                                  {contenido.nombre_proceso || "Proceso"}
-                                </span>
-                                <span style={{ color: "blue" }}>
-                                  {contenido.apartamentos_realizados} /{" "}
-                                  {contenido.total_apartamentos}{" "}
-                                </span>
-                                <span style={{ color: "blue" }}>
-                                  Atraso del proceso:{" "}
-                                  {contenido.porcentaje_atraso}%
-                                </span>
+                                {aptos.map((apt: any) => {
+                                  const getTooltipTitle = () => {
+                                    if (apt.estado === "2")
+                                      return "Apt Confirmado para este proceso";
+                                    if (apt.estado === "1")
+                                      return "Apartamento Habilitado";
+                                    return "Apartamento no habilitado";
+                                  };
+
+                                  const getBackgroundColor = () => {
+                                    if (apt.estado === "1")
+                                      return "linear-gradient(135deg, #1890ff, #36cfc9)";
+                                    if (apt.estado === "2")
+                                      return "linear-gradient(135deg, #4caf50, #66bb6a)";
+                                    return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
+                                  };
+
+                                  const opacity = apt.estado === "0" ? 0.6 : 1;
+
+                                  return (
+                                    <Tooltip
+                                      key={apt.id}
+                                      title={getTooltipTitle()}
+                                    >
+                                      <Button
+                                        style={{
+                                          width: "60px",
+                                          height: "36px",
+                                          padding: 0,
+                                          borderRadius: "6px",
+                                          border: "none",
+                                          background: getBackgroundColor(),
+                                          color: "white",
+                                          fontWeight: 500,
+                                          boxShadow:
+                                            "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                          display: "flex",
+                                          alignItems: "center",
+                                          justifyContent: "center",
+                                          opacity,
+                                          position: "relative",
+                                          cursor: "pointer",
+                                        }}
+                                        onClick={() => handleAptClick(apt.id)}
+                                      >
+                                        {apt.consecutivo}
+                                        {necesitaValidacion &&
+                                          !estaValidado && (
+                                            <span
+                                              style={{
+                                                position: "absolute",
+                                                top: -2,
+                                                right: -2,
+                                                background: "#ff4d4f",
+                                                borderRadius: "50%",
+                                                width: 8,
+                                                height: 8,
+                                                border: "2px solid #fff",
+                                              }}
+                                            />
+                                          )}
+                                      </Button>
+                                    </Tooltip>
+                                  );
+                                })}
                               </div>
-                            }
-                            style={{
-                              borderRadius: "16px",
-                              boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-                              border: "none",
-                              background: "rgba(255, 255, 255, 0.8)",
-                              backdropFilter: "blur(8px)",
-                              height: "100%",
-                            }}
-                            headStyle={{
-                              borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-                              padding: "16px 24px",
-                            }}
-                            bodyStyle={{
-                              padding: "16px 24px",
-                            }}
-                          >
-                            {Object.entries(contenido.pisos || {})
-                              .sort((a, b) => Number(b[0]) - Number(a[0]))
-                              .map(([piso, aptos]: any) => (
-                                <div
-                                  key={piso}
-                                  style={{ marginBottom: "20px" }}
-                                >
-                                  <Text
-                                    strong
-                                    style={{
-                                      display: "block",
-                                      marginBottom: "12px",
-                                      color: "#595959",
-                                      fontSize: "15px",
-                                    }}
-                                  >
-                                    Piso {piso}
-                                  </Text>
-                                  <div
-                                    style={{
-                                      display: "flex",
-                                      flexWrap: "wrap",
-                                      gap: "8px",
-                                    }}
-                                  >
-                                    {aptos.map((apt: any) => {
-                                      const getTooltipTitle = () => {
-                                        if (apt.estado === "2")
-                                          return "Apt Confirmado para este proceso";
-                                        if (apt.estado === "1")
-                                          return "Apartamento Habilitado";
-                                        return "Apartamento no habilitado";
-                                      };
-
-                                      const getBackgroundColor = () => {
-                                        if (apt.estado === "1")
-                                          return "linear-gradient(135deg, #1890ff, #36cfc9)";
-                                        if (apt.estado === "2")
-                                          return "linear-gradient(135deg, #4caf50, #66bb6a)";
-                                        return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
-                                      };
-
-                                      const opacity =
-                                        apt.estado === "0" ? 0.6 : 1;
-
-                                      return (
-                                        <Tooltip
-                                          key={apt.id}
-                                          title={getTooltipTitle()}
-                                        >
-                                          <Button
-                                            style={{
-                                              width: "60px", // o el ancho que tú desees
-                                              height: "36px",
-                                              padding: 0,
-                                              // minWidth: "40px",
-                                              // height: "32px",
-                                              // padding: "0 8px",
-                                              borderRadius: "6px",
-                                              border: "none",
-                                              background: getBackgroundColor(),
-                                              color: "white",
-                                              fontWeight: 500,
-                                              boxShadow:
-                                                "0 2px 4px rgba(0, 0, 0, 0.1)",
-                                              display: "flex",
-                                              alignItems: "center",
-                                              justifyContent: "center",
-                                              opacity,
-                                              position: "relative",
-                                              cursor: "pointer",
-                                            }}
-                                            onClick={() =>
-                                              handleAptClick(apt.id)
-                                            }
-                                          >
-                                            {apt.consecutivo}
-                                            {necesitaValidacion &&
-                                              !estaValidado && (
-                                                <span
-                                                  style={{
-                                                    position: "absolute",
-                                                    top: -2,
-                                                    right: -2,
-                                                    background: "#ff4d4f",
-                                                    borderRadius: "50%",
-                                                    width: 8,
-                                                    height: 8,
-                                                    border: "2px solid #fff",
-                                                  }}
-                                                />
-                                              )}
-                                          </Button>
-                                        </Tooltip>
-                                      );
-                                    })}
-                                  </div>
-                                </div>
-                              ))}
-                          </Card>
-                        </Col>
-                      );
-                    }
-                  )}
-                </Row>
-              </div>
-            )}
-          </>
+                            </div>
+                          ))}
+                      </Card>
+                    </Col>
+                  );
+                }
+              )}
+            </Row>
+          </div>
         )}
       </div>
       <ModalInfoApt
@@ -400,6 +388,54 @@ export const VistaProcesoProyectos = () => {
         onClose={() => setModalOpen(false)}
         selectedApt={selectedApt}
       />
+
+      {/* modal del procesos*/}
+      <Modal
+        open={modalProcesosOpen}
+        onCancel={() => setModalProcesosOpen(false)}
+        footer={null}
+        title={`Procesos de ${
+          porcetanjeTorre[torreSeleccionada!]?.nombre_torre || "Torre"
+        }`}
+        centered
+        width={700}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+          {torreSeleccionada &&
+            Object.entries(data[torreSeleccionada] || {}).map(
+              ([procesoKey, contenido]: any) => (
+                <div
+                  key={procesoKey}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    padding: "8px 12px",
+                    borderRadius: "8px",
+                    background: "rgba(245,245,245,0.8)",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
+                  }}
+                >
+                  <div style={{ minWidth: "180px", fontWeight: 500 }}>
+                    {contenido.nombre_proceso}
+                  </div>
+                  <Progress
+                    percent={contenido.porcentaje_atraso}
+                    status="active"
+                    strokeColor={
+                      contenido.porcentaje_atraso < 15
+                        ? "#1890ff"
+                        : contenido.porcentaje_atraso < 30
+                        ? "#faad14"
+                        : "#cf1322"
+                    }
+                    style={{ flex: 1 }}
+                  />
+                </div>
+              )
+            )}
+        </div>
+      </Modal>
     </>
   );
 };
