@@ -1,6 +1,5 @@
 import {
   Card,
-  Spin,
   Select,
   Typography,
   Button,
@@ -9,17 +8,17 @@ import {
   Col,
   Progress,
   Modal,
+  notification,
 } from "antd";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { Apartment } from "@/services/types";
-import { detalleApt } from "@/services/graficasDashboard/proyectosAPI";
-import { ModalInfoApt } from "./ModalInfoAPt";
+import ModalAnulacion from "../ModalAnulacion";
+import { cambioestadoAptAnulacion } from "@/services/proyectos/gestionProyectoAPI";
 
 const { Title, Text } = Typography;
 
-export const VistaProcesoProyectos = () => {
+export const VistaProcesoProyectosING = () => {
   // 📌 Recibimos los datos que envía ResumenTorres
   const { state } = useLocation();
   const { data, porcetanjeTorre, infoProyecto, id, torre } = state || {};
@@ -27,24 +26,64 @@ export const VistaProcesoProyectos = () => {
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
     torre
   );
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedApt, setSelectedApt] = useState<Apartment | null>(null);
-  const [loadingModal, setLoadingModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [aptSeleccionado, setAptSeleccionado] = useState<{
+    id: string;
+    orden: number;
+    consecutivo: number;
+    proceso: string;
+  } | null>(null);
   //modal de info de proceos
   const [modalProcesosOpen, setModalProcesosOpen] = useState(false);
 
-  const handleAptClick = async (aptId: number) => {
-    setLoadingModal(true);
-    setModalOpen(true);
-    try {
-      const { data } = await detalleApt({ id: aptId });
-      setSelectedApt(data.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingModal(false);
-    }
+  const AnularPiso = (
+    aptId: string,
+    ordenProceso: number,
+    consecutivo: number,
+    proceso: string
+  ) => {
+    setAptSeleccionado({
+      id: aptId,
+      orden: ordenProceso,
+      consecutivo,
+      proceso,
+    });
+    setModalVisible(true);
+  };
+
+  const EnvioAnulacion = (detalle: string) => {
+    setLoading(true);
+    if (!aptSeleccionado) return;
+
+    const datos = {
+      aptId: aptSeleccionado.id,
+      ordenProceso: aptSeleccionado.orden,
+      detalle,
+    };
+
+    cambioestadoAptAnulacion(datos)
+      .then(() => {
+        notification.success({
+          message: "El cambio de estado fue realizado",
+          placement: "topRight",
+          duration: 2,
+        });
+      })
+      .catch((err) => {
+        notification.success({
+          message: "El cambio de estado fue realizado" + err,
+          placement: "topRight",
+          duration: 2,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    setModalVisible(false);
+    setAptSeleccionado(null);
   };
 
   const torresUnicas = Object.keys(data || {});
@@ -105,41 +144,6 @@ export const VistaProcesoProyectos = () => {
             ID: {id} | Seleccione una torre para gestionar
           </Text>
         </div>
-
-        {/* Selección de Torre */}
-        {/* <Card
-          style={{
-            marginBottom: "32px",
-            borderRadius: "16px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-            border: "none",
-            background: "rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(8px)",
-            position: "sticky",
-            top: 60,
-            zIndex: 100,
-          }}
-        >
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} sm={12} md={8} lg={6}>
-              <Select
-                placeholder="Seleccione una torre"
-                style={{ width: "100%" }}
-                onChange={setTorreSeleccionada}
-                value={torreSeleccionada}
-                options={torresUnicas.map((torre) => ({
-                  label:
-                    porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
-                  value: torre,
-                }))}
-                size="large"
-              />
-            </Col>
-          </Row>
-
-          aqui ejemplo, destapada: 8%
-          prolongacion: 6%
-        </Card> */}
 
         <Card
           style={{
@@ -348,7 +352,14 @@ export const VistaProcesoProyectos = () => {
                                           position: "relative",
                                           cursor: "pointer",
                                         }}
-                                        onClick={() => handleAptClick(apt.id)}
+                                        onClick={() =>
+                                          AnularPiso(
+                                            apt.id,
+                                            contenido.orden_proceso,
+                                            apt.consecutivo,
+                                            contenido.nombre_proceso
+                                          )
+                                        }
                                       >
                                         {apt.consecutivo}
                                         {necesitaValidacion &&
@@ -382,11 +393,14 @@ export const VistaProcesoProyectos = () => {
           </div>
         )}
       </div>
-      <ModalInfoApt
-        isOpen={modalOpen}
-        loading={loadingModal}
-        onClose={() => setModalOpen(false)}
-        selectedApt={selectedApt}
+      <ModalAnulacion
+        visible={modalVisible}
+        infoApt={aptSeleccionado}
+        onConfirm={EnvioAnulacion}
+        onCancel={() => {
+          setModalVisible(false);
+          setAptSeleccionado(null);
+        }}
       />
 
       {/* modal del procesos*/}

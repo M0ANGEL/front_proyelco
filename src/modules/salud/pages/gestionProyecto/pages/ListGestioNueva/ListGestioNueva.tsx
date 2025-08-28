@@ -24,13 +24,13 @@ import {
 } from "antd";
 import {
   DeleteProyecto,
-  getProyectos,
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
 
 const { Text } = Typography;
 
-export const ListConvenios = () => {
+export const ListGestioNueva = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
@@ -46,7 +46,7 @@ export const ListConvenios = () => {
   }, []);
 
   const fetchConvenios = () => {
-    getProyectos().then(({ data: { data } }) => {
+    getGestionProyecto().then(({ data: { data } }) => {
       const convenios = data.map((convenio: any) => {
         return {
           key: convenio.id,

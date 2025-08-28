@@ -61,7 +61,7 @@ export const DashboardPage = () => {
         case "Directora Proyectos":
           cardsArray = [
             {
-              title: "PROYECTOS CREADOS",
+              title: "PROYECTOS ACTIVOS",
               icon: <AiTwotoneHome />,
               value: data.proyectosActivos,
               link: "/proyectos/administrar-proyectos",
@@ -95,8 +95,53 @@ export const DashboardPage = () => {
           ];
           break;
 
+        case "Administrador":
+          cardsArray = [
+            {
+              title: "PROYECTOS CREADOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosActivos,
+              link: "/proyectos/administrar-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+            {
+              title: "PROYECTOS INACTIVOS",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosInactivos,
+              link: "/proyectos/administrar-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[1],
+            },
+            {
+              title: "CLIENTES ACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesActivos,
+              link: "/clientes/administrar-clientes",
+              permiso: true,
+              bgColor: cardsBgColors[3],
+            },
+            {
+              title: "CLIENTES INACTIVOS",
+              icon: <AiOutlineTeam />,
+              value: data.clientesInactivos,
+              link: "/clientes/administrar-clientes",
+              permiso: true,
+              bgColor: cardsBgColors[4],
+            },
+          ];
+          break;
         default:
-          cardsArray = [];
+          cardsArray = [
+            {
+              title: "😇",
+              icon: <AiTwotoneHome />,
+              value: data.proyectosActivos,
+              link: "www.google.com",
+              permiso: false,
+              bgColor: cardsBgColors[0],
+            },
+          ];
           break;
       }
 

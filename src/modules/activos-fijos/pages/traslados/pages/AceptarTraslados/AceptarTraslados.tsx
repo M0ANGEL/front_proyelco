@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  Button,
-  Input,
-  Popconfirm,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Input, Popconfirm, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { aceptarActivo, getActiActivosAceptar } from "@/services/activosFijos/TrasladosActivosAPI";
+import {
+  aceptarActivo,
+  getActiActivosAceptar,
+} from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineCheck } from "react-icons/ai";
 
 interface DataType {
@@ -65,7 +62,6 @@ export const AceptarTraslados = () => {
           usuario: categoria.usuario,
           categoria: categoria.categoria,
           subcategoria: categoria.subcategoria,
-          codigo_traslado: categoria.codigo_traslado,
           bodega_origen: categoria.bodega_origen,
           bodega_destino: categoria.bodega_destino,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
@@ -108,43 +104,12 @@ export const AceptarTraslados = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "ID",
-      dataIndex: "key",
-      key: "key",
-    },
-    {
-      title: "Nuero Traslado",
-      dataIndex: "codigo_traslado",
-      key: "codigo_traslado",
-    },
-    {
-      title: "Fecha creacion",
-      dataIndex: "created_at",
-      key: "created_at",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Fecha fin garantia",
-      dataIndex: "fecha_fin_garantia",
-      key: "fecha_fin_garantia",
-      sorter: (a, b) =>
-        a.fecha_fin_garantia.localeCompare(b.fecha_fin_garantia),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Usuario Crea Traslado",
-      dataIndex: "usuario",
-      key: "usuario",
-      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
       title: "Categoria",
       dataIndex: "categoria",
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Subcategoria",
@@ -220,8 +185,8 @@ export const AceptarTraslados = () => {
       key: "aceptacion",
       align: "center",
       render: (_, record: { key: React.Key; aceptacion: number }) => {
-        const estadoString =  "PENDIENTE";
-        const color =  "red";
+        const estadoString = "PENDIENTE";
+        const color = "red";
 
         return (
           <Tag
@@ -254,6 +219,8 @@ export const AceptarTraslados = () => {
           </Popconfirm>
         </>
       ),
+      fixed: "right",
+      width: 70,
     },
   ];
 

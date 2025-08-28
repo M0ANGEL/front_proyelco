@@ -128,3 +128,10 @@ td.ant-table-cell-row-hover {
 .table-glosas .fila-impar .ant-table-cell {
   background-color: #f0f0f0;
 }
+
+
+@keyframes pulseRed {
+  0% { box-shadow: 0 0 5px #ff4d4f; }
+  50% { box-shadow: 0 0 15px #ff4d4f; }
+  100% { box-shadow: 0 0 5px #ff4d4f; }
+}
