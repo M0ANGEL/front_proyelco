@@ -2,7 +2,6 @@ import { Button, Modal, Tooltip, Table, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
 import { Proyectodetallado } from "@/services/proyectos/gestionProyectoAPI";
-import { GreenButton } from "@/modules/common/components/ExportExcel/styled";
 import { DescargarInforme } from "./descargaArchivos";
 
 interface DataId {

@@ -1,0 +1,1 @@
+export { ListGestioNueva } from "./ListGestioNueva";
