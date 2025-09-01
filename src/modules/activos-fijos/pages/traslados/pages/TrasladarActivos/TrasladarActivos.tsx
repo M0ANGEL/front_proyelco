@@ -34,6 +34,8 @@ interface DataType {
   categoria: string;
   subcategoria: string;
   solicitud: string;
+  motivo_solicitud: string;
+  usuario_solicita: string;
 }
 
 const { Text } = Typography;
@@ -51,6 +53,7 @@ export const TrasladarActivos = () => {
   }, []);
 
   const fetchCategorias = () => {
+    setLoading(true);
     getActiActivosSalida().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
@@ -64,6 +67,9 @@ export const TrasladarActivos = () => {
           bodega_actual: categoria.bodega_actual,
           solicitud: categoria.solicitud,
           subcategoria: categoria.subcategoria,
+          motivo_solicitud: categoria.motivo_solicitud,
+          descripcion: categoria.descripcion,
+          usuario_solicita: categoria.usuario_solicita,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
@@ -155,13 +161,6 @@ export const TrasladarActivos = () => {
       dataIndex: "numero_activo",
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
-    },
-
-    {
-      title: "Valor",
-      dataIndex: "valor",
-      key: "valor",
-      sorter: (a, b) => a.valor.localeCompare(b.valor),
     },
     {
       title: "Estado",

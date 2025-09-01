@@ -30,6 +30,7 @@ interface DataType {
   estado: string;
   usuario: string;
   categoria: string;
+  solicitud: string;
   subcategoria: string;
 }
 
@@ -46,6 +47,7 @@ export const SolicitarTraslado = () => {
   }, []);
 
   const fetchCategorias = () => {
+    setLoading(true);
     getActiSolicitar().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
@@ -57,6 +59,7 @@ export const SolicitarTraslado = () => {
           usuario: categoria.usuario,
           categoria: categoria.categoria,
           bodega_actual: categoria.bodega_actual,
+          solicitud: categoria.solicitud,
           descripcion: categoria.descripcion,
           subcategoria: categoria.subcategoria,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
@@ -192,6 +195,7 @@ export const SolicitarTraslado = () => {
           },
         }}
         bordered
+        rowClassName={(record) => (record.solicitud ? "red-row" : "")}
       />
     </StyledCard>
   );
