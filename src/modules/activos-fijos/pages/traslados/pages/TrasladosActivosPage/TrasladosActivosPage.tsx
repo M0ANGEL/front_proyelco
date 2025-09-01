@@ -32,7 +32,7 @@ export const TrasladosActivosPage = () => {
     if (rol === 'Ingeniero Obra') {
       return ['RST', 'APT', 'SLA'].includes(traslado.codigo);
     }
-    if (rol === 'administrador' || rol === 'admin_activos'){
+    if (rol === 'Administrador' || rol === 'Admin Activos'){
       return ['RST','APT', 'SLA', 'TRM', 'TRSDM','TRSDPM'].includes(traslado.codigo)
     }
     return ['RST', 'APT','SLA'].includes(traslado.codigo);
