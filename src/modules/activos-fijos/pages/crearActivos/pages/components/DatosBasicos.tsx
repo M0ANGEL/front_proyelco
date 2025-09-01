@@ -448,7 +448,10 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 <Row gutter={8}>
                   {/* Botón subir archivo */}
                   <Col span={12}>
-                    <CustomUpload {...uploadProps}>
+                    <CustomUpload
+                      {...uploadProps}
+                      accept="image/png, image/jpeg"
+                    >
                       <Button
                         block
                         ghost
@@ -462,7 +465,10 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
 
                   {/* Botón tomar foto */}
                   <Col span={12}>
-                    <CustomUpload {...cameraProps}>
+                    <CustomUpload
+                      {...cameraProps}
+                      accept="image/png, image/jpeg"
+                    >
                       <Button
                         block
                         ghost
