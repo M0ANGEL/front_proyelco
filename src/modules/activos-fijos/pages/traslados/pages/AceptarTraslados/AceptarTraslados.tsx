@@ -51,6 +51,7 @@ export const AceptarTraslados = () => {
   }, []);
 
   const fetchCategorias = () => {
+    setLoading(true);
     getActiActivosAceptar().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
@@ -91,8 +92,6 @@ export const AceptarTraslados = () => {
 
   //cambio de estado
   const AceptarTraslado = (id: React.Key) => {
-    console.log("alerta");
-
     aceptarActivo(id)
       .then(() => {
         fetchCategorias();
@@ -123,13 +122,6 @@ export const AceptarTraslados = () => {
       dataIndex: "bodega_origen",
       key: "bodega_origen",
       sorter: (a, b) => a.bodega_origen.localeCompare(b.bodega_origen),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Area Destino",
-      dataIndex: "bodega_destino",
-      key: "bodega_destino",
-      sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -171,13 +163,6 @@ export const AceptarTraslados = () => {
       dataIndex: "numero_activo",
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
-    },
-
-    {
-      title: "Valor",
-      dataIndex: "valor",
-      key: "valor",
-      sorter: (a, b) => a.valor.localeCompare(b.valor),
     },
     {
       title: "Estado",

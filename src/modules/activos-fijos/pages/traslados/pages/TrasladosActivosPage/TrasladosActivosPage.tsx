@@ -3,12 +3,17 @@ import { Col, Collapse, Row, Space, Typography, Button } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { StyledCardGrid } from "./styled";
+import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
+
 
 const { Panel } = Collapse;
 const { Text } = Typography;
 
 export const TrasladosActivosPage = () => {
   const navigate = useNavigate();
+  const { getSessionVariable } = useSessionStorage();
+  const rol = getSessionVariable(KEY_ROL);
 
   const traslados = [
     { id: 1, codigo: "RST", descripcion: "Realizar Traslado de mis activos" },
@@ -21,7 +26,16 @@ export const TrasladosActivosPage = () => {
 
   // Filtrar los traslados según el rol del usuario
   const trasladosFiltrados = traslados.filter((traslado) => {
-    return ['RST', 'APT','SLA','TRM','TRSDM','TRSDPM'].includes(traslado.codigo);
+     if (rol === 'Encargado Obras') {
+      return ['RST', 'APT', 'SLA'].includes(traslado.codigo);
+    }
+    if (rol === 'Ingeniero Obra') {
+      return ['RST', 'APT', 'SLA'].includes(traslado.codigo);
+    }
+    if (rol === 'Administrador' || rol === 'Admin Activos'){
+      return ['RST','APT', 'SLA', 'TRM', 'TRSDM','TRSDPM'].includes(traslado.codigo)
+    }
+    return ['RST', 'APT','SLA'].includes(traslado.codigo);
   });
 
   return (

@@ -5995,4 +5995,6 @@ export interface ActivosData {
   subcategoria: string;
   bodega_actual: string;
   solicitud: string;
+  motivo_solicitud: string;
+  usuario_solicita: string;
 }
