@@ -154,7 +154,7 @@ export const ResumenTorresING = () => {
                   </div>
 
                   <div style={{ minWidth: "200px" }}>
-                    <Text type="secondary">Atrazo del proyecto</Text>
+                    <Text type="secondary">Atraso del proyecto</Text>
                     <Progress
                       percent={porcetanjeTorre[torre]?.porcentaje_atraso || 0}
                       strokeColor={

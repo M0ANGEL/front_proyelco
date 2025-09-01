@@ -97,11 +97,12 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
 
   return (
     <>
-      <Tooltip title="Solicitar Activo">
+      <Tooltip title={data.solicitud == "1" ? "Activo solicitado (estado pendiente)" : "Solicitar Activo"}>
         <Button
           icon={<AiOutlineIssuesClose />}
           type="primary"
           size="small"
+          disabled={data.solicitud == "1" ? true : false}
           onClick={() => setVisible(true)}
           style={{ marginLeft: "5px", background: "#17ae00ff" }}
         />

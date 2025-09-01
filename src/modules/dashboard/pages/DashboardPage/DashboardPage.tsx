@@ -8,7 +8,7 @@ import { DashboardInfo } from "./types";
 import { infoCartDash } from "@/services/dashboard/statisticsAPI";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { AiOutlineTeam, AiTwotoneHome } from "react-icons/ai";
+import { AiFillBank, AiOutlineTeam, AiTwotoneHome } from "react-icons/ai";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 
@@ -42,6 +42,14 @@ export const DashboardPage = () => {
               permiso: true,
               bgColor: cardsBgColors[0],
             },
+             {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
           ];
           break;
 
@@ -52,6 +60,14 @@ export const DashboardPage = () => {
               icon: <AiTwotoneHome />,
               value: data.proyectosActivos,
               link: "/proyectos/gestion-proyectos",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+             {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
               permiso: true,
               bgColor: cardsBgColors[0],
             },
@@ -92,6 +108,14 @@ export const DashboardPage = () => {
               permiso: true,
               bgColor: cardsBgColors[4],
             },
+             {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
           ];
           break;
 
@@ -129,15 +153,23 @@ export const DashboardPage = () => {
               permiso: true,
               bgColor: cardsBgColors[4],
             },
+             {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
           ];
           break;
         default:
           cardsArray = [
             {
-              title: "😇",
-              icon: <AiTwotoneHome />,
-              value: data.proyectosActivos,
-              link: "www.google.com",
+              title: "Proyelco",
+              icon: <AiFillBank />,
+              value: 0,
+              link: "Proyelco.com",
               permiso: false,
               bgColor: cardsBgColors[0],
             },
