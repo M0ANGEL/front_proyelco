@@ -22,9 +22,7 @@ import {
   Switch,
   Spin,
 } from "antd";
-import {
-  DeleteProyecto,
-} from "@/services/proyectos/proyectosAPI";
+import { DeleteProyecto } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
 
@@ -193,23 +191,9 @@ export const ListGestioNueva = () => {
                       <div className="info-section">
                         <List.Item.Meta
                           title={
-                            item.estado == "1" ? (
-                              <Link
-                                to={`${location.pathname}/edit/${item.key}`}
-                                className="title-link"
-                              >
-                                <span className="title-text">
-                                  {item.descripcion_proyecto.toUpperCase()}
-                                </span>
-                                <span className="title-icon">
-                                  <EditFilled style={{ color: "#FFB380" }} />
-                                </span>
-                              </Link>
-                            ) : (
-                              <span className="title-text">
-                                {item.descripcion_proyecto.toUpperCase()}
-                              </span>
-                            )
+                            <span className="title-text">
+                              {item.descripcion_proyecto.toUpperCase()}
+                            </span>
                           }
                           description={
                             <>
