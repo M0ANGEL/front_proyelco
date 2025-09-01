@@ -234,51 +234,6 @@ export const ListGestioNueva = () => {
                         />
                         <div className="actions-container">
                           <div className="status-container">
-                            <Popconfirm
-                              title="¿Desea cambiar el estado?"
-                              onConfirm={() => handleStatus(item.key)}
-                              placement="left"
-                            >
-                              <ButtonTag className="custom-button-tag">
-                                <Tooltip title="Cambiar estado">
-                                  <Tag
-                                    color={
-                                      item.estado === "1"
-                                        ? "#C2E5C2"
-                                        : "#FFCCCB"
-                                    }
-                                    key={item.estado}
-                                    style={{
-                                      color:
-                                        item.estado === "1"
-                                          ? "#2E8B57"
-                                          : "#D32F2F",
-                                      border: "none",
-                                    }}
-                                    icon={
-                                      loadingRow.includes(item.key) ? (
-                                        <SyncOutlined spin />
-                                      ) : (
-                                        <CheckCircleFilled
-                                          style={{
-                                            color:
-                                              item.estado === "1"
-                                                ? "#2E8B57"
-                                                : "#D32F2F",
-                                          }}
-                                        />
-                                      )
-                                    }
-                                  >
-                                    {item.estado === "1"
-                                      ? "ACTIVO"
-                                      : "INACTIVO"}
-                                  </Tag>
-                                </Tooltip>
-                              </ButtonTag>
-                            </Popconfirm>
-                          </div>
-                          <div className="status-container">
                             <Tooltip title="Ver Proceso Proyecto">
                               <Link
                                 to={`${location.pathname}/proceso/${item.key}`}
