@@ -91,6 +91,7 @@ export const ListCategoriasActivos = () => {
       key: "prefijo",
       sorter: (a, b) => a.prefijo.localeCompare(b.prefijo),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Categoria",
@@ -164,6 +165,8 @@ export const ListCategoriasActivos = () => {
           </Tooltip>
         );
       },
+      fixed: "right",
+      width: 70,
     },
   ];
 

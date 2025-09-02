@@ -5680,7 +5680,7 @@ export interface Proyectos {
   porcentaje: string;
   avance: string;
   avance_pisos: string;
-   total_apartamentos: string;
+  total_apartamentos: string;
   apartamentos_realizados: string;
   created_at: string;
   updated_at: string;

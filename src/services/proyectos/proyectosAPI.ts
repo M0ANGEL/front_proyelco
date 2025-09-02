@@ -59,3 +59,18 @@ export const updateProyecto = async (data: any, id: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+//ver de la categoria por id
+export const getNomenclaturas = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`nomenclaturas/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//actualizar Nomenclatura
+export const actualizarNomenclatura = async (data: any): Promise<any> => {
+  return await client.post<any>("ActualizarNomenclaturas", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

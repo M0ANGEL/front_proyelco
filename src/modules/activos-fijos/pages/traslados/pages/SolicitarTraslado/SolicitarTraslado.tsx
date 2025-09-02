@@ -6,9 +6,7 @@ import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmp
 import Table, { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {
-  getActiSolicitar,
-} from "@/services/activosFijos/TrasladosActivosAPI";
+import { getActiSolicitar } from "@/services/activosFijos/TrasladosActivosAPI";
 import { SolicitarForm } from "./SolicitarForm";
 
 interface DataType {
@@ -87,13 +85,13 @@ export const SolicitarTraslado = () => {
     setDataSource(filterTable);
   };
 
-
   const columns: ColumnsType<DataType> = [
     {
       title: "Ubicacion",
       dataIndex: "bodega_actual",
       key: "bodega_actual",
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Categoria",
@@ -161,6 +159,8 @@ export const SolicitarTraslado = () => {
           <SolicitarForm data={record} fetchList={() => fetchCategorias()} />
         </>
       ),
+      fixed: "right",
+      width: 70,
     },
   ];
 
