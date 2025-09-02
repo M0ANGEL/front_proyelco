@@ -4,7 +4,7 @@ import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
-import {  ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
@@ -104,6 +104,7 @@ export const TrasladarPendientesActivosAdmin = () => {
       title: "ID",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
     },
     {
       title: "Nuero Traslado",
@@ -260,6 +261,8 @@ export const TrasladarPendientesActivosAdmin = () => {
           <GenerarQR id={record.key} />
         </>
       ),
+      fixed: "right",
+      width: 70,
     },
   ];
 

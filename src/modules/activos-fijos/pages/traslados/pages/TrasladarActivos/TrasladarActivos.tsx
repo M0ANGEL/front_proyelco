@@ -114,6 +114,7 @@ export const TrasladarActivos = () => {
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Subcategoria",
@@ -216,6 +217,8 @@ export const TrasladarActivos = () => {
           <FormTraslados data={record} fetchList={() => fetchCategorias()} />
         </>
       ),
+      fixed: "right",
+      width: 70,
     },
   ];
 

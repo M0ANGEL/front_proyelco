@@ -108,6 +108,7 @@ export const TrasladarActivosAdmin = () => {
       title: "ID",
       dataIndex: "key",
       key: "key",
+        fixed: "left",
     },
     {
       title: "Fecha creacion",
@@ -246,6 +247,8 @@ export const TrasladarActivosAdmin = () => {
           <FormTraslados data={record} fetchList={() => fetchCategorias()} />
         </>
       ),
+      fixed: "right",
+      width: 70,
     },
   ];
 

@@ -1,0 +1,1 @@
+export {Nomenclaturas} from './Nomenclaturas'
