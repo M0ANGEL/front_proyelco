@@ -167,28 +167,6 @@ const ListGestionEncargadoObra = () => {
       align: "center",
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
-
-    // {
-    //   title: "Cant Torres",
-    //   dataIndex: "torres",
-    //   key: "torres",
-    //   sorter: (a, b) => a.torres.localeCompare(b.torres),
-    //   align: "center",
-    // },
-    // {
-    //   title: "Cant Pisos x torre",
-    //   dataIndex: "cant_pisos",
-    //   key: "cant_pisos",
-    //   sorter: (a, b) => a.cant_pisos.localeCompare(b.cant_pisos),
-    //   align: "center",
-    // },
-    // {
-    //   title: "Cant Apt x piso",
-    //   dataIndex: "apt",
-    //   key: "apt",
-    //   sorter: (a, b) => a.apt.localeCompare(b.apt),
-    //   align: "center",
-    // },
     {
       title: "Estado Proyecto",
       dataIndex: "fecha_ini_proyecto",

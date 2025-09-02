@@ -38,6 +38,7 @@ import {
   getProyectoID,
   updateProyecto,
 } from "@/services/proyectos/proyectosAPI";
+import { Nomenclaturas } from "../../components/Nomenclaturas";
 
 const { Text } = Typography;
 
@@ -47,9 +48,6 @@ type Proceso = {
   proceso: string;
   nombre_proceso: string;
 };
-
-
-
 
 export const FormConvenios = () => {
   const [selectTipoProyecto, setselectTipoProyecto] = useState<
@@ -64,8 +62,7 @@ export const FormConvenios = () => {
     []
   );
 
-const [dataProcesos, setDataProcesos] = useState<Proceso[]>([]);
-
+  const [dataProcesos, setDataProcesos] = useState<Proceso[]>([]);
 
   const [USuarios, selectUSuarios] = useState<SelectProps["options"]>([]);
   const [Ingeniero, selectIngeniero] = useState<SelectProps["options"]>([]);
@@ -194,12 +191,14 @@ const [dataProcesos, setDataProcesos] = useState<Proceso[]>([]);
           minimoApt: data?.proyecto.minimoApt,
           estado: data?.proyecto.estado?.toString(),
           activador_pordia_apt: data?.proyecto.activador_pordia_apt?.toString(),
-          usuarios_notificacion: JSON.parse(data?.proyecto.usuarios_notificacion),
+          usuarios_notificacion: JSON.parse(
+            data?.proyecto.usuarios_notificacion
+          ),
           encargado_id: JSON.parse(data?.proyecto.encargado_id),
           ingeniero_id: JSON.parse(data?.proyecto.ingeniero_id),
           proceso: data.procesos,
         });
-        setDataProcesos(data.procesos)
+        setDataProcesos(data.procesos);
       });
     } else {
       control.reset({
@@ -421,29 +420,28 @@ const [dataProcesos, setDataProcesos] = useState<Proceso[]>([]);
                         },
                       ]
                     : []),
-                  // {
-                  //   key: "4",
-                  //   label: (
-                  //     <Space>
-                  //       <Text
-                  //         type={
-                  //           Object.keys(control.formState.errors).length > 0
-                  //             ? "danger"
-                  //             : undefined
-                  //         }
-                  //       >
-                  //         Extras del Proyecto
-                  //       </Text>
-                  //     </Space>
-                  //   ),
-                  //   // children: (
-                  //   //   <DatosFacturacion
-                  //   //     selectTipoProyecto={selectTipoProyecto}
-                  //   //     selectUSuarios={USuarios}
-                  //   //     selectIngeniero={Ingeniero}
-                  //   //   />
-                  //   // ),
-                  // },
+                  ...(id
+                    ? [
+                        {
+                          key: "4",
+                          label: (
+                            <Space>
+                              <Text
+                                type={
+                                  Object.keys(control.formState.errors).length >
+                                  0
+                                    ? "danger"
+                                    : undefined
+                                }
+                              >
+                                Editar Nomenclaturas
+                              </Text>
+                            </Space>
+                          ),
+                          children: <Nomenclaturas />,
+                        },
+                      ]
+                    : []),
                 ]}
                 animated
               />

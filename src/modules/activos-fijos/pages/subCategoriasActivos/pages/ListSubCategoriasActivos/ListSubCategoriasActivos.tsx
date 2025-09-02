@@ -91,6 +91,7 @@ export const ListSubCategoriasActivos = () => {
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "SubCategoria",
@@ -164,6 +165,8 @@ export const ListSubCategoriasActivos = () => {
           </Tooltip>
         );
       },
+      fixed: "right",
+      width: 70,
     },
   ];
 

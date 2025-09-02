@@ -108,6 +108,7 @@ export const ListCrearActivos = () => {
       title: "ID",
       dataIndex: "key",
       key: "key",
+      fixed: "left",
     },
     {
       title: "Fecha creacion",
@@ -253,6 +254,8 @@ export const ListCrearActivos = () => {
           <GenerarQR id={record.key} />
         </>
       ),
+      fixed: "right",
+      width: 50,
     },
   ];
 
