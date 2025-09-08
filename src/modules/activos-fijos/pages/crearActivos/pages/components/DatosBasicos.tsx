@@ -10,7 +10,7 @@ import {
   Typography,
   UploadProps,
 } from "antd";
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
 import TextArea from "antd/es/input/TextArea";
@@ -36,23 +36,32 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
   const [bodegas, setBodegas] = useState<DataSelect[]>([]);
 
   const methods = useFormContext();
+  const origen = useWatch({ control: methods.control, name: "origen_activo" });
 
   useEffect(() => {
     if (TkCategoria) {
+      methods.setValue("origen_activo", TkCategoria?.origen_activo);
+      methods.setValue("tipo_activo", TkCategoria?.tipo_activo);
+      methods.setValue("proveedor_activo", TkCategoria?.proveedor_activo);
       methods.setValue("numero_activo", TkCategoria?.numero_activo);
       methods.setValue("categoria_id", TkCategoria?.categoria_id);
       methods.setValue("subcategoria_id", TkCategoria?.subcategoria_id);
       methods.setValue("descripcion", TkCategoria?.descripcion);
-      methods.setValue("ubicacion_actual", TkCategoria?.ubicacion_actual_id);
+      methods.setValue(
+        "ubicacion_actual",
+        Number(TkCategoria?.ubicacion_actual_id)
+      );
       methods.setValue("valor", TkCategoria?.valor);
       fetchSubcategorias(Number(TkCategoria?.categoria_id));
 
       // Conversión de fecha
       methods.setValue(
-        "fecha_fin_garantia",
-        TkCategoria?.fecha_fin_garantia
-          ? dayjs(TkCategoria.fecha_fin_garantia)
-          : null
+        "fecha_aquiler",
+        TkCategoria?.fecha_aquiler ? dayjs(TkCategoria.fecha_aquiler) : null
+      );
+      methods.setValue(
+        "fecha_compra",
+        TkCategoria?.fecha_compra ? dayjs(TkCategoria.fecha_compra) : null
       );
 
       methods.setValue("condicion", TkCategoria?.condicion);
@@ -65,7 +74,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
     }
   }, [TkCategoria]);
 
-  //llamdo de categorias
+  //llamado de categorias
   const fetchCategorias = () => {
     getActiCategorias().then(({ data: { data } }) => {
       const categoriasPadres = data.map((item) => ({
@@ -76,7 +85,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
     });
   };
 
-  //llamado de subcategorias por id de categoria 3
+  //llamado de subcategorias por id de categoria
   const fetchSubcategorias = async (categoriaId: number) => {
     if (!categoriaId) {
       setSubcategorias([]);
@@ -109,7 +118,36 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
 
   return (
     <Row gutter={24}>
-      {/* campo de nombre de la categorias padre para la seleccion*/}
+      {/* tipo del activo */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="tipo_activo"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "El tipo del activo es requerida",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Tipo Activo">
+              <Select
+                {...field}
+                showSearch
+                allowClear
+                options={[
+                  { value: 1, label: "MAYORES" },
+                  { value: 2, label: "MENORES" },
+                ]}
+                status={error ? "error" : ""}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* campo de nombre de la categorias padre */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="categoria_id"
@@ -117,7 +155,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "Categoria pafre requerida",
+              message: "Categoria padre requerida",
             },
           }}
           render={({ field, fieldState: { error } }) => (
@@ -126,18 +164,13 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 showSearch
                 allowClear
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? "")
-                    .toString()
-                    .toLowerCase()
-                    .localeCompare(
-                      (optionB?.label ?? "").toString().toLowerCase()
-                    )
+                filterSort={(a, b) =>
+                  (a?.label ?? "").toString().localeCompare(b?.label ?? "")
                 }
                 filterOption={(input, option) =>
                   (option?.label?.toString() ?? "")
                     .toLowerCase()
-                    .includes(input.toString().toLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 options={selectCategorias}
                 onSelect={(value) => {
@@ -152,7 +185,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* campo de nombre de la sucategorias */}
+      {/* campo de nombre de la subcategoria */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="subcategoria_id"
@@ -160,7 +193,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "Subcategoria  requerida",
+              message: "Subcategoria requerida",
             },
           }}
           render={({ field, fieldState: { error } }) => (
@@ -170,18 +203,13 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 showSearch
                 allowClear
                 disabled={!subcategorias?.length}
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? "")
-                    .toString()
-                    .toLowerCase()
-                    .localeCompare(
-                      (optionB?.label ?? "").toString().toLowerCase()
-                    )
+                filterSort={(a, b) =>
+                  (a?.label ?? "").toString().localeCompare(b?.label ?? "")
                 }
                 filterOption={(input, option) =>
                   (option?.label?.toString() ?? "")
                     .toLowerCase()
-                    .includes(input.toString().toLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 options={subcategorias}
                 placeholder={
@@ -197,7 +225,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* numero de activo, unico */}
+      {/* numero de activo */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="numero_activo"
@@ -223,37 +251,47 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* campo de ubicacion actual activo */}
+      {/* ubicacion actual cuando se edite*/}
+      {TkCategoria && (
+        <Col xs={24} sm={12} style={{ width: "100%" }}>
+          <Controller
+            name="ubicacion_actual"
+            control={methods.control}
+            rules={{
+              required: { value: true, message: "La ubicacion es requerida" },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Ubicacion actual">
+                <Select {...field} showSearch allowClear options={bodegas} />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col>
+      )}
+
+      {/* origen  del activo */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
-          name="ubicacion_actual"
+          name="origen_activo"
           control={methods.control}
           rules={{
             required: {
               value: true,
-              message: "la ubicacion es requerida",
+              message: "El origen del activo es requerido",
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Ubicacion actual">
+            <StyledFormItem required label="Tipo Origen">
               <Select
                 {...field}
                 showSearch
                 allowClear
-                filterSort={(optionA, optionB) =>
-                  (optionA?.label ?? "")
-                    .toString()
-                    .toLowerCase()
-                    .localeCompare(
-                      (optionB?.label ?? "").toString().toLowerCase()
-                    )
-                }
-                filterOption={(input, option) =>
-                  (option?.label?.toString() ?? "")
-                    .toLowerCase()
-                    .includes(input.toString().toLowerCase())
-                }
-                options={bodegas}
+                options={[
+                  { value: 1, label: "PROPIO" },
+                  { value: 2, label: "ALQUILADO" },
+                ]}
+                status={error ? "error" : ""}
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
@@ -261,16 +299,86 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* valor de activo */}
+      {/* si es propio (1) -> fecha de compra */}
+      {origen === 1 && (
+        <Col xs={24} sm={12} style={{ width: "100%" }}>
+          <Controller
+            name="fecha_compra"
+            control={methods.control}
+            rules={{
+              required: { value: true, message: "Fecha de compra requerida" },
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label="Fecha Compra">
+                <DatePicker
+                  style={{ width: "100%" }}
+                  value={field.value}
+                  onChange={(date) => field.onChange(date)}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
+        </Col>
+      )}
+
+      {/* si es alquilado (2) -> fecha de alquiler */}
+      {origen === 2 && (
+        <>
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <Controller
+              name="fecha_aquiler"
+              control={methods.control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Fecha de alquiler requerida",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <StyledFormItem required label="Fecha Alquiler">
+                  <DatePicker
+                    style={{ width: "100%" }}
+                    value={field.value}
+                    onChange={(date) => field.onChange(date)}
+                  />
+                  <Text type="danger">{error?.message}</Text>
+                </StyledFormItem>
+              )}
+            />
+          </Col>
+
+          {/* proveedor */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <Controller
+              name="proveedor_activo"
+              control={methods.control}
+              rules={{
+                required: { value: true, message: "Proveedor requerido" },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <StyledFormItem required label="Proveedor de activo">
+                  <Input
+                    {...field}
+                    maxLength={50}
+                    status={error && "error"}
+                    style={{ textTransform: "uppercase" }}
+                  />
+                  <Text type="danger">{error?.message}</Text>
+                </StyledFormItem>
+              )}
+            />
+          </Col>
+        </>
+      )}
+
+      {/* valor */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="valor"
           control={methods.control}
           rules={{
-            required: {
-              value: true,
-              message: "Valor de activo es requerido",
-            },
+            required: { value: true, message: "Valor requerido" },
           }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Valor de activo">
@@ -287,40 +395,13 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* fecha donde termina la garantia del activo */}
-      <Col xs={24} sm={12} style={{ width: "100%" }}>
-        <Controller
-          name="fecha_fin_garantia"
-          control={methods.control}
-          rules={{
-            required: {
-              value: true,
-              message: "Fecha de garantía de activo es requerida",
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Fecha fin garantía">
-              <DatePicker
-                style={{ width: "100%" }}
-                value={field.value}
-                onChange={(date) => field.onChange(date)}
-              />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
-        />
-      </Col>
-
-      {/* estado del activo */}
+      {/* condicion */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="condicion"
           control={methods.control}
           rules={{
-            required: {
-              value: true,
-              message: "La condición del activo es requerida",
-            },
+            required: { value: true, message: "Condición requerida" },
           }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Condición del Activo">
@@ -330,7 +411,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 allowClear
                 options={[
                   { value: 1, label: "Bueno" },
-                  { value: 2, label: "Regular" },
+                  { value: 2, label: "Reparado" },
                   { value: 3, label: "Malo" },
                 ]}
                 status={error ? "error" : ""}
@@ -341,11 +422,14 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* marca de activo */}
+      {/* marca */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="marca"
           control={methods.control}
+          rules={{
+            required: { value: true, message: "Marca del activo es requerida" },
+          }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Marca de activo">
               <Input
@@ -361,11 +445,14 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* serial de activo */}
+      {/* serial */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="serial"
           control={methods.control}
+           rules={{
+            required: { value: true, message: "Serial del activo es requerida" },
+          }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Serial de activo">
               <Input
@@ -381,38 +468,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* subir archivo */}
-      {/* <Col xs={24} sm={24}>
-        <Controller
-          control={methods.control}
-          name="file"
-          render={({ field, fieldState: { error } }) => {
-            const uploadProps: UploadProps = {
-              maxCount: 1,
-              accept: ".jpg, .jpeg, .png, .pdf, .xls, .xlsx, .docx",
-              beforeUpload: (file) => {
-                field.onChange(file); // 🔹 Guardar en react-hook-form
-                return false; // evitar subida automática
-              },
-              onRemove: () => {
-                field.onChange(null); // limpiar en react-hook-form
-              },
-            };
-
-            return (
-              <StyledFormItem label="Archivo:">
-                <CustomUpload {...uploadProps}>
-                  <Button block ghost type="primary" icon={<UploadOutlined />}>
-                    Seleccionar archivo
-                  </Button>
-                </CustomUpload>
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
-            );
-          }}
-        />
-      </Col> */}
-
+      {/* subir archivo o foto */}
       <Col xs={24} sm={24}>
         <Controller
           control={methods.control}
@@ -446,12 +502,8 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
             return (
               <StyledFormItem label="Archivo o Foto:">
                 <Row gutter={8}>
-                  {/* Botón subir archivo */}
                   <Col span={12}>
-                    <CustomUpload
-                      {...uploadProps}
-                      accept="image/png, image/jpeg"
-                    >
+                    <CustomUpload {...uploadProps}>
                       <Button
                         block
                         ghost
@@ -463,12 +515,8 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                     </CustomUpload>
                   </Col>
 
-                  {/* Botón tomar foto */}
                   <Col span={12}>
-                    <CustomUpload
-                      {...cameraProps}
-                      accept="image/png, image/jpeg"
-                    >
+                    <CustomUpload {...cameraProps}>
                       <Button
                         block
                         ghost
@@ -488,15 +536,12 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
       </Col>
 
       {/* descripcion */}
-      <Col xs={24} sm={12} style={{ width: "100%" }}>
+      <Col xs={24} sm={24} style={{ width: "100%" }}>
         <Controller
           name="descripcion"
           control={methods.control}
           rules={{
-            required: {
-              value: true,
-              message: "La descripcion es requerido",
-            },
+            required: { value: true, message: "Descripcion requerida" },
           }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Descripcion">

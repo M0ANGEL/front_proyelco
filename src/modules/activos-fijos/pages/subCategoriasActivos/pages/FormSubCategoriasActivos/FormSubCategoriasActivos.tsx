@@ -19,7 +19,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { ActivosSubCategoria } from "@/services/types";
 import { DatosBasicos } from "../components";
-import { crearActiSubCategoria, getActiSubCategoria, updateActiSubCategoria } from "@/services/activosFijos/SubCategoriasAPI";
+import {
+  crearActiSubCategoria,
+  getActiSubCategoria,
+  updateActiSubCategoria,
+} from "@/services/activosFijos/SubCategoriasAPI";
 
 const { Text } = Typography;
 
@@ -63,31 +67,19 @@ export const FormSubCategoriasActivos = () => {
     if (categoria) {
       updateActiSubCategoria(data, id)
         .then(() => {
-          pushNotification({ title: "CLiente actualizado con éxito!" });
+          pushNotification({ title: "Subcategoria actualizado con éxito!" });
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          if (
-            error.response?.data?.message?.includes(
-              "No se puede actualizar el nit porque ya hay un cliente con este NIT."
-            )
-          ) {
-            pushNotification({
-              type: "error",
-              title: "Error",
-              description:
-                "No se puede actualizar el nit porque ya hay un cliente con este NIT.",
-            });
-          } else {
-            pushNotification({
-              type: "error",
-              title: "Error al actualizar",
-              description: error.message || "Ocurrió un error inesperado",
-            });
-          }
+
+          pushNotification({
+            type: "error",
+            title: "Error al actualizar",
+            description: error.message || "Ocurrió un error inesperado",
+          });
           setLoaderSave(false);
         });
     } else {
@@ -102,9 +94,7 @@ export const FormSubCategoriasActivos = () => {
           pushNotification({
             type: "error",
             title: error.error,
-            description: error.response?.data?.errors?.prefijo
-              ? "PREFIJO EN USO"
-              : error.message,
+            description: error.message,
           });
           setLoaderSave(false);
         });
@@ -135,9 +125,7 @@ export const FormSubCategoriasActivos = () => {
                   <Button
                     htmlType="submit"
                     type="primary"
-                    icon={
-                      <SaveOutlined />
-                    } 
+                    icon={<SaveOutlined />}
                   >
                     Guardar
                   </Button>
@@ -201,4 +189,3 @@ export const FormSubCategoriasActivos = () => {
     </>
   );
 };
-
