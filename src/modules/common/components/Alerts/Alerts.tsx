@@ -22,11 +22,11 @@ export const Alerts = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (["Administrador"].includes(user_rol)) {
+      if (["Administrador" , "Directora Proyectos"].includes(user_rol)) {
         await fetchResolucionesPorVencer();
       }
     };
-    if (["Administrador"].includes(user_rol)) fetchData();
+    if (["Administrador", "Directora Proyectos"].includes(user_rol)) fetchData();
   }, []);
 
   const fetchResolucionesPorVencer = async () => {
