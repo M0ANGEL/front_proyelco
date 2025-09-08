@@ -105,8 +105,8 @@ export const ModalInfo = ({ data }: GenerarQRProps) => {
 
             {/* Fecha Fin Garantía */}
             <Col xs={24} sm={12}>
-              <StyledFormItem label="Fecha Fin Garantía" labelCol={{ span: 24 }}>
-                <Input value={initialData.fecha_fin_garantia} disabled />
+              <StyledFormItem label="Fecha Traslado" labelCol={{ span: 24 }}>
+                <Input value={initialData.created_at} disabled />
               </StyledFormItem>
             </Col>
 
@@ -131,35 +131,79 @@ export const ModalInfo = ({ data }: GenerarQRProps) => {
               </StyledFormItem>
             </Col>
 
-            {/* Usuarios Asignados */}
-            <Col xs={24}>
-              <StyledFormItem label="Usuarios Asignados" labelCol={{ span: 24 }}>
-                {initialData.usuariosAsignados?.length > 0 ? (
-                  initialData.usuariosAsignados.map((u: string, i: number) => (
-                    <Tag color="blue" key={i}>
-                      {u}
-                    </Tag>
-                  ))
-                ) : (
-                  <Tag color="default">Ninguno</Tag>
-                )}
-              </StyledFormItem>
-            </Col>
+            {initialData.observacion_rachazo ? (
+              <>
+                {/* Descripción Rechazo */}
+                <Col xs={24}>
+                  <StyledFormItem
+                    label="Descripción Rechazo"
+                    labelCol={{ span: 24 }}
+                  >
+                    <TextArea
+                      value={initialData.observacion_rachazo || "..."}
+                      disabled
+                    />
+                  </StyledFormItem>
+                </Col>
+              </>
+            ) : (
+              ""
+            )}
 
-            {/* Usuarios que Aceptaron */}
-            <Col xs={24}>
-              <StyledFormItem label="Usuarios que Aceptaron" labelCol={{ span: 24 }}>
-                {initialData.usuariosAceptaron?.length > 0 ? (
-                  initialData.usuariosAceptaron.map((u: string, i: number) => (
-                    <Tag color="green" key={i}>
-                      {u}
-                    </Tag>
-                  ))
-                ) : (
-                  <Tag color="default">Ninguno</Tag>
-                )}
-              </StyledFormItem>
-            </Col>
+            {initialData.observacion_rachazo ? (
+              <>
+                <Col xs={24} sm={12}>
+                  <StyledFormItem
+                    label="Usuario Rechaza"
+                    labelCol={{ span: 24 }}
+                  >
+                    <Input value={initialData.user_rechaza} disabled />
+                  </StyledFormItem>
+                </Col>
+              </>
+            ) : (
+              <>
+                {/* Usuarios Asignados */}
+                <Col xs={24}>
+                  <StyledFormItem
+                    label="Usuarios Asignados"
+                    labelCol={{ span: 24 }}
+                  >
+                    {initialData.usuariosAsignados?.length > 0 ? (
+                      initialData.usuariosAsignados.map(
+                        (u: string, i: number) => (
+                          <Tag color="blue" key={i}>
+                            {u}
+                          </Tag>
+                        )
+                      )
+                    ) : (
+                      <Tag color="default">Ninguno</Tag>
+                    )}
+                  </StyledFormItem>
+                </Col>
+
+                {/* Usuarios que Aceptaron */}
+                <Col xs={24}>
+                  <StyledFormItem
+                    label="Usuarios que Aceptaron"
+                    labelCol={{ span: 24 }}
+                  >
+                    {initialData.usuariosAceptaron?.length > 0 ? (
+                      initialData.usuariosAceptaron.map(
+                        (u: string, i: number) => (
+                          <Tag color="green" key={i}>
+                            {u}
+                          </Tag>
+                        )
+                      )
+                    ) : (
+                      <Tag color="default">Ninguno</Tag>
+                    )}
+                  </StyledFormItem>
+                </Col>
+              </>
+            )}
           </Row>
         ) : (
           <p>Cargando información...</p>

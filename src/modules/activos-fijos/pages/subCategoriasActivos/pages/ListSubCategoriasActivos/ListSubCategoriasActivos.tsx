@@ -15,7 +15,6 @@ import { DeleteActiSubCategoria, getActiSubCategorias } from "@/services/activos
 interface DataType {
   key: number;
   estado: string;
-  descripcion: string;
   usuario: string;
   categoria: string;
   id_user: string;
@@ -45,7 +44,6 @@ export const ListSubCategoriasActivos = () => {
         return {
           key: categoria.id,
           estado: categoria.estado.toString(),
-          descripcion: categoria.descripcion,
           nombre: categoria.nombre,
           categoria: categoria.categoria,
           id_user: categoria.id_user,
@@ -98,13 +96,6 @@ export const ListSubCategoriasActivos = () => {
       dataIndex: "nombre",
       key: "nombre",
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Descripcion",
-      dataIndex: "descripcion",
-      key: "descripcion",
-      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -189,6 +180,7 @@ export const ListSubCategoriasActivos = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,

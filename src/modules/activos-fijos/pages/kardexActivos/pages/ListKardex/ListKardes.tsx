@@ -1,20 +1,11 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  Input,
-  Select,
-  Row,
-  Col,
-  Tag,
-  Typography,
-} from "antd";
+import { Input, Select, Row, Col, Tag, Typography } from "antd";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {
-  getActiHistorico,
-} from "@/services/activosFijos/TrasladosActivosAPI";
+import { getActiHistorico } from "@/services/activosFijos/TrasladosActivosAPI";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { GenerarQR } from "../../../crearActivos/pages/ListCrearActivos/GenerarQR";
 import { ModalInfo } from "../../../traslados/pages/AceptarTraslados/ModalInfo";
@@ -42,6 +33,7 @@ interface DataType {
   codigo_traslado: string;
   bodega_origen: string;
   bodega_destino: string;
+  aceptacion: string;
 }
 
 const { Text } = Typography;
@@ -79,6 +71,7 @@ export const ListKardex = () => {
           subcategoria: categoria.subcategoria,
           numero_activo: categoria.numero_activo,
           valor: categoria.valor,
+          aceptacion: categoria.aceptacion,
           condicion: categoria.condicion.toString(),
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -137,21 +130,13 @@ export const ListKardex = () => {
       title: "Numero Traslado",
       dataIndex: "codigo_traslado",
       key: "codigo_traslado",
-       fixed: "left",
+      fixed: "left",
     },
     {
       title: "Fecha creacion",
       dataIndex: "created_at",
       key: "created_at",
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Fecha fin garantia",
-      dataIndex: "fecha_fin_garantia",
-      key: "fecha_fin_garantia",
-      sorter: (a, b) =>
-        a.fecha_fin_garantia.localeCompare(b.fecha_fin_garantia),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -229,7 +214,36 @@ export const ListKardex = () => {
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
     },
+    {
+      title: "Estado Traslado",
+      dataIndex: "aceptacion",
+      key: "aceptacion",
+      align: "center",
+      render: (_, record: { key: React.Key; aceptacion: string }) => {
+        let estadoString;
+        let color;
 
+        if (record.aceptacion == "0") {
+          estadoString = "Sin Trasladar";
+          color = "yellow";
+        } else if (record.aceptacion == "1") {
+          estadoString = "Pendiente";
+          color = "red";
+        } else if (record.aceptacion == "2") {
+          estadoString = "Aceptado";
+          color = "green";
+        } else {
+          estadoString = "Rechazado";
+          color = "red";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+    },
     {
       title: "Valor",
       dataIndex: "valor",
@@ -245,11 +259,11 @@ export const ListKardex = () => {
         <>
           <ModalInfo data={record} />
           <VerFoto id={record.key} />
-          <GenerarQR id={record.key} />
+          <GenerarQR id={record.key} numero_activo={record.numero_activo} />
         </>
       ),
       fixed: "right",
-      width: 70,
+      width: 120,
     },
   ];
 
@@ -303,6 +317,7 @@ export const ListKardex = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,

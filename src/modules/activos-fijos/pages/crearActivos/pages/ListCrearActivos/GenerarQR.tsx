@@ -5,9 +5,10 @@ import { BASE_URL_IMAGENES } from "@/config/api";
 
 interface GenerarQRProps {
   id: number;
+  numero_activo: string;
 }
 
-export const GenerarQR = ({ id }: GenerarQRProps) => {
+export const GenerarQR = ({ id, numero_activo }: GenerarQRProps) => {
   const [visible, setVisible] = useState(false);
   const qrRef = useRef<HTMLDivElement>(null);
   const enlace = `${BASE_URL_IMAGENES}activos/${id}/qr`;
@@ -54,10 +55,37 @@ export const GenerarQR = ({ id }: GenerarQRProps) => {
         ]}
         centered
       >
-        <div ref={qrRef} style={{ textAlign: "center" }}>
+        <div
+          ref={qrRef}
+          style={{
+            textAlign: "center",
+            position: "relative",
+            display: "inline-block",
+            marginLeft: 100
+          }}
+        >
+          {/* QR */}
           <QRCode value={enlace} size={200} />
-          <p style={{ marginTop: "10px" }}>Escanea para ver el activo</p>
+
+          {/* Número de activo en el centro */}
+          <span
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              fontSize: "16px",
+              fontWeight: "bold",
+              background: "white",
+              padding: "5px 6px",
+              borderRadius: "4px",
+            }}
+          >
+            {numero_activo}
+          </span>
         </div>
+
+        <p style={{ marginTop: "15px" }}>Escanea para ver el activo</p>
       </Modal>
     </>
   );

@@ -1,0 +1,1 @@
+export {Mantenimientoactivos} from './Mantenimientoactivos'

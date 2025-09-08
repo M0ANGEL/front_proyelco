@@ -176,6 +176,7 @@ export const ListBodegaAreas = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,

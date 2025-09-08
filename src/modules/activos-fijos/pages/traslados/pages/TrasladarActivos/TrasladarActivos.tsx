@@ -12,6 +12,8 @@ import dayjs from "dayjs";
 import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
 import { FormTraslados } from "../formTraslados/FormTraslados";
 import { getActiActivosSalida } from "@/services/activosFijos/TrasladosActivosAPI";
+import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
+import { FormLiberarActivo } from "../formLiberarActivo/FormLiberarActivo";
 
 interface DataType {
   key: number;
@@ -215,10 +217,12 @@ export const TrasladarActivos = () => {
       render: (_, record) => (
         <>
           <FormTraslados data={record} fetchList={() => fetchCategorias()} />
+          <VerFoto id={record.key} />
+          <FormLiberarActivo data={record} fetchList={() => fetchCategorias()} />
         </>
       ),
       fixed: "right",
-      width: 70,
+      width: 120,
     },
   ];
 
@@ -243,6 +247,7 @@ export const TrasladarActivos = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,

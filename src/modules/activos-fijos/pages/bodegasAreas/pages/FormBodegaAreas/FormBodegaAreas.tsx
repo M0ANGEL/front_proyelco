@@ -20,8 +20,11 @@ import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { ActivosCategoria } from "@/services/types";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
-import { crearActiCategoria, getActiCategoria, updateActiCategoria } from "@/services/activosFijos/CategoriasAPI";
-import { crearActiBodega, getActiBodega, updateActiBodega } from "@/services/activosFijos/BodegasAPI";
+import {
+  crearActiBodega,
+  getActiBodega,
+  updateActiBodega,
+} from "@/services/activosFijos/BodegasAPI";
 
 const { Text } = Typography;
 
@@ -68,37 +71,25 @@ export const FormBodegaAreas = () => {
     if (categoria) {
       updateActiBodega(data, id)
         .then(() => {
-          pushNotification({ title: "CLiente actualizado con éxito!" });
+          pushNotification({ title: "Bodega / Area actualizado con éxito!" });
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          if (
-            error.response?.data?.message?.includes(
-              "No se puede actualizar el nit porque ya hay un cliente con este NIT."
-            )
-          ) {
-            pushNotification({
-              type: "error",
-              title: "Error",
-              description:
-                "No se puede actualizar el nit porque ya hay un cliente con este NIT.",
-            });
-          } else {
-            pushNotification({
-              type: "error",
-              title: "Error al actualizar",
-              description: error.message || "Ocurrió un error inesperado",
-            });
-          }
+
+          pushNotification({
+            type: "error",
+            title: "Error al actualizar",
+            description: error.message || "Ocurrió un error inesperado",
+          });
           setLoaderSave(false);
         });
     } else {
       crearActiBodega(data)
         .then(() => {
-          pushNotification({ title: "Cliente creado con éxito!" });
+          pushNotification({ title: "Bodega / Area creado con éxito!" });
           setTimeout(() => {
             navigate(-1);
           }, 800);
@@ -140,9 +131,7 @@ export const FormBodegaAreas = () => {
                   <Button
                     htmlType="submit"
                     type="primary"
-                    icon={
-                      <SaveOutlined />
-                    } 
+                    icon={<SaveOutlined />}
                   >
                     Guardar
                   </Button>
@@ -206,4 +195,3 @@ export const FormBodegaAreas = () => {
     </>
   );
 };
-

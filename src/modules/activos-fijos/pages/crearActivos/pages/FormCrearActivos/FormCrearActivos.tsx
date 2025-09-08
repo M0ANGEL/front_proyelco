@@ -18,7 +18,6 @@ import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { ActivosData } from "@/services/types";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
 import {
   crearActiActivo,
@@ -33,7 +32,6 @@ export const FormCrearActivos = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<ActivosData>();
-  const { transformToUpperCase } = useSerialize();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -64,7 +62,6 @@ export const FormCrearActivos = () => {
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
-    data = transformToUpperCase(data, ["emp_nombre"]);
 
     setLoaderSave(true);
 
@@ -97,7 +94,7 @@ export const FormCrearActivos = () => {
           pushNotification({
             type: "error",
             title: error.message,
-            description: error.message || "Ocurrió un error inesperado",
+            description: "NUMERO DE ACTIVO EN USO || " + error.message ,
           });
           setLoaderSave(false);
         });

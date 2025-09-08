@@ -1,1 +1,0 @@
-export {VistaTap} from './VistaTap'

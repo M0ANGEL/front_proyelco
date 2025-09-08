@@ -63,9 +63,24 @@ export const getActiSolicitar = async (): Promise<ResponseActivosS> => {
 };
 
 
-//crear traslados
+//crear Solicitud del actiivo
 export const envioSolicitudActivo = async (data: any): Promise<any> => {
   return await client.post<any>("envio-solicitud-activo", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+//Liberar activo
+export const LiberarActiActivo = async (data: any): Promise<any> => {
+  return await client.post<any>("liberar-activos", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+//rechazar traslado de activo
+export const rechazarActivo = async (data: any): Promise<any> => {
+  return await client.post<any>("activo-rechazarActivo", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

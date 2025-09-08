@@ -55,3 +55,10 @@ export const getActiUsers = async (): Promise<ResponseUsers> => {
   });
 };
 
+
+//llamar todas los clientes usaremos Am = para identificar que es de adminisracion
+export const getActiActivosDeBaja = async (): Promise<ResponseActivosS> => {
+  return await client.get("administar-activosBaja", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

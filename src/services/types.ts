@@ -5998,3 +5998,23 @@ export interface ActivosData {
   motivo_solicitud: string;
   usuario_solicita: string;
 }
+
+export interface ResponseActivosMantenimiento{
+  data: {
+    status: string;
+    data: ActivosMantenimiento[];
+  };
+}
+export interface ActivosMantenimiento {
+  id: number;
+  valor: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  observaciones: string;
+  user_id: string;
+  activo_id: string;
+  estado: string;
+  numero_activo: string;
+  created_at: string;
+  updated_at: string;
+}
