@@ -90,7 +90,7 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
       ubicacion_destino: bodegaSelecionadaDestino,
       usuarios: usuarioSeleccionado,
       tipo_ubicacion: tipoUbicacion,
-      solicitud: data.solicitud ? data.solicitud : 0 ,
+      solicitud: data.solicitud ? data.solicitud : 0,
     };
 
     trasladarActiActivo(rechazoTicket)
@@ -173,7 +173,7 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
             <StyledFormItem label="Subategoría" labelCol={{ span: 24 }}>
               <Input value={data.subcategoria} disabled />
             </StyledFormItem>
-          </Col> 
+          </Col>
 
           {/* descripcion */}
           <Col xs={24} sm={24} style={{ width: "100%" }}>
@@ -182,29 +182,48 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
             </StyledFormItem>
           </Col>
 
+          {data.solicitud == "1" ? (
+            <>
+              {/* motivo solicitud */}
+              <Col xs={24} sm={24} style={{ width: "100%" }}>
+                <StyledFormItem
+                  label="Descripción Solicitud"
+                  labelCol={{ span: 24 }}
+                >
+                  <TextArea
+                    value={data?.motivo_solicitud || "Sin motivo"}
+                    disabled
+                  />
+                </StyledFormItem>
+              </Col>
 
-          {/* motivo solicitud */}
-          <Col xs={24} sm={24} style={{ width: "100%" }}>
-            <StyledFormItem label="Descripción Solicitud" labelCol={{ span: 24 }}>
-              <TextArea value={data?.motivo_solicitud || "Sin motivo"} disabled />
-            </StyledFormItem>
-          </Col>
+              {/* usuario que hace la solitud */}
+              <Col xs={24} sm={12} style={{ width: "100%" }}>
+                <StyledFormItem
+                  label="Usuario Solicita"
+                  labelCol={{ span: 24 }}
+                >
+                  <Input value={data.usuario_solicita} disabled />
+                </StyledFormItem>
+              </Col>
 
-         {data.solicitud == "1" ? (<>
-          {/* usuario que hace la solitud */}
-          <Col xs={24} sm={12} style={{ width: "100%" }}>
-            <StyledFormItem label="Usuario Solicita" labelCol={{ span: 24 }}>
-              <Input value={data.usuario_solicita} disabled />
-            </StyledFormItem>
-          </Col> 
-
-          {/* campo de ubicacion actual activo */}
-          <Col xs={24} sm={12} style={{ width: "100%" }}>
-            <StyledFormItem label={data.solicitud == "1" ? "Ubiacion Destino" : "Ubiacion Actual"} labelCol={{ span: 24 }}>
-              <Input value={data.bodega_actual} disabled />
-            </StyledFormItem>
-          </Col>
-         </>) : ("")}
+              {/* campo de ubicacion actual activo */}
+              <Col xs={24} sm={12} style={{ width: "100%" }}>
+                <StyledFormItem
+                  label={
+                    data.solicitud == "1"
+                      ? "Ubiacion Destino"
+                      : "Ubiacion Actual"
+                  }
+                  labelCol={{ span: 24 }}
+                >
+                  <Input value={data.bodega_actual} disabled />
+                </StyledFormItem>
+              </Col>
+            </>
+          ) : (
+            ""
+          )}
 
           {data.solicitud != "1" ? (
             <>

@@ -60,44 +60,30 @@ export const FormCategoriasActivos = () => {
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
-    data = transformToUpperCase(data, ["emp_nombre"]);
-
     setLoaderSave(true);
 
     if (categoria) {
       updateActiCategoria(data, id)
         .then(() => {
-          pushNotification({ title: "CLiente actualizado con éxito!" });
+          pushNotification({ title: "Categoria actualizado con éxito!" });
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          if (
-            error.response?.data?.message?.includes(
-              "No se puede actualizar el nit porque ya hay un cliente con este NIT."
-            )
-          ) {
-            pushNotification({
-              type: "error",
-              title: "Error",
-              description:
-                "No se puede actualizar el nit porque ya hay un cliente con este NIT.",
-            });
-          } else {
+          
             pushNotification({
               type: "error",
               title: "Error al actualizar",
               description: error.message || "Ocurrió un error inesperado",
             });
-          }
           setLoaderSave(false);
         });
     } else {
       crearActiCategoria(data)
         .then(() => {
-          pushNotification({ title: "Cliente creado con éxito!" });
+          pushNotification({ title: "Categoria creado con éxito!" });
           setTimeout(() => {
             navigate(-1);
           }, 800);

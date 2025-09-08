@@ -164,16 +164,7 @@ export const DashboardPage = () => {
           ];
           break;
         default:
-          cardsArray = [
-            {
-              title: "Proyelco",
-              icon: <AiFillBank />,
-              value: 0,
-              link: "Proyelco.com",
-              permiso: false,
-              bgColor: cardsBgColors[0],
-            },
-          ];
+          
           break;
       }
 

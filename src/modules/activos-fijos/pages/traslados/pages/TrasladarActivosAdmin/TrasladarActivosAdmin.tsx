@@ -194,50 +194,6 @@ export const TrasladarActivosAdmin = () => {
       sorter: (a, b) => a.valor.localeCompare(b.valor),
     },
     {
-      title: "Estado",
-      dataIndex: "estado",
-      key: "estado",
-      align: "center",
-      render: (_, record: { key: React.Key; estado: string }) => {
-        let estadoString = "";
-        let color;
-        if (record.estado === "1") {
-          estadoString = "ACTIVO";
-          color = "green";
-        } else {
-          estadoString = "INACTIVO";
-          color = "red";
-        }
-        return (
-          <Popconfirm
-            title="¿Desea cambiar el estado?"
-            onConfirm={() => handleStatus(record.key)}
-            placement="left"
-          >
-            <ButtonTag
-              color={color}
-              disabled={!["administrador"].includes(user_rol)}
-            >
-              <Tooltip title="Cambiar estado">
-                <Tag
-                  color={color}
-                  key={estadoString}
-                  icon={
-                    loadingRow.includes(record.key) ? (
-                      <SyncOutlined spin />
-                    ) : null
-                  }
-                >
-                  {estadoString.toUpperCase()}
-                </Tag>
-              </Tooltip>
-            </ButtonTag>
-          </Popconfirm>
-        );
-      },
-      sorter: (a, b) => a.estado.localeCompare(b.estado),
-    },
-    {
       title: "Acciones",
       dataIndex: "acciones",
       key: "acciones",
@@ -273,6 +229,7 @@ export const TrasladarActivosAdmin = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,

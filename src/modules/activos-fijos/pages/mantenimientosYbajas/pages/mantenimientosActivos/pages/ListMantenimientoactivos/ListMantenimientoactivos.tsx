@@ -1,54 +1,69 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import { Link, useLocation } from "react-router-dom";
 // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
-import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteActiCategoria, getActiCategorias } from "@/services/activosFijos/CategoriasAPI";
-import { getMisiActivos } from "@/services/activosFijos/MisActivosAPI";
+import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
+import { VerFoto } from "@/modules/activos-fijos/pages/crearActivos/pages/ListCrearActivos/VerFoto";
+import { DeleteActiMantenemimiento, getActivosMantenimientos } from "@/services/activosFijos/MantenimientoActivosAPI";
 
 interface DataType {
   key: number;
+  id: number;
+  valor: string;
+  fecha_inicio: string;
+  fecha_fin: string;
+  observaciones: string;
+  activo_id: string;
+  user_id: string;
   estado: string;
-  descripcion: string;
-  usuario: string;
-  id_user: string;
-  nombre: string;
+  numero_activo: string;
   created_at: string;
   updated_at: string;
 }
 
 const { Text } = Typography;
 
-export const ListMisActivos = () => {
+export const ListMantenimientoactivos = () => {
   const location = useLocation();
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getSessionVariable } = useSessionStorage();
-  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
   }, []);
 
   const fetchCategorias = () => {
-    getMisiActivos().then(({ data: { data } }) => {
+    getActivosMantenimientos().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
+          id: categoria.id,
           estado: categoria.estado.toString(),
-          descripcion: categoria.descripcion,
-          nombre: categoria.nombre,
-          id_user: categoria.id_user,
-          usuario: categoria.usuario,
+          valor: categoria.valor,
+          observaciones: categoria.observaciones,
+          activo_id: categoria.activo_id,
+          user_id: categoria.user_id,
+          numero_activo: categoria.numero_activo,
+          fecha_inicio: dayjs(categoria?.fecha_inicio).format(
+            "DD-MM-YYYY HH:mm"
+          ),
+          fecha_fin: dayjs(categoria?.fecha_fin).format("DD-MM-YYYY HH:mm"),
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -74,7 +89,7 @@ export const ListMisActivos = () => {
   //cambio de estado
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    DeleteActiCategoria(id)
+    DeleteActiMantenemimiento(id)
       .then(() => {
         fetchCategorias();
       })
@@ -85,52 +100,76 @@ export const ListMisActivos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Usuario Creo",
-      dataIndex: "usuario",
-      key: "usuario",
-      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
+      title: "Fecha Creacion",
+      dataIndex: "created_at",
+      key: "created_at",
+      fixed: "left",
+      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Categoria",
-      dataIndex: "nombre",
-      key: "nombre",
-      sorter: (a, b) => a.nombre.localeCompare(b.nombre),
+      title: "Fecha Inicio",
+      dataIndex: "fecha_inicio",
+      key: "fecha_inicio",
+      fixed: "left",
+      sorter: (a, b) => a.fecha_inicio.localeCompare(b.fecha_inicio),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Descripcion",
-      dataIndex: "descripcion",
-      key: "descripcion",
-      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
+      title: "Fecha Final",
+      dataIndex: "fecha_fin",
+      key: "fecha_fin",
+      fixed: "left",
+      sorter: (a, b) => a.fecha_fin.localeCompare(b.fecha_fin),
+      render: (text) => text?.toUpperCase(),
+    },
+
+    {
+      title: "Valor",
+      dataIndex: "valor",
+      key: "valor",
+      sorter: (a, b) => a.valor.localeCompare(b.valor),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Estado",
+      title: "Numero Acitivo",
+      dataIndex: "numero_activo",
+      key: "numero_activo",
+      sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Valor Manteimiento",
+      dataIndex: "valor",
+      key: "valor",
+      sorter: (a, b) => a.valor.localeCompare(b.valor),
+      align: "center",
+    },
+    {
+      title: "Estado Activo",
       dataIndex: "estado",
       key: "estado",
       align: "center",
       render: (_, record: { key: React.Key; estado: string }) => {
         let estadoString = "";
         let color;
+
         if (record.estado === "1") {
-          estadoString = "ACTIVO";
+          estadoString = "En Proceso";
+          color = "blue";
+        }else{
+          estadoString = "Finalizado";
           color = "green";
-        } else {
-          estadoString = "INACTIVO";
-          color = "red";
         }
+
         return (
           <Popconfirm
-            title="¿Desea cambiar el estado?"
+            title="¿Confirmar la finalizacion del mantenimiento del activo?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
           >
-            <ButtonTag
-              color={color}
-              disabled={!["administrador"].includes(user_rol)}
-            >
-              <Tooltip title="Cambiar estado">
+            <ButtonTag color={color}>
+              <Tooltip title={"Finalizar mantenimiento"}>
                 <Tag
                   color={color}
                   key={estadoString}
@@ -147,28 +186,32 @@ export const ListMisActivos = () => {
           </Popconfirm>
         );
       },
-      sorter: (a, b) => a.estado.localeCompare(b.estado),
     },
+
     {
       title: "Acciones",
       dataIndex: "acciones",
       key: "acciones",
       align: "center",
-      render: (_, record: { key: React.Key }) => {
-        return (
+      render: (_, record) => (
+        <Space>
           <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
+            <Link to={`${location.pathname}/edit/${record.key}`} >
+              <Button disabled={record.estado == "0"}  icon={<EditOutlined />} type="primary" size="small" />
             </Link>
           </Tooltip>
-        );
-      },
+
+          <VerFoto id={record.key} />
+        </Space>
+      ),
+      fixed: "right",
+      width: 110, //  aumenta el ancho para que quepan los botones
     },
   ];
 
   return (
     <StyledCard
-      title={"Lista de Categorias Activos Fijos"}
+      title={"Lista De Activos Fijos Mantenimientos"}
       extra={
         <Link to={`${location.pathname}/create`}>
           <Button type="primary">Crear</Button>
@@ -185,6 +228,7 @@ export const ListMisActivos = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
@@ -194,9 +238,9 @@ export const ListMisActivos = () => {
             return <Text>Total Registros: {total}</Text>;
           },
         }}
+        style={{ textAlign: "center" }}
         bordered
       />
     </StyledCard>
   );
 };
-

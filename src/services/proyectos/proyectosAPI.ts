@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "../client";
-import { ResponseProcesosProyectos } from "../types";
+import { ResponseProcesosProyectos, ResponseProyectos } from "../types";
 
 //llamar todas los clientes usaremos Am = para identificar que es de adminisracion
 export const getProcesosProyecto = async (): Promise<ResponseProcesosProyectos> => {
@@ -71,6 +71,14 @@ export const getNomenclaturas = async (id: React.Key): Promise<any> => {
 //actualizar Nomenclatura
 export const actualizarNomenclatura = async (data: any): Promise<any> => {
   return await client.post<any>("ActualizarNomenclaturas", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+//llamar todas los proyectos que no llevan movimiento hace un dia
+export const getProyectosSinMovimientos = async (): Promise<ResponseProyectos> => {
+  return await client.get("obras-sin-movimientos", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };

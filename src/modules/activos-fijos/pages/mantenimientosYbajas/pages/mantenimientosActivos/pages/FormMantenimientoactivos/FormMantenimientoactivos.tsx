@@ -21,14 +21,15 @@ import { ActivosCategoria } from "@/services/types";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
 import {
-  crearActiCategoria,
-  getActiCategoria,
-  updateActiCategoria,
-} from "@/services/activosFijos/CategoriasAPI";
+  crearActiBodega,
+  getActiBodega,
+  updateActiBodega,
+} from "@/services/activosFijos/BodegasAPI";
+import { crearActiMantenimiento, updateActiMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
 
 const { Text } = Typography;
 
-export const FormMisActivos = () => {
+export const FormMantenimientoactivos = () => {
   const [api, contextHolder] = notification.useNotification();
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
@@ -40,7 +41,7 @@ export const FormMisActivos = () => {
   useEffect(() => {
     //si hay un id ejecutamos una consulta para traer datos de esa categoria
     if (id) {
-      getActiCategoria(id).then(({ data }) => {
+      getActiBodega(id).then(({ data }) => {
         setCategoria(data);
         setLoaderSave(false);
       });
@@ -64,44 +65,29 @@ export const FormMisActivos = () => {
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
-    data = transformToUpperCase(data, ["emp_nombre"]);
-
     setLoaderSave(true);
 
     if (categoria) {
-      updateActiCategoria(data, id)
+      updateActiMantenimiento(data, id)
         .then(() => {
-          pushNotification({ title: "CLiente actualizado con éxito!" });
+          pushNotification({ title: "Mnatenimiento Actualizado con éxito!" });
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          if (
-            error.response?.data?.message?.includes(
-              "No se puede actualizar el nit porque ya hay un cliente con este NIT."
-            )
-          ) {
-            pushNotification({
-              type: "error",
-              title: "Error",
-              description:
-                "No se puede actualizar el nit porque ya hay un cliente con este NIT.",
-            });
-          } else {
-            pushNotification({
-              type: "error",
-              title: "Error al actualizar",
-              description: error.message || "Ocurrió un error inesperado",
-            });
-          }
+          pushNotification({
+            type: "error",
+            title: "Error al actualizar Mantenimiento",
+            description: error.message || "Ocurrió un error inesperado",
+          });
           setLoaderSave(false);
         });
     } else {
-      crearActiCategoria(data)
+      crearActiMantenimiento(data)
         .then(() => {
-          pushNotification({ title: "Cliente creado con éxito!" });
+          pushNotification({ title: "Mantenimiento Creado!" });
           setTimeout(() => {
             navigate(-1);
           }, 800);
@@ -110,9 +96,7 @@ export const FormMisActivos = () => {
           pushNotification({
             type: "error",
             title: error.error,
-            description: error.response?.data?.errors?.prefijo
-              ? "PREFIJO EN USO"
-              : error.message,
+            description: error.message,
           });
           setLoaderSave(false);
         });
@@ -190,26 +174,7 @@ export const FormMisActivos = () => {
                             : undefined
                         }
                       >
-                        Activos por aceptar
-                      </Text>
-                    ),
-                    children: (
-                      /* campos de input datos basicos */
-                      <DatosBasicos TkCategoria={categoria} />
-                    ),
-                  },
-
-                  {
-                    key: "2",
-                    label: (
-                      <Text
-                        type={
-                          Object.keys(control.formState.errors).length > 0
-                            ? "danger"
-                            : undefined
-                        }
-                      >
-                        Mis Activos
+                        Datos Basicos
                       </Text>
                     ),
                     children: (

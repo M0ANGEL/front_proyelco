@@ -3,7 +3,6 @@ import { Col, Input, Row, Typography } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
-import TextArea from "antd/es/input/TextArea";
 
 const { Text } = Typography;
 
@@ -66,32 +65,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 maxLength={50}
                 placeholder="Nombre"
-                status={error && "error"}
-                style={{ textTransform: "uppercase" }}
-              />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
-        />
-      </Col>
-
-      {/* descripcion */}
-      <Col xs={24} sm={24} style={{ width: "100%" }}>
-        <Controller
-          name="descripcion"
-          control={methods.control}
-          rules={{
-            required: {
-              value: true,
-              message: "La descripcion es requerido",
-            },
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Descripcion">
-              <TextArea
-                {...field}
-                maxLength={200}
-                placeholder="Equipo Computo"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />

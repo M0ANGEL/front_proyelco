@@ -1,14 +1,20 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import { Link, useLocation } from "react-router-dom";
 // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
-import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
 import {
   DeleteActiActivos,
@@ -26,7 +32,6 @@ interface DataType {
   descripcion: string;
   ubicacion_id: string;
   valor: string;
-  fecha_fin_garantia: string;
   condicion: string;
   updated_at: string;
   created_at: string;
@@ -37,6 +42,15 @@ interface DataType {
   usuario: string;
   categoria: string;
   subcategoria: string;
+  tipo_activo: string;
+  origen_activo: string;
+  bodega_actual: string;
+  usuariosAsignados: string;
+  usuarios_confirmaron: string;
+  tipo_ubicacion: string;
+  ubicacion_actual_id: string;
+  usuarios_asignados: string;
+  aceptacion: string;
 }
 
 const { Text } = Typography;
@@ -47,8 +61,6 @@ export const ListCrearActivos = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getSessionVariable } = useSessionStorage();
-  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
@@ -71,6 +83,15 @@ export const ListCrearActivos = () => {
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
             "DD-MM-YYYY HH:mm"
           ),
+          tipo_activo: categoria.tipo_activo.toString(),
+          origen_activo: categoria.origen_activo,
+          bodega_actual: categoria.bodega_actual,
+          usuariosAsignados: categoria.usuariosAsignados,
+          usuarios_confirmaron: categoria.usuarios_confirmaron,
+          tipo_ubicacion: categoria.tipo_ubicacion,
+          ubicacion_actual_id: categoria.ubicacion_actual_id,
+          usuarios_asignados: categoria.usuarios_asignados,
+          aceptacion: categoria.aceptacion.toString(),
         };
       });
 
@@ -105,39 +126,30 @@ export const ListCrearActivos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "ID",
-      dataIndex: "key",
-      key: "key",
+      title: "Tipo Activo",
+      dataIndex: "tipo_activo",
+      key: "tipo_activo",
       fixed: "left",
-    },
-    {
-      title: "Fecha creacion",
-      dataIndex: "created_at",
-      key: "created_at",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Fecha fin garantia",
-      dataIndex: "fecha_fin_garantia",
-      key: "fecha_fin_garantia",
-      sorter: (a, b) =>
-        a.fecha_fin_garantia.localeCompare(b.fecha_fin_garantia),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Usuario Creo",
-      dataIndex: "usuario",
-      key: "usuario",
-      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Categoria",
-      dataIndex: "categoria",
-      key: "categoria",
-      sorter: (a, b) => a.categoria.localeCompare(b.categoria),
-      render: (text) => text?.toUpperCase(),
+      align: "center",
+      render: (_, record: { key: React.Key; tipo_activo: string }) => {
+        let estadoString = "";
+        let color = "";
+
+        if (record.tipo_activo === "1") {
+          estadoString = "MAYORES";
+          color = "green";
+        } else {
+          estadoString = "MENORES";
+          color = "blue";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+      sorter: (a, b) => a.condicion.localeCompare(b.condicion),
     },
     {
       title: "Subcategoria",
@@ -167,13 +179,7 @@ export const ListCrearActivos = () => {
         }
 
         return (
-          <Tag
-            color={color}
-            key={estadoString}
-            icon={
-              loadingRow.includes(record.key) ? <SyncOutlined spin /> : null
-            }
-          >
+          <Tag color={color} key={estadoString}>
             {estadoString.toUpperCase()}
           </Tag>
         );
@@ -185,6 +191,24 @@ export const ListCrearActivos = () => {
       dataIndex: "numero_activo",
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
+      align: "center",
+    },
+    {
+      title: "Ubicacion Actual",
+      dataIndex: "bodega_actual",
+      key: "bodega_actual",
+      sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
+      align: "center",
+    },
+    {
+      title: "Responsable",
+      dataIndex: "usuariosAsignados",
+      key: "usuariosAsignados",
+      align: "center",
+      render: (usuarios) =>
+        usuarios && usuarios.length > 0
+          ? usuarios.join(", ")
+          : "Sin Responsable",
     },
 
     {
@@ -192,15 +216,53 @@ export const ListCrearActivos = () => {
       dataIndex: "valor",
       key: "valor",
       sorter: (a, b) => a.valor.localeCompare(b.valor),
+      align: "center",
     },
     {
-      title: "Estado",
+      title: "Estado Traslado",
+      dataIndex: "aceptacion",
+      key: "aceptacion",
+      align: "center",
+      render: (_, record: { key: React.Key; aceptacion: string }) => {
+        let estadoString;
+        let color;
+
+        if (record.aceptacion == "0") {
+          estadoString = "Sin Trasladar";
+          color = "yellow";
+        } else if (record.aceptacion == "1") {
+          estadoString = "Pendiente";
+          color = "red";
+        } else if (record.aceptacion == "2") {
+          estadoString = "Aceptado";
+          color = "green";
+        } else if (record.aceptacion == "3") {
+          estadoString = "Rechazado";
+          color = "red";
+        } else if (record.aceptacion == "4") {
+          estadoString = "Mantenimiento";
+          color = "blue";
+        } else {
+          estadoString = "Mantenimiento";
+          color = "blue";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Estado Activo",
       dataIndex: "estado",
       key: "estado",
       align: "center",
       render: (_, record: { key: React.Key; estado: string }) => {
         let estadoString = "";
         let color;
+
         if (record.estado === "1") {
           estadoString = "ACTIVO";
           color = "green";
@@ -208,17 +270,23 @@ export const ListCrearActivos = () => {
           estadoString = "INACTIVO";
           color = "red";
         }
+
+        // condición clara para habilitar
+        const isDisabled = !["0", "3"].includes(record.aceptacion);
+
         return (
           <Popconfirm
-            title="¿Desea cambiar el estado?"
+            title="¿Desea cambiar el estado (Dar de baja)?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
+            disabled={isDisabled} // 👈 también bloquea el Popconfirm
           >
-            <ButtonTag
-              color={color}
-              disabled={!["administrador"].includes(user_rol)}
-            >
-              <Tooltip title="Cambiar estado">
+            <ButtonTag color={color} disabled={isDisabled}>
+              <Tooltip
+                title={
+                  isDisabled ? "No disponible para este activo" : "Dar de baja"
+                }
+              >
                 <Tag
                   color={color}
                   key={estadoString}
@@ -235,15 +303,15 @@ export const ListCrearActivos = () => {
           </Popconfirm>
         );
       },
-      sorter: (a, b) => a.estado.localeCompare(b.estado),
     },
+
     {
       title: "Acciones",
       dataIndex: "acciones",
       key: "acciones",
       align: "center",
       render: (_, record) => (
-        <>
+        <Space>
           <Tooltip title="Editar">
             <Link to={`${location.pathname}/edit/${record.key}`}>
               <Button icon={<EditOutlined />} type="primary" size="small" />
@@ -251,11 +319,11 @@ export const ListCrearActivos = () => {
           </Tooltip>
 
           <VerFoto id={record.key} />
-          <GenerarQR id={record.key} />
-        </>
+          <GenerarQR id={record.key} numero_activo={record.numero_activo} />
+        </Space>
       ),
       fixed: "right",
-      width: 50,
+      width: 120, //  aumenta el ancho para que quepan los botones
     },
   ];
 
@@ -278,6 +346,7 @@ export const ListCrearActivos = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
@@ -287,6 +356,7 @@ export const ListCrearActivos = () => {
             return <Text>Total Registros: {total}</Text>;
           },
         }}
+        style={{ textAlign: "center" }}
         bordered
       />
     </StyledCard>

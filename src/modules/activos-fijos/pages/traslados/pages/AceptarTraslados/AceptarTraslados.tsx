@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Typography } from "antd";
+import {
+  Button,
+  Input,
+  Popconfirm,
+  Space,
+  Tag,
+  Tooltip,
+  Typography,
+} from "antd";
 import { Link } from "react-router-dom";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
@@ -10,7 +18,9 @@ import {
   aceptarActivo,
   getActiActivosAceptar,
 } from "@/services/activosFijos/TrasladosActivosAPI";
-import { AiOutlineCheck } from "react-icons/ai";
+import { AiOutlineCheck, } from "react-icons/ai";
+import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
+import { ModalRechazarActivo } from "./ModalRechazarActivo";
 
 interface DataType {
   key: number;
@@ -90,7 +100,10 @@ export const AceptarTraslados = () => {
     setDataSource(filterTable);
   };
 
-  //cambio de estado
+
+
+
+    //aceptar activo traslado
   const AceptarTraslado = (id: React.Key) => {
     aceptarActivo(id)
       .then(() => {
@@ -187,25 +200,35 @@ export const AceptarTraslados = () => {
       },
       sorter: (a, b) => a.aceptacion - b.aceptacion, // numeric sorter
     },
-
     {
       title: "Acciones",
       dataIndex: "acciones",
       key: "acciones",
       align: "center",
       render: (_, record) => (
-        <>
-          <Popconfirm
-            title="¿Aceptar Traslado?"
-            onConfirm={() => AceptarTraslado(record.key)}
-            placement="left"
-          >
-            <Button icon={<AiOutlineCheck />} type="primary" />
-          </Popconfirm>
-        </>
+        <Space>
+          <ModalRechazarActivo data={record} fetchList={() => fetchCategorias()} />
+
+          <Tooltip title="¿Aceptar Traslado?">
+            <Popconfirm
+              title="¿Aceptar Traslado?"
+              onConfirm={() => AceptarTraslado(record.key)}
+              placement="left"
+            >
+              <Button
+                icon={<AiOutlineCheck />}
+                size="small"
+                type="primary"
+                style={{ backgroundColor: "green" }}
+              />
+            </Popconfirm>
+          </Tooltip>
+
+          <VerFoto id={record.key} />
+        </Space>
       ),
       fixed: "right",
-      width: 70,
+      width: 150,
     },
   ];
 
@@ -230,6 +253,7 @@ export const AceptarTraslados = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
