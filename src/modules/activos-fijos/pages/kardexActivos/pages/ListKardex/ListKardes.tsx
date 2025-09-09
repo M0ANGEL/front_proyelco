@@ -71,7 +71,6 @@ export const ListKardex = () => {
           subcategoria: categoria.subcategoria,
           numero_activo: categoria.numero_activo,
           valor: categoria.valor,
-          aceptacion: categoria.aceptacion,
           condicion: categoria.condicion.toString(),
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
