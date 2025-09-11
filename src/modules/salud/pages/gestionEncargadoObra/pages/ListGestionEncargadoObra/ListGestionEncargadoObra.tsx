@@ -9,7 +9,7 @@ import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsu
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
-  getGestionProyecto,
+  getGestionProyectoEncargado,
   IniciarProyecto,
 } from "@/services/proyectos/gestionProyectoAPI";
 import { ModalInforme } from "./ModalInforme";
@@ -58,7 +58,7 @@ const ListGestionEncargadoObra = () => {
   }, []);
 
   const fetchCategorias = () => {
-    getGestionProyecto().then(({ data: { data } }) => {
+    getGestionProyectoEncargado().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,

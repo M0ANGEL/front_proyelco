@@ -7,9 +7,7 @@ import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
 import "./CustomList.css";
-import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
 import {
-  Popconfirm,
   Typography,
   Tooltip,
   Button,
@@ -18,20 +16,16 @@ import {
   List,
   Col,
   Row,
-  Tag,
   Switch,
   Spin,
 } from "antd";
-import { DeleteProyecto } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
-
-const { Text } = Typography;
+import { ModalInforme } from "../ListGestionProyecto/ModalInforme";
 
 export const ListGestioNueva = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
   const [initialData, setInitialData] = useState<DataType[]>([]);
-  const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
   const [searchValue, setSearchValue] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -61,20 +55,8 @@ export const ListGestioNueva = () => {
         };
       });
       setInitialData(convenios);
-      setLoadingRow([]);
       setLoading(false);
     });
-  };
-
-  const handleStatus = (id: React.Key) => {
-    setLoadingRow([...loadingRow, id]);
-    DeleteProyecto(id)
-      .then(() => {
-        fetchConvenios();
-      })
-      .catch(() => {
-        setLoadingRow([]);
-      });
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -234,51 +216,6 @@ export const ListGestioNueva = () => {
                         />
                         <div className="actions-container">
                           <div className="status-container">
-                            <Popconfirm
-                              title="¿Desea cambiar el estado?"
-                              onConfirm={() => handleStatus(item.key)}
-                              placement="left"
-                            >
-                              <ButtonTag className="custom-button-tag">
-                                <Tooltip title="Cambiar estado">
-                                  <Tag
-                                    color={
-                                      item.estado === "1"
-                                        ? "#C2E5C2"
-                                        : "#FFCCCB"
-                                    }
-                                    key={item.estado}
-                                    style={{
-                                      color:
-                                        item.estado === "1"
-                                          ? "#2E8B57"
-                                          : "#D32F2F",
-                                      border: "none",
-                                    }}
-                                    icon={
-                                      loadingRow.includes(item.key) ? (
-                                        <SyncOutlined spin />
-                                      ) : (
-                                        <CheckCircleFilled
-                                          style={{
-                                            color:
-                                              item.estado === "1"
-                                                ? "#2E8B57"
-                                                : "#D32F2F",
-                                          }}
-                                        />
-                                      )
-                                    }
-                                  >
-                                    {item.estado === "1"
-                                      ? "ACTIVO"
-                                      : "INACTIVO"}
-                                  </Tag>
-                                </Tooltip>
-                              </ButtonTag>
-                            </Popconfirm>
-                          </div>
-                          <div className="status-container">
                             <Tooltip title="Ver Proceso Proyecto">
                               <Link
                                 to={`${location.pathname}/proceso/${item.key}`}
@@ -297,6 +234,9 @@ export const ListGestioNueva = () => {
                                 </ButtonTag>
                               </Link>
                             </Tooltip>
+                          </div>
+                          <div className="status-container">
+                            <ModalInforme proyecto={item} />
                           </div>
                         </div>
                       </div>
