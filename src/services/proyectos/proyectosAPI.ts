@@ -82,3 +82,11 @@ export const getProyectosSinMovimientos = async (): Promise<ResponseProyectos> =
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+//llamar todas los proyectos que no llevan movimiento hace un dia
+export const getProyectosSinMovimientosIng = async (): Promise<ResponseProyectos> => {
+  return await client.get("obras-sin-movimientos-ing", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+

@@ -3,12 +3,20 @@ import { client } from "../client";
 import { ResponseProyectos } from "../types";
 
 
-//llamar todas los clientes usaremos Am = para identificar que es de adminisracion
+//llamar todas los proyectos
 export const getGestionProyecto = async (): Promise<ResponseProyectos> => {
   return await client.get("gestion-proyectos", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+//llamar todas los proyectos
+export const getGestionProyectoEncargado = async (): Promise<ResponseProyectos> => {
+  return await client.get("gestion-proyectos-encargados", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
 
 
 //crear el proceos

@@ -27,6 +27,7 @@ import {
   getProyectos,
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
 
 const { Text } = Typography;
 
@@ -313,6 +314,9 @@ export const ListConvenios = () => {
                                 </ButtonTag>
                               </Link>
                             </Tooltip>
+                          </div>
+                          <div className="status-container">
+                            <ModalInforme proyecto={item} />
                           </div>
                         </div>
                       </div>
