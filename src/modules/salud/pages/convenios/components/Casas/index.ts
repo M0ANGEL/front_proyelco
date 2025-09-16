@@ -1,0 +1,1 @@
+export {ResumenManzanas} from './ResumenManzanas'

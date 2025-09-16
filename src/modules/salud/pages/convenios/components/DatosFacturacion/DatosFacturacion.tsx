@@ -579,7 +579,7 @@ export const DatosFacturacion = ({
             <>
               <Col xs={24} sm={5}>
                 <Controller
-                  name="activador_pordia_casa"
+                  name="activador_pordia_fundida"
                   control={methods.control}
                   rules={{
                     required: "Número es requerido",
