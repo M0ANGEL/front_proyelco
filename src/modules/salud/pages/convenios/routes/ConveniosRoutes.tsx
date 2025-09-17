@@ -4,6 +4,7 @@ import { Route } from "react-router-dom";
 import { ListConvenios, FormConvenios } from "../pages";
 import { ResumenManzanas, VistaProcesoProyectos } from "../components";
 import { ResumenTorres } from "../components/VistaProceso";
+import { VistaProcesoCasa } from "../components/Casas";
 
 export const ConveniosRoutes = () => {
   return (
@@ -15,7 +16,7 @@ export const ConveniosRoutes = () => {
         <Route path="/proceso/:id" element={<ResumenTorres />} />
         <Route path="/proceso/:id/detalle" element={<VistaProcesoProyectos />} />
          <Route path="/proceso-casa/:id" element={<ResumenManzanas />} />
-        <Route path="/proceso-casa/:id/detalle" element={<VistaProcesoProyectos />} />
+        <Route path="/proceso-casa/:id/detalle" element={<VistaProcesoCasa />} />
       </Route>
     </RoutesWithNotFound>
   );

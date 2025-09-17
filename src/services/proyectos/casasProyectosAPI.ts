@@ -42,12 +42,12 @@ import { ResponseProyectos } from "../types";
 //   });
 // };
 
-// //Iniciar Proyecto 
-// export const IniciarProyecto = async ( id: any): Promise<any> => {
-//   return await client.delete<any>(`gestion-proyectos/${id}`, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
+//Iniciar Proyecto 
+export const IniciarProyectoCasas = async ( id: any): Promise<any> => {
+  return await client.delete<any>(`gestion-proyectos-casas/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
 
 // //detalle del proyecto
 export const getProyectoDetalleGestionCasa = async (id: React.Key): Promise<any> => {
@@ -79,19 +79,19 @@ export const InfoProyectoCasa = async (id: React.Key): Promise<any> => {
 };
 
 
-// //confirmar apartamento 
-// export const confirmarAptGestion = async ( id: any): Promise<any> => {
-//   return await client.get<any>(`gestion-confirmar-apartamento/${id}`, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
+//confirmar proceos casas 
+export const confirmarCasaGestion = async ( id: any): Promise<any> => {
+  return await client.get<any>(`gestion-confirmar-apartamento/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
 
-// //confirmar apartamento 
-// export const confirmarValidacionApt = async ( data: any): Promise<any> => {
-//   return await client.post<any>(`gestion-confirmar-validar`, data,{
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
+//confirmar apartamento 
+export const confirmarValidacionCasa = async ( data: any): Promise<any> => {
+  return await client.post<any>(`gestion-confirmar-validar`, data,{
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
 
 
 // //confirmar pisos por dia 

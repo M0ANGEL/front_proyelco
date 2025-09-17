@@ -16,7 +16,6 @@ export const ModalInfoApt = ({
 }: ModalInfoAptProps) => {
   if (!isOpen) return null;
 
-  console.log(selectedApt);
 
   return (
     <div
