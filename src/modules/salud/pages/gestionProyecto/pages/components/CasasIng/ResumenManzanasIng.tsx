@@ -20,7 +20,7 @@ import { AiOutlineExpandAlt } from "react-icons/ai";
 
 const { Title, Text } = Typography;
 
-export const ResumenManzanas = () => {
+export const ResumenManzanasIng = () => {
   const [data, setData] = useState<any>({});
   const [porcetanjeManzana, setPorcetanjeManzana] = useState<any>({});
   const [loading, setLoading] = useState(false);
@@ -261,7 +261,7 @@ export const ResumenManzanas = () => {
             Object.entries(data[manzanaSeleccionada] || {}).map(
               ([casaKey, casaContenido]: any) => (
                 <Panel
-                style={{background: "#1a4c9e"}}
+                  style={{ background: "#1a4c9e" }}
                   key={casaKey}
                   header={
                     <Title level={5} style={{ margin: 0, color: "white" }}>
@@ -293,7 +293,7 @@ export const ResumenManzanas = () => {
                                 }}
                               >
                                 <Text>{proceso.nombre_proceso}</Text>
-                                
+
                                 <Tooltip title={`Estado: ${proceso.estado}`}>
                                   <div
                                     style={{

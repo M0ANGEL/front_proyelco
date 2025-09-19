@@ -24,12 +24,12 @@ import {
 } from "antd";
 import {
   DeleteProyecto,
+  DeleteProyectoCasa,
   getProyectos,
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
 
-const { Text } = Typography;
 
 export const ListConvenios = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
@@ -117,6 +117,16 @@ export const ListConvenios = () => {
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
     DeleteProyecto(id)
+      .then(() => {
+        fetchConvenios();
+      })
+      .catch(() => {
+        setLoadingRow([]);
+      });
+  };
+  const handleStatusCasas = (id: React.Key) => {
+    setLoadingRow([...loadingRow, id]);
+    DeleteProyectoCasa(id)
       .then(() => {
         fetchConvenios();
       })
@@ -298,7 +308,11 @@ export const ListConvenios = () => {
                           <div className="status-container">
                             <Popconfirm
                               title="¿Desea cambiar el estado?"
-                              onConfirm={() => handleStatus(item.key)}
+                              onConfirm={
+                                item.tipo === "Casa"
+                                  ? () => handleStatusCasas(item.key)
+                                  : () => handleStatus(item.key)
+                              }
                               placement="left"
                             >
                               <ButtonTag className="custom-button-tag">
@@ -388,9 +402,15 @@ export const ListConvenios = () => {
                             </>
                           )}
 
-                          <div className="status-container">
-                            <ModalInforme proyecto={item} />
-                          </div>
+                          {item.tipo == "Casa" ? (
+                            <></>
+                          ) : (
+                            <>
+                              <div className="status-container">
+                                <ModalInforme proyecto={item} />
+                              </div>
+                            </>
+                          )}
                         </div>
                         <span
                           style={{ color: "red", fontSize: 15, marginTop: 5 }}

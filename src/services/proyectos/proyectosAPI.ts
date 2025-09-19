@@ -90,3 +90,11 @@ export const getProyectosSinMovimientosIng = async (): Promise<ResponseProyectos
   });
 };
 
+//cambiar el estado de los proyectos casas 
+export const DeleteProyectoCasa = async ( id: any): Promise<any> => {
+  return await client.delete<any>(`activar-proyecto/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+

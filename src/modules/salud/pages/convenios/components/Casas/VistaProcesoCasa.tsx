@@ -10,10 +10,15 @@ import {
   Divider,
   Space,
   Alert,
+  Collapse,
+  Tooltip,
 } from "antd";
 import { useState, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftOutlined, FilterOutlined } from "@ant-design/icons";
+import { detalleCasa } from "@/services/proyectos/casasProyectosAPI";
+import { Apartment } from "@/services/types";
+import { ModalInfoCassas } from "./ModalInfoCassas";
 
 const { Title, Text } = Typography;
 
@@ -27,6 +32,11 @@ export const VistaProcesoCasa = () => {
   );
   const [filtroProceso, setFiltroProceso] = useState("");
   const [filtroEtapa, setFiltroEtapa] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [loadingModal, setLoadingModal] = useState(false);
+  const [selectedCasas, setSelectedCasas] = useState<Apartment | null>(null);
+
+  const { Panel } = Collapse;
 
   // Modal de info de procesos
   const [modalProcesosOpen, setModalProcesosOpen] = useState(false);
@@ -40,21 +50,22 @@ export const VistaProcesoCasa = () => {
     const etapasSet = new Set();
     Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
       Object.values(casa.pisos || {}).forEach((piso: any) => {
-        Object.keys(piso).forEach(etapaKey => {
+        Object.keys(piso).forEach((etapaKey) => {
           etapasSet.add(etapaKey);
         });
       });
     });
 
-    return Array.from(etapasSet).map(etapa => ({
+    return Array.from(etapasSet).map((etapa) => ({
       label: `Etapa ${etapa}`,
-      value: etapa
+      value: etapa,
     }));
   }, [manzanaSeleccionada, data]);
 
   // Obtener procesos únicos para la etapa seleccionada
   const procesosPorEtapa = useMemo(() => {
-    if (!manzanaSeleccionada || !data[manzanaSeleccionada] || !filtroEtapa) return [];
+    if (!manzanaSeleccionada || !data[manzanaSeleccionada] || !filtroEtapa)
+      return [];
 
     const procesosSet = new Set();
     Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
@@ -90,24 +101,26 @@ export const VistaProcesoCasa = () => {
 
       Object.keys(casa.pisos || {}).forEach((pisoKey) => {
         const etapasFiltradas = {};
-        
-        Object.entries(casa.pisos[pisoKey]).forEach(([etapaKey, etapa]: any) => {
-          // Solo procesamos la etapa seleccionada
-          if (etapaKey !== filtroEtapa) return;
-          
-          const procesosFiltrados = {};
-          
-          Object.entries(etapa).forEach(([procesoId, proceso]: any) => {
-            // Si hay filtro de proceso, solo mostramos procesos que coincidan
-            if (!filtroProceso || proceso.nombre_proceso === filtroProceso) {
-              procesosFiltrados[procesoId] = proceso;
-            }
-          });
 
-          if (Object.keys(procesosFiltrados).length > 0) {
-            etapasFiltradas[etapaKey] = procesosFiltrados;
+        Object.entries(casa.pisos[pisoKey]).forEach(
+          ([etapaKey, etapa]: any) => {
+            // Solo procesamos la etapa seleccionada
+            if (etapaKey !== filtroEtapa) return;
+
+            const procesosFiltrados = {};
+
+            Object.entries(etapa).forEach(([procesoId, proceso]: any) => {
+              // Si hay filtro de proceso, solo mostramos procesos que coincidan
+              if (!filtroProceso || proceso.nombre_proceso === filtroProceso) {
+                procesosFiltrados[procesoId] = proceso;
+              }
+            });
+
+            if (Object.keys(procesosFiltrados).length > 0) {
+              etapasFiltradas[etapaKey] = procesosFiltrados;
+            }
           }
-        });
+        );
 
         if (Object.keys(etapasFiltradas).length > 0) {
           pisosFiltrados[pisoKey] = etapasFiltradas;
@@ -124,29 +137,40 @@ export const VistaProcesoCasa = () => {
   // Función para obtener el color del estado basado en el valor de la data
   const getColorEstado = (estado: string) => {
     switch (estado) {
-      case "2": return "green"; // Completado - Verde
-      case "1": return "blue";  // En progreso - Azul
-      case "0": return "default"; // Pendiente - Gris
-      default: return "default"; // Por defecto - Gris
+      case "2":
+        return "green"; // Completado - Verde
+      case "1":
+        return "blue"; // En progreso - Azul
+      case "0":
+        return "default"; // Pendiente - Gris
+      default:
+        return "default"; // Por defecto - Gris
     }
   };
 
   // Función para obtener el texto del estado basado en el valor de la data
   const getTextoEstado = (estado: string) => {
     switch (estado) {
-      case "2": return "Completado";
-      case "1": return "Habilitado";
-      case "0": return "Pendiente";
-      default: return "Desconocido";
+      case "2":
+        return "Completado";
+      case "1":
+        return "Habilitado";
+      case "0":
+        return "Pendiente";
+      default:
+        return "Desconocido";
     }
   };
 
   // Función para obtener el color de la etapa
   const getColorEtapa = (etapa: string) => {
     switch (etapa) {
-      case "1": return "blue";
-      case "2": return "green";
-      default: return "default";
+      case "1":
+        return "blue";
+      case "2":
+        return "green";
+      default:
+        return "default";
     }
   };
 
@@ -160,6 +184,20 @@ export const VistaProcesoCasa = () => {
   const manejarCambioEtapa = (valor: string) => {
     setFiltroEtapa(valor);
     setFiltroProceso(""); // Resetear filtro de proceso al cambiar etapa
+  };
+
+  //consultar informe del proceso
+  const handleCasaClick = async (aptId: number) => {
+    setLoadingModal(true);
+    setModalOpen(true);
+    try {
+      const { data } = await detalleCasa({ id: aptId });
+      setSelectedCasas(data.data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingModal(false);
+    }
   };
 
   return (
@@ -272,7 +310,11 @@ export const VistaProcesoCasa = () => {
             {/* Filtro por Proceso (opcional) - Solo procesos de la etapa seleccionada */}
             <Col xs={24} sm={12} md={8} lg={6}>
               <Select
-                placeholder={filtroEtapa ? "Filtrar por proceso (opcional)" : "Primero seleccione una etapa"}
+                placeholder={
+                  filtroEtapa
+                    ? "Filtrar por proceso (opcional)"
+                    : "Primero seleccione una etapa"
+                }
                 style={{ width: "100%" }}
                 value={filtroProceso}
                 onChange={setFiltroProceso}
@@ -290,9 +332,7 @@ export const VistaProcesoCasa = () => {
             <Col xs={24} sm={12} md={8} lg={6} style={{ textAlign: "right" }}>
               <Space>
                 {hayFiltrosAplicados && (
-                  <Button onClick={limpiarFiltros}>
-                    Limpiar filtros
-                  </Button>
+                  <Button onClick={limpiarFiltros}>Limpiar filtros</Button>
                 )}
                 {manzanaSeleccionada && (
                   <Button
@@ -311,19 +351,23 @@ export const VistaProcesoCasa = () => {
         {hayFiltrosAplicados && (
           <div>
             {/* Resumen de filtros aplicados */}
-            <Alert 
+            <Alert
               message={
                 <span>
                   <Text strong>Filtros aplicados: </Text>
-                  <Tag color="blue" style={{ marginLeft: 8 }}>Etapa: {filtroEtapa}</Tag>
+                  <Tag color="blue" style={{ marginLeft: 8 }}>
+                    Etapa: {filtroEtapa}
+                  </Tag>
                   {filtroProceso && (
-                    <Tag color="green" style={{ marginLeft: 8 }}>Proceso: {filtroProceso}</Tag>
+                    <Tag color="green" style={{ marginLeft: 8 }}>
+                      Proceso: {filtroProceso}
+                    </Tag>
                   )}
                 </span>
-              } 
-              type="info" 
-              style={{ marginBottom: 16 }} 
-              closable 
+              }
+              type="info"
+              style={{ marginBottom: 16 }}
+              closable
               onClose={limpiarFiltros}
             />
 
@@ -348,15 +392,21 @@ export const VistaProcesoCasa = () => {
                         hoverable
                       >
                         {/* Header de la Casa */}
-                        <div style={{ 
-                          textAlign: "center", 
-                          marginBottom: "16px",
-                          padding: "12px",
-                          background: "linear-gradient(135deg, #1890ff, #36cfc9)",
-                          borderRadius: "8px",
-                          color: "white"
-                        }}>
-                          <Title level={4} style={{ margin: 0, color: "white" }}>
+                        <div
+                          style={{
+                            textAlign: "center",
+                            marginBottom: "16px",
+                            padding: "5px",
+                            background:
+                              "linear-gradient(135deg, #1890ff, #36cfc9)",
+                            borderRadius: "8px",
+                            color: "white",
+                          }}
+                        >
+                          <Title
+                            level={4}
+                            style={{ margin: 0, color: "white" }}
+                          >
                             Casa {casaContenido.consecutivo}
                           </Title>
                         </div>
@@ -373,7 +423,7 @@ export const VistaProcesoCasa = () => {
                                   padding: "8px 12px",
                                   borderRadius: "6px",
                                   marginBottom: "12px",
-                                  borderLeft: "4px solid #1890ff"
+                                  borderLeft: "4px solid #1890ff",
                                 }}
                               >
                                 <Text
@@ -388,77 +438,118 @@ export const VistaProcesoCasa = () => {
                               </div>
 
                               {/* Etapas del piso */}
-                              {Object.entries(etapas).map(([etapaKey, procesos]: any) => (
-                                <div key={etapaKey} style={{ marginBottom: "16px" }}>
-                                  {/* Header de la Etapa */}
-                                  <Divider orientation="left" orientationMargin="0">
-                                    <Tag color={getColorEtapa(etapaKey)} style={{ fontSize: "12px", padding: "4px 8px" }}>
-                                      Etapa {etapaKey}
-                                    </Tag>
-                                  </Divider>
-
-                                  {/* Procesos de la etapa */}
-                                  {Object.entries(procesos).map(
-                                    ([procesoId, proceso]: any) => (
-                                      <div
-                                        key={procesoId}
+                              {Object.entries(etapas).map(
+                                ([etapaKey, procesos]: any) => (
+                                  <div
+                                    key={etapaKey}
+                                    style={{ marginBottom: "16px" }}
+                                  >
+                                    {/* Header de la Etapa */}
+                                    <Divider
+                                      orientation="left"
+                                      orientationMargin="0"
+                                    >
+                                      <Tag
+                                        color={getColorEtapa(etapaKey)}
                                         style={{
-                                          padding: "12px",
-                                          background: "#fafafa",
-                                          borderRadius: "8px",
-                                          marginBottom: "12px",
-                                          border: "1px solid #e8e8e8",
+                                          fontSize: "12px",
+                                          padding: "4px 8px",
                                         }}
                                       >
-                                        {/* Nombre del proceso y estado */}
-                                        <div style={{ 
-                                          display: "flex", 
-                                          justifyContent: "space-between", 
-                                          alignItems: "flex-start",
-                                          marginBottom: "8px"
-                                        }}>
-                                          <Text strong style={{ fontSize: "14px", color: "#262626" }}>
-                                            {proceso.nombre_proceso}
-                                          </Text>
-                                          <Tag 
-                                            color={getColorEstado(proceso.estado)}
-                                            style={{ 
-                                              fontSize: "12px", 
-                                              padding: "4px 8px",
-                                              margin: 0,
-                                              borderRadius: "12px"
+                                        Etapa {etapaKey}
+                                      </Tag>
+                                    </Divider>
+
+                                    {/* Procesos de la etapa */}
+                                    {Object.entries(procesos).map(
+                                      ([procesoId, proceso]: any) => (
+                                        <div
+                                          key={procesoId}
+                                          style={{
+                                            padding: "12px",
+                                            background: "#fafafa",
+                                            borderRadius: "8px",
+                                            marginBottom: "12px",
+                                            border: "1px solid #e8e8e8",
+                                          }}
+                                        >
+                                          {/* Nombre del proceso y estado */}
+                                          <div
+                                            style={{
+                                              display: "flex",
+                                              justifyContent: "space-between",
+                                              alignItems: "flex-start",
+                                              marginBottom: "8px",
                                             }}
                                           >
-                                            {getTextoEstado(proceso.estado)}
-                                          </Tag>
+                                            <Text
+                                              strong
+                                              style={{
+                                                fontSize: "14px",
+                                                color: "#262626",
+                                              }}
+                                            >
+                                              {proceso.nombre_proceso}
+                                            </Text>
+                                            <Tag
+                                              color={getColorEstado(
+                                                proceso.estado
+                                              )}
+                                              style={{
+                                                fontSize: "12px",
+                                                padding: "4px 8px",
+                                                margin: 0,
+                                                borderRadius: "12px",
+                                              }}
+                                              onClick={() =>
+                                                handleCasaClick(proceso.id)
+                                              }
+                                            >
+                                              {getTextoEstado(proceso.estado)}
+                                            </Tag>
+                                          </div>
+
+                                          {/* Información adicional */}
+                                          <div
+                                            style={{
+                                              borderTop: "1px dashed #e8e8e8",
+                                              paddingTop: "8px",
+                                            }}
+                                          >
+                                            {proceso.text_validacion && (
+                                              <Text
+                                                type="secondary"
+                                                style={{
+                                                  fontSize: "12px",
+                                                  display: "block",
+                                                  marginBottom: "4px",
+                                                }}
+                                              >
+                                                ❓ {proceso.text_validacion}
+                                              </Text>
+                                            )}
+
+                                            {/* Mostrar información de validación si existe */}
+                                            {proceso.validacion === 1 && (
+                                              <Text
+                                                type="secondary"
+                                                style={{
+                                                  fontSize: "12px",
+                                                  display: "block",
+                                                }}
+                                              >
+                                                {proceso.estado_validacion === 1
+                                                  ? "✅ Validado"
+                                                  : "⏳ Pendiente validación"}
+                                              </Text>
+                                            )}
+                                          </div>
                                         </div>
-                                        
-                                        {/* Información adicional */}
-                                        <div style={{ borderTop: "1px dashed #e8e8e8", paddingTop: "8px" }}>
-                                          {proceso.text_validacion && (
-                                            <Text type="secondary" style={{ fontSize: "12px", display: "block", marginBottom: "4px" }}>
-                                              📝 {proceso.text_validacion}
-                                            </Text>
-                                          )}
-                                          
-                                          {proceso.usuario && (
-                                            <Text type="secondary" style={{ fontSize: "12px", display: "block" }}>
-                                              👤 {proceso.usuario}
-                                            </Text>
-                                          )}
-                                          
-                                          {/* Mostrar información de validación si existe */}
-                                          {proceso.validacion === 1 && (
-                                            <Text type="secondary" style={{ fontSize: "12px", display: "block" }}>
-                                              {proceso.estado_validacion === 1 ? "✅ Validado" : "⏳ Pendiente validación"}
-                                            </Text>
-                                          )}
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
-                                </div>
-                              ))}
+                                      )
+                                    )}
+                                  </div>
+                                )
+                              )}
                             </div>
                           ))}
                       </Card>
@@ -476,11 +567,17 @@ export const VistaProcesoCasa = () => {
                   border: "2px dashed #d9d9d9",
                 }}
               >
-                <Title level={4} style={{ color: "#8c8c8c", marginBottom: "16px" }}>
+                <Title
+                  level={4}
+                  style={{ color: "#8c8c8c", marginBottom: "16px" }}
+                >
                   No se encontraron resultados para los filtros aplicados
                 </Title>
-                <Text type="secondary" style={{ display: "block", marginBottom: "16px" }}>
-                  {filtroProceso 
+                <Text
+                  type="secondary"
+                  style={{ display: "block", marginBottom: "16px" }}
+                >
+                  {filtroProceso
                     ? `No hay procesos "${filtroProceso}" en la etapa ${filtroEtapa}`
                     : `No hay procesos en la etapa ${filtroEtapa}`}
                 </Text>
@@ -510,15 +607,29 @@ export const VistaProcesoCasa = () => {
             <Title level={4} style={{ color: "#8c8c8c", marginBottom: "16px" }}>
               Seleccione una etapa para visualizar los procesos
             </Title>
-            <Text type="secondary" style={{ fontSize: "16px", display: "block", marginBottom: "16px" }}>
+            <Text
+              type="secondary"
+              style={{
+                fontSize: "16px",
+                display: "block",
+                marginBottom: "16px",
+              }}
+            >
               El filtro de etapa es obligatorio para mostrar la información
             </Text>
             <div style={{ marginTop: 24 }}>
-              <Text strong style={{ display: "block", marginBottom: 8 }}>Opciones de filtrado:</Text>
-              <div style={{ textAlign: "left", maxWidth: 400, margin: "0 auto" }}>
+              <Text strong style={{ display: "block", marginBottom: 8 }}>
+                Opciones de filtrado:
+              </Text>
+              <div
+                style={{ textAlign: "left", maxWidth: 400, margin: "0 auto" }}
+              >
                 <ul>
                   <li>Seleccione una etapa para ver todos sus procesos</li>
-                  <li>Luego puede filtrar adicionalmente por un proceso específico de esa etapa</li>
+                  <li>
+                    Luego puede filtrar adicionalmente por un proceso específico
+                    de esa etapa
+                  </li>
                 </ul>
               </div>
             </div>
@@ -546,67 +657,92 @@ export const VistaProcesoCasa = () => {
         )}
       </div>
 
+      {/* info del proceso */}
+      <ModalInfoCassas
+        isOpen={modalOpen}
+        loading={loadingModal}
+        onClose={() => setModalOpen(false)}
+        selectedApt={selectedCasas}
+      />
+
       {/* Modal de procesos */}
       <Modal
         open={modalProcesosOpen}
         onCancel={() => setModalProcesosOpen(false)}
         footer={null}
-        title={`Procesos de ${
-          porcetanjeManzana[manzanaSeleccionada!]?.nombre_manzana || "Manzana"
+        title={`Detalle de manzana: ${
+          manzanaSeleccionada
+            ? porcetanjeManzana[manzanaSeleccionada]?.nombre_manzana ||
+              `Manzana ${manzanaSeleccionada}`
+            : "Manzana"
         }`}
         centered
-        width={700}
+        width={500}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <Collapse accordion>
           {manzanaSeleccionada &&
             Object.entries(data[manzanaSeleccionada] || {}).map(
               ([casaKey, casaContenido]: any) => (
-                <div key={casaKey}>
-                  <Title level={5} style={{ marginBottom: 12 }}>
-                    Casa {casaContenido.consecutivo}
-                  </Title>
-                  {Object.entries(casaContenido.pisos || {}).map(
-                    ([pisoKey, etapas]: any) => (
-                      <div key={pisoKey} style={{ marginBottom: 16 }}>
-                        <Text strong>Piso {pisoKey}</Text>
-                        {Object.entries(etapas).map(([etapaKey, procesos]: any) => (
-                          <div key={etapaKey} style={{ marginTop: 8 }}>
-                            <Tag color={getColorEtapa(etapaKey)}>Etapa {etapaKey}</Tag>
-                            {Object.entries(procesos).map(
-                              ([procesoId, proceso]: any) => (
-                                <div
-                                  key={procesoId}
-                                  style={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    gap: "12px",
-                                    padding: "8px 12px",
-                                    borderRadius: "8px",
-                                    background: "rgba(245,245,245,0.8)",
-                                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                                    marginTop: 8,
-                                  }}
-                                >
+                <Panel
+                  style={{ background: "#1a4c9e" }}
+                  key={casaKey}
+                  header={
+                    <Title level={5} style={{ margin: 0, color: "white" }}>
+                      🏠 Casa {casaContenido.consecutivo}
+                    </Title>
+                  }
+                >
+                  {/* Pisos dentro del acordeón */}
+                  {Object.entries(casaContenido.pisos?.[1] || {}).map(
+                    ([pisoKey, procesos]: any) => (
+                      <div key={pisoKey} style={{ marginBottom: "16px" }}>
+                        <Text underline strong>
+                          Piso {pisoKey}
+                        </Text>
+                        <div style={{ marginLeft: 16, marginTop: 6 }}>
+                          {Object.entries(procesos).map(
+                            ([procesoKey, proceso]: any) => (
+                              <div
+                                key={procesoKey}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "6px 10px",
+                                  border: "1px solid #eee",
+                                  borderRadius: "6px",
+                                  backgroundColor: "#fff",
+                                  marginBottom: 6,
+                                }}
+                              >
+                                <Text>{proceso.nombre_proceso}</Text>
+
+                                <Tooltip title={`Estado: ${proceso.estado}`}>
                                   <div
-                                    style={{ minWidth: "180px", fontWeight: 500 }}
-                                  >
-                                    {proceso.nombre_proceso}
-                                  </div>
-                                  <Tag color={getColorEstado(proceso.estado)}>
-                                    {getTextoEstado(proceso.estado)}
-                                  </Tag>
-                                </div>
-                              )
-                            )}
-                          </div>
-                        ))}
+                                    style={{
+                                      width: 24,
+                                      height: 24,
+                                      borderRadius: "50%",
+                                      background:
+                                        proceso.estado === "2"
+                                          ? "#36cf55"
+                                          : proceso.estado === "1"
+                                          ? "#1890ff"
+                                          : "#d9d9d9",
+                                    }}
+                                  ></div>
+                                </Tooltip>
+                              </div>
+                            )
+                          )}
+                        </div>
                       </div>
                     )
                   )}
-                </div>
+                </Panel>
               )
             )}
-        </div>
+        </Collapse>
       </Modal>
     </>
   );

@@ -15,7 +15,7 @@ export const ConveniosRoutes = () => {
         <Route path="/edit/:id" element={<FormConvenios />} />
         <Route path="/proceso/:id" element={<ResumenTorres />} />
         <Route path="/proceso/:id/detalle" element={<VistaProcesoProyectos />} />
-         <Route path="/proceso-casa/:id" element={<ResumenManzanas />} />
+        <Route path="/proceso-casa/:id" element={<ResumenManzanas />} />
         <Route path="/proceso-casa/:id/detalle" element={<VistaProcesoCasa />} />
       </Route>
     </RoutesWithNotFound>
