@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { ConfigProvider, Layout, Modal, Space, Spin, notification } from "antd";
 import { LoadingOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { CustomAvatarDescription, CustomMenu } from "../../components";
+import { CartaAmorAmistad, CustomAvatarDescription, CustomMenu } from "../../components";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { fetchUserProfile, logout } from "@/services/auth/authAPI";
 import { BreadcrumbItemType } from "antd/es/breadcrumb/Breadcrumb";
@@ -136,26 +136,6 @@ export const DashboardLayout = () => {
     });
   };
 
-  // useEffect(() => {
-  //   const handleLoad = () => {
-  //     fetchUserProfile()
-  //       .then(({ data }) => {
-  //         setLoader(false);
-  //         setUser(data.userData);
-  //       })
-  //       .catch(() => {
-  //         removeToken();
-  //         navigate(`/${AuthRoutesList.AUTH}/${AuthRoutesList.LOGIN}`);
-  //       });
-  //   };
-
-  //   window.addEventListener("load", handleLoad);
-
-  //   // return () => {
-  //   //   window.removeEventListener("load", handleLoad);
-  //   // };
-  // }, []);
-
   useMemo(() => {
     setLoader(true);
     const elementos = location.pathname.split("/").slice(1);
@@ -277,75 +257,6 @@ export const DashboardLayout = () => {
   }, [timer]);
 
 
-  //validacion de horario 
-  //  useEffect(() => {
-  //     const verificarHorario = () => {
-  //       if (!user) return;
-    
-  //       const ahora = new Date();
-  //       const diaActual = ahora.toLocaleString("es-CO", { weekday: "long" }).toLowerCase();
-  //       const horaActual = ahora.toLocaleTimeString("es-CO", { hour12: false }); // HH:mm:ss
-    
-  //       // console.log("Día actual:", diaActual);
-  //       // console.log("Hora actual:", horaActual);
-  //       // console.log("Horario adicional:", user?.horario_adicional);
-  //       // console.log("Horario regular:", user?.horario?.detalles);
-    
-  //       let dentroDeHorario = false;
-    
-  //       //  Validar Horario Adicional
-  //       const { horario_adicional } = user;
-  //       if (horario_adicional) {
-  //         const fechaInicio = new Date(horario_adicional.fecha_inicio);
-  //         const fechaFinal = new Date(horario_adicional.fecha_final);
-    
-  //         if (ahora >= fechaInicio && ahora <= fechaFinal) {
-  //           dentroDeHorario = true;
-  //         }
-  //       }
-    
-  //       //  Validar Horario 
-  //       if (!dentroDeHorario && user.horario?.detalles) {
-  //         const horarioDia = user.horario.detalles.find((h) => h.dia.toLowerCase() === diaActual);
-  //         if (horarioDia) {
-  //           const convertirMinutos = (hora: string) => {
-  //             const [h, m, s] = hora.split(":").map(Number);
-  //             return h * 60 + m + (s || 0) / 60;
-  //           };
-    
-  //           const minutosActual = convertirMinutos(horaActual);
-  //           const minutosInicio = convertirMinutos(horarioDia.hora_inicio.trim());
-  //           const minutosFinal = convertirMinutos(horarioDia.hora_final.trim());
-    
-  //           if (minutosActual >= minutosInicio && minutosActual <= minutosFinal) {
-  //             dentroDeHorario = true;
-  //           }
-  //         }
-  //       }
-    
-  //       //  Si no está dentro de ningún horario, cerrar sesión
-  //       // if (!dentroDeHorario) {
-  //       //   console.warn("Fuera de horario. Cerrando sesión...");
-  //       //   pushNotification({
-  //       //     type: "warning",
-  //       //     description: "Tu sesión se cerrará porque estás fuera del horario permitido.",
-  //       //   });
-  //       //   // setTimeout(onLogout, 1500);
-  //       //   logout().then(() => {
-  //       //     removeToken();
-  //       //     setTimeout(() => {
-  //       //       navigate(`/${AuthRoutesList.AUTH}/${AuthRoutesList.LOGIN}`);
-  //       //     }, 2000);
-  //       //   });
-  //       // }
-  //     };
-    
-  //     // Ejecutar cada 15 m 900000
-  //     const interval = setInterval(verificarHorario, 900000);
-    
-  //     return () => clearInterval(interval);
-  //   }, [user]);
-
   return (
     <>
       {contextModal}
@@ -423,6 +334,8 @@ export const DashboardLayout = () => {
                 ) : null}
               </Space>
               <Alerts />
+             <CartaAmorAmistad/>
+              
               <CustomAvatarDescription
                 user={user}
                 bodega={user?.bodega?.find(
