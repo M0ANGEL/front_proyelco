@@ -1,6 +1,6 @@
 import { AuthRoutes } from "@/modules/auth/routes/AuthRoutes";
 import {
-  /*ParticlesBackground,*/ RoutesWithNotFound,
+ /*  ParticlesBackground,  */ParticlesFlores, RoutesWithNotFound,
 } from "@/modules/common/components";
 import { Route, Navigate } from "react-router-dom";
 import { AdminRoutes } from "./AdminRoutes";
@@ -10,7 +10,8 @@ import { AuthGuard } from "@/modules/common/guards";
 export const AppRouter = () => {
   return (
     <>
-      {/* <ParticlesBackground /> */}
+      <ParticlesFlores /> {/* animacion en el menu */}
+      
       <RoutesWithNotFound>
         <Route path={`${AuthRoutesList.AUTH}/*`} element={<AuthRoutes />} />
         <Route element={<AuthGuard />}>
