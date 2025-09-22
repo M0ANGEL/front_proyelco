@@ -70,7 +70,8 @@ export const ListKardex = () => {
           categoria: categoria.categoria,
           subcategoria: categoria.subcategoria,
           numero_activo: categoria.numero_activo,
-          valor: categoria.valor,
+          valor: Number(categoria.valor).toLocaleString("es-CO"),
+          descripcion: categoria.descripcion,
           condicion: categoria.condicion.toString(),
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -157,6 +158,13 @@ export const ListKardex = () => {
       dataIndex: "subcategoria",
       key: "subcategoria",
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
+      render: (text) => text?.toUpperCase(),
+    },
+     {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
     },
     {

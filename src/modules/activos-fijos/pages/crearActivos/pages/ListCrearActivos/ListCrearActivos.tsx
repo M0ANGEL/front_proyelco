@@ -73,7 +73,7 @@ export const ListCrearActivos = () => {
           key: categoria.id,
           estado: categoria.estado.toString(),
           numero_activo: categoria.numero_activo,
-          valor: categoria.valor,
+          valor: Number(categoria.valor).toLocaleString("es-CO"),
           condicion: categoria.condicion.toString(),
           usuario: categoria.usuario,
           categoria: categoria.categoria,
@@ -92,6 +92,7 @@ export const ListCrearActivos = () => {
           ubicacion_actual_id: categoria.ubicacion_actual_id,
           usuarios_asignados: categoria.usuarios_asignados,
           aceptacion: categoria.aceptacion.toString(),
+          descripcion: categoria.descripcion,
         };
       });
 
@@ -156,6 +157,13 @@ export const ListCrearActivos = () => {
       dataIndex: "subcategoria",
       key: "subcategoria",
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
     },
     {

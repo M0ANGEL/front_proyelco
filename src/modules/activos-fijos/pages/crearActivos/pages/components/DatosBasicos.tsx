@@ -380,18 +380,35 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: { value: true, message: "Valor requerido" },
           }}
-          render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Valor de activo">
-              <Input
-                {...field}
-                maxLength={50}
-                placeholder="0"
-                status={error && "error"}
-                style={{ textTransform: "uppercase" }}
-              />
-              <Text type="danger">{error?.message}</Text>
-            </StyledFormItem>
-          )}
+          render={({ field, fieldState: { error } }) => {
+            const formatNumber = (value: string) => {
+              if (!value) return "";
+              // quitar puntos
+              const numericValue = value.replace(/\./g, "");
+              // convertir a número
+              const number = parseInt(numericValue, 10);
+              if (isNaN(number)) return "";
+              // devolver con puntos de miles
+              return new Intl.NumberFormat("es-CO").format(number);
+            };
+
+            return (
+              <StyledFormItem required label="Valor de activo">
+                <Input
+                  value={formatNumber(field.value)}
+                  onChange={(e) => {
+                    const rawValue = e.target.value.replace(/\./g, "");
+                    // guardar limpio en react-hook-form
+                    field.onChange(rawValue);
+                  }}
+                  maxLength={50}
+                  placeholder="0"
+                  status={error && "error"}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            );
+          }}
         />
       </Col>
 
@@ -450,8 +467,11 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         <Controller
           name="serial"
           control={methods.control}
-           rules={{
-            required: { value: true, message: "Serial del activo es requerida" },
+          rules={{
+            required: {
+              value: true,
+              message: "Serial del activo es requerida",
+            },
           }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="Serial de activo">
