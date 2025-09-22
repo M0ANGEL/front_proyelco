@@ -47,14 +47,15 @@ export const AdminRoutes = () => {
               path={"configuracionproyectos/*"}
               element={<AdministrarProcesosProyectoRoutes />}
             />
-             <Route path={"compras/*"} element={<ComprasRoutes />} />
-            <Route path={"cronogramaasistencias/*"} element={<TalentoHumanoRoutes />} />
+            <Route path={"compras/*"} element={<ComprasRoutes />} />
+            <Route
+              path={"cronogramaasistencias/*"}
+              element={<TalentoHumanoRoutes />}
+            />
             <Route path={"tickets/*"} element={<TickestRoutes />} />
             <Route path={"dashboards/*"} element={<DashboarsdRoutes />} />
 
-
-
-             <Route path={"activosfijos/*"} element={<ActivosRoutes />} />
+            <Route path={"activosfijos/*"} element={<ActivosRoutes />} />
 
             {/* <Route path={"gestionhumana/*"} element={<GestionHumanaRoutes />} />
             <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}

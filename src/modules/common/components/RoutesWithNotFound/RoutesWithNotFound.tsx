@@ -6,7 +6,7 @@ export const RoutesWithNotFound = ({ children }: RoutesWithNotFoundProps) => {
   return (
     <Routes>
       {children}
-      <Route path="*" element={<NotFound />} />
+      <Route path="404" element={<NotFound />} />
     </Routes>
   );
 };

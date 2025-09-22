@@ -1,5 +1,5 @@
 import { Row, Col, notification, Image } from "antd";
-import { LoginCard, LoginLayout, LoginTitle } from "./styled";
+import { LoginCard, LoginLayout } from "./styled";
 import { useState } from "react";
 import { Notification } from "./types";
 import { FormLogin } from "../../components";
