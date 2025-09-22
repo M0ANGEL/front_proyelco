@@ -14,7 +14,6 @@ import TextArea from "antd/es/input/TextArea";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   getActiBodegas,
-  getActiObras,
 } from "@/services/activosFijos/BodegasAPI";
 import { envioSolicitudActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineIssuesClose } from "react-icons/ai";
@@ -38,31 +37,16 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
   const [observacionActivo, setObservacionActivo] = useState<string>("");
 
   // 👇 nuevo state para condición del activo
-  const [tipoUbicacion, setTipoUbicacion] = useState<number | null>(null);
 
   useEffect(() => {
-    if (visible && tipoUbicacion) {
-      if (tipoUbicacion === 1) {
-        // Administrativas
-        getActiBodegas().then(({ data: { data } }) => {
+     getActiBodegas().then(({ data: { data } }) => {
           const opciones = data.map((item) => ({
             label: item.nombre.toUpperCase(),
             value: item.id,
           }));
           setBodegas(opciones);
         });
-      } else if (tipoUbicacion === 2) {
-        // Obras
-        getActiObras().then(({ data: { data } }) => {
-          const opciones = data.map((item) => ({
-            label: item.nombre.toUpperCase(),
-            value: item.id,
-          }));
-          setBodegas(opciones);
-        });
-      }
-    }
-  }, [visible, tipoUbicacion]);
+  }, [visible]);
 
   //trasladar
   const trasladarActivo = () => {
@@ -70,7 +54,7 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
       id: data.key,
       observacion: observacionActivo,
       ubicacion_destino: bodegaSelecionadaDestino,
-      tipoUbicacion: tipoUbicacion,
+      tipoUbicacion: 1,
       activo: data.id,
     };
 
@@ -168,21 +152,6 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
           <Col xs={24} sm={12}>
             <StyledFormItem label="Ubicación Actual" labelCol={{ span: 24 }}>
               <Input value={data.bodega_actual} disabled />
-            </StyledFormItem>
-          </Col>
-
-          {/* tipo de ubicaciones */}
-          <Col xs={24} sm={12}>
-            <StyledFormItem label="Tipo Ubicaciones" labelCol={{ span: 24 }}>
-              <Select
-                showSearch
-                allowClear
-                options={[
-                  { value: 1, label: "Administrativas" },
-                  { value: 2, label: "Obras" },
-                ]}
-                onChange={(value) => setTipoUbicacion(value)} // 👈 se guarda y dispara useEffect
-              />
             </StyledFormItem>
           </Col>
 
