@@ -7,7 +7,7 @@ import {
 } from "@/services/auth/authAPI";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { KEY_BODEGA, KEY_EMPRESA, KEY_ROL } from "@/config/api";
+import { KEY_BODEGA, KEY_EMPRESA, KEY_ROL, KEY_USER } from "@/config/api";
 import { LoginFormInput } from "../../pages/LoginPage/types";
 import useToken from "@/modules/common/hooks/useToken";
 import { Button, Form, Spin, Typography } from "antd";
@@ -111,6 +111,7 @@ export const FormLogin = ({
               setSessionVariable(KEY_EMPRESA, "1");
               setSessionVariable(KEY_BODEGA, "1");
               // Redirigir directamente al dashboard
+              setSessionVariable(KEY_USER, JSON.stringify(data.userData));
               navigate('/dashboard');
               onFetch(false);
             })

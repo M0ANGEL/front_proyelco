@@ -14,6 +14,7 @@ export const API_KEY = "37127b80-d847-4394-bfb1-75227fdbe5a7";
 export const KEY_EMPRESA = "i_eMb71jA";
 export const KEY_BODEGA = "i_bo7lH0tA";
 export const KEY_ROL = "xvhur_uor";
+export const KEY_USER = "userData";
 // Llaves para almacenar la informacion de los select en el formulario de Dispensacion
 export const KEY_CUOTAS_DIS = "xvhKONVJHVz_DIS";
 export const KEY_ENTIDADES_DIS = "vghKVWBKTVS_DIS";
