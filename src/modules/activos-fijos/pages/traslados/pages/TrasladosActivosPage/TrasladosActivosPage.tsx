@@ -26,7 +26,7 @@ export const TrasladosActivosPage = () => {
 
   // Filtrar los traslados según el rol del usuario
   const trasladosFiltrados = traslados.filter((traslado) => {
-    if (rol === 'Administrador' || rol === 'Admin Activos'){
+    if (rol === 'Administrador' || rol === 'Admin Activos' || rol ==  'Directora Proyectos'){
       return ['RST','APT', 'SLA', 'TRSDM'].includes(traslado.codigo)
     }
     return ['RST', 'APT','SLA'].includes(traslado.codigo);

@@ -1,6 +1,6 @@
 import { AuthRoutes } from "@/modules/auth/routes/AuthRoutes";
 import {
- /*  ParticlesBackground,  */ParticlesFlores, RoutesWithNotFound,
+ /*  ParticlesBackground,*/  ParticlesFlores, RoutesWithNotFound,
 } from "@/modules/common/components";
 import { Route, Navigate } from "react-router-dom";
 import { AdminRoutes } from "./AdminRoutes";
