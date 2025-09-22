@@ -10,7 +10,7 @@ import { AuthGuard } from "@/modules/common/guards";
 export const AppRouter = () => {
   return (
     <>
-      <ParticlesFlores /> {/* animacion en el menu */}
+      {/* <ParticlesFlores /> animacion en el menu */}
       
       <RoutesWithNotFound>
         <Route path={`${AuthRoutesList.AUTH}/*`} element={<AuthRoutes />} />
