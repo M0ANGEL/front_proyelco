@@ -40,7 +40,7 @@ export const CartaAmorAmistad = () => {
         </p>
 
         <p className="text-center text-pink-500 font-semibold mt-4">
-          Con todo mi aprecio 💕
+          Con todo mi aprecio PROYELCO 💕
         </p>
 
         {/* botón cerrar */}
