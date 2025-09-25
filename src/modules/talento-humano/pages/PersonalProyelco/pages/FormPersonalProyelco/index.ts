@@ -1,0 +1,1 @@
+export {FormPersonalProyelco } from './FormPersonalProyelco'
