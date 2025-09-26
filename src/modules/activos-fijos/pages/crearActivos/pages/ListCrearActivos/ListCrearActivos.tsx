@@ -358,8 +358,8 @@ export const ListCrearActivos = () => {
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
-          defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
+          defaultPageSize: 100,
+          pageSizeOptions: ["30", "50", "100"],
           showTotal: (total: number) => {
             return <Text>Total Registros: {total}</Text>;
           },
