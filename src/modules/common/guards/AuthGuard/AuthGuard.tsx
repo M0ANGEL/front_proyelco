@@ -7,9 +7,10 @@ import { UserData } from "@/services/types";
 import { notification } from "antd";
 import { useEffect, useState } from "react";
 
-// 👉 Lista de TODAS las rutas definidas en tu sistema (AdminRoutes)
+// 👉 Lista de rutas base definidas en tu sistema
 const systemRoutes = [
   "/dashboard",
+  "/dashboard/perfil",
   "/gestiondeempresas",
   "/administraciondeusuarios",
   "/configuraciondelsistema",
@@ -23,8 +24,72 @@ const systemRoutes = [
   "/tickets",
   "/dashboards",
   "/activosfijos",
-  // si luego agregas más, lo actualizas aquí 👆
+  "/talentohumano",
+  "/logistica",
 ];
+
+// 🔐 Construir rutas jerárquicas desde userData
+const buildAllowedRoutes = (perfil: any) => {
+  const routes: string[] = [];
+
+  perfil.modulos.forEach((mod: any) => {
+    const moduloPath =
+      "/" + (mod.modulo?.nom_modulo || "").toLowerCase().replace(/\s+/g, "");
+
+    const menuPath = mod.menu?.link_menu
+      ? "/" + mod.menu.link_menu.toLowerCase()
+      : "";
+
+    const submenuPath = mod.submenu?.link_submenu
+      ? "/" + mod.submenu.link_submenu.toLowerCase()
+      : "";
+
+    // Nivel módulo
+    if (moduloPath) routes.push(moduloPath);
+
+    // Nivel menú
+    if (moduloPath && menuPath) routes.push(moduloPath + menuPath);
+
+    // Nivel submenú
+    if (moduloPath && menuPath && submenuPath) {
+      routes.push(moduloPath + menuPath + submenuPath);
+    }
+  });
+
+  return routes;
+};
+
+// 🔎 Validar permisos hasta modulo/menu/submenu/*
+// Si el usuario tiene permitido un nivel base, cualquier cosa después se permite.
+const hasHierarchicalPermission = (
+  currentPath: string,
+  allowedRoutes: string[]
+) => {
+  const segments = currentPath.split("/").filter(Boolean); // ["activosfijos","categoria","edit","23"]
+
+  if (segments.length === 0) return true;
+
+  for (let i = 0; i < segments.length; i++) {
+    const pathToCheck = "/" + segments.slice(0, i + 1).join("/");
+
+    // Si está en rutas permitidas, seguimos al siguiente segmento
+    if (allowedRoutes.includes(pathToCheck)) {
+      continue;
+    }
+
+    // Si no está en rutas permitidas pero el padre sí lo estaba,
+    // entonces dejamos pasar todo lo que venga después
+    const basePath = "/" + segments.slice(0, i).join("/");
+    if (allowedRoutes.includes(basePath)) {
+      return true;
+    }
+
+    // Ni este ni el anterior → acceso denegado
+    return false;
+  }
+
+  return true;
+};
 
 export const AuthGuard = () => {
   const { getToken } = useToken();
@@ -34,7 +99,9 @@ export const AuthGuard = () => {
   const token = getToken();
   const empresaId = getSessionVariable(KEY_EMPRESA);
   const bodegaId = getSessionVariable(KEY_BODEGA);
-  const userData: UserData = JSON.parse(getSessionVariable(KEY_USER) || "null");
+  const userData: UserData = JSON.parse(
+    getSessionVariable(KEY_USER) || "null"
+  );
 
   const [isAuthorized, setIsAuthorized] = useState(true);
 
@@ -55,40 +122,40 @@ export const AuthGuard = () => {
     const perfil = userData.perfiles.find(
       (p) => Number(p.id_empresa) === Number(empresaId)
     );
-    if (!perfil || !perfil.menu) return;
+    if (!perfil) return;
 
-    // Recolectar todos los paths PERMITIDOS del perfil
-    const allowedRoutes: string[] = [];
-
-    const collectRoutes = (items: any[]) => {
-      items.forEach((item) => {
-        allowedRoutes.push("/" + item.key.toLowerCase());
-        if (item.children) collectRoutes(item.children);
-      });
-    };
-    collectRoutes(perfil.menu);
+    const allowedRoutes = buildAllowedRoutes(perfil);
 
     const currentPath = location.pathname.toLowerCase();
     const currentBase = "/" + (currentPath.split("/")[1] || "");
 
-    // ⬅️ Caso 1: La ruta NO existe en ninguna parte → NotFound
+    // ✅ Excepción: siempre permitir /dashboard/perfil
+    if (currentPath === "/dashboard/perfil") {
+      setIsAuthorized(true);
+      return;
+    }
+
+    // Caso 1: Ruta no existe en sistema
     if (currentPath !== "/dashboard" && !systemRoutes.includes(currentBase)) {
       setIsAuthorized(false);
       return;
     }
 
-    // ⬅️ Caso 2: La ruta existe en el sistema, pero NO en permisos
-    const hasPermission = allowedRoutes.some((route) =>
-      currentPath.startsWith(route)
+    // Caso 2: Ruta existe pero no tengo permisos jerárquicos
+    const hasPermission = hasHierarchicalPermission(
+      currentPath,
+      allowedRoutes
     );
 
     if (currentPath !== "/dashboard" && !hasPermission) {
       notification.warning({
         message: "Acceso denegado",
-        description: "No tienes permisos para acceder a este módulo.",
+        description: "No tienes permisos para acceder a esta información.",
         placement: "topRight",
       });
       setIsAuthorized(false);
+    } else {
+      setIsAuthorized(true);
     }
   }, [location.pathname]);
 

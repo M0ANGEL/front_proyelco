@@ -232,7 +232,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
                       { value: "Ingeniero Obra", label: "Ingeniero Obra" },
                       { value: "Encargado Obras", label: "Encargado Obras" },
                       { value: "Directora Proyectos", label: "Directora Proyectos" },
-                      { value: "Talento Humano", label: "Talento Humano" },
+                      { value: "Administrativo", label: "Administrativo" },
                     ]}
                     status={error && "error"}
                   />

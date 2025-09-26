@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { Button, Input, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
-import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
@@ -59,7 +58,7 @@ export const TrasladarActivosAdmin = () => {
           key: categoria.id,
           estado: categoria.estado.toString(),
           numero_activo: categoria.numero_activo,
-          valor: categoria.valor,
+          valor: Number(categoria.valor).toLocaleString("es-CO"),
           descripcion: categoria.descripcion,
           condicion: categoria.condicion.toString(),
           usuario: categoria.usuario,
@@ -144,6 +143,13 @@ export const TrasladarActivosAdmin = () => {
       dataIndex: "subcategoria",
       key: "subcategoria",
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
+      render: (text) => text?.toUpperCase(),
+    },
+        {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
     },
     {
