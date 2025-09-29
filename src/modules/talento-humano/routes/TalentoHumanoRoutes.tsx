@@ -2,7 +2,7 @@ import { RoutesWithNotFound } from "@/modules/common/components";
 import { AuthGuard } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
 import { PersonaProyelcolRoutes, TalentoHumanoPages } from "../pages";
-import { AsistenciasObraRoutes } from "../pages/asistenciasObra";
+import { SSTAdminRoutes } from "../pages/SST";
 
 
 export const TalentoHumanoRoutes = () => {
@@ -11,7 +11,7 @@ export const TalentoHumanoRoutes = () => {
       <Route element={<AuthGuard />}>
         <Route path="/" element={<TalentoHumanoPages />} />
         <Route path="/administrar-personal/*" element={<PersonaProyelcolRoutes />} />
-        <Route path="/asistencias-obra/*" element={<AsistenciasObraRoutes />} />
+        <Route path="/seguridad-salud/*" element={<SSTAdminRoutes />} />
       </Route>
     </RoutesWithNotFound>
   );

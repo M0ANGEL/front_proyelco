@@ -1,0 +1,1 @@
+export {ListFichasObra} from './ListFichasObra'

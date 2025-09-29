@@ -6081,3 +6081,18 @@ export interface paisTH {
   created_at: string;
   updated_at: string;
 }
+
+//typos para contratistas
+export interface ResponseContratistasSST {
+  data: {
+    status: string;
+    data: ContratistasSST[];
+  };
+}
+export interface ContratistasSST {
+  id: number;
+  contratista: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
