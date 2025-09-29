@@ -38,20 +38,23 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
   const [observacionActivo, setObservacionActivo] = useState<string>("");
 
   useEffect(() => {
-    if (visible) {
+    if (visible == true) {
       fetchUsuarios();
+      fechBodegas();
     }
   }, [visible]);
 
-  useEffect(() => {
-    getActiBodegas().then(({ data: { data } }) => {
+
+
+  const fechBodegas = () => {
+     getActiBodegas().then(({ data: { data } }) => {
       const opciones = data.map((item) => ({
         label: item.nombre.toUpperCase(),
         value: item.id,
       }));
       setBodegas(opciones);
     });
-  }, [visible]);
+  }
 
   //llamado de usuarios
   const fetchUsuarios = () => {
