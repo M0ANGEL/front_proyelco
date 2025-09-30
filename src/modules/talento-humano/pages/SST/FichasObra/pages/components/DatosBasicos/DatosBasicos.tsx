@@ -7,6 +7,7 @@ import {
   Select,
   SelectProps,
   Typography,
+  Upload,
 } from "antd";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
@@ -180,6 +181,31 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
   return (
     <Row gutter={24}>
       {/* cedula */}
+      {/* <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="identificacion"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Nombre es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Cedula">
+              <Input
+                {...field}
+                maxLength={20}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+                onPressEnter={() => buscarEmpleado(field.value)} 
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col> */}
+
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="identificacion"
@@ -195,10 +221,14 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
               <Input
                 {...field}
                 maxLength={20}
-                placeholder="111111111"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
-                onPressEnter={() => buscarEmpleado(field.value)} // 👈 aquí hacemos la búsqueda
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === "Tab") {
+                    e.preventDefault(); // evita que Tab cambie el foco si quieres
+                    buscarEmpleado(field.value);
+                  }
+                }}
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
@@ -265,7 +295,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 disabled
                 maxLength={50}
-                placeholder="miguel "
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />
@@ -424,7 +453,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 maxLength={10}
                 disabled
-                placeholder="000 000 00 00"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />
@@ -445,7 +473,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 disabled
                 maxLength={10}
-                placeholder="000 000 00 00"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />
@@ -466,7 +493,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 disabled
                 maxLength={50}
-                placeholder="Calle 3c"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />
@@ -487,7 +513,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 {...field}
                 disabled
                 maxLength={50}
-                placeholder="correo@correo.com"
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
               />
@@ -612,9 +637,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           }}
         />
       </Col>
-
-
-      {/* eps */}
+{/* 
       <Col xs={24} sm={6} style={{ width: "100%" }}>
         <Controller
           name="eps"
@@ -643,7 +666,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* pension */}
       <Col xs={24} sm={6} style={{ width: "100%" }}>
         <Controller
           name="pension"
@@ -672,7 +694,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-       {/* sangre */}
       <Col xs={24} sm={6} style={{ width: "100%" }}>
         <Controller
           name="eps"
@@ -701,7 +722,6 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* hjijos */}
       <Col xs={24} sm={6} style={{ width: "100%" }}>
         <Controller
           name="pension"
@@ -728,7 +748,120 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
             </StyledFormItem>
           )}
         />
-      </Col>
+      </Col> */}
+
+
+  {/* EPS */}
+  <Col xs={24} sm={6}>
+    <Controller
+      name="eps"
+      control={methods.control}
+      rules={{ required: { value: true, message: "Eps es requerido" } }}
+      render={({ field, fieldState: { error } }) => (
+        <StyledFormItem required label="EPS">
+          <Select
+            {...field}
+            showSearch
+            allowClear
+            options={[
+              { value: "SI", label: "SI" },
+              { value: "NO", label: "NO" },
+            ]}
+            status={error ? "error" : ""}
+          />
+          <Text type="danger">{error?.message}</Text>
+        </StyledFormItem>
+      )}
+    />
+  </Col>
+
+  {/* Pensión */}
+  <Col xs={24} sm={6}>
+    <Controller
+      name="pension"
+      control={methods.control}
+      rules={{ required: { value: true, message: "Pension es requerido" } }}
+      render={({ field, fieldState: { error } }) => (
+        <StyledFormItem required label="Pensión">
+          <Select
+            {...field}
+            showSearch
+            allowClear
+            options={[
+              { value: "SI", label: "SI" },
+              { value: "NO", label: "NO" },
+            ]}
+            status={error ? "error" : ""}
+          />
+          <Text type="danger">{error?.message}</Text>
+        </StyledFormItem>
+      )}
+    />
+  </Col>
+
+  {/* Tipo de sangre */}
+  <Col xs={24} sm={6}>
+    <Controller
+      name="tipo_sangre"
+      control={methods.control}
+      rules={{ required: { value: true, message: "Tipo de sangre es requerido" } }}
+      render={({ field, fieldState: { error } }) => (
+        <StyledFormItem required label="Tipo de sangre">
+          <Select
+            {...field}
+            showSearch
+            allowClear
+            options={[
+              { value: "A+", label: "A+" },
+              { value: "A-", label: "A-" },
+              { value: "B+", label: "B+" },
+              { value: "B-", label: "B-" },
+              { value: "O+", label: "O+" },
+              { value: "O-", label: "O-" },
+              { value: "AB+", label: "AB+" },
+              { value: "AB-", label: "AB-" },
+            ]}
+            status={error ? "error" : ""}
+          />
+          <Text type="danger">{error?.message}</Text>
+        </StyledFormItem>
+      )}
+    />
+  </Col>
+
+  {/* Número de hijos */}
+  <Col xs={24} sm={6}>
+    <Controller
+      name="numero_hijos"
+      control={methods.control}
+      rules={{ required: { value: true, message: "Número de hijos es requerido" } }}
+      render={({ field, fieldState: { error } }) => (
+        <StyledFormItem required label="Número de hijos">
+          <Input
+            {...field}
+            type="number"
+            min={0}
+            max={20}
+            status={error ? "error" : ""}
+          />
+          <Text type="danger">{error?.message}</Text>
+        </StyledFormItem>
+      )}
+    />
+  </Col>
+
+  {/* Subir fotos */}
+  <Col xs={24} sm={24} style={{ marginTop: 16 }}>
+    <StyledFormItem label="Fotos">
+      <Upload
+        multiple
+        listType="picture-card"
+        beforeUpload={() => false} // evitar upload automático
+      >
+        <div>Click o arrastrar fotos</div>
+      </Upload>
+    </StyledFormItem>
+  </Col>
 
     </Row>
   );
