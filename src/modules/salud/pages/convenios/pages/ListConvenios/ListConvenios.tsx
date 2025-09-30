@@ -29,7 +29,7 @@ import {
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
-
+import { ModalInformeCasa } from "./ModalInformeCasa";
 
 export const ListConvenios = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
@@ -403,7 +403,11 @@ export const ListConvenios = () => {
                           )}
 
                           {item.tipo == "Casa" ? (
-                            <></>
+                            <>
+                              <div className="status-container">
+                                <ModalInformeCasa proyecto={item} />
+                              </div>
+                            </>
                           ) : (
                             <>
                               <div className="status-container">

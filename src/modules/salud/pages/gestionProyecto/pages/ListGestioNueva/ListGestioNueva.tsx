@@ -11,6 +11,7 @@ import { Typography, Tooltip, Input, Card, List, Col, Row, Spin } from "antd";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
 import { ModalInforme } from "../ListGestionProyecto/ModalInforme";
+import { ModalInformeCasa } from "../../../convenios/pages/ListConvenios/ModalInformeCasa";
 
 export const ListGestioNueva = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
@@ -255,7 +256,11 @@ export const ListGestioNueva = () => {
                           )}
 
                           {item.tipo == "Casa" ? (
-                            <></>
+                            <>
+                              <div className="status-container">
+                                <ModalInformeCasa proyecto={item} />
+                              </div>
+                            </>
                           ) : (
                             <>
                               <div className="status-container">

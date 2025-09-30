@@ -16,6 +16,7 @@ import { ModalInforme } from "./ModalInforme";
 import { KEY_ROL } from "@/config/api";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { IniciarProyectoCasas } from "@/services/proyectos/casasProyectosAPI";
+import { ModalInformeCasa } from "../../../convenios/pages/ListConvenios/ModalInformeCasa";
 
 interface DataType {
   key: number;
@@ -398,7 +399,19 @@ const ListGestionEncargadoObra = () => {
                 />
               </Link>
             </Tooltip>
-            <ModalInforme proyecto={record} />
+            {record.nombre_tipo === "Casa" ? (
+              <>
+                <div className="status-container">
+                  <ModalInformeCasa proyecto={record} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="status-container">
+                  <ModalInforme proyecto={record} />
+                </div>
+              </>
+            )}
           </>
         );
       },

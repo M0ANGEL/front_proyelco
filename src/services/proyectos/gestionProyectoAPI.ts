@@ -116,5 +116,13 @@ export const cambioestadoAptAnulacion = async (data: any): Promise<any> => {
 };
 
 
+//full detalle del proyecto casas
+export const ProyectodetalladoCasas = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`InformeDetalladoProyectosCasas/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
 
 

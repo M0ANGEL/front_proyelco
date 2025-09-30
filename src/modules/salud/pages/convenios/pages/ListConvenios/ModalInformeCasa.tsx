@@ -1,8 +1,11 @@
 import { Button, Modal, Tooltip, Table, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { AiOutlineFileAdd } from "react-icons/ai";
-import { Proyectodetallado } from "@/services/proyectos/gestionProyectoAPI";
-import { DescargarInforme } from "./descargaArchivos";
+import {
+  Proyectodetallado,
+  ProyectodetalladoCasas,
+} from "@/services/proyectos/gestionProyectoAPI";
+// import { DescargarInforme } from "./descargaArchivos";
 
 interface DataId {
   proyecto: DataTypeA;
@@ -15,13 +18,16 @@ interface DataTypeA {
 
 interface ReporteFila {
   proceso: string;
-  [key: string]: string;
+  etapa: number; // etapa del proyecto
+  piso: number;
+  orden: number;
+  [key: string]: string | number;
 }
 
-export const ModalInforme = ({ proyecto }: DataId) => {
+export const ModalInformeCasa = ({ proyecto }: DataId) => {
   const [open, setOpen] = useState(false);
   const [reporte, setReporte] = useState<ReporteFila[]>([]);
-  const [torres, setTorres] = useState<string[]>([]);
+  const [manzanas, setManzanas] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [IdProyecto, setIdProyecto] = useState<number>(0);
 
@@ -32,15 +38,14 @@ export const ModalInforme = ({ proyecto }: DataId) => {
   useEffect(() => {
     if (open) {
       setLoading(true);
-      Proyectodetallado(Number(proyecto.key))
+      ProyectodetalladoCasas(Number(proyecto.key))
         .then(({ data }) => {
           if (data.success) {
             setReporte(data.data.reporte);
-            setTorres(data.data.torres);
+            setManzanas(data.data.manzanas); // 👈 backend devuelve "manzanas"
             setIdProyecto(data.data.proyecto_id);
           }
         })
-
         .catch((error) => {
           console.error("Error cargando informe detallado", error);
         })
@@ -48,8 +53,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
           setLoading(false);
         });
     }
-  }, [open]);
-
+  }, [open, proyecto.key]);
 
   const columns = [
     {
@@ -58,10 +62,22 @@ export const ModalInforme = ({ proyecto }: DataId) => {
       key: "proceso",
       fixed: "left",
     },
-    ...torres.map((torre) => ({
-      title: `Torre ${torre}`,
-      dataIndex: torre,
-      key: `torre_${torre}`,
+    // {
+    //   title: "Etapa", // 👈 encabezado corregido
+    //   dataIndex: "etapa",
+    //   key: "etapa",
+    //   width: 80,
+    // },
+    {
+      title: "Piso", // 👈 ahora mostramos también el piso
+      dataIndex: "piso",
+      key: "piso",
+      width: 80,
+    },
+    ...manzanas.map((manzana) => ({
+      title: `Manzana ${manzana}`, // 👈 nombres dinámicos de manzanas
+      dataIndex: manzana,
+      key: `manzana_${manzana}`,
     })),
     {
       title: "Total",
@@ -102,14 +118,23 @@ export const ModalInforme = ({ proyecto }: DataId) => {
         ) : (
           <>
             <Table
-              dataSource={reporte}
+              dataSource={[...reporte].sort((a, b) => {
+                // primero por etapa
+                if (a.etapa !== b.etapa) {
+                  return a.etapa - b.etapa;
+                }
+                // luego por orden
+                return a.orden - b.orden;
+              })}
               columns={columns}
               pagination={false}
-              rowKey="proceso"
+              rowKey={(record) =>
+                `${record.proceso}-${record.etapa}-${record.piso}`
+              } // 👈 clave única
               bordered
               scroll={{ x: true }}
             />
-            <DescargarInforme id={IdProyecto} />
+            {/* <DescargarInforme id={IdProyecto} /> */}
           </>
         )}
       </Modal>
