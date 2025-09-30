@@ -88,11 +88,6 @@ export const ListGestioNueva = () => {
     <>
       <StyledCard
         title={"Lista de Proyectos"}
-        extra={
-          <Link to={`${location.pathname}/create`}>
-            <Button type="primary">Crear</Button>
-          </Link>
-        }
       >
         {loading ? (
           // Loader centrado mientras carga
@@ -106,14 +101,6 @@ export const ListGestioNueva = () => {
                 <SearchBar>
                   <Input placeholder="Buscar" onChange={handleSearch} />
                 </SearchBar>
-              </Col>
-              <Col xs={24} sm={6} style={{ marginBottom: 20 }}>
-                <Switch
-                  checkedChildren="Mostrar Activos"
-                  unCheckedChildren="Mostrar Inactivos"
-                  checked={showActiveConvenios}
-                  onChange={toggleConvenioList}
-                />
               </Col>
             </Row>
 
