@@ -24,6 +24,7 @@ import {
   getPersonalNo,
   updatePersonalNo,
 } from "@/services/talento-humano/personalAPI";
+import { crearFicha } from "@/services/talento-humano/fichaObraAPI";
 
 const { Text } = Typography;
 
@@ -82,7 +83,7 @@ export const FormFichasObra = () => {
           setLoaderSave(false);
         });
     } else {
-      crearPersonalNo(data)
+      crearFicha(data)
         .then(() => {
           pushNotification({ title: "Empleado creado con éxito!" });
           setTimeout(() => {

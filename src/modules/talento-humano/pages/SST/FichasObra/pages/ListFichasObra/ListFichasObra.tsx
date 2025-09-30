@@ -6,10 +6,10 @@ import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
-import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
 import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
-import { DeletePersonalNo, getPersonalesNo } from "@/services/talento-humano/personalAPI";
+import { DeletePersonalNo } from "@/services/talento-humano/personalAPI";
+import { getFichasObra } from "@/services/talento-humano/fichaObraAPI";
 
 interface DataType {
   key: number;
@@ -33,15 +33,13 @@ export const ListFichasObra = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const { getSessionVariable } = useSessionStorage();
-  const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
     fetchCategorias();
   }, []);
 
   const fetchCategorias = () => {
-    getPersonalesNo().then(({ data: { data } }) => {
+    getFichasObra().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
@@ -212,7 +210,7 @@ export const ListFichasObra = () => {
 
   return (
     <StyledCard
-      title={"Lista de Personal No Proyelco"}
+      title={"Fichas"}
       extra={
         <Link to={`${location.pathname}/create`}>
           <Button type="primary">Crear</Button>
