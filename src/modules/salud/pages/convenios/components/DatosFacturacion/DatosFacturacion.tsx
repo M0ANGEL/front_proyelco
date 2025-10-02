@@ -312,6 +312,41 @@ export const DatosFacturacion = ({
 
   return (
     <Row gutter={[12, 6]}>
+      {/* cuando se crea un proyecyo */}
+      {!id && (
+        <>
+          {/* Tipo Proyecto */}
+          <Col xs={24} sm={6}>
+            <Controller
+              name="tipoProyecto_id"
+              control={methods.control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Tipo de proyecto es requerido",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <StyledFormItem required label="Tipo Proyecto:">
+                  <Select
+                    {...field}
+                    status={error && "error"}
+                    options={selectTipoProyecto}
+                    placeholder="Tipo de Proyecto"
+                    onChange={(value) => {
+                      field.onChange(value);
+                      methods.resetField("tipo_obra", { defaultValue: "" }); // queda con 3 para setear
+                    }}
+                  />
+
+                  <Text type="danger">{error?.message}</Text>
+                </StyledFormItem>
+              )}
+            />
+          </Col>
+        </>
+      )}
+
       {/* apt para activacion por dia   */}
       <Col xs={24} sm={5}>
         <Controller
@@ -319,7 +354,7 @@ export const DatosFacturacion = ({
           control={methods.control}
           rules={{
             required: {
-              value: true,
+              value: tipoProyecto == "1" ? true : false,
               message: "Numero de activacion de apt por dia es requerido",
             },
           }}
@@ -327,6 +362,7 @@ export const DatosFacturacion = ({
             <StyledFormItem required label="Activacion por dia de procesos:">
               <Input
                 {...field}
+                disabled={tipoProyecto=="1" ? false:true}
                 status={error && "error"}
                 placeholder="00"
                 type="number"
@@ -508,39 +544,8 @@ export const DatosFacturacion = ({
         </>
       )}
 
-      {/* cuando se crea un proyecyo */}
       {!id && (
         <>
-          {/* Tipo Proyecto */}
-          <Col xs={24} sm={6}>
-            <Controller
-              name="tipoProyecto_id"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Tipo de proyecto es requerido",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Tipo Proyecto:">
-                  <Select
-                    {...field}
-                    status={error && "error"}
-                    options={selectTipoProyecto}
-                    placeholder="Tipo de Proyecto"
-                    onChange={(value) => {
-                      field.onChange(value);
-                      methods.resetField("tipo_obra", { defaultValue: 3 }); // queda con 3 para setear
-                    }}
-                  />
-
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-
           {/* SE DEBE CONDICIONAR SI SON APARTAMENTOS */}
           {/* Tipo Obra */}
           {tipoProyecto === 1 && (
@@ -565,41 +570,6 @@ export const DatosFacturacion = ({
                         ]}
                         status={error && "error"}
                         placeholder="Selecciona tipo de obra"
-                      />
-                      <Text type="danger">{error?.message}</Text>
-                    </StyledFormItem>
-                  )}
-                />
-              </Col>
-            </>
-          )}
-
-          {/* dia de habilitacion por procesos de fundia casa */}
-          {tipoProyecto === 2 && (
-            <>
-              <Col xs={24} sm={5}>
-                <Controller
-                  name="activador_pordia_fundida"
-                  control={methods.control}
-                  rules={{
-                    required: "Número es requerido",
-                    validate: (value) =>
-                      Number.isInteger(value)
-                        ? true
-                        : "Debe ser un número válido",
-                  }}
-                  render={({ field, fieldState: { error } }) => (
-                    <StyledFormItem
-                      required
-                      label="Activación por día proceso fundida:"
-                    >
-                      <InputNumber
-                        {...field}
-                        style={{ width: "100%" }}
-                        placeholder="00"
-                        status={error ? "error" : ""}
-                        min={0} // evita negativos
-                        parser={(val) => val?.replace(/\D/g, "")} // limpia cualquier cosa no numérica
                       />
                       <Text type="danger">{error?.message}</Text>
                     </StyledFormItem>

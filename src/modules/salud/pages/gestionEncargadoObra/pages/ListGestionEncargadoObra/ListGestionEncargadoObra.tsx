@@ -330,39 +330,6 @@ const ListGestionEncargadoObra = () => {
       },
       sorter: (a, b) => a.estado.localeCompare(b.estado),
     },
-
-    // {
-    //   title: "Acciones",
-    //   dataIndex: "fecha_ini_proyecto",
-    //   key: "fecha_ini_proyecto",
-    //   align: "center",
-    //   render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
-    //     return (
-    //       <>
-    //         <Tooltip
-    //           title={
-    //             record.fecha_ini_proyecto === null
-    //               ? "Inicia el proyecto para Gestionar"
-    //               : "Gestionar"
-    //           }
-    //         >
-    //           <Link to={`${location.pathname}/${record.key}`}>
-    //             <Button
-    //               disabled={
-    //                 !Number(record.fecha_ini_proyecto === null) ? false : true
-    //               }
-    //               icon={<EditOutlined />}
-    //               type="primary"
-    //             />
-    //           </Link>
-    //         </Tooltip>
-    //         <ModalInforme proyecto={record} />
-    //       </>
-    //     );
-    //   },
-    //   fixed: "right",
-    //   width: 70,
-    // },
     {
       title: "Acciones",
       dataIndex: "fecha_ini_proyecto",

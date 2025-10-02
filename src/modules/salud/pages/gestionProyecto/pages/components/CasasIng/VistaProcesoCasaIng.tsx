@@ -26,7 +26,6 @@ import {
 import { Apartment } from "@/services/types";
 import { ModalInfoCassasIng } from "./ModalInfoCassasIng";
 import { ModalAnulacionCasa } from "./ModalAnulacionCasa";
-import { cambioestadoAptAnulacion } from "@/services/proyectos/gestionProyectoAPI";
 
 const { Title, Text } = Typography;
 
@@ -50,7 +49,7 @@ export const VistaProcesoCasaIng = () => {
     id: string,
     proceso: string;
   } | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { Panel } = Collapse;
 
@@ -60,23 +59,46 @@ export const VistaProcesoCasaIng = () => {
   const manzanasUnicas = Object.keys(data || {});
 
   // Obtener todas las etapas únicas para el filtro
-  const todasEtapas = useMemo(() => {
-    if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
+  // const todasEtapas = useMemo(() => {
+  //   if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
 
-    const etapasSet = new Set();
-    Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
-      Object.values(casa.pisos || {}).forEach((piso: any) => {
-        Object.keys(piso).forEach((etapaKey) => {
-          etapasSet.add(etapaKey);
+  //   const etapasSet = new Set();
+  //   Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
+  //     Object.values(casa.pisos || {}).forEach((piso: any) => {
+  //       Object.keys(piso).forEach((etapaKey) => {
+  //         etapasSet.add(etapaKey);
+  //       });
+  //     });
+  //   });
+
+  //   return Array.from(etapasSet).map((etapa) => ({
+  //     label: `Etapa ${etapa}`,
+  //     value: etapa,
+  //   }));
+  // }, [manzanaSeleccionada, data]);
+    const todasEtapas = useMemo(() => {
+      if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
+  
+      const etapasSet = new Set();
+      Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
+        Object.values(casa.pisos || {}).forEach((piso: any) => {
+          Object.keys(piso).forEach((etapaKey) => {
+            etapasSet.add(etapaKey);
+          });
         });
       });
-    });
-
-    return Array.from(etapasSet).map((etapa) => ({
-      label: `Etapa ${etapa}`,
-      value: etapa,
-    }));
-  }, [manzanaSeleccionada, data]);
+  
+      // 🔹 Diccionario de nombres de etapa
+      const nombreEtapas: Record<string, string> = {
+        "1": "Tubería",
+        "2": "Acabados",
+      };
+  
+      return Array.from(etapasSet).map((etapa) => ({
+        label: nombreEtapas[etapa] || `Etapa ${etapa}`,
+        value: etapa,
+      }));
+    }, [manzanaSeleccionada, data]);
 
   // Obtener procesos únicos para la etapa seleccionada
   const procesosPorEtapa = useMemo(() => {
@@ -267,7 +289,6 @@ export const VistaProcesoCasaIng = () => {
   }, [id]);
 
   const LlamadoData = () => {
-    setLoading(true);
     getProyectoDetalleGestionCasa(Number(id)).then(({ data }) => {
       setData(data.data);
       setPorcetanjeManzana(data.manzanaResumen);
