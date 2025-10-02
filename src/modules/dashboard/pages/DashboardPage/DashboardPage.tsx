@@ -52,7 +52,6 @@ export const DashboardPage = () => {
             },
           ];
           break;
-
         case "Ingeniero Obra":
           cardsArray = [
             {
@@ -73,7 +72,6 @@ export const DashboardPage = () => {
             },
           ];
           break;
-
         case "Directora Proyectos":
           cardsArray = [
             {
@@ -118,7 +116,30 @@ export const DashboardPage = () => {
             },
           ];
           break;
-
+        case "Activos":
+          cardsArray = [
+            {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+          ];
+          break;
+        case "Administrativo":
+          cardsArray = [
+            {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+          ];
+          break;
         case "Administrador":
           cardsArray = [
             {
