@@ -414,6 +414,7 @@ export const FormConvenios = () => {
                           children: (
                             <DatosConfigProyecto
                               selectTipoProcesos={selectTipoProcesos}
+                              selectTipoProyecto={selectTipoProyecto}
                             />
                           ),
                           forceRender: true,
