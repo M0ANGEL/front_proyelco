@@ -354,7 +354,7 @@ export const DatosFacturacion = ({
           control={methods.control}
           rules={{
             required: {
-              value: true,
+              value: false,
               message: "Numero de activacion de apt por dia es requerido",
             },
           }}
