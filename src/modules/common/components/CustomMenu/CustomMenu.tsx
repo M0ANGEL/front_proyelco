@@ -150,15 +150,27 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
     <ConfigProvider
       theme={{
         components: {
+          //colres estandar
+          // Menu: {
+          //   colorBgContainer: "#1976d2", //azul
+          //   itemColor: "#FFFFFF",
+          //   itemSelectedColor: "#a5a5a5ff", //color de texto selecionado
+          //   itemHoverBg: "#0967a7",  //azul de hover
+          //   itemHoverColor: "#FFFFFF",
+          //   itemSelectedBg: "#FFFFFF",
+          //   itemActiveBg: "#FFFFFF",
+          //   popupBg: "#000000",
+          // },
+          //hallowing
           Menu: {
-            colorBgContainer: "#1976d2", //azul
+            colorBgContainer: "#000000ff", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#a5a5a5ff", //color de texto selecionado
-            itemHoverBg: "#0967a7",  //azul de hover
+            itemSelectedColor: "#4a08e4ff", //color de texto selecionado
+            itemHoverBg: "#5b5b5bff",  //azul de hover
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
             itemActiveBg: "#FFFFFF",
-            popupBg: "#000000",
+            popupBg: "#040404ff",
           },
         },
       }}

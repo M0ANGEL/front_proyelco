@@ -23,6 +23,7 @@ import {
   BreadcrumbLink,
 } from "./styled";
 import { GlobalContext } from "@/router/GlobalContext";
+import { CartaHallowen } from "../../components/MensajesFestividades/Carahallowen";
 
 const { Sider, Header, Content } = Layout;
 
@@ -299,7 +300,7 @@ export const DashboardLayout = () => {
               scrollbarWidth: "thin",
               scrollbarGutter: "stable",
               transition: ".6s all",
-              backgroundColor: "#1976d2", //color sidebar
+              backgroundColor: "#000000ff", //color sidebar azul estadnar 1976d2
               zIndex: 0,
             }}
           >
@@ -334,7 +335,9 @@ export const DashboardLayout = () => {
                 ) : null}
               </Space>
               <Alerts />
-             <CartaAmorAmistad/>
+             {/* <CartaAmorAmistad/> */}
+             <CartaHallowen/>
+             
               
               <CustomAvatarDescription
                 user={user}
@@ -360,8 +363,8 @@ export const DashboardLayout = () => {
                 marginLeft: collapsed ? -150 : 0,
                 position: "relative",
                 background: "#f8f8f8",
-                minHeight: "calc(100vh - 64px)",
-                backgroundImage: "url(./logo_dash1.png)",  //logo de dashboard
+                minHeight: "calc(130vh - 1px)",
+                backgroundImage: "url(./fiestas/logo.hallowen.png)",  //logo de dashboard
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 overflow: "initial",
