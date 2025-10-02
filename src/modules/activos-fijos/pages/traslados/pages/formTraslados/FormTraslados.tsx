@@ -14,10 +14,7 @@ import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { getActiUsers } from "@/services/activosFijos/CrearActivosAPI";
-import {
-  getActiBodegas,
-  getActiObras,
-} from "@/services/activosFijos/BodegasAPI";
+import { getActiBodegas } from "@/services/activosFijos/BodegasAPI";
 import { trasladarActiActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 
 interface GenerarQRProps {
@@ -39,37 +36,25 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
     number | null
   >(null);
   const [observacionActivo, setObservacionActivo] = useState<string>("");
-  const [tipoUbicacion, setTipoUbicacion] = useState<number | null>(null);
 
   useEffect(() => {
-    if (visible) {
+    if (visible == true) {
       fetchUsuarios();
+      fechBodegas();
     }
   }, [visible]);
 
-  useEffect(() => {
-    if (visible && tipoUbicacion) {
-      if (tipoUbicacion === 1) {
-        // Administrativas
-        getActiBodegas().then(({ data: { data } }) => {
-          const opciones = data.map((item) => ({
-            label: item.nombre.toUpperCase(),
-            value: item.id,
-          }));
-          setBodegas(opciones);
-        });
-      } else if (tipoUbicacion === 2) {
-        // Obras
-        getActiObras().then(({ data: { data } }) => {
-          const opciones = data.map((item) => ({
-            label: item.nombre.toUpperCase(),
-            value: item.id,
-          }));
-          setBodegas(opciones);
-        });
-      }
-    }
-  }, [visible, tipoUbicacion]);
+
+
+  const fechBodegas = () => {
+     getActiBodegas().then(({ data: { data } }) => {
+      const opciones = data.map((item) => ({
+        label: item.nombre.toUpperCase(),
+        value: item.id,
+      }));
+      setBodegas(opciones);
+    });
+  }
 
   //llamado de usuarios
   const fetchUsuarios = () => {
@@ -89,7 +74,7 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
       observacion: observacionActivo,
       ubicacion_destino: bodegaSelecionadaDestino,
       usuarios: usuarioSeleccionado,
-      tipo_ubicacion: tipoUbicacion,
+      tipo_ubicacion: 1, //se quita tipo ubicacion
       solicitud: data.solicitud ? data.solicitud : 0,
     };
 
@@ -227,24 +212,6 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
 
           {data.solicitud != "1" ? (
             <>
-              {/* tipo de ubicaciones */}
-              <Col xs={24} sm={12}>
-                <StyledFormItem
-                  label="Tipo Ubicaciones"
-                  labelCol={{ span: 24 }}
-                >
-                  <Select
-                    showSearch
-                    allowClear
-                    options={[
-                      { value: 1, label: "Administrativas" },
-                      { value: 2, label: "Obras" },
-                    ]}
-                    onChange={(value) => setTipoUbicacion(value)} // 👈 se guarda y dispara useEffect
-                  />
-                </StyledFormItem>
-              </Col>
-
               {/* ubicacion destino activo */}
               <Col xs={24} sm={24}>
                 <StyledFormItem

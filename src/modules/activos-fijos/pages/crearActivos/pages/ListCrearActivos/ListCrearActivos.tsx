@@ -73,7 +73,7 @@ export const ListCrearActivos = () => {
           key: categoria.id,
           estado: categoria.estado.toString(),
           numero_activo: categoria.numero_activo,
-          valor: categoria.valor,
+          valor: Number(categoria.valor).toLocaleString("es-CO"),
           condicion: categoria.condicion.toString(),
           usuario: categoria.usuario,
           categoria: categoria.categoria,
@@ -92,6 +92,7 @@ export const ListCrearActivos = () => {
           ubicacion_actual_id: categoria.ubicacion_actual_id,
           usuarios_asignados: categoria.usuarios_asignados,
           aceptacion: categoria.aceptacion.toString(),
+          descripcion: categoria.descripcion,
         };
       });
 
@@ -126,133 +127,12 @@ export const ListCrearActivos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Tipo Activo",
-      dataIndex: "tipo_activo",
-      key: "tipo_activo",
-      fixed: "left",
-      align: "center",
-      render: (_, record: { key: React.Key; tipo_activo: string }) => {
-        let estadoString = "";
-        let color = "";
-
-        if (record.tipo_activo === "1") {
-          estadoString = "MAYORES";
-          color = "green";
-        } else {
-          estadoString = "MENORES";
-          color = "blue";
-        }
-
-        return (
-          <Tag color={color} key={estadoString}>
-            {estadoString.toUpperCase()}
-          </Tag>
-        );
-      },
-      sorter: (a, b) => a.condicion.localeCompare(b.condicion),
-    },
-    {
-      title: "Subcategoria",
-      dataIndex: "subcategoria",
-      key: "subcategoria",
-      sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Condición",
-      dataIndex: "condicion",
-      key: "condicion",
-      align: "center",
-      render: (_, record: { key: React.Key; condicion: string }) => {
-        let estadoString = "";
-        let color = "";
-
-        if (record.condicion === "1") {
-          estadoString = "BUENO";
-          color = "green";
-        } else if (record.condicion === "2") {
-          estadoString = "REGULAR";
-          color = "yellow";
-        } else {
-          estadoString = "MALO";
-          color = "red";
-        }
-
-        return (
-          <Tag color={color} key={estadoString}>
-            {estadoString.toUpperCase()}
-          </Tag>
-        );
-      },
-      sorter: (a, b) => a.condicion.localeCompare(b.condicion),
-    },
-    {
       title: "Numero Activo",
       dataIndex: "numero_activo",
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
       align: "center",
-    },
-    {
-      title: "Ubicacion Actual",
-      dataIndex: "bodega_actual",
-      key: "bodega_actual",
-      sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
-      align: "center",
-    },
-    {
-      title: "Responsable",
-      dataIndex: "usuariosAsignados",
-      key: "usuariosAsignados",
-      align: "center",
-      render: (usuarios) =>
-        usuarios && usuarios.length > 0
-          ? usuarios.join(", ")
-          : "Sin Responsable",
-    },
-
-    {
-      title: "Valor",
-      dataIndex: "valor",
-      key: "valor",
-      sorter: (a, b) => a.valor.localeCompare(b.valor),
-      align: "center",
-    },
-    {
-      title: "Estado Traslado",
-      dataIndex: "aceptacion",
-      key: "aceptacion",
-      align: "center",
-      render: (_, record: { key: React.Key; aceptacion: string }) => {
-        let estadoString;
-        let color;
-
-        if (record.aceptacion == "0") {
-          estadoString = "Sin Trasladar";
-          color = "yellow";
-        } else if (record.aceptacion == "1") {
-          estadoString = "Pendiente";
-          color = "red";
-        } else if (record.aceptacion == "2") {
-          estadoString = "Aceptado";
-          color = "green";
-        } else if (record.aceptacion == "3") {
-          estadoString = "Rechazado";
-          color = "red";
-        } else if (record.aceptacion == "4") {
-          estadoString = "Mantenimiento";
-          color = "blue";
-        } else {
-          estadoString = "Mantenimiento";
-          color = "blue";
-        }
-
-        return (
-          <Tag color={color} key={estadoString}>
-            {estadoString.toUpperCase()}
-          </Tag>
-        );
-      },
+      fixed: "left",
     },
     {
       title: "Estado Activo",
@@ -304,7 +184,140 @@ export const ListCrearActivos = () => {
         );
       },
     },
+    {
+      title: "Tipo Activo",
+      dataIndex: "tipo_activo",
+      key: "tipo_activo",
+      align: "center",
+      render: (_, record: { key: React.Key; tipo_activo: string }) => {
+        let estadoString = "";
+        let color = "";
 
+        if (record.tipo_activo === "1") {
+          estadoString = "MAYORES";
+          color = "green";
+        } else {
+          estadoString = "MENORES";
+          color = "blue";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+      sorter: (a, b) => a.tipo_activo.localeCompare(b.tipo_activo),
+    },
+    {
+      title: "Categoria",
+      dataIndex: "categoria",
+      key: "categoria",
+      sorter: (a, b) => a.categoria.localeCompare(b.categoria),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Subcategoria",
+      dataIndex: "subcategoria",
+      key: "subcategoria",
+      sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Ubicacion Actual",
+      dataIndex: "bodega_actual",
+      key: "bodega_actual",
+      sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
+      align: "center",
+    },
+    {
+      title: "Responsable",
+      dataIndex: "usuariosAsignados",
+      key: "usuariosAsignados",
+      align: "center",
+      render: (usuarios) =>
+        usuarios && usuarios.length > 0
+          ? usuarios.join(", ")
+          : "Sin Responsable",
+    },
+    {
+      title: "Condición",
+      dataIndex: "condicion",
+      key: "condicion",
+      align: "center",
+      render: (_, record: { key: React.Key; condicion: string }) => {
+        let estadoString = "";
+        let color = "";
+
+        if (record.condicion === "1") {
+          estadoString = "BUENO";
+          color = "green";
+        } else if (record.condicion === "2") {
+          estadoString = "REGULAR";
+          color = "yellow";
+        } else {
+          estadoString = "MALO";
+          color = "red";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+      sorter: (a, b) => a.condicion.localeCompare(b.condicion),
+    },
+    {
+      title: "Estado Traslado",
+      dataIndex: "aceptacion",
+      key: "aceptacion",
+      align: "center",
+      render: (_, record: { key: React.Key; aceptacion: string }) => {
+        let estadoString;
+        let color;
+
+        if (record.aceptacion == "0") {
+          estadoString = "Sin Trasladar";
+          color = "yellow";
+        } else if (record.aceptacion == "1") {
+          estadoString = "Pendiente";
+          color = "red";
+        } else if (record.aceptacion == "2") {
+          estadoString = "Aceptado";
+          color = "green";
+        } else if (record.aceptacion == "3") {
+          estadoString = "Rechazado";
+          color = "red";
+        } else if (record.aceptacion == "4") {
+          estadoString = "Mantenimiento";
+          color = "blue";
+        } else {
+          estadoString = "Mantenimiento";
+          color = "blue";
+        }
+
+        return (
+          <Tag color={color} key={estadoString}>
+            {estadoString.toUpperCase()}
+          </Tag>
+        );
+      },
+    },
+    {
+      title: "Valor",
+      dataIndex: "valor",
+      key: "valor",
+      sorter: (a, b) => a.valor.localeCompare(b.valor),
+      align: "center",
+    },
     {
       title: "Acciones",
       dataIndex: "acciones",
@@ -350,8 +363,8 @@ export const ListCrearActivos = () => {
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
-          defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
+          defaultPageSize: 100,
+          pageSizeOptions: ["30", "50", "100"],
           showTotal: (total: number) => {
             return <Text>Total Registros: {total}</Text>;
           },
