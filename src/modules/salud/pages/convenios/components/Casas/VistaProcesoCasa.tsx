@@ -44,23 +44,48 @@ export const VistaProcesoCasa = () => {
   const manzanasUnicas = Object.keys(data || {});
 
   // Obtener todas las etapas únicas para el filtro
-  const todasEtapas = useMemo(() => {
-    if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
+  // const todasEtapas = useMemo(() => {
+  //   if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
 
-    const etapasSet = new Set();
-    Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
-      Object.values(casa.pisos || {}).forEach((piso: any) => {
-        Object.keys(piso).forEach((etapaKey) => {
-          etapasSet.add(etapaKey);
+  //   const etapasSet = new Set();
+  //   Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
+  //     Object.values(casa.pisos || {}).forEach((piso: any) => {
+  //       Object.keys(piso).forEach((etapaKey) => {
+  //         etapasSet.add(etapaKey);
+  //       });
+  //     });
+  //   });
+
+  //   return Array.from(etapasSet).map((etapa) => ({
+  //     label: `Etapa ${etapa}`,
+  //     value: etapa,
+  //   }));
+  // }, [manzanaSeleccionada, data]);
+
+     const todasEtapas = useMemo(() => {
+        if (!manzanaSeleccionada || !data[manzanaSeleccionada]) return [];
+    
+        const etapasSet = new Set();
+        Object.values(data[manzanaSeleccionada]).forEach((casa: any) => {
+          Object.values(casa.pisos || {}).forEach((piso: any) => {
+            Object.keys(piso).forEach((etapaKey) => {
+              etapasSet.add(etapaKey);
+            });
+          });
         });
-      });
-    });
-
-    return Array.from(etapasSet).map((etapa) => ({
-      label: `Etapa ${etapa}`,
-      value: etapa,
-    }));
-  }, [manzanaSeleccionada, data]);
+    
+        // 🔹 Diccionario de nombres de etapa
+        const nombreEtapas: Record<string, string> = {
+          "1": "Tubería",
+          "2": "Acabados",
+        };
+    
+        return Array.from(etapasSet).map((etapa) => ({
+          label: nombreEtapas[etapa] || `Etapa ${etapa}`,
+          value: etapa,
+        }));
+      }, [manzanaSeleccionada, data]);
+  
 
   // Obtener procesos únicos para la etapa seleccionada
   const procesosPorEtapa = useMemo(() => {
