@@ -8,14 +8,13 @@ interface ModalInfoAptProps {
   loading: boolean;
 }
 
-export const ModalInfoApt = ({
+export const ModalInfoCassasIng = ({
   isOpen,
   onClose,
   selectedApt,
   loading,
 }: ModalInfoAptProps) => {
   if (!isOpen) return null;
-
 
   return (
     <div
@@ -63,7 +62,7 @@ export const ModalInfoApt = ({
                   fontWeight: "600",
                 }}
               >
-                Información del Apartamento
+                Información de casa
               </h2>
 
               <div style={{ marginBottom: "15px" }}>
@@ -86,32 +85,7 @@ export const ModalInfoApt = ({
                 ) : (
                   ""
                 )}
-                {/* consecutivo */}
-                <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
-                  <strong
-                    style={{
-                      color: "#333",
-                      display: "inline-block",
-                      width: "150px",
-                    }}
-                  >
-                    Consecutivo:
-                  </strong>{" "}
-                  {selectedApt.consecutivo}
-                </p>
-                {/* torre */}
-                {/* <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
-                  <strong
-                    style={{
-                      color: "#333",
-                      display: "inline-block",
-                      width: "150px",
-                    }}
-                  >
-                    Torre:
-                  </strong>{" "}
-                  {selectedApt.torre}
-                </p> */}
+                
                 {/* piso */}
                 <p style={{ margin: "8px 0", fontSize: "16px", color: "#555" }}>
                   <strong

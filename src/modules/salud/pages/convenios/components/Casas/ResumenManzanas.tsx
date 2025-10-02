@@ -6,53 +6,53 @@ import {
   List,
   Tooltip,
   Modal,
+  Collapse,
 } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import {
-  getProyectoDetalleGestion,
-  InfoProyecto,
-} from "@/services/proyectos/gestionProyectoAPI";
+  getProyectoDetalleGestionCasa,
+  InfoProyectoCasa,
+} from "@/services/proyectos/casasProyectosAPI";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 
 const { Title, Text } = Typography;
 
-export const ResumenTorresING = () => {
+export const ResumenManzanas = () => {
   const [data, setData] = useState<any>({});
-  const [porcetanjeTorre, setPorcetanjeTorre] = useState<any>({});
+  const [porcetanjeManzana, setPorcetanjeManzana] = useState<any>({});
   const [loading, setLoading] = useState(false);
 
   const [infoProyecto, setInfoProyecto] = useState<any>({});
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
-  //modal de info de proceos
+  const { Panel } = Collapse;
+
+  // modal de procesos
   const [modalProcesosOpen, setModalProcesosOpen] = useState(false);
-  const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
+  const [manzanaSeleccionada, setManzanaSeleccionada] = useState<string | null>(
     null
   );
 
   useEffect(() => {
     LlamadoData();
-    InfoProyecto(Number(id)).then(({ data: { data } }) => {
+    InfoProyectoCasa(Number(id)).then(({ data: { data } }) => {
       setInfoProyecto(data);
     });
   }, [id]);
 
   const LlamadoData = () => {
     setLoading(true);
-    getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
+    getProyectoDetalleGestionCasa(Number(id)).then(({ data }) => {
       setData(data.data);
-      setPorcetanjeTorre(data.torreResumen);
+      setPorcetanjeManzana(data.manzanaResumen);
       setLoading(false);
     });
   };
 
-  const torresUnicas = Object.keys(data);
-  const emitRefetchEvent = () => {
-  window.dispatchEvent(new CustomEvent('refetchProyectoData'));
-};
+  const manzanasUnicas = Object.keys(data);
 
   return (
     <>
@@ -82,7 +82,6 @@ export const ResumenTorresING = () => {
             borderRadius: "16px",
             boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
             marginBottom: "32px",
-
             border: "none",
             position: "sticky",
             top: 60,
@@ -112,7 +111,7 @@ export const ResumenTorresING = () => {
             Visual del Proyecto: {infoProyecto?.descripcion_proyecto}
           </Title>
           <Text type="secondary" style={{ marginLeft: "20px" }}>
-            ID: {id} | Seleccione una torre para gestionar
+            ID: {id} | Seleccione una manzana para gestionar
           </Text>
         </div>
 
@@ -134,8 +133,8 @@ export const ResumenTorresING = () => {
           <>
             <List
               itemLayout="horizontal"
-              dataSource={torresUnicas}
-              renderItem={(torre) => (
+              dataSource={manzanasUnicas}
+              renderItem={(manzana) => (
                 <List.Item
                   style={{
                     background: "#fff",
@@ -144,36 +143,41 @@ export const ResumenTorresING = () => {
                     padding: "16px 24px",
                     border: "2px solid transparent",
                     animation:
-                      (porcetanjeTorre[torre]?.porcentaje_atraso || 0) >= 30
+                      (porcetanjeManzana[manzana]?.porcentaje_atraso || 0) >= 30
                         ? "pulseRed 2s infinite"
                         : "",
                   }}
                 >
                   <div>
                     <Title level={5} style={{ margin: 0 }}>
-                      Torre{" "}
-                      {porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`}
+                      Manzana{" "}
+                      {porcetanjeManzana[manzana]?.nombre_manzana ||
+                        `Manzana ${manzana}`}
                     </Title>
                   </div>
 
                   <div style={{ minWidth: "200px" }}>
                     <Text type="secondary">Atraso del proyecto</Text>
                     <Progress
-                      percent={porcetanjeTorre[torre]?.porcentaje_atraso || 0}
+                      percent={
+                        porcetanjeManzana[manzana]?.porcentaje_atraso || 0
+                      }
                       strokeColor={
-                        (porcetanjeTorre[torre]?.porcentaje_atraso || 0) <= 15
+                        (porcetanjeManzana[manzana]?.porcentaje_atraso || 0) <=
+                        15
                           ? "blue"
-                          : (porcetanjeTorre[torre]?.porcentaje_atraso || 0) <=
-                            30
+                          : (porcetanjeManzana[manzana]?.porcentaje_atraso ||
+                              0) <= 30
                           ? "yellow"
                           : "red"
                       }
                     />
 
                     <Text type="secondary">Avance del proyecto</Text>
-
                     <Progress
-                      percent={porcetanjeTorre[torre]?.porcentaje_avance || 0}
+                      percent={
+                        porcetanjeManzana[manzana]?.porcentaje_avance || 0
+                      }
                       strokeColor={{
                         "0%": "#102c9dff",
                         "100%": "#36cf55ff",
@@ -189,15 +193,15 @@ export const ResumenTorresING = () => {
                       gap: "8px",
                     }}
                   >
-                    {porcetanjeTorre && (
+                    {porcetanjeManzana && (
                       <Button
                         type="primary"
                         onClick={() => {
-                          setTorreSeleccionada(torre); // <-- aquí guardas el id/clave de la torre
+                          setManzanaSeleccionada(manzana);
                           setModalProcesosOpen(true);
                         }}
                       >
-                        Ver Procesos y % de Atraso
+                        Procesos y avances
                       </Button>
                     )}
 
@@ -206,10 +210,10 @@ export const ResumenTorresING = () => {
                         to={`${location.pathname}/detalle`}
                         state={{
                           data,
-                          porcetanjeTorre,
+                          porcetanjeManzana,
                           infoProyecto,
                           id,
-                          torre,
+                          manzana,
                         }}
                       >
                         <ButtonTag
@@ -235,58 +239,87 @@ export const ResumenTorresING = () => {
         )}
       </div>
 
-      {/* modal del procesos*/}
+      {/* Modal Jerárquico */}
       <Modal
         open={modalProcesosOpen}
         onCancel={() => {
           setModalProcesosOpen(false);
-          setTorreSeleccionada(null); // opcional: limpiar la selección al cerrar
+          setManzanaSeleccionada(null);
         }}
         footer={null}
-        title={`Procesos de ${
-          torreSeleccionada
-            ? porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
-              `Torre ${torreSeleccionada}`
-            : "Torre"
+        title={`Detalle de manzana: ${
+          manzanaSeleccionada
+            ? porcetanjeManzana[manzanaSeleccionada]?.nombre_manzana ||
+              `Manzana ${manzanaSeleccionada}`
+            : "Manzana"
         }`}
         centered
-        width={700}
+        width={500}
       >
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {torreSeleccionada &&
-            Object.entries(data[torreSeleccionada] || {}).map(
-              ([procesoKey, contenido]: any) => (
-                <div
-                  key={procesoKey}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                    padding: "8px 12px",
-                    borderRadius: "8px",
-                    background: "rgba(245,245,245,0.8)",
-                    boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
-                  }}
+        <Collapse accordion>
+          {manzanaSeleccionada &&
+            Object.entries(data[manzanaSeleccionada] || {}).map(
+              ([casaKey, casaContenido]: any) => (
+                <Panel
+                style={{background: "#1a4c9e"}}
+                  key={casaKey}
+                  header={
+                    <Title level={5} style={{ margin: 0, color: "white" }}>
+                      🏠 Casa {casaContenido.consecutivo}
+                    </Title>
+                  }
                 >
-                  <div style={{ minWidth: "180px", fontWeight: 500 }}>
-                    {contenido.nombre_proceso}
-                  </div>
-                  <Progress
-                    percent={contenido.porcentaje_atraso}
-                    status="active"
-                    strokeColor={
-                      contenido.porcentaje_atraso < 15
-                        ? "#1890ff"
-                        : contenido.porcentaje_atraso < 30
-                        ? "#faad14"
-                        : "#cf1322"
-                    }
-                    style={{ flex: 1 }}
-                  />
-                </div>
+                  {/* Pisos dentro del acordeón */}
+                  {Object.entries(casaContenido.pisos?.[1] || {}).map(
+                    ([pisoKey, procesos]: any) => (
+                      <div key={pisoKey} style={{ marginBottom: "16px" }}>
+                        <Text underline strong>
+                          Piso {pisoKey}
+                        </Text>
+                        <div style={{ marginLeft: 16, marginTop: 6 }}>
+                          {Object.entries(procesos).map(
+                            ([procesoKey, proceso]: any) => (
+                              <div
+                                key={procesoKey}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  padding: "6px 10px",
+                                  border: "1px solid #eee",
+                                  borderRadius: "6px",
+                                  backgroundColor: "#fff",
+                                  marginBottom: 6,
+                                }}
+                              >
+                                <Text>{proceso.nombre_proceso}</Text>
+                                
+                                <Tooltip title={`Estado: ${proceso.estado}`}>
+                                  <div
+                                    style={{
+                                      width: 24,
+                                      height: 24,
+                                      borderRadius: "50%",
+                                      background:
+                                        proceso.estado === "2"
+                                          ? "#36cf55"
+                                          : proceso.estado === "1"
+                                          ? "#1890ff"
+                                          : "#d9d9d9",
+                                    }}
+                                  ></div>
+                                </Tooltip>
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )
+                  )}
+                </Panel>
               )
             )}
-        </div>
+        </Collapse>
       </Modal>
     </>
   );

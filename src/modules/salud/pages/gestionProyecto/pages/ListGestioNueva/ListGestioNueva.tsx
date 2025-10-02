@@ -7,21 +7,11 @@ import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
 import "./CustomList.css";
-import {
-  Typography,
-  Tooltip,
-  Button,
-  Input,
-  Card,
-  List,
-  Col,
-  Row,
-  Switch,
-  Spin,
-} from "antd";
+import { Typography, Tooltip, Input, Card, List, Col, Row, Spin } from "antd";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";
 import { ModalInforme } from "../ListGestionProyecto/ModalInforme";
+import { ModalInformeCasa } from "../../../convenios/pages/ListConvenios/ModalInformeCasa";
 
 export const ListGestioNueva = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
@@ -38,23 +28,45 @@ export const ListGestioNueva = () => {
   }, []);
 
   const fetchConvenios = () => {
-    getGestionProyecto().then(({ data: { data } }) => {
-      const convenios = data.map((convenio: any) => {
-        return {
-          key: convenio.id,
-          nombreEncargado: (convenio.nombresEncargados || []).join(", "),
-          nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
-          descripcion_proyecto: convenio.descripcion_proyecto,
-          emp_nombre: convenio.emp_nombre,
-          estado: convenio.estado.toString(),
-          fec_ini: convenio.fecha_inicio,
-          fec_fin: convenio.fec_fin,
-          codigo_proyecto: convenio.codigo_proyecto,
-          porcentaje: convenio.porcentaje,
-          avance: convenio.avance,
-        };
-      });
-      setInitialData(convenios);
+    getGestionProyecto().then(({ data: { data, data_casas } }) => {
+      // Mapear proyectos normales
+      const convenios = data.map((convenio: any) => ({
+        // key: `apt-${convenio.id}`, // prefijo para diferenciar
+        key: convenio.id,
+        tipo: "Apartamento",
+        nombreEncargado: (convenio.nombresEncargados || []).join(", "),
+        nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
+        descripcion_proyecto: convenio.descripcion_proyecto,
+        emp_nombre: convenio.emp_nombre,
+        estado: convenio.estado.toString(),
+        fec_ini: convenio.fecha_inicio,
+        fec_fin: convenio.fec_fin,
+        codigo_proyecto: convenio.codigo_proyecto,
+        porcentaje: convenio.porcentaje,
+        avance: convenio.avance,
+      }));
+
+      // Mapear proyectos de casas
+      const conveniosCasas = data_casas.map((casa: any) => ({
+        // key: `casa-${casa.id}`, // prefijo diferente
+        key: casa.id,
+        tipo: "Casa",
+        nombreEncargado: (casa.nombresEncargados || []).join(", "),
+        nombreIngeniero: (casa.nombresIngenieros || []).join(", "),
+        descripcion_proyecto: casa.descripcion_proyecto,
+        emp_nombre: casa.emp_nombre,
+        estado: casa.estado.toString(),
+        fec_ini: casa.fecha_inicio,
+        fec_fin: casa.fec_fin,
+        codigo_proyecto: casa.codigo_proyecto,
+        porcentaje: casa.porcentaje,
+        avance: casa.avance,
+      }));
+
+      // Unir todo
+      const todosConvenios = [...convenios, ...conveniosCasas];
+
+      setInitialData(todosConvenios);
       setLoading(false);
     });
   };
@@ -62,11 +74,6 @@ export const ListGestioNueva = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     setSearchValue(value);
-  };
-
-  const toggleConvenioList = (checked: any) => {
-    setShowActiveConvenios(checked ? true : false);
-    fetchConvenios();
   };
 
   const filterConvenios = () => {
@@ -86,9 +93,7 @@ export const ListGestioNueva = () => {
 
   return (
     <>
-      <StyledCard
-        title={"Lista de Proyectos"}
-      >
+      <StyledCard title={"Lista de Proyectos"}>
         {loading ? (
           // Loader centrado mientras carga
           <div style={{ textAlign: "center", padding: "50px" }}>
@@ -202,30 +207,74 @@ export const ListGestioNueva = () => {
                           }
                         />
                         <div className="actions-container">
-                          <div className="status-container">
-                            <Tooltip title="Ver Proceso Proyecto">
-                              <Link
-                                to={`${location.pathname}/proceso/${item.key}`}
-                              >
-                                <ButtonTag
-                                  style={{
-                                    padding: 5,
-                                    borderRadius: 8,
-                                    width: 40,
-                                    backgroundColor: "#B5EAD7",
-                                    border: "none",
-                                    color: "#2C5F2D",
-                                  }}
-                                >
-                                  <AiOutlineExpandAlt />
-                                </ButtonTag>
-                              </Link>
-                            </Tooltip>
-                          </div>
-                          <div className="status-container">
-                            <ModalInforme proyecto={item} />
-                          </div>
+                          {item.tipo == "Casa" ? (
+                            <>
+                              <div className="status-container">
+                                <Tooltip title="Ver Proceso Proyecto">
+                                  <Link
+                                    to={`${location.pathname}/proceso-casa/${item.key}`}
+                                  >
+                                    <ButtonTag
+                                      style={{
+                                        padding: 5,
+                                        borderRadius: 8,
+                                        width: 40,
+                                        backgroundColor: "#B5EAD7",
+                                        border: "none",
+                                        color: "#2C5F2D",
+                                      }}
+                                    >
+                                      <AiOutlineExpandAlt />
+                                    </ButtonTag>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="status-container">
+                                <Tooltip title="Ver Proceso Proyecto">
+                                  <Link
+                                    to={`${location.pathname}/proceso/${item.key}`}
+                                  >
+                                    <ButtonTag
+                                      style={{
+                                        padding: 5,
+                                        borderRadius: 8,
+                                        width: 40,
+                                        backgroundColor: "#B5EAD7",
+                                        border: "none",
+                                        color: "#2C5F2D",
+                                      }}
+                                    >
+                                      <AiOutlineExpandAlt />
+                                    </ButtonTag>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </>
+                          )}
+
+                          {item.tipo == "Casa" ? (
+                            <>
+                              <div className="status-container">
+                                <ModalInformeCasa proyecto={item} />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="status-container">
+                                <ModalInforme proyecto={item} />
+                              </div>
+                            </>
+                          )}
                         </div>
+                        <span
+                          style={{ color: "red", fontSize: 15, marginTop: 5 }}
+                          className="title-text"
+                        >
+                          {item.tipo}
+                        </span>
                       </div>
                     </div>
                   </Card>
