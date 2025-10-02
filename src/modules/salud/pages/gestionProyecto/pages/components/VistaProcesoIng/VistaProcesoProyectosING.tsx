@@ -30,7 +30,7 @@ export const VistaProcesoProyectosING = () => {
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
     torre
   );
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [data, setData] = useState<any>({});
@@ -51,14 +51,33 @@ export const VistaProcesoProyectosING = () => {
     LlamadoData();
   }, [id]);
 
+  // const LlamadoData = () => {
+  //   getProyectoDetalleGestion(Number(id)).then(({ data}) => {
+  //     setData(data.data);
+  //     setPorcetanjeTorre(data.torreResumen);
+  //   });
+  //   setLoading(false);
+  // };
   const LlamadoData = () => {
-    setLoading(true);
-    getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
+  setLoading(true); // activar el loading antes de la llamada
+
+  getProyectoDetalleGestion(Number(id))
+    .then(({ data }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
+    })
+    .catch((err) => {
+      notification.error({
+        message: "Error cargando la información",
+        description: err.message || "Intenta de nuevo",
+        placement: "topRight",
+      });
+    })
+    .finally(() => {
+      setLoading(false); // apagar loading solo cuando termina la llamada
     });
-    setLoading(false);
-  };
+};
+
 
   const AnularPiso = (
     aptId: string,
