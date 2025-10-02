@@ -77,7 +77,7 @@ export const ModalInforme = ({ proyecto }: DataId) => {
           type="primary"
           style={{ background: "#1638a2" }}
           onClick={showLoading}
-          // size="small"
+          size="small"
         >
           <AiOutlineFileAdd />
         </Button>

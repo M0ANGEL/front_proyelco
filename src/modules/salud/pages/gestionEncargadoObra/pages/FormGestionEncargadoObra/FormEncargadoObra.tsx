@@ -168,30 +168,6 @@ export const FormEncargadoObra = () => {
     }
   };
 
-  // const confirmarPisosDia = async () => {
-  //   try {
-  //     const response = await confirmarPisosXDia({
-  //       proyecto_id: infoProyecto.id,
-  //       torre: torreSeleccionada,
-  //     });
-
-  //     notification.success({
-  //       message: response.data.message,
-  //       placement: "topRight",
-  //       duration: 2,
-  //     });
-  //   } catch (error: any) {
-  //     notification.error({
-  //       message: "Error al validar pisos por dia",
-  //       description: error.response.data.message,
-  //       placement: "topRight",
-  //       duration: 3,
-  //     });
-  //   } finally {
-  //     LlamadoData();
-  //   }
-  // };
-
   const handleValidarProceso = async () => {
     if (!procesoAValidar || !torreSeleccionada) return;
 

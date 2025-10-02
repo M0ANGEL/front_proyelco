@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillBank, AiOutlineBarChart, AiTwotoneProject } from "react-icons/ai";
+import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiTwotoneProject } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -14,7 +14,6 @@ import { ConfigProvider } from "antd";
 import { BsBank } from "react-icons/bs";
 import { TfiAlarmClock } from "react-icons/tfi";
 import { HiUserGroup } from "react-icons/hi";
-
 import {
   FaRegHandshake,
   FaTruckLoading,
@@ -78,6 +77,7 @@ const moduleIcons = [
   { cod: "CA", icon: <AiTwotoneProject /> },
   { cod: "DSH", icon: <RiDashboardLine  /> },
   { cod: "ACTIV", icon: <AiFillBank /> },
+  { cod: "LOGI", icon:<AiOutlineFileDone  /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
