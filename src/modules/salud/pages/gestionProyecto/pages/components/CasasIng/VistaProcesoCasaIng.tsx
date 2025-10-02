@@ -19,6 +19,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ArrowLeftOutlined, FilterOutlined } from "@ant-design/icons";
 import {
+  cambioestadoCasasAnulacion,
   detalleCasa,
   getProyectoDetalleGestionCasa,
 } from "@/services/proyectos/casasProyectosAPI";
@@ -237,7 +238,7 @@ export const VistaProcesoCasaIng = () => {
       detalle,
     };
 
-    cambioestadoAptAnulacion(datos)
+    cambioestadoCasasAnulacion(datos)
       .then(() => {
         notification.success({
           message: "El cambio de estado fue realizado",
@@ -251,6 +252,9 @@ export const VistaProcesoCasaIng = () => {
           placement: "topRight",
           duration: 2,
         });
+      }).finally(() => {
+        setLoading(false);
+        LlamadoData();
       });
 
     setModalVisible(false);

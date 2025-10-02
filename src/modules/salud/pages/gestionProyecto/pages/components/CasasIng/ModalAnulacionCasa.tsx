@@ -30,7 +30,7 @@ export const ModalAnulacionCasa: FC<Props> = ({
   return (
     <Modal
       visible={visible}
-      title="Cambio de estado  de APT"
+      title="Cambio de estado  de casa"
       onOk={() => onConfirm(detalle)}
       onCancel={onCancel}
       okText="Anular"
@@ -42,6 +42,8 @@ export const ModalAnulacionCasa: FC<Props> = ({
           Se anulará el estado de la casa <b>{infoApt?.consecutivo}</b> del proceso{" "}
           <b>{infoApt?.proceso}</b>. Ten en cuenta que si este afecta la
           secuencia, se anularán la confirmacion de los procesos siguientes en efecto cascada.
+          <br />
+          <span style={{color: "red"}}><b> Tener encuenta con el proceso fundicion: al anular este proceso todo los demas se anulan en efecto casca, sin discriminar pisos</b></span>
         </span>
       </p>
 

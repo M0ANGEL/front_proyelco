@@ -1,46 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { client } from "../client";
-import { ResponseProyectos } from "../types";
 
 
-// //llamar todas los proyectos
-// export const getGestionProyecto = async (): Promise<ResponseProyectos> => {
-//   return await client.get("gestion-proyectos", {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-// //llamar todas los proyectos
-// export const getGestionProyectoEncargado = async (): Promise<ResponseProyectos> => {
-//   return await client.get("gestion-proyectos-encargados", {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-
-
-// //crear el proceos
-// export const crearProcePro = async (data: any): Promise<any> => {
-//   return await client.post<any>("procesos-proyectos", data, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-
-
-// //ver el proceso por id
-// export const getProcesoProye = async (id: React.Key): Promise<any> => {
-//   return await client.get<any>(`procesos-proyectos/${id}`, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-// //actualizar la categoria
-// export const updateProcesoProyec = async (data: any, id: any): Promise<any> => {
-//   return await client.put<any>(`procesos-proyectos/${id}`, data, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
 
 //Iniciar Proyecto 
 export const IniciarProyectoCasas = async ( id: any): Promise<any> => {
@@ -57,12 +18,6 @@ export const getProyectoDetalleGestionCasa = async (id: React.Key): Promise<any>
 };
 
 
-// //detalle del proyecto
-// export const habilitarTorre = async (id: React.Key): Promise<any> => {
-//   return await client.get<any>(`gestio-habilitar-torre/${id}`, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
 
 
 export const IniciarManzana = async (data: any): Promise<any> => {
@@ -93,34 +48,19 @@ export const confirmarValidacionCasa = async ( data: any): Promise<any> => {
   });
 };
 
-
-// //confirmar pisos por dia 
-// export const confirmarPisosXDia = async ( data: any): Promise<any> => {
-//   return await client.post<any>(`activacionXdia`, data,{
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-// //full detalle del proyecto
-// export const Proyectodetallado = async (id: React.Key): Promise<any> => {
-//   return await client.get<any>(`InformeDetalladoProyectos/${id}`, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
-// //anulacion de apt(cambio de estado a 0 con detalle)
-// export const cambioestadoAptAnulacion = async (data: any): Promise<any> => {
-//   return await client.post<any>("CambioEstadosApt-anulacion", data, {
-//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-//   });
-// };
-
 //llamdo de graficas para proyectos
 export const detalleCasa = async (data: any): Promise<any> => {
   return await client.post<any>("casas-infoCasa", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+export const cambioestadoCasasAnulacion = async (data: any): Promise<any> => {
+  return await client.post<any>("CambioEstadosCasas-anulacion", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+}; 
 
 
 
