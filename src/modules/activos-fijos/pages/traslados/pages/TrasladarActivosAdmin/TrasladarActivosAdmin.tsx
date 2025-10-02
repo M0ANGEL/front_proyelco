@@ -8,9 +8,7 @@ import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import {
-  DeleteActiActivos,
-} from "@/services/activosFijos/CrearActivosAPI";
+import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
 import { FormTraslados } from "../formTraslados/FormTraslados";
 import { getActiAdministrarActivosAdmin } from "@/services/activosFijos/AdministarActivosAdminAPI";
 
@@ -104,39 +102,12 @@ export const TrasladarActivosAdmin = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "ID",
-      dataIndex: "key",
-      key: "key",
-        fixed: "left",
-    },
-    {
-      title: "Fecha creacion",
-      dataIndex: "created_at",
-      key: "created_at",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Fecha fin garantia",
-      dataIndex: "fecha_fin_garantia",
-      key: "fecha_fin_garantia",
-      sorter: (a, b) =>
-        a.fecha_fin_garantia.localeCompare(b.fecha_fin_garantia),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Usuario Creo",
-      dataIndex: "usuario",
-      key: "usuario",
-      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
       title: "Categoria",
       dataIndex: "categoria",
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Subcategoria",
@@ -145,7 +116,7 @@ export const TrasladarActivosAdmin = () => {
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
       render: (text) => text?.toUpperCase(),
     },
-        {
+    {
       title: "Descripcion",
       dataIndex: "descripcion",
       key: "descripcion",
