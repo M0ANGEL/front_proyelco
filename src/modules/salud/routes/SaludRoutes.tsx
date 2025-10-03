@@ -6,8 +6,8 @@ import {
   SaludPage,
 } from "../pages";
 import { GestionProyectoRoutes } from "../pages/gestionProyecto/routes";
-import { AsistenciasObrasRoutes } from "../pages/asistenciaObraConfirmacion";
 import { GestionEncargadoObraRoutes } from "../pages/gestionEncargadoObra/routes";
+import { UnidadMedidaRoutes } from "../pages/unidadMedida/routes";
 
 export const SaludRoutes = () => {
   return (
@@ -17,7 +17,7 @@ export const SaludRoutes = () => {
         <Route path="/administrar-proyectos/*" element={<ConveniosRoutes />} />
         <Route path="/gestion-proyectos/*" element={<GestionProyectoRoutes />} />
         <Route path="/gestion-encargado-obra/*" element={<GestionEncargadoObraRoutes />} />
-        <Route path="/asistencia-obra-personal/*" element={<AsistenciasObrasRoutes/>} />
+        <Route path="/unidad-medida/*" element={<UnidadMedidaRoutes/>} />
       </Route>
     </RoutesWithNotFound>
   );

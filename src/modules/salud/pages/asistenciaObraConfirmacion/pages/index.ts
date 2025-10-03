@@ -1,1 +1,0 @@
-export {ListAsistenciasObraConfirmacion} from './ListAsistenciasObraConfirmacion'
