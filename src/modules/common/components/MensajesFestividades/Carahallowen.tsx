@@ -34,7 +34,7 @@ export const CartaHallowen = () => {
           🎃 ¡Feliz Halloween! 👻
         </h2>
         <p className="text-gray-300 text-center leading-relaxed">
-          Esta mes mágica, llena de misterio y diversión,  
+          Este mes mágica, llena de misterio y diversión,  
           quiero desearte muchos sustos, dulces y sonrisas.  
           Que la luna ilumine tu camino y los fantasmas solo  
           te traigan alegría. 🕷️
