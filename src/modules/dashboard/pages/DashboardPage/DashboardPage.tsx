@@ -52,6 +52,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
+          
         case "Ingeniero Obra":
           cardsArray = [
             {
@@ -72,6 +73,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
+
         case "Directora Proyectos":
           cardsArray = [
             {
@@ -116,6 +118,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
+
         case "Activos":
           cardsArray = [
             {
@@ -128,6 +131,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
+
         case "Administrativo":
           cardsArray = [
             {
@@ -140,6 +144,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
+
         case "Administrador":
           cardsArray = [
             {
