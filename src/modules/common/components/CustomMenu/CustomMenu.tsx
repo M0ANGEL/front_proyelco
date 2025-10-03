@@ -165,7 +165,7 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
           Menu: {
             colorBgContainer: "#000000ff", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#4a08e4ff", //color de texto selecionado
+            itemSelectedColor: "#e68415ff", //color de texto selecionado
             itemHoverBg: "#5b5b5bff",  //azul de hover
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
