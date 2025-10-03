@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Col, DatePicker, Select, Table, Row, Space } from "antd";
 import dayjs from "dayjs";
-import { getProyectos, PostUnidadDeMedida } from "@/services/proyectos/proyectosAPI";
+import {
+  getProyectos,
+  PostUnidadDeMedida,
+} from "@/services/proyectos/proyectosAPI";
 
 const { RangePicker } = DatePicker;
 
@@ -11,6 +14,7 @@ interface DataType {
   proyecto: string;
   cliente: string;
   cantidad: number;
+  cantidadT: number;
   proceso?: string;
 }
 
@@ -21,9 +25,15 @@ interface DataSelect {
 
 export const UnidadMedida = () => {
   const [proyectos, setProyectos] = useState<DataSelect[]>([]);
-  const [selectedProyecto, setSelectedProyecto] = useState<(number | string)[]>([]);
-  const [selectedProceso, setSelectedProceso] = useState<string | null>("fundida");
-  const [fechaRange, setFechaRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
+  const [selectedProyecto, setSelectedProyecto] = useState<(number | string)[]>(
+    []
+  );
+  const [selectedProceso, setSelectedProceso] = useState<string | null>(
+    "fundida"
+  );
+  const [fechaRange, setFechaRange] = useState<
+    [dayjs.Dayjs, dayjs.Dayjs] | null
+  >(null);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -73,13 +83,18 @@ export const UnidadMedida = () => {
     } = await PostUnidadDeMedida(dataPost);
 
     // 👇 Adaptado a la respuesta real del backend
-    const mapped = data.map((item: any, idx: number) => ({
-      key: idx,
-      proyecto: item.proyecto,
-      cliente: item.cliente ?? "-",
-      cantidad: item.total,
-      proceso: selectedProceso ?? "-",
-    }));
+    const mapped = data.map((item: any, idx: number) => {
+      const [completados, total] = item.estado.split("/").map(Number);
+
+      return {
+        key: idx,
+        proyecto: item.proyecto,
+        cliente: item.cliente ?? "-",
+        cantidad: completados, 
+        cantidadT: total, 
+        proceso: selectedProceso ?? "-",
+      };
+    });
 
     setDataSource(mapped);
     setLoading(false);
@@ -99,10 +114,14 @@ export const UnidadMedida = () => {
       align: "center",
     },
     {
-      title: "Total",
-      dataIndex: "cantidad",
-      key: "cantidad",
+      title: "Avance",
+      key: "avance",
       align: "center",
+      render: (_: any, record: DataType) => (
+        <span>
+          {record.cantidad}/{record.cantidadT}
+        </span>
+      ),
     },
   ];
 
@@ -117,8 +136,12 @@ export const UnidadMedida = () => {
             format="DD/MM/YYYY"
             placeholder={["Fecha inicio", "Fecha fin"]}
             value={fechaRange}
-            onChange={(dates) => setFechaRange(dates as [dayjs.Dayjs, dayjs.Dayjs])}
-            disabledDate={(current) => current && current > dayjs().endOf("day")}
+            onChange={(dates) =>
+              setFechaRange(dates as [dayjs.Dayjs, dayjs.Dayjs])
+            }
+            disabledDate={(current) =>
+              current && current > dayjs().endOf("day")
+            }
           />
         </Col>
         <Col xs={24} md={6}>
@@ -187,15 +210,21 @@ export const UnidadMedida = () => {
         <Col xs={24} md={6} style={{ textAlign: "center" }}>
           <span
             style={{
-              fontSize: "10rem", // número grande
+              fontSize: "6rem",
               fontWeight: "bold",
-              color: "#1890ff", // color primario AntD
+              color: "#e68415ff",
               display: "block",
             }}
           >
-            {dataSource.reduce((acc, item) => acc + item.cantidad, 0)}
+            {`${dataSource.reduce(
+              (acc, i) => acc + i.cantidad,
+              0
+            )}/${dataSource.reduce((acc, i) => acc + i.cantidadT, 0)}`}
           </span>
-          <span style={{ fontSize: "2rem" }}>Total: <span style={{color: "#1890ff"}}>{selectedProceso}</span>  </span>
+
+          <span style={{ fontSize: "2rem" }}>
+            Total: <span style={{ color: "#e68415ff" }}>{selectedProceso}</span>{" "}
+          </span>
         </Col>
       </Row>
     </StyledCard>
