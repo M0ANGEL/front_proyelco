@@ -1,13 +1,14 @@
 import { RoutesWithNotFound } from "@/modules/common/components";
 import { AuthGuard } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
-import {ListAsistenciasObraConfirmacion } from "../pages";
+import { UnidadMedida } from "../pages/UnidadDeMedida";
 
-export const AsistenciasObrasRoutes = () => {
+
+export const UnidadMedidaRoutes = () => {
   return (
     <RoutesWithNotFound>
       <Route element={<AuthGuard />}>
-        <Route path="/" element={<ListAsistenciasObraConfirmacion />} />
+        <Route path="/" element={<UnidadMedida />} />
       </Route>
     </RoutesWithNotFound>
   );
