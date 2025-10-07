@@ -14,13 +14,16 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
     if (TkCategoria) {
       methods.setValue("direccion", TkCategoria?.direccion);
       methods.setValue("nombre", TkCategoria?.nombre);
+      methods.setValue("nit", TkCategoria?.nit);
+      methods.setValue("telefono", TkCategoria?.telefono);
+      methods.setValue("correo", TkCategoria?.correo);
     } else {
       /*  methods.setValue('estado', '1') */
     }
   }, [TkCategoria]);
   return (
     <Row gutter={24}>
-      {/* nombre del area */}
+      {/* nombre de contratista */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="nombre"
@@ -28,11 +31,11 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "Nombre del area es requerido",
+              message: "Nombre del contratista es requerido",
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Nombre del area">
+            <StyledFormItem required label="Nombre del contratista">
               <Input
                 {...field}
                 maxLength={50}
@@ -45,7 +48,57 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* nombre de la categoria */}
+      {/* nit de contratista */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="nit"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Nit del contratista es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Nit del contratista">
+              <Input
+                {...field}
+                maxLength={50}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* telefono de contratista */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="telefono"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "telefono del contratista es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="telefono">
+              <Input
+                {...field}
+                maxLength={50}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* direccion de contratista */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="direccion"
@@ -53,11 +106,36 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "La direccion  es requerida",
+              message: "Direccion del contratista es requerido",
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Dirrecion">
+            <StyledFormItem required label="Direccion del contratista">
+              <Input
+                {...field}
+                maxLength={50}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* correo */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="correo"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "El correo  es requerida",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Correo">
               <Input
                 {...field}
                 maxLength={50}

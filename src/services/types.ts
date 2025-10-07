@@ -6092,6 +6092,11 @@ export interface ResponseContratistasSST {
 export interface ContratistasSST {
   id: number;
   contratista: string;
+  direccion: string;
+  correo: string;
+  telefono: string;
+  nit: string;
+  estado: string;
   user_id: string;
   created_at: string;
   updated_at: string;

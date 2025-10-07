@@ -9,15 +9,21 @@ import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteActiBodegas, getActiBodegas } from "@/services/activosFijos/BodegasAPI";
+import {
+  DeleteActiBodegas,
+  getActiBodegas,
+} from "@/services/activosFijos/BodegasAPI";
+import { getContratistas } from "@/services/talento-humano/contratistasAPI";
 
 interface DataType {
   key: number;
+  id: number;
+  contratista: string;
   direccion: string;
-  nombre: string;
-  estado: string;
-  id_user: string;
-  usuario: string;
+  correo: string;
+  telefono: string;
+  nit: string;
+  user_id: string;
   created_at: string;
   updated_at: string;
 }
@@ -38,15 +44,14 @@ export const ListContratistasSST = () => {
   }, []);
 
   const fetchCategorias = () => {
-    getActiBodegas().then(({ data: { data } }) => {
+    getContratistas().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
           estado: categoria.estado.toString(),
           direccion: categoria.direccion,
-          nombre: categoria.nombre,
-          id_user: categoria.id_user,
-          usuario: categoria.usuario,
+          nombre: categoria.contratista,
+          user_id: categoria.user_id,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
         };
@@ -87,6 +92,20 @@ export const ListContratistasSST = () => {
       dataIndex: "nombre",
       key: "nombre",
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Nit",
+      dataIndex: "nit",
+      key: "nit",
+      sorter: (a, b) => a.nit.localeCompare(b.nit),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Telefono",
+      dataIndex: "telefono",
+      key: "telefono",
+      sorter: (a, b) => a.telefono.localeCompare(b.telefono),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -184,4 +203,3 @@ export const ListContratistasSST = () => {
     </StyledCard>
   );
 };
-
