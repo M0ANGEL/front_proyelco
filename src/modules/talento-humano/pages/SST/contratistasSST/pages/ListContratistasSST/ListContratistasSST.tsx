@@ -2,32 +2,29 @@ import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
-import { DeletePersonalNo, getPersonalesNo } from "@/services/talento-humano/personalAPI";
+import { DeleteActiBodegas, getActiBodegas } from "@/services/activosFijos/BodegasAPI";
 
 interface DataType {
   key: number;
-  nombres: string;
+  direccion: string;
+  nombre: string;
   estado: string;
-  identificacion: number;
-  cargo: string;
-  genero: string;
-  telefono_celular: string;
+  id_user: string;
+  usuario: string;
   created_at: string;
   updated_at: string;
-  fecha_ingreso: string;
-  fecha_nacimiento: string;
 }
 
 const { Text } = Typography;
 
-export const ListPersonalNoProyelco = () => {
+export const ListContratistasSST = () => {
   const location = useLocation();
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
@@ -41,22 +38,17 @@ export const ListPersonalNoProyelco = () => {
   }, []);
 
   const fetchCategorias = () => {
-    getPersonalesNo().then(({ data: { data } }) => {
+    getActiBodegas().then(({ data: { data } }) => {
       const categorias = data.map((categoria) => {
         return {
           key: categoria.id,
-          nombres: categoria.nombre_completo,
           estado: categoria.estado.toString(),
-          tipo_documento: categoria.tipo_documento,
-          identificacion: categoria.identificacion,
-          telefono_celular: categoria.telefono_celular,
-          genero: categoria.genero,
-          cargo: categoria.cargo,
-          estado_civil: categoria.estado_civil,
+          direccion: categoria.direccion,
+          nombre: categoria.nombre,
+          id_user: categoria.id_user,
+          usuario: categoria.usuario,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
-          fecha_ingreso: dayjs(categoria?.fecha_ingreso).format("DD-MM-YYYY"),
-          fecha_nacimiento: dayjs(categoria?.fecha_nacimiento).format("DD-MM-YYYY"),
         };
       });
 
@@ -80,7 +72,7 @@ export const ListPersonalNoProyelco = () => {
   //cambio de estado
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    DeletePersonalNo(id)
+    DeleteActiBodegas(id)
       .then(() => {
         fetchCategorias();
       })
@@ -91,52 +83,11 @@ export const ListPersonalNoProyelco = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Fecha Ingreso",
-      dataIndex: "fecha_ingreso",
-      key: "fecha_ingreso",
-      sorter: (a, b) => a.fecha_ingreso.localeCompare(b.fecha_ingreso),
-    },
-       {
-      title: "Fecha Nacimiento",
-      dataIndex: "fecha_nacimiento",
-      key: "fecha_nacimiento",
-      sorter: (a, b) => a.fecha_nacimiento.localeCompare(b.fecha_nacimiento),
-    },
-    {
-      title: "Nombre Completo",
-      dataIndex: "nombres",
-      key: "nombres",
-      sorter: (a, b) => a.nombres.localeCompare(b.nombres),
-    },
-    {
-      title: "Genero",
-      dataIndex: "genero",
-      key: "genero",
-    },
-    {
-      title: "Estado Civil",
-      dataIndex: "estado_civil",
-      key: "estado_civil",
-    },
-    {
-      title: "Tipo Documento",
-      dataIndex: "tipo_documento",
-      key: "tipo_documento",
-    },
-    {
-      title: "Cedula",
-      dataIndex: "identificacion",
-      key: "identificacion",
-    },
-    {
-      title: "Telefono",
-      dataIndex: "telefono_celular",
-      key: "telefono_celular",
-    },
-    {
-      title: "Cargo",
-      dataIndex: "cargo",
-      key: "cargo",
+      title: "Contratistas",
+      dataIndex: "nombre",
+      key: "nombre",
+      sorter: (a, b) => a.nombre.localeCompare(b.nombre),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Estado",
@@ -161,6 +112,7 @@ export const ListPersonalNoProyelco = () => {
           >
             <ButtonTag
               color={color}
+              disabled={!["administrador"].includes(user_rol)}
             >
               <Tooltip title="Cambiar estado">
                 <Tag
@@ -200,7 +152,7 @@ export const ListPersonalNoProyelco = () => {
 
   return (
     <StyledCard
-      title={"Lista de Personal No Proyelco"}
+      title={"Lista de contratistas"}
       extra={
         <Link to={`${location.pathname}/create`}>
           <Button type="primary">Crear</Button>
@@ -217,6 +169,7 @@ export const ListPersonalNoProyelco = () => {
         dataSource={dataSource ?? initialData}
         columns={columns}
         loading={loading}
+        scroll={{ x: 800 }}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
