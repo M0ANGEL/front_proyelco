@@ -428,9 +428,9 @@ export const ListConvenios = () => {
                 </List.Item>
               )}
               pagination={{
-                pageSize: 8, // cantidad de cards por página
+                pageSize: 100, // cantidad de cards por página
                 showSizeChanger: true, // permite cambiar el tamaño de página
-                pageSizeOptions: ["4", "8", "12", "20"], // opciones de items por página
+                pageSizeOptions: [ "200", "300"], // opciones de items por página
                 showTotal: (total: number, range: [number, number]) =>
                   `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
               }}
