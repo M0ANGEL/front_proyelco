@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Col, Input, Row, Typography } from "antd";
+import { Col, Input, Row, Select, Typography } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
@@ -66,6 +66,73 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
                 maxLength={50}
                 status={error && "error"}
                 style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* arl */}
+      <Col xs={24} md={6}>
+        <Controller
+          name="arl"
+          control={methods.control}
+          rules={{
+            required: { value: true, message: "ARL es requerido" },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="ARL">
+              <Select
+                {...field}
+                showSearch
+                allowClear
+                placeholder="Seleccione una ARL"
+                options={[
+                  {
+                    value: "Positiva Compañía de Seguros S.A.",
+                    label: "Positiva Compañía de Seguros S.A.",
+                  },
+                  {
+                    value: "Seguros Bolívar S.A.",
+                    label: "Seguros Bolívar S.A.",
+                  },
+                  {
+                    value: "Seguros de Vida Aurora S.A.",
+                    label: "Seguros de Vida Aurora S.A.",
+                  },
+                  {
+                    value: "Liberty Seguros de Vida S.A.",
+                    label: "Liberty Seguros de Vida S.A.",
+                  },
+                  {
+                    value: "Mapfre Colombia Vida Seguros S.A.",
+                    label: "Mapfre Colombia Vida Seguros S.A.",
+                  },
+                  {
+                    value: "Colmena Seguros ARL",
+                    label: "Colmena Seguros ARL",
+                  },
+                  {
+                    value: "Seguros de Vida Alfa S.A.",
+                    label: "Seguros de Vida Alfa S.A.",
+                  },
+                  {
+                    value: "Seguros de Vida Colpatria S.A.",
+                    label: "Seguros de Vida Colpatria S.A.",
+                  },
+                  {
+                    value: "Seguros de Vida La Equidad Organismo Cooperativo",
+                    label: "Seguros de Vida La Equidad Organismo Cooperativo",
+                  },
+                  {
+                    value:
+                      "ARL SURA (Compañía Suramericana de Seguros de Vida)",
+                    label:
+                      "ARL SURA (Compañía Suramericana de Seguros de Vida)",
+                  },
+                ]}
+                status={error ? "error" : ""}
               />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
