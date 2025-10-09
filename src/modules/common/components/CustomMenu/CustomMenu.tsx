@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillBank, AiOutlineBarChart, AiOutlineSolution } from "react-icons/ai";
+import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiOutlineSolution } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
