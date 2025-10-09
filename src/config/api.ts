@@ -2,9 +2,11 @@ const HOST = import.meta.env.VITE_API_HOST;
 const HOST_REP = import.meta.env.VITE_API_HOST_REP;
 const HOST_GESTION = import.meta.env.VITE_API_HOST_GESTION;
 const HOST_TK = import.meta.env.VITE_API_HOST_TK;
+const HOST_SINCO = import.meta.env.VITE_API_HOST_SINCO;
 export const BASE_URL_TK = HOST_TK + "api/"; /* tk = tickets */
 const HOST_MARCACION = import.meta.env.VITE_API_HOST_MARCACION;
 export const BASE_URL = HOST + "api/";
+export const BASE_SICO = HOST_SINCO + "api/";
 export const BASE_URL_IMAGENES = HOST;
 export const BASE_URL_GESTION = HOST_GESTION + "api/"
 export const BASE_URL_REP = HOST_REP + "reportes/";

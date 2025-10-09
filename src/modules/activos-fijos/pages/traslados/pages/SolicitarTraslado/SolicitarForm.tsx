@@ -39,13 +39,15 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
   // 👇 nuevo state para condición del activo
 
   useEffect(() => {
-     getActiBodegas().then(({ data: { data } }) => {
+     if(visible == true){
+      getActiBodegas().then(({ data: { data } }) => {
           const opciones = data.map((item) => ({
             label: item.nombre.toUpperCase(),
             value: item.id,
           }));
           setBodegas(opciones);
         });
+     }
   }, [visible]);
 
   //trasladar

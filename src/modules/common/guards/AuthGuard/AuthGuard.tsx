@@ -24,6 +24,8 @@ const systemRoutes = [
   "/tickets",
   "/dashboards",
   "/activosfijos",
+  "/talentohumano",
+  "/logistica",
 ];
 
 // 🔐 Construir rutas jerárquicas desde userData

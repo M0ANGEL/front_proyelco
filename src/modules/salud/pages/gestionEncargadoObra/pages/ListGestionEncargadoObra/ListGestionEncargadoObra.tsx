@@ -15,6 +15,8 @@ import {
 import { ModalInforme } from "./ModalInforme";
 import { KEY_ROL } from "@/config/api";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { IniciarProyectoCasas } from "@/services/proyectos/casasProyectosAPI";
+import { ModalInformeCasa } from "../../../convenios/pages/ListConvenios/ModalInformeCasa";
 
 interface DataType {
   key: number;
@@ -57,28 +59,68 @@ const ListGestionEncargadoObra = () => {
     fetchCategorias();
   }, []);
 
+  // const fetchCategorias = () => {
+  //   getGestionProyectoEncargado().then(({ data: { data } }) => {
+  //     const categorias = data.map((categoria) => {
+  //       return {
+  //         key: categoria.id,
+  //         tipoPoryecto_id: categoria.tipoPoryecto_id,
+  //         estado: categoria.estado.toString(),
+  //         cliente_id: categoria.cliente_id,
+  //         usuario_crea_id: categoria.usuario_crea_id,
+  //         encargado_id: categoria.encargado_id,
+  //         descripcion_proyecto: categoria.descripcion_proyecto,
+  //         fecha_inicio: categoria.fecha_inicio,
+  //         codigo_proyecto: categoria.codigo_proyecto,
+  //         torres: categoria.torres,
+  //         cant_pisos: categoria.cant_pisos,
+  //         avance_pisos: categoria.avance_pisos,
+  //         apt: categoria.apt,
+  //         pisoCambiarProceso: categoria.pisoCambiarProceso,
+  //         fecha_ini_proyecto: categoria.fecha_ini_proyecto,
+  //         nombre_tipo: categoria.nombre_tipo,
+  //         emp_nombre: categoria.emp_nombre,
+  //         porcentaje: categoria.porcentaje.toString(),
+  //         avance: categoria.avance,
+  //         total_apartamentos: categoria.total_apartamentos,
+  //         apartamentos_realizados: categoria.apartamentos_realizados,
+  //         created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
+  //         updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
+  //       };
+  //     });
+
+  //     setInitialData(categorias);
+  //     setDataSource(categorias);
+  //     setLoadingRow([]);
+  //     setLoading(false);
+  //   });
+  // };
+
   const fetchCategorias = () => {
-    getGestionProyectoEncargado().then(({ data: { data } }) => {
-      const categorias = data.map((categoria) => {
+    getGestionProyectoEncargado().then(({ data: { data, data_casas } }) => {
+      // 🔹 Unimos apartamentos y casas
+      const proyectos = [...(data || []), ...(data_casas || [])];
+
+      const categorias = proyectos.map((categoria) => {
         return {
           key: categoria.id,
           tipoPoryecto_id: categoria.tipoPoryecto_id,
-          estado: categoria.estado.toString(),
+          estado: categoria.estado?.toString(),
           cliente_id: categoria.cliente_id,
           usuario_crea_id: categoria.usuario_crea_id,
           encargado_id: categoria.encargado_id,
           descripcion_proyecto: categoria.descripcion_proyecto,
           fecha_inicio: categoria.fecha_inicio,
           codigo_proyecto: categoria.codigo_proyecto,
-          torres: categoria.torres,
-          cant_pisos: categoria.cant_pisos,
+          torres: categoria.torres ?? null,
+          cant_pisos: categoria.cant_pisos ?? null,
           avance_pisos: categoria.avance_pisos,
           apt: categoria.apt,
           pisoCambiarProceso: categoria.pisoCambiarProceso,
           fecha_ini_proyecto: categoria.fecha_ini_proyecto,
           nombre_tipo: categoria.nombre_tipo,
           emp_nombre: categoria.emp_nombre,
-          porcentaje: categoria.porcentaje.toString(),
+          porcentaje: categoria.porcentaje?.toString(),
           avance: categoria.avance,
           total_apartamentos: categoria.total_apartamentos,
           apartamentos_realizados: categoria.apartamentos_realizados,
@@ -105,9 +147,21 @@ const ListGestionEncargadoObra = () => {
   };
 
   //iniciar proyecto
-  const handleStatus = (id: React.Key) => {
+  const iniciarProyectoAparamentos = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
     IniciarProyecto(id)
+      .then(() => {
+        fetchCategorias();
+      })
+      .catch(() => {
+        setLoadingRow([]);
+      });
+  };
+
+  //iniciar proyecto casas
+  const iniciarProyectoCasas = (id: React.Key) => {
+    setLoadingRow([...loadingRow, id]);
+    IniciarProyectoCasas(id)
       .then(() => {
         fetchCategorias();
       })
@@ -167,12 +221,66 @@ const ListGestionEncargadoObra = () => {
       align: "center",
       sorter: (a, b) => a.emp_nombre.localeCompare(b.emp_nombre),
     },
+    // {
+    //   title: "Estado Proyecto",
+    //   dataIndex: "fecha_ini_proyecto",
+    //   key: "fecha_ini_proyecto",
+    //   align: "center",
+    //   render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
+    //     let estadoString = "";
+    //     let color;
+    //     if (record.fecha_ini_proyecto !== null) {
+    //       estadoString = "PROCESO";
+    //       color = "green";
+    //     } else {
+    //       estadoString = "INICIAR";
+    //       color = "#00a9e4";
+    //     }
+    //     return (
+    //       <Popconfirm
+    //         disabled={!["Encargado Obras"].includes(user_rol)}
+    //         title="¿Desea inicar el proyecto?"
+    //         onConfirm={() => iniciarProyectoAparamentos(record.key)}
+    //         placement="left"
+    //       >
+    //         <ButtonTag
+    //           color={color}
+    //           disabled={
+    //             !Number(record.fecha_ini_proyecto !== null) ? false : true
+    //           }
+    //         >
+    //           <Tooltip title="Iniciar Proyecto">
+    //             <Tag
+    //               color={color}
+    //               key={estadoString}
+    //               icon={
+    //                 loadingRow.includes(record.key) ? (
+    //                   <SyncOutlined spin />
+    //                 ) : null
+    //               }
+    //             >
+    //               {estadoString.toUpperCase()}
+    //             </Tag>
+    //           </Tooltip>
+    //         </ButtonTag>
+    //       </Popconfirm>
+    //     );
+    //   },
+    //   sorter: (a, b) => a.estado.localeCompare(b.estado),
+    // },
     {
       title: "Estado Proyecto",
       dataIndex: "fecha_ini_proyecto",
       key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
+      render: (
+        _,
+        record: {
+          key: React.Key;
+          fecha_ini_proyecto: string;
+          nombre_tipo: string;
+        }
+      ) => {
         let estadoString = "";
         let color;
         if (record.fecha_ini_proyecto !== null) {
@@ -182,18 +290,26 @@ const ListGestionEncargadoObra = () => {
           estadoString = "INICIAR";
           color = "#00a9e4";
         }
+
+        // 🔹 Función dinámica según el tipo
+        const iniciarProyecto = (id: React.Key, tipo: string) => {
+          if (tipo === "Apartamentos") {
+            iniciarProyectoAparamentos(id);
+          } else if (tipo === "Casa") {
+            iniciarProyectoCasas(id);
+          }
+        };
+
         return (
           <Popconfirm
             disabled={!["Encargado Obras"].includes(user_rol)}
-            title="¿Desea inicar el proyecto?"
-            onConfirm={() => handleStatus(record.key)}
+            title="¿Desea iniciar el proyecto?"
+            onConfirm={() => iniciarProyecto(record.key, record.nombre_tipo)}
             placement="left"
           >
             <ButtonTag
               color={color}
-              disabled={
-                !Number(record.fecha_ini_proyecto !== null) ? false : true
-              }
+              disabled={record.fecha_ini_proyecto !== null}
             >
               <Tooltip title="Iniciar Proyecto">
                 <Tag
@@ -219,7 +335,20 @@ const ListGestionEncargadoObra = () => {
       dataIndex: "fecha_ini_proyecto",
       key: "fecha_ini_proyecto",
       align: "center",
-      render: (_, record: { key: React.Key; fecha_ini_proyecto: string }) => {
+      render: (
+        _,
+        record: {
+          key: React.Key;
+          fecha_ini_proyecto: string;
+          nombre_tipo: string;
+        }
+      ) => {
+        // 🔹 Decidir la ruta según el tipo de proyecto
+        const ruta =
+          record.nombre_tipo === "Casa"
+            ? `${location.pathname}/casas/${record.key}`
+            : `${location.pathname}/${record.key}`;
+
         return (
           <>
             <Tooltip
@@ -229,17 +358,27 @@ const ListGestionEncargadoObra = () => {
                   : "Gestionar"
               }
             >
-              <Link to={`${location.pathname}/${record.key}`}>
+              <Link to={ruta}>
                 <Button
-                  disabled={
-                    !Number(record.fecha_ini_proyecto === null) ? false : true
-                  }
+                  disabled={record.fecha_ini_proyecto === null}
                   icon={<EditOutlined />}
                   type="primary"
                 />
               </Link>
             </Tooltip>
-            <ModalInforme proyecto={record} />
+            {record.nombre_tipo === "Casa" ? (
+              <>
+                <div className="status-container">
+                  <ModalInformeCasa proyecto={record} />
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="status-container">
+                  <ModalInforme proyecto={record} />
+                </div>
+              </>
+            )}
           </>
         );
       },

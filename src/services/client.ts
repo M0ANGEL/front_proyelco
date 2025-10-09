@@ -5,6 +5,7 @@ import {
   BASE_URL_TK,
   BASE_URL_ACTIVOS,
   BASE_URL_ASISTENCIA,
+  BASE_SICO,
 } from "@/config/api";
 import axios from "axios";
 
@@ -30,5 +31,10 @@ export const client_tk = axios.create({
 
 export const client_aistencia = axios.create({
   baseURL: BASE_URL_ASISTENCIA,
+});
+
+
+export const client_sinco = axios.create({
+  baseURL: BASE_SICO,
 });
 

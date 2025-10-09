@@ -30,7 +30,7 @@ export const LoginPage = () => {
           <Col md={12} xs={24}>
             <LoginCard
               title={
-                <Image src="./logo_dash1.png" preview={false} width={300}  style={{marginBottom:20}}/>
+                <Image src="./logo_dash.png" preview={false} width={300}  style={{marginBottom:20}}/>
               }
             >
               {/* <LoginTitle level={2}>PROYELCO</LoginTitle> */}

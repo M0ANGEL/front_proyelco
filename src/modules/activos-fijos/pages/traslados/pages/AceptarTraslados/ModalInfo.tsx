@@ -59,8 +59,21 @@ export const ModalInfo = ({ data }: GenerarQRProps) => {
         centered
         width={800}
       >
-        {initialData ? (
+        {initialData ? ( 
           <Row gutter={24}>
+
+             {/* fecha creacion */} 
+            <Col xs={24} sm={12}>
+              <StyledFormItem label="Fecha Traslado" labelCol={{ span: 24 }}>
+                <Input value={initialData.created_at} disabled />
+              </StyledFormItem>
+            </Col>
+               {/* Usaior crea traslado */} 
+            <Col xs={24} sm={12}>
+              <StyledFormItem label="Usuario Crea Traslado" labelCol={{ span: 24 }}>
+                <Input value={initialData.usuario} disabled />
+              </StyledFormItem>
+            </Col>
             {/* Número Activo */}
             <Col xs={24} sm={12}>
               <StyledFormItem label="Número Activo" labelCol={{ span: 24 }}>

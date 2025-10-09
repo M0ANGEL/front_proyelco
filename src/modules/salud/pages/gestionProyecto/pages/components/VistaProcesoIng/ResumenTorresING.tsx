@@ -50,6 +50,9 @@ export const ResumenTorresING = () => {
   };
 
   const torresUnicas = Object.keys(data);
+  const emitRefetchEvent = () => {
+  window.dispatchEvent(new CustomEvent('refetchProyectoData'));
+};
 
   return (
     <>
