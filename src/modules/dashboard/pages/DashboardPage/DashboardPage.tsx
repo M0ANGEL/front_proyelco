@@ -52,7 +52,7 @@ export const DashboardPage = () => {
             },
           ];
           break;
-
+          
         case "Ingeniero Obra":
           cardsArray = [
             {
@@ -108,6 +108,32 @@ export const DashboardPage = () => {
               permiso: true,
               bgColor: cardsBgColors[4],
             },
+            {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+          ];
+          break;
+
+        case "Activos":
+          cardsArray = [
+            {
+              title: "ACTIVOS POR ACEPTAR",
+              icon: <AiFillBank />,
+              value: data.activos_pendinetes,
+              link: "/activosfijos/traslados-activos/apt",
+              permiso: true,
+              bgColor: cardsBgColors[0],
+            },
+          ];
+          break;
+
+        case "Administrativo":
+          cardsArray = [
             {
               title: "ACTIVOS POR ACEPTAR",
               icon: <AiFillBank />,

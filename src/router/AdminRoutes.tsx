@@ -16,6 +16,7 @@ import { ComprasRoutes } from "@/modules/compras";
 import { TickestRoutes } from "@/modules/tickets";
 import { DashboarsdRoutes } from "@/modules/graficasDashboard/routes/DashboarsdRoutes";
 import { ActivosRoutes } from "@/modules/activos-fijos";
+import { LogisticaAdminRouter } from "@/modules/logistica/routes";
 
 export const AdminRoutes = () => {
   return (
@@ -57,8 +58,8 @@ export const AdminRoutes = () => {
 
             <Route path={"activosfijos/*"} element={<ActivosRoutes />} />
 
-            {/* <Route path={"gestionhumana/*"} element={<GestionHumanaRoutes />} />
-            <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
+            <Route path={"logistica/*"} element={<LogisticaAdminRouter />} />
+            {/* <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
           </Route>
         </RoutesWithNotFound>
       </GlobalProvider>

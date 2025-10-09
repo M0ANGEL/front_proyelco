@@ -78,6 +78,8 @@ export const ListKardex = () => {
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
             "DD-MM-YYYY HH:mm"
           ),
+          responsable: (categoria.usuariosAsignados || []).join(", "),
+
         };
       });
 
@@ -127,31 +129,22 @@ export const ListKardex = () => {
 
   const columns: ColumnsType<DataType> = [
     {
+      title: "Numero Activo",
+      dataIndex: "numero_activo",
+      key: "numero_activo",
+      fixed: "left",
+      sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
+    },
+    {
       title: "Numero Traslado",
       dataIndex: "codigo_traslado",
       key: "codigo_traslado",
-      fixed: "left",
-    },
-    {
-      title: "Fecha creacion",
-      dataIndex: "created_at",
-      key: "created_at",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Usuario Crea Traslado",
-      dataIndex: "usuario",
-      key: "usuario",
-      sorter: (a, b) => a.usuario.localeCompare(b.usuario),
-      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Categoria",
       dataIndex: "categoria",
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
-      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Subcategoria",
@@ -160,7 +153,7 @@ export const ListKardex = () => {
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
       render: (text) => text?.toUpperCase(),
     },
-     {
+    {
       title: "Descripcion",
       dataIndex: "descripcion",
       key: "descripcion",
@@ -180,6 +173,11 @@ export const ListKardex = () => {
       key: "bodega_destino",
       sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
       render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Responsable",
+      dataIndex: "responsable",
+      key: "responsable",
     },
     {
       title: "Condición",
@@ -214,12 +212,6 @@ export const ListKardex = () => {
         );
       },
       sorter: (a, b) => a.condicion.localeCompare(b.condicion),
-    },
-    {
-      title: "Numero Activo",
-      dataIndex: "numero_activo",
-      key: "numero_activo",
-      sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
     },
     {
       title: "Estado Traslado",
@@ -328,8 +320,8 @@ export const ListKardex = () => {
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
-          defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
+          defaultPageSize: 100,
+          pageSizeOptions: ["5", "15", "30", "100", "200"],
           showTotal: (total: number) => {
             return <Text>Total Registros: {total}</Text>;
           },

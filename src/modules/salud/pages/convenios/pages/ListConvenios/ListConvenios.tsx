@@ -24,12 +24,12 @@ import {
 } from "antd";
 import {
   DeleteProyecto,
+  DeleteProyectoCasa,
   getProyectos,
 } from "@/services/proyectos/proyectosAPI";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
-
-const { Text } = Typography;
+import { ModalInformeCasa } from "./ModalInformeCasa";
 
 export const ListConvenios = () => {
   const [showActiveConvenios, setShowActiveConvenios] = useState<boolean>(true);
@@ -46,24 +46,69 @@ export const ListConvenios = () => {
     fetchConvenios();
   }, []);
 
+  // const fetchConvenios = () => {
+  //   getProyectos().then(({ data: { data } }) => {
+  //     const convenios = data.map((convenio: any) => {
+  //       return {
+  //         key: convenio.id,
+  //         nombreEncargado: (convenio.nombresEncargados || []).join(", "),
+  //         nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
+  //         descripcion_proyecto: convenio.descripcion_proyecto,
+  //         emp_nombre: convenio.emp_nombre,
+  //         estado: convenio.estado.toString(),
+  //         fec_ini: convenio.fecha_inicio,
+  //         fec_fin: convenio.fec_fin,
+  //         codigo_proyecto: convenio.codigo_proyecto,
+  //         porcentaje: convenio.porcentaje,
+  //         avance: convenio.avance,
+  //       };
+  //     });
+  //     setInitialData(convenios);
+  //     setLoadingRow([]);
+  //     setLoading(false);
+  //   });
+  // };
+
   const fetchConvenios = () => {
-    getProyectos().then(({ data: { data } }) => {
-      const convenios = data.map((convenio: any) => {
-        return {
-          key: convenio.id,
-          nombreEncargado: (convenio.nombresEncargados || []).join(", "),
-          nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
-          descripcion_proyecto: convenio.descripcion_proyecto,
-          emp_nombre: convenio.emp_nombre,
-          estado: convenio.estado.toString(),
-          fec_ini: convenio.fecha_inicio,
-          fec_fin: convenio.fec_fin,
-          codigo_proyecto: convenio.codigo_proyecto,
-          porcentaje: convenio.porcentaje,
-          avance: convenio.avance,
-        };
-      });
-      setInitialData(convenios);
+    getProyectos().then(({ data: { data, data_casas } }) => {
+      // Mapear proyectos normales
+      const convenios = data.map((convenio: any) => ({
+        // key: `apt-${convenio.id}`, // prefijo para diferenciar
+        key: convenio.id,
+        tipo: "Apartamento",
+        nombreEncargado: (convenio.nombresEncargados || []).join(", "),
+        nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
+        descripcion_proyecto: convenio.descripcion_proyecto,
+        emp_nombre: convenio.emp_nombre,
+        estado: convenio.estado.toString(),
+        fec_ini: convenio.fecha_inicio,
+        fec_fin: convenio.fec_fin,
+        codigo_proyecto: convenio.codigo_proyecto,
+        porcentaje: convenio.porcentaje,
+        avance: convenio.avance,
+      }));
+
+      // Mapear proyectos de casas
+      const conveniosCasas = data_casas.map((casa: any) => ({
+        // key: `casa-${casa.id}`, // prefijo diferente
+        key: casa.id,
+        tipo: "Casa",
+        nombreEncargado: (casa.nombresEncargados || []).join(", "),
+        nombreIngeniero: (casa.nombresIngenieros || []).join(", "),
+        descripcion_proyecto: casa.descripcion_proyecto,
+        emp_nombre: casa.emp_nombre,
+        estado: casa.estado.toString(),
+        fec_ini: casa.fecha_inicio,
+        fec_fin: casa.fec_fin,
+        codigo_proyecto: casa.codigo_proyecto,
+        porcentaje: casa.porcentaje,
+        avance: casa.avance,
+      }));
+
+      // Unir todo
+      const todosConvenios = [...convenios, ...conveniosCasas];
+
+      setInitialData(todosConvenios);
       setLoadingRow([]);
       setLoading(false);
     });
@@ -72,6 +117,16 @@ export const ListConvenios = () => {
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
     DeleteProyecto(id)
+      .then(() => {
+        fetchConvenios();
+      })
+      .catch(() => {
+        setLoadingRow([]);
+      });
+  };
+  const handleStatusCasas = (id: React.Key) => {
+    setLoadingRow([...loadingRow, id]);
+    DeleteProyectoCasa(id)
       .then(() => {
         fetchConvenios();
       })
@@ -253,7 +308,11 @@ export const ListConvenios = () => {
                           <div className="status-container">
                             <Popconfirm
                               title="¿Desea cambiar el estado?"
-                              onConfirm={() => handleStatus(item.key)}
+                              onConfirm={
+                                item.tipo === "Casa"
+                                  ? () => handleStatusCasas(item.key)
+                                  : () => handleStatus(item.key)
+                              }
                               placement="left"
                             >
                               <ButtonTag className="custom-button-tag">
@@ -295,39 +354,83 @@ export const ListConvenios = () => {
                               </ButtonTag>
                             </Popconfirm>
                           </div>
-                          <div className="status-container">
-                            <Tooltip title="Ver Proceso Proyecto">
-                              <Link
-                                to={`${location.pathname}/proceso/${item.key}`}
-                              >
-                                <ButtonTag
-                                  style={{
-                                    padding: 5,
-                                    borderRadius: 8,
-                                    width: 40,
-                                    backgroundColor: "#B5EAD7",
-                                    border: "none",
-                                    color: "#2C5F2D",
-                                  }}
-                                >
-                                  <AiOutlineExpandAlt />
-                                </ButtonTag>
-                              </Link>
-                            </Tooltip>
-                          </div>
-                          <div className="status-container">
-                            <ModalInforme proyecto={item} />
-                          </div>
+                          {item.tipo == "Casa" ? (
+                            <>
+                              <div className="status-container">
+                                <Tooltip title="Ver Proceso Proyecto">
+                                  <Link
+                                    to={`${location.pathname}/proceso-casa/${item.key}`}
+                                  >
+                                    <ButtonTag
+                                      style={{
+                                        padding: 5,
+                                        borderRadius: 8,
+                                        width: 40,
+                                        backgroundColor: "#B5EAD7",
+                                        border: "none",
+                                        color: "#2C5F2D",
+                                      }}
+                                    >
+                                      <AiOutlineExpandAlt />
+                                    </ButtonTag>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="status-container">
+                                <Tooltip title="Ver Proceso Proyecto">
+                                  <Link
+                                    to={`${location.pathname}/proceso/${item.key}`}
+                                  >
+                                    <ButtonTag
+                                      style={{
+                                        padding: 5,
+                                        borderRadius: 8,
+                                        width: 40,
+                                        backgroundColor: "#B5EAD7",
+                                        border: "none",
+                                        color: "#2C5F2D",
+                                      }}
+                                    >
+                                      <AiOutlineExpandAlt />
+                                    </ButtonTag>
+                                  </Link>
+                                </Tooltip>
+                              </div>
+                            </>
+                          )}
+
+                          {item.tipo == "Casa" ? (
+                            <>
+                              <div className="status-container">
+                                <ModalInformeCasa proyecto={item} />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div className="status-container">
+                                <ModalInforme proyecto={item} />
+                              </div>
+                            </>
+                          )}
                         </div>
+                        <span
+                          style={{ color: "red", fontSize: 15, marginTop: 5 }}
+                          className="title-text"
+                        >
+                          {item.tipo}
+                        </span>
                       </div>
                     </div>
                   </Card>
                 </List.Item>
               )}
               pagination={{
-                pageSize: 8, // cantidad de cards por página
+                pageSize: 100, // cantidad de cards por página
                 showSizeChanger: true, // permite cambiar el tamaño de página
-                pageSizeOptions: ["4", "8", "12", "20"], // opciones de items por página
+                pageSizeOptions: [ "200", "300"], // opciones de items por página
                 showTotal: (total: number, range: [number, number]) =>
                   `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
               }}

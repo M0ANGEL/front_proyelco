@@ -126,11 +126,11 @@ export const CustomAvatarDescription = ({
             >
               {!loader || showText ? (
                 <>
-                  {shotName ? <Text>{user?.nombre}</Text> : null}
+                  {shotName ? <Text strong keyboard>{user?.nombre}</Text> : null}
 
-                  <Text strong keyboard>
+                  {/* <Text strong keyboard>
                     {"Empresa: Proyelco "}
-                  </Text>
+                  </Text> */}
                 </>
               ) : (
                 <>
