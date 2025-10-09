@@ -101,6 +101,7 @@ export interface AsistenciaTH {
   tipo_obra_texto: string;
 }
 
+
 export interface ResponseAsistenciasTH {
   status: string;
   data: AsistenciaTH[];
