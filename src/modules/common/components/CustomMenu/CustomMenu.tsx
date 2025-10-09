@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiTwotoneProject } from "react-icons/ai";
+import { AiFillBank, AiOutlineBarChart, AiOutlineSolution } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -74,7 +74,7 @@ const moduleIcons = [
   { cod: "CLI", icon: <HiUserGroup /> },
   { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
   { cod: "COMPA", icon: <MdLocalGroceryStore /> },
-  { cod: "CA", icon: <AiTwotoneProject /> },
+  { cod: "TH", icon: <AiOutlineSolution /> },
   { cod: "DSH", icon: <RiDashboardLine  /> },
   { cod: "ACTIV", icon: <AiFillBank /> },
   { cod: "LOGI", icon:<AiOutlineFileDone  /> },

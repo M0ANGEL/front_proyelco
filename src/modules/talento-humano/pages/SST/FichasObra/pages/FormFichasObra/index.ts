@@ -1,0 +1,1 @@
+export {FormFichasObra } from './FormFichasObra'

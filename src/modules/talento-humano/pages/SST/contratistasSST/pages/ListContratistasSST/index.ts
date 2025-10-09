@@ -1,0 +1,1 @@
+export {ListContratistasSST} from './ListContratistasSST'
