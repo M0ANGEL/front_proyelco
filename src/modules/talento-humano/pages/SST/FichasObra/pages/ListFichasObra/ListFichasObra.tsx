@@ -5,11 +5,9 @@ import { Link, useLocation } from "react-router-dom";
 import Table, { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import dayjs from "dayjs";
 import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
-import { DeletePersonalNo } from "@/services/talento-humano/personalAPI";
-import { getFichasObra } from "@/services/talento-humano/fichaObraAPI";
+import { DeleteFicha, getFichasObra } from "@/services/talento-humano/fichaObraAPI";
 
 interface DataType {
   key: number;
@@ -46,6 +44,7 @@ export const ListFichasObra = () => {
           nombres: categoria.nombre_completo,
           estado: categoria.estado.toString(),
           tipo_documento: categoria.tipo_documento,
+          tipo_empleado: categoria.tipo_empleado == 1 ? "PROYELCO" : "NO PROYELCO",
           identificacion: categoria.identificacion,
           telefono_celular: categoria.telefono_celular,
           genero: categoria.genero,
@@ -80,7 +79,7 @@ export const ListFichasObra = () => {
   //cambio de estado
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    DeletePersonalNo(id)
+    DeleteFicha(id)
       .then(() => {
         fetchCategorias();
       })
@@ -91,10 +90,10 @@ export const ListFichasObra = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Fecha Ingreso",
-      dataIndex: "fecha_ingreso",
-      key: "fecha_ingreso",
-      sorter: (a, b) => a.fecha_ingreso.localeCompare(b.fecha_ingreso),
+      title: "Tipo empleado",
+      dataIndex: "tipo_empleado",
+      key: "tipo_empleado",
+      sorter: (a, b) => a.tipo_empleado.localeCompare(b.tipo_empleado),
     },
        {
       title: "Fecha Nacimiento",
@@ -137,16 +136,6 @@ export const ListFichasObra = () => {
       title: "Cargo",
       dataIndex: "cargo",
       key: "cargo",
-    },
-     {
-      title: "Salario",
-      dataIndex: "salario",
-      key: "salario",
-    },
-    {
-      title: "Valor Hora",
-      dataIndex: "valor_hora",
-      key: "valor_hora",
     },
     {
       title: "Estado",

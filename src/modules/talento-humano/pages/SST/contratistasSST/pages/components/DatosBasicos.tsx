@@ -12,10 +12,13 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
   useEffect(() => {
     //si tenemos datos en categoria agregamos a metho los datos
     if (TkCategoria) {
-      methods.setValue("direccion", TkCategoria?.direccion);
-      methods.setValue("nombre", TkCategoria?.nombre);
+      methods.setValue("nombre", TkCategoria?.contratista);
       methods.setValue("nit", TkCategoria?.nit);
+      methods.setValue("actividad", TkCategoria?.actividad);
+      methods.setValue("arl", TkCategoria?.arl);
       methods.setValue("telefono", TkCategoria?.telefono);
+      methods.setValue("contacto", TkCategoria?.contacto);
+      methods.setValue("direccion", TkCategoria?.direccion);
       methods.setValue("correo", TkCategoria?.correo);
     } else {
       /*  methods.setValue('estado', '1') */
@@ -73,8 +76,33 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
+      {/* Actividad de contratista */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="actividad"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "Actividad del contratista es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="Actividad del contratista">
+              <Input
+                {...field}
+                maxLength={50}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
       {/* arl */}
-      <Col xs={24} md={6}>
+      <Col xs={24} md={12}>
         <Controller
           name="arl"
           control={methods.control}
@@ -153,6 +181,31 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           }}
           render={({ field, fieldState: { error } }) => (
             <StyledFormItem required label="telefono">
+              <Input
+                {...field}
+                maxLength={50}
+                status={error && "error"}
+                style={{ textTransform: "uppercase" }}
+              />
+              <Text type="danger">{error?.message}</Text>
+            </StyledFormItem>
+          )}
+        />
+      </Col>
+
+      {/* conctato de contratista */}
+      <Col xs={24} sm={12} style={{ width: "100%" }}>
+        <Controller
+          name="contacto"
+          control={methods.control}
+          rules={{
+            required: {
+              value: true,
+              message: "contacto del contratista es requerido",
+            },
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <StyledFormItem required label="contacto">
               <Input
                 {...field}
                 maxLength={50}

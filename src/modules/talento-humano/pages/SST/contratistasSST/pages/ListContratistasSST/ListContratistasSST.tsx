@@ -9,20 +9,19 @@ import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import {
-  DeleteActiBodegas,
-  getActiBodegas,
-} from "@/services/activosFijos/BodegasAPI";
-import { getContratistas } from "@/services/talento-humano/contratistasAPI";
+import { DeleteContratista, getContratistas } from "@/services/talento-humano/contratistasAPI";
 
 interface DataType {
   key: number;
   id: number;
-  contratista: string;
+  nit: string;
+  nombre: string;
+  arl: string;
+  actividad: string;
+  contacto: string;
+  telefono: string;
   direccion: string;
   correo: string;
-  telefono: string;
-  nit: string;
   user_id: string;
   created_at: string;
   updated_at: string;
@@ -49,8 +48,15 @@ export const ListContratistasSST = () => {
         return {
           key: categoria.id,
           estado: categoria.estado.toString(),
-          direccion: categoria.direccion,
+          nit: categoria.nit,
           nombre: categoria.contratista,
+          arl: categoria.arl,
+          actividad: categoria.actividad,
+          contacto: categoria.contacto,
+          telefono: categoria.telefono,
+          direccion: categoria.direccion,
+          correo: categoria.correo,
+
           user_id: categoria.user_id,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -77,7 +83,7 @@ export const ListContratistasSST = () => {
   //cambio de estado
   const handleStatus = (id: React.Key) => {
     setLoadingRow([...loadingRow, id]);
-    DeleteActiBodegas(id)
+    DeleteContratista(id)
       .then(() => {
         fetchCategorias();
       })
@@ -131,7 +137,6 @@ export const ListContratistasSST = () => {
           >
             <ButtonTag
               color={color}
-              disabled={!["administrador"].includes(user_rol)}
             >
               <Tooltip title="Cambiar estado">
                 <Tag

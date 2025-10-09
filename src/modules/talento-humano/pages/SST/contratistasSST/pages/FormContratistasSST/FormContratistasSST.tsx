@@ -20,11 +20,7 @@ import { Notification } from "@/modules/auth/pages/LoginPage/types";
 import { ActivosCategoria } from "@/services/types";
 import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
-import {
-  crearActiBodega,
-  getActiBodega,
-  updateActiBodega,
-} from "@/services/activosFijos/BodegasAPI";
+import { crearContratista, getContratista, updateContratista } from "@/services/talento-humano/contratistasAPI";
 
 const { Text } = Typography;
 
@@ -40,7 +36,7 @@ export const FormContratistasSST = () => {
   useEffect(() => {
     //si hay un id ejecutamos una consulta para traer datos de esa categoria
     if (id) {
-      getActiBodega(id).then(({ data }) => {
+      getContratista(id).then(({ data }) => {
         setCategoria(data);
         setLoaderSave(false);
       });
@@ -69,7 +65,7 @@ export const FormContratistasSST = () => {
     setLoaderSave(true);
 
     if (categoria) {
-      updateActiBodega(data, id)
+      updateContratista(data, id)
         .then(() => {
           pushNotification({ title: "Bodega / Area actualizado con éxito!" });
           setTimeout(() => {
@@ -87,7 +83,7 @@ export const FormContratistasSST = () => {
           setLoaderSave(false);
         });
     } else {
-      crearActiBodega(data)
+      crearContratista(data)
         .then(() => {
           pushNotification({ title: "Bodega / Area creado con éxito!" });
           setTimeout(() => {

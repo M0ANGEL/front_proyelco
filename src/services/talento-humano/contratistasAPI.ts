@@ -4,7 +4,7 @@ import { ResponseContratistasSST } from "../types";
 
 //llamar todo los proveedores
 export const getContratistas = async (): Promise<ResponseContratistasSST> => {
-  return await client.get("contratistas", {
+  return await client.get("administar-contratistas", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
@@ -12,29 +12,29 @@ export const getContratistas = async (): Promise<ResponseContratistasSST> => {
 
 
 //crear la categoria
-export const crearActiBodega = async (data: any): Promise<any> => {
-  return await client.post<any>("bodega-areas", data, {
+export const crearContratista = async (data: any): Promise<any> => {
+  return await client.post<any>("administar-contratistas", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
 //ver de la categoria por id
-export const getActiBodega= async (id: React.Key): Promise<any> => {
-  return await client.get<any>(`bodega-areas/${id}`, {
+export const getContratista= async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`administar-contratistas/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
 //actualizar la categoria
-export const updateActiBodega = async (data: any, id: any): Promise<any> => {
-  return await client.put<any>(`bodega-areas/${id}`, data, {
+export const updateContratista = async (data: any, id: any): Promise<any> => {
+  return await client.put<any>(`administar-contratistas/${id}`, data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
 //cambiar el estado de la categoria 
-export const DeleteActiBodegas = async ( id: any): Promise<any> => {
-  return await client.delete<any>(`bodega-areas/${id}`, {
+export const DeleteContratista = async ( id: any): Promise<any> => {
+  return await client.delete<any>(`administar-contratistas/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
