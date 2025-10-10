@@ -98,3 +98,10 @@ export const DeleteProyectoCasa = async ( id: any): Promise<any> => {
 };
 
 
+
+//unidad de medida
+export const PostUnidadDeMedida = async (data: any): Promise<any> => {
+  return await client.post<any>("UnidadDeMedida", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};

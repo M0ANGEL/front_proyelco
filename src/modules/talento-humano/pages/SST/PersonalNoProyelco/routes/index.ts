@@ -1,0 +1,1 @@
+export {PersonaNoProyelcolRoutes} from './PersonaNoProyelcolRoutes'

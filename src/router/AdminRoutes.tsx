@@ -50,7 +50,7 @@ export const AdminRoutes = () => {
             />
             <Route path={"compras/*"} element={<ComprasRoutes />} />
             <Route
-              path={"cronogramaasistencias/*"}
+              path={"talentohumano/*"}
               element={<TalentoHumanoRoutes />}
             />
             <Route path={"tickets/*"} element={<TickestRoutes />} />

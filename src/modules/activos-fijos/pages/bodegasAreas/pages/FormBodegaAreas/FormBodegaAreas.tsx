@@ -182,7 +182,6 @@ export const FormBodegaAreas = () => {
                       </Text>
                     ),
                     children: (
-                      /* campos de input datos basicos */
                       <DatosBasicos TkCategoria={categoria} />
                     ),
                   },

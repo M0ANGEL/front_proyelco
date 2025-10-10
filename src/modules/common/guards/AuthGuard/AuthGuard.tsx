@@ -20,7 +20,7 @@ const systemRoutes = [
   "/clientes",
   "/configuracionproyectos",
   "/compras",
-  "/cronogramaasistencias",
+  "/talentohumano",
   "/tickets",
   "/dashboards",
   "/activosfijos",

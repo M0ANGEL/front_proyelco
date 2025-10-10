@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiTwotoneProject } from "react-icons/ai";
+import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiOutlineSolution } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -74,7 +74,7 @@ const moduleIcons = [
   { cod: "CLI", icon: <HiUserGroup /> },
   { cod: "PMPT", icon: <MdOutlineAddHomeWork /> },
   { cod: "COMPA", icon: <MdLocalGroceryStore /> },
-  { cod: "CA", icon: <AiTwotoneProject /> },
+  { cod: "TH", icon: <AiOutlineSolution /> },
   { cod: "DSH", icon: <RiDashboardLine  /> },
   { cod: "ACTIV", icon: <AiFillBank /> },
   { cod: "LOGI", icon:<AiOutlineFileDone  /> },
@@ -150,15 +150,27 @@ export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
     <ConfigProvider
       theme={{
         components: {
+          //colres estandar
+          // Menu: {
+          //   colorBgContainer: "#1976d2", //azul
+          //   itemColor: "#FFFFFF",
+          //   itemSelectedColor: "#a5a5a5ff", //color de texto selecionado
+          //   itemHoverBg: "#0967a7",  //azul de hover
+          //   itemHoverColor: "#FFFFFF",
+          //   itemSelectedBg: "#FFFFFF",
+          //   itemActiveBg: "#FFFFFF",
+          //   popupBg: "#000000",
+          // },
+          //hallowing
           Menu: {
-            colorBgContainer: "#1976d2", //azul
+            colorBgContainer: "#000000ff", //azul
             itemColor: "#FFFFFF",
-            itemSelectedColor: "#a5a5a5ff", //color de texto selecionado
-            itemHoverBg: "#0967a7",  //azul de hover
+            itemSelectedColor: "#e68415ff", //color de texto selecionado
+            itemHoverBg: "#5b5b5bff",  //azul de hover
             itemHoverColor: "#FFFFFF",
             itemSelectedBg: "#FFFFFF",
             itemActiveBg: "#FFFFFF",
-            popupBg: "#000000",
+            popupBg: "#040404ff",
           },
         },
       }}

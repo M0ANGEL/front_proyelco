@@ -6018,3 +6018,86 @@ export interface ActivosMantenimiento {
   created_at: string;
   updated_at: string;
 }
+
+//typos para talento humano
+export interface ResponseEmpleadosTH {
+  data: {
+    status: string;
+    data: EmpleadosTH[];
+  };
+}
+export interface EmpleadosTH {
+  id: number;
+  estado: string;
+  tipo_documento: string;
+  identificacion: string;
+  nombre_completo: string;
+  fecha_expedicion: number;
+  estado_civil: string;
+  ciuda_expedicion_id: string;
+  fecha_nacimiento: string;
+  pais_residencia_id: string;
+  ciudad_resudencia_id: string;
+  genero: string;
+  telefono_fijo: string;
+  telefono_celular: string;
+  direccion: string;
+  correo: string;
+  cargo_id: string;
+  fecha_ingreso: string;
+  salario: string;
+  valor_hora: string;
+  created_at: string;
+  updated_at: string;
+}
+
+
+export interface ResponseCargoTH {
+  data: {
+    status: string;
+    data: cargosTH[];
+  };
+}
+export interface cargosTH {
+  id: number;
+  estado: string;
+  cargo: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ResponsePaisTH {
+  data: {
+    status: string;
+    data: paisTH[];
+  };
+}
+export interface paisTH {
+  id: number;
+  estado: string;
+  pais: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+//typos para contratistas
+export interface ResponseContratistasSST {
+  data: {
+    status: string;
+    data: ContratistasSST[];
+  };
+}
+export interface ContratistasSST {
+  id: number;
+  contratista: string;
+  direccion: string;
+  correo: string;
+  telefono: string;
+  nit: string;
+  estado: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+}

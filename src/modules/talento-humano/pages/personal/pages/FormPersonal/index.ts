@@ -1,1 +1,0 @@
-export {FormPersonal } from './FormPersonal'
