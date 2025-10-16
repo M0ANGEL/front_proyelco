@@ -75,14 +75,6 @@ export const VistaProcesoProyectos = () => {
               minHeight: "100vh",
             }}
           >
-            <div style={{ marginBottom: 15, textAlign: "right" }}>
-              <Link to=".." relative="path">
-                <Button danger type="primary" icon={<ArrowLeftOutlined />}>
-                  Volver
-                </Button>
-              </Link>
-            </div>
-
             {/* Header Section */}
             <div
               style={{
@@ -121,41 +113,7 @@ export const VistaProcesoProyectos = () => {
               </Text>
             </div>
 
-            {/* Selección de Torre */}
-            {/* <Card
-          style={{
-            marginBottom: "32px",
-            borderRadius: "16px",
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.05)",
-            border: "none",
-            background: "rgba(255, 255, 255, 0.8)",
-            backdropFilter: "blur(8px)",
-            position: "sticky",
-            top: 60,
-            zIndex: 100,
-          }}
-        >
-          <Row gutter={[16, 16]} align="middle">
-            <Col xs={24} sm={12} md={8} lg={6}>
-              <Select
-                placeholder="Seleccione una torre"
-                style={{ width: "100%" }}
-                onChange={setTorreSeleccionada}
-                value={torreSeleccionada}
-                options={torresUnicas.map((torre) => ({
-                  label:
-                    porcetanjeTorre[torre]?.nombre_torre || `Torre ${torre}`,
-                  value: torre,
-                }))}
-                size="large"
-              />
-            </Col>
-          </Row>
-
-          aqui ejemplo, destapada: 8%
-          prolongacion: 6%
-        </Card> */}
-
+            {/* Card Principal con Botones Anclados */}
             <Card
               style={{
                 marginBottom: "32px",
@@ -169,8 +127,22 @@ export const VistaProcesoProyectos = () => {
                 zIndex: 100,
               }}
             >
-              <Row gutter={[16, 16]} align="middle">
-                {/* Columna izquierda: Select */}
+              <Row gutter={[16, 16]} align="middle" justify="space-between">
+                {/* Columna Izquierda: Botón Volver */}
+                <Col xs={24} sm={6} md={4} lg={3}>
+                  <Link to=".." relative="path">
+                    <Button 
+                      danger 
+                      type="primary" 
+                      icon={<ArrowLeftOutlined />}
+                      style={{ width: "100%" }}
+                    >
+                      Volver
+                    </Button>
+                  </Link>
+                </Col>
+
+                {/* Columna Centro: Select de Torre */}
                 <Col xs={24} sm={12} md={8} lg={6}>
                   <Select
                     placeholder="Seleccione una torre"
@@ -187,19 +159,15 @@ export const VistaProcesoProyectos = () => {
                   />
                 </Col>
 
-                <Col
-                  xs={24}
-                  sm={12}
-                  md={16}
-                  lg={18}
-                  style={{ textAlign: "right" }}
-                >
+                {/* Columna Derecha: Botón Ver Procesos */}
+                <Col xs={24} sm={6} md={4} lg={3}>
                   {torreSeleccionada && (
                     <Button
                       type="primary"
                       onClick={() => setModalProcesosOpen(true)}
+                      style={{ width: "100%" }}
                     >
-                      Ver Procesos y % de Atraso
+                      Informe
                     </Button>
                   )}
                 </Col>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Col, DatePicker, Select, Table, Row, Space } from "antd";
 import dayjs from "dayjs";
-import { getProyectos, PostUnidadDeMedida } from "@/services/proyectos/proyectosAPI";
+import { getProcesosProyectoUnidad, PostUnidadDeMedida } from "@/services/proyectos/proyectosAPI";
 
 const { RangePicker } = DatePicker;
 
@@ -48,7 +48,7 @@ export const UnidadMedida = () => {
   const fetchProyectos = async () => {
     const {
       data: { data },
-    } = await getProyectos();
+    } = await getProcesosProyectoUnidad();
     setProyectos(
       data.map((p: any) => ({
         label: p.descripcion_proyecto.toUpperCase(),

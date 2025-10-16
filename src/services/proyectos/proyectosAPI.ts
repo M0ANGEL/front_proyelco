@@ -105,3 +105,11 @@ export const PostUnidadDeMedida = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+//llamar todas los clientes usaremos Am = para identificar que es de adminisracion
+export const getProcesosProyectoUnidad = async (): Promise<ResponseProcesosProyectos> => {
+  return await client.get("proyectosUnidadMedida", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
