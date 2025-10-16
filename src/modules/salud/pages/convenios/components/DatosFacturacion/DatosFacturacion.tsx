@@ -1,6 +1,7 @@
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Alert,
+  Button,
   Col,
   Collapse,
   Input,
@@ -14,6 +15,7 @@ import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { Proceso, Props } from "./types";
 import { useParams } from "react-router-dom";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import React from "react";
 
 const { Text } = Typography;
 const { Panel } = Collapse;
@@ -192,123 +194,303 @@ export const DatosFacturacion = ({
   };
 
   /* render de casas */
-  const renderCasas = () => {
-    const bloques = [];
-    const totalManzanas = parseInt(cantidadManzanas || "0", 10);
+  // const renderCasas = () => {
+  //   const bloques = [];
+  //   const totalManzanas = parseInt(cantidadManzanas || "0", 10);
 
-    for (let i = 0; i < totalManzanas; i++) {
-      const totalCasas = parseInt(manzanasData?.[i]?.cantidadCasas || "0", 10);
-      const casasInputs = [];
+  //   for (let i = 0; i < totalManzanas; i++) {
+  //     const totalCasas = parseInt(manzanasData?.[i]?.cantidadCasas || "0", 10);
+  //     const casasInputs = [];
 
-      for (let j = 0; j < totalCasas; j++) {
-        casasInputs.push(
-          <Col xs={24} sm={4} key={`casa-${i}-${j}`}>
-            <Controller
-              name={`manzanas[${i}].casas[${j}].pisos`}
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Cantidad de pisos requerida",
-                },
-                validate: (value) =>
-                  value === 1 || value === 2 || "Solo se permite 1 o 2 pisos",
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label={`Casa ${j + 1} - Pisos`}>
-                  <InputNumber
-                    {...field}
-                    min={1}
-                    max={2}
-                    placeholder="Solo 1 o 2 pisos"
-                    status={error ? "error" : ""}
-                    style={{ width: "100%" }}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
-              )}
-            />
-          </Col>
-        );
-      }
+  //     for (let j = 0; j < totalCasas; j++) {
+  //       casasInputs.push(
+  //         <Col xs={24} sm={4} key={`casa-${i}-${j}`}>
+  //           <Controller
+  //             name={`manzanas[${i}].casas[${j}].pisos`}
+  //             control={methods.control}
+  //             rules={{
+  //               required: {
+  //                 value: true,
+  //                 message: "Cantidad de pisos requerida",
+  //               },
+  //               validate: (value) =>
+  //                 value === 1 || value === 2 || "Solo se permite 1 o 2 pisos",
+  //             }}
+  //             render={({ field, fieldState: { error } }) => (
+  //               <StyledFormItem required label={`Casa ${j + 1} - Pisos`}>
+  //                 <InputNumber
+  //                   {...field}
+  //                   min={1}
+  //                   max={2}
+  //                   placeholder="Solo 1 o 2 pisos"
+  //                   status={error ? "error" : ""}
+  //                   style={{ width: "100%" }}
+  //                 />
+  //                 <Text type="danger">{error?.message}</Text>
+  //               </StyledFormItem>
+  //             )}
+  //           />
+  //         </Col>
+  //       );
+  //     }
 
-      bloques.push(
-        <Col span={24} key={i}>
-          <Collapse
-            style={{ backgroundColor: "#1a4c9e" }}
-            expandIconPosition="right"
-          >
-            <Panel
-              header={`Manzana ${i + 1}`}
-              key={i}
-              style={{ color: "#FFFFFF" }}
-            >
-              <Row gutter={[12, 6]}>
-                {/* Nombre de la manzana */}
-                <Col xs={24}>
-                  <Controller
-                    name={`manzanas[${i}].nombre`}
-                    control={methods.control}
-                    rules={{
-                      required: { value: true, message: `Nombre requerido` },
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <StyledFormItem
-                        required
-                        label={`Nombre Manzana ${i + 1}`}
-                      >
-                        <Input {...field} status={error && "error"} />
-                        <Text type="danger">{error?.message}</Text>
-                      </StyledFormItem>
-                    )}
-                  />
-                </Col>
+  //     bloques.push(
+  //       <Col span={24} key={i}>
+  //         <Collapse
+  //           style={{ backgroundColor: "#1a4c9e" }}
+  //           expandIconPosition="right"
+  //         >
+  //           <Panel
+  //             header={`Manzana ${i + 1}`}
+  //             key={i}
+  //             style={{ color: "#FFFFFF" }}
+  //           >
+  //             <Row gutter={[12, 6]}>
+  //               {/* Nombre de la manzana */}
+  //               <Col xs={24}>
+  //                 <Controller
+  //                   name={`manzanas[${i}].nombre`}
+  //                   control={methods.control}
+  //                   rules={{
+  //                     required: { value: true, message: `Nombre requerido` },
+  //                   }}
+  //                   render={({ field, fieldState: { error } }) => (
+  //                     <StyledFormItem
+  //                       required
+  //                       label={`Nombre Manzana ${i + 1}`}
+  //                     >
+  //                       <Input {...field} status={error && "error"} />
+  //                       <Text type="danger">{error?.message}</Text>
+  //                     </StyledFormItem>
+  //                   )}
+  //                 />
+  //               </Col>
 
-                {/* Cantidad de casas */}
-                <Col xs={24}>
-                  <Controller
-                    name={`manzanas[${i}].cantidadCasas`}
-                    control={methods.control}
-                    rules={{
-                      required: {
-                        value: true,
-                        message: "Cantidad de casas requerida",
-                      },
-                      pattern: { value: /^[0-9]+$/, message: "Solo números" },
-                    }}
-                    render={({ field, fieldState: { error } }) => (
-                      <StyledFormItem required label="Cantidad Casas">
-                        <Input
-                          {...field}
-                          type="number"
-                          status={error && "error"}
-                        />
-                        <Text type="danger">{error?.message}</Text>
-                      </StyledFormItem>
-                    )}
-                  />
-                </Col>
+  //               {/* Cantidad de casas */}
+  //               <Col xs={24}>
+  //                 <Controller
+  //                   name={`manzanas[${i}].cantidadCasas`}
+  //                   control={methods.control}
+  //                   rules={{
+  //                     required: {
+  //                       value: true,
+  //                       message: "Cantidad de casas requerida",
+  //                     },
+  //                     pattern: { value: /^[0-9]+$/, message: "Solo números" },
+  //                   }}
+  //                   render={({ field, fieldState: { error } }) => (
+  //                     <StyledFormItem required label="Cantidad Casas">
+  //                       <Input
+  //                         {...field}
+  //                         type="number"
+  //                         status={error && "error"}
+  //                       />
+  //                       <Text type="danger">{error?.message}</Text>
+  //                     </StyledFormItem>
+  //                   )}
+  //                 />
+  //               </Col>
 
-                {casasInputs}
-              </Row>
-            </Panel>
-          </Collapse>
+  //               {casasInputs}
+  //             </Row>
+  //           </Panel>
+  //         </Collapse>
+  //       </Col>
+  //     );
+  //   }
+
+  //   return (
+  //     <>
+  //       <Col span={24}>
+  //         <Alert
+  //           message="Primero define la cantidad de manzanas. Luego cada manzana tendrá su nombre, número de casas y pisos por casa."
+  //           type="success"
+  //         />
+  //       </Col>
+  //       {bloques}
+  //     </>
+  //   );
+  // };
+
+  //render nuevo con botrn global
+
+  /* render de casas */
+const renderCasas = () => {
+  const bloques = [];
+  const totalManzanas = parseInt(cantidadManzanas || "0", 10);
+
+  for (let i = 0; i < totalManzanas; i++) {
+    const totalCasas = parseInt(manzanasData?.[i]?.cantidadCasas || "0", 10);
+    const casasInputs = [];
+
+    for (let j = 0; j < totalCasas; j++) {
+      casasInputs.push(
+        <Col xs={24} sm={4} key={`casa-${i}-${j}`}>
+          <Controller
+            name={`manzanas[${i}].casas[${j}].pisos`}
+            control={methods.control}
+            rules={{
+              required: {
+                value: true,
+                message: "Cantidad de pisos requerida",
+              },
+              validate: (value) =>
+                value === 1 || value === 2 || "Solo se permite 1 o 2 pisos",
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <StyledFormItem required label={`Casa ${j + 1} - Pisos`}>
+                <InputNumber
+                  {...field}
+                  min={1}
+                  max={2}
+                  placeholder="Solo 1 o 2 pisos"
+                  status={error ? "error" : ""}
+                  style={{ width: "100%" }}
+                />
+                <Text type="danger">{error?.message}</Text>
+              </StyledFormItem>
+            )}
+          />
         </Col>
       );
     }
 
-    return (
-      <>
-        <Col span={24}>
-          <Alert
-            message="Primero define la cantidad de manzanas. Luego cada manzana tendrá su nombre, número de casas y pisos por casa."
-            type="success"
+    bloques.push(
+      <Col span={24} key={i}>
+        <Collapse
+          style={{ backgroundColor: "#1a4c9e" }}
+          expandIconPosition="right"
+        >
+          <Panel
+            header={`Manzana ${i + 1}`}
+            key={i}
+            style={{ color: "#FFFFFF" }}
+          >
+            <Row gutter={[12, 6]}>
+              {/* Nombre de la manzana */}
+              <Col xs={24}>
+                <Controller
+                  name={`manzanas[${i}].nombre`}
+                  control={methods.control}
+                  rules={{
+                    required: { value: true, message: `Nombre requerido` },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem
+                      required
+                      label={`Nombre Manzana ${i + 1}`}
+                    >
+                      <Input {...field} status={error && "error"} />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+
+              {/* Cantidad de casas */}
+              <Col xs={24}>
+                <Controller
+                  name={`manzanas[${i}].cantidadCasas`}
+                  control={methods.control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Cantidad de casas requerida",
+                    },
+                    pattern: { value: /^[0-9]+$/, message: "Solo números" },
+                  }}
+                  render={({ field, fieldState: { error } }) => (
+                    <StyledFormItem required label="Cantidad Casas">
+                      <Input
+                        {...field}
+                        type="number"
+                        status={error && "error"}
+                      />
+                      <Text type="danger">{error?.message}</Text>
+                    </StyledFormItem>
+                  )}
+                />
+              </Col>
+
+              {/* Controles de pisos globales - Componente separado */}
+              <Col xs={24}>
+                <PisosGlobalesManzana 
+                  manzanaIndex={i} 
+                  totalCasas={totalCasas}
+                  methods={methods}
+                />
+              </Col>
+
+              {casasInputs}
+            </Row>
+          </Panel>
+        </Collapse>
+      </Col>
+    );
+  }
+
+  return (
+    <>
+      <Col span={24}>
+        <Alert
+          message="Primero define la cantidad de manzanas. Luego cada manzana tendrá su nombre, número de casas y pisos por casa."
+          type="success"
+        />
+      </Col>
+      {bloques}
+    </>
+  );
+};
+
+// Componente separado para manejar los pisos globales por manzana
+const PisosGlobalesManzana = ({ manzanaIndex, totalCasas, methods }: { 
+  manzanaIndex: number; 
+  totalCasas: number;
+  methods: any;
+}) => {
+  const [pisosGlobales, setPisosGlobales] = React.useState<number | null>(null);
+
+  const aplicarPisosGlobales = () => {
+    if (pisosGlobales === 1 || pisosGlobales === 2) {
+      for (let j = 0; j < totalCasas; j++) {
+        methods.setValue(`manzanas[${manzanaIndex}].casas[${j}].pisos`, pisosGlobales);
+      }
+    }
+  };
+
+  return (
+    <>
+      <Alert
+        message="Pisos Globales"
+        description="Establece el mismo número de pisos para todas las casas de esta manzana"
+        type="info"
+        style={{ marginBottom: 16 }}
+      />
+      <Row gutter={[12, 6]} align="middle">
+        <Col xs={12} sm={6}>
+          <InputNumber
+            min={1}
+            max={2}
+            value={pisosGlobales}
+            onChange={(value) => setPisosGlobales(value)}
+            placeholder="1 o 2"
+            style={{ width: "100%" }}
           />
         </Col>
-        {bloques}
-      </>
-    );
-  };
+        <Col xs={12} sm={6}>
+          <Button 
+            type="primary" 
+            onClick={aplicarPisosGlobales}
+            disabled={!pisosGlobales || (pisosGlobales !== 1 && pisosGlobales !== 2)}
+            style={{ width: "100%" }}
+          >
+            Aplicar a Todas
+          </Button>
+        </Col>
+      </Row>
+    </>
+  );
+};
 
   return (
     <Row gutter={[12, 6]}>
