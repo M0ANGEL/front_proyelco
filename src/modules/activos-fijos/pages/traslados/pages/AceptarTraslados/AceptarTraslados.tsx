@@ -18,7 +18,7 @@ import {
   aceptarActivo,
   getActiActivosAceptar,
 } from "@/services/activosFijos/TrasladosActivosAPI";
-import { AiOutlineCheck, } from "react-icons/ai";
+import { AiOutlineCheck } from "react-icons/ai";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { ModalRechazarActivo } from "./ModalRechazarActivo";
 
@@ -71,6 +71,7 @@ export const AceptarTraslados = () => {
           valor: categoria.valor,
           condicion: categoria.condicion.toString(),
           usuario: categoria.usuario,
+          descripcion: categoria.descripcion,
           categoria: categoria.categoria,
           subcategoria: categoria.subcategoria,
           bodega_origen: categoria.bodega_origen,
@@ -100,10 +101,7 @@ export const AceptarTraslados = () => {
     setDataSource(filterTable);
   };
 
-
-
-
-    //aceptar activo traslado
+  //aceptar activo traslado
   const AceptarTraslado = (id: React.Key) => {
     aceptarActivo(id)
       .then(() => {
@@ -128,6 +126,13 @@ export const AceptarTraslados = () => {
       dataIndex: "subcategoria",
       key: "subcategoria",
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -207,7 +212,10 @@ export const AceptarTraslados = () => {
       align: "center",
       render: (_, record) => (
         <Space>
-          <ModalRechazarActivo data={record} fetchList={() => fetchCategorias()} />
+          <ModalRechazarActivo
+            data={record}
+            fetchList={() => fetchCategorias()}
+          />
 
           <Tooltip title="¿Aceptar Traslado?">
             <Popconfirm
