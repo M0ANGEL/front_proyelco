@@ -17,6 +17,8 @@ import { TickestRoutes } from "@/modules/tickets";
 import { DashboarsdRoutes } from "@/modules/graficasDashboard/routes/DashboarsdRoutes";
 import { ActivosRoutes } from "@/modules/activos-fijos";
 import { LogisticaAdminRouter } from "@/modules/logistica/routes";
+import { MaterialesRoutes } from "@/modules/materiales";
+import { DocumentacionRoutes } from "@/modules/documentacion/routes";
 
 export const AdminRoutes = () => {
   return (
@@ -59,6 +61,8 @@ export const AdminRoutes = () => {
             <Route path={"activosfijos/*"} element={<ActivosRoutes />} />
 
             <Route path={"logistica/*"} element={<LogisticaAdminRouter />} />
+            <Route path={"soliciudmaterial/*"} element={<MaterialesRoutes />} />
+            <Route path={"documentacion/*"} element={<DocumentacionRoutes />} />
             {/* <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
           </Route>
         </RoutesWithNotFound>

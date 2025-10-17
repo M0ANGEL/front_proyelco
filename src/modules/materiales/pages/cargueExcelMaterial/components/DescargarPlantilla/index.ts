@@ -1,0 +1,1 @@
+export {DescargaPlantillaPapeleria} from './DescargaPlantillaPapeleria'
