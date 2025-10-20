@@ -6,7 +6,7 @@ import { notification } from "antd";
 
 
 
-export const DescargaPlantillaPapeleria = () => {
+export const DescargaPlantillaMaterial = () => {
   const EnvioCierreTicket = () => {
     DocPlantilla()
     .then((response) => {

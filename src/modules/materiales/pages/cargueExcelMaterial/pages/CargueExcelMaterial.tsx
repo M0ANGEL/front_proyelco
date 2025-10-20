@@ -3,6 +3,7 @@ import {
   UploadOutlined,
   CheckOutlined,
   CloseOutlined,
+  RedoOutlined,
 } from "@ant-design/icons";
 import Table, { ColumnsType } from "antd/es/table";
 import {
@@ -34,12 +35,10 @@ type DataType = {
   um: string;
   cantidad: number;
   subcapitulo: string;
-  id_proyecto: string;
-  version: string;
   cant_apu: number;
   rend: number;
   iva: number;
-  vr_unit_sin_iva: number;
+  valor_sin_iva: number;
   tipo_insumo: string;
   agrupacion: string;
 };
@@ -48,7 +47,7 @@ type ProyectoType = {
   id: number;
   descripcion_proyecto: string;
   tipoProyecto_id: number;
-  // ✅ Agregar un identificador único combinado
+  codigo_proyecto: string;
   uniqueId: string;
 };
 
@@ -63,6 +62,7 @@ export const CargueExcelMaterial = () => {
   const [openModalErrores, setOpenModalErrores] = useState<boolean>(false);
   const [proyectos, setProyectos] = useState<ProyectoType[]>([]);
   const [proyectosFiltrados, setProyectosFiltrados] = useState<ProyectoType[]>([]);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [form] = Form.useForm();
 
   // Cargar proyectos unificados
@@ -76,10 +76,9 @@ export const CargueExcelMaterial = () => {
       const response = await getProyectosMaterial();
 
       if (response.data.status === "success") {
-        // ✅ Crear un identificador único para cada proyecto combinando id + tipoProyecto_id
         const proyectosConUniqueId = response.data.data.map((proyecto: any) => ({
           ...proyecto,
-          uniqueId: `${proyecto.id}-${proyecto.tipoProyecto_id}` // Combinación única
+          uniqueId: `${proyecto.id}-${proyecto.tipoProyecto_id}`
         }));
         setProyectos(proyectosConUniqueId);
       }
@@ -137,12 +136,44 @@ export const CargueExcelMaterial = () => {
     return true;
   };
 
-  // ✅ Función para obtener el ID real del proyecto desde el uniqueId
-  const getProyectoIdFromUniqueId = (uniqueId: string): number => {
-    const [id] = uniqueId.split('-');
-    return parseInt(id);
+  // ✅ FUNCIÓN MEJORADA: Auto-rellenar códigos vacíos
+  const autoRellenarCodigos = (jsonData: any[]) => {
+    let ultimoCodigo = "";
+    
+    return jsonData.map((item) => {
+      const CODIGO = item.CODIGO?.toString().trim();
+      
+      // Si la fila actual tiene código, actualizamos el último código
+      if (CODIGO && CODIGO !== "") {
+        ultimoCodigo = CODIGO;
+      }
+      // Si la fila no tiene código pero tenemos un último código, lo usamos
+      else if (ultimoCodigo && ultimoCodigo !== "") {
+        item.CODIGO = ultimoCodigo;
+      }
+      
+      return item;
+    });
   };
 
+  // ✅ FUNCIÓN MEJORADA: Procesar valores numéricos
+  const procesarValorNumerico = (valor: any): number => {
+    if (valor === null || valor === undefined || valor === '' || valor === ' ') {
+      return 0;
+    }
+    const numero = parseFloat(valor.toString().replace(',', '.'));
+    return isNaN(numero) ? 0 : numero;
+  };
+
+  // ✅ FUNCIÓN MEJORADA: Procesar valores de texto
+  const procesarValorTexto = (valor: any): string => {
+    if (valor === null || valor === undefined) {
+      return '';
+    }
+    return valor.toString().trim();
+  };
+
+  // ✅ Procesar archivo Excel CON AUTO-RELLENO
   const handleExcelUpload = (file: File) => {
     const tipoObra = form.getFieldValue("tipo_obra");
     const proyectoUniqueId = form.getFieldValue("proyecto_id");
@@ -171,45 +202,55 @@ export const CargueExcelMaterial = () => {
         const workbook = XLSX.read(data, { type: "array" });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
-        const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+        let jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
+
+        console.log("Datos originales:", jsonData);
+
+        // ✅ APLICAR AUTO-RELLENO DE CÓDIGOS
+        jsonData = autoRellenarCodigos(jsonData);
+
+        console.log("Datos después del auto-relleno:", jsonData);
 
         // ✅ Incluir TODOS los items del módulo 4, tanto padres como hijos
         const filteredData = jsonData.filter((item) => {
-          const codigo = item.Código?.toString();
-          const padre = item.Padre?.toString();
+          const CODIGO = item.CODIGO?.toString();
+          const PADRE = item.PADRE?.toString();
 
           return (
-            (codigo && (codigo === "4" || codigo.startsWith("4."))) ||
-            (padre && (padre === "4" || padre.startsWith("4.")))
+            (CODIGO && (CODIGO === "4" || CODIGO.startsWith("4."))) ||
+            (PADRE && (PADRE === "4" || PADRE.startsWith("4.")))
           );
         });
 
         const formattedData = filteredData.map((item, index) => ({
           key: `${index}`,
-          codigo: item.Código?.toString() || "",
-          descripcion: item.Descripción || "",
-          padre: item.Padre?.toString() || "",
-          um: item.UM || "",
-          cantidad: item.CANTIDAD ? parseFloat(item.CANTIDAD) : 0,
-          subcapitulo: item.SUBCAPITULO || "",
-          id_proyecto: item["ID PROYECTO"]?.toString() || "",
-          version: item.VERSION?.toString() || "",
-          cant_apu: item["Cant APU"] ? parseFloat(item["Cant APU"]) : 0,
-          rend: item.Rend ? parseFloat(item.Rend) : 0,
-          iva: item.IVA ? parseInt(item.IVA) : 0,
-          vr_unit_sin_iva: item.VrUnitSinIVA
-            ? parseFloat(item.VrUnitSinIVA)
-            : 0,
-          tipo_insumo: item["Tipo Insumo"] || "",
-          agrupacion: item.Agrupacion || "",
+          codigo: procesarValorTexto(item.CODIGO),
+          descripcion: procesarValorTexto(item.DESCRIPCION),
+          padre: procesarValorTexto(item.PADRE),
+          um: procesarValorTexto(item.UM),
+          cantidad: procesarValorNumerico(item.CANTIDAD),
+          subcapitulo: procesarValorTexto(item.SUBCAPITULO),
+          cant_apu: procesarValorNumerico(item["CANT_APU"]),
+          rend: procesarValorNumerico(item.REND),
+          iva: procesarValorNumerico(item.IVA),
+          valor_sin_iva: procesarValorNumerico(item.VALOR_SIN_IVA),
+          tipo_insumo: procesarValorTexto(item["TIPO_INSUMO"]),
+          agrupacion: procesarValorTexto(item.AGRUPACION),
         }));
 
         setDataSource(formattedData);
         setFileToUpload(file);
         setPreviewMode(true);
+        setUploadSuccess(false);
         setLoader(false);
 
-        console.log("Datos cargados:", formattedData);
+        console.log("Datos finales formateados:", formattedData);
+        
+        notificationApi.success({
+          message: "Archivo procesado correctamente",
+          description: `Se encontraron ${formattedData.length} registros del módulo 4. Códigos auto-rellenados.`,
+          duration: 3,
+        });
       } catch (error) {
         setLoader(false);
         notificationApi.error({
@@ -232,13 +273,48 @@ export const CargueExcelMaterial = () => {
     return false;
   };
 
+  // ✅ Obtener proyecto seleccionado
+  const getProyectoSeleccionado = () => {
+    const proyectoUniqueId = form.getFieldValue("proyecto_id");
+    return proyectos.find((p) => p.uniqueId === proyectoUniqueId);
+  };
+
+  // ✅ Extraer ID y código del proyecto seleccionado
+  const getProyectoInfo = () => {
+    const proyecto = getProyectoSeleccionado();
+    if (!proyecto) return { id: null, codigo: null };
+    
+    return {
+      id: proyecto.id,
+      codigo: proyecto.codigo_proyecto
+    };
+  };
+
+  // ✅ FUNCIÓN MEJORADA: Resetear completamente el estado
+  const resetearEstadoCompleto = () => {
+    setPreviewMode(false);
+    setDataSource([]);
+    setFileToUpload(null);
+    setUploadSuccess(false);
+    setErroresPlano([]);
+    setOpenModalErrores(false);
+    // NO resetear el formulario aquí para mantener la selección del proyecto
+  };
+
+  // ✅ FUNCIÓN MEJORADA: Cargar nuevo archivo
+  const handleNuevoArchivo = () => {
+    resetearEstadoCompleto();
+    // Mantener la selección actual del proyecto
+  };
+
+  // ✅ CONFIRMAR Y SUBIR ARCHIVO CON ID Y CÓDIGO DEL PROYECTO
   const handleConfirmUpload = async () => {
     if (!fileToUpload) return;
 
     const tipoObra = form.getFieldValue("tipo_obra");
-    const proyectoUniqueId = form.getFieldValue("proyecto_id");
+    const proyectoInfo = getProyectoInfo();
 
-    if (!tipoObra || !proyectoUniqueId) {
+    if (!tipoObra || !proyectoInfo.id) {
       notificationApi.error({
         message: "Error de validación",
         description: "Debe seleccionar tipo de obra y proyecto",
@@ -247,21 +323,29 @@ export const CargueExcelMaterial = () => {
       return;
     }
 
-    // ✅ Obtener el ID real del proyecto desde el uniqueId
-    const proyectoId = getProyectoIdFromUniqueId(proyectoUniqueId);
-
     setLoader(true);
-    const formData = new FormData();
-    formData.append("archivo", fileToUpload);
-    formData.append("tipo_obra", tipoObra);
 
     try {
+      const formData = new FormData();
+      formData.append("archivo", fileToUpload);
+      formData.append("tipo_obra", tipoObra);
+      formData.append("proyecto_id", proyectoInfo.id.toString());
+      formData.append("codigo_proyecto", proyectoInfo.codigo || "");
+      
+      console.log("Enviando datos:", {
+        tipo_obra: tipoObra,
+        proyecto_id: proyectoInfo.id,
+        codigo_proyecto: proyectoInfo.codigo,
+        archivo: fileToUpload.name,
+        registros: dataSource.length
+      });
+
       const response = await fetch(
-        `${BASE_URL}proyectos/${proyectoId}/budget-items/cargar-excel`,
+        `${BASE_URL}cargueProyecion`,
         {
           method: "POST",
           headers: {
-            authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: formData,
         }
@@ -269,26 +353,40 @@ export const CargueExcelMaterial = () => {
 
       const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.error || "Error al subir el archivo");
+      // ✅ MEJOR MANEJO DE RESPUESTAS
+      if (data.status === "error") {
+        if (data.errores && data.errores.length > 0) {
+          setErroresPlano(data.errores);
+          setOpenModalErrores(true);
+        } else {
+          throw new Error(data.message || "Error del servidor");
+        }
+        return;
       }
 
+      if (!response.ok) {
+        throw new Error(data.message || `Error ${response.status}`);
+      }
+
+      // ✅ ÉXITO - Mostrar mensaje y resetear estado
       notificationApi.success({
         message: "Archivo subido exitosamente",
-        description: `Se han cargado ${data.items_procesados} registros del módulo 4`,
+        description: `Se han cargado ${data.cantidad || dataSource.length} registros del módulo 4 al proyecto ${proyectoInfo.codigo}`,
         duration: 5,
       });
 
-      // Resetear todo
-      setPreviewMode(false);
+      setUploadSuccess(true);
+      
+      // ✅ NO resetear el formulario para mantener la selección del proyecto
+      // Solo resetear los datos del archivo
       setDataSource([]);
       setFileToUpload(null);
-      form.resetFields();
-      setProyectosFiltrados([]);
+      
     } catch (error: any) {
+      console.error("Error en upload:", error);
       notificationApi.error({
         message: "Error al subir el archivo",
-        description: error.message,
+        description: error.message || "Error de conexión con el servidor",
         duration: 5,
       });
     } finally {
@@ -297,17 +395,21 @@ export const CargueExcelMaterial = () => {
   };
 
   const handleCancelUpload = () => {
-    setPreviewMode(false);
-    setDataSource([]);
-    setFileToUpload(null);
+    resetearEstadoCompleto();
   };
 
+  // ✅ Columnas de la tabla
   const columns: ColumnsType<DataType> = [
     {
       title: "Código",
       dataIndex: "codigo",
       key: "codigo",
       width: 100,
+      render: (codigo: string) => (
+        <Text strong={!!codigo && codigo !== ""}>
+          {codigo || <Text type="secondary">(auto)</Text>}
+        </Text>
+      ),
     },
     {
       title: "Descripción",
@@ -364,12 +466,12 @@ export const CargueExcelMaterial = () => {
       dataIndex: "iva",
       key: "iva",
       width: 80,
-      render: (value: number) => `${value}%`,
+      render: (value: number) => value ? `${value}%` : "0%",
     },
     {
       title: "VrUnitSinIVA",
-      dataIndex: "vr_unit_sin_iva",
-      key: "vr_unit_sin_iva",
+      dataIndex: "valor_sin_iva",
+      key: "valor_sin_iva",
       width: 120,
       render: (value: number) =>
         value
@@ -390,12 +492,6 @@ export const CargueExcelMaterial = () => {
       ellipsis: true,
     },
   ];
-
-  // ✅ Obtener proyecto seleccionado para mostrar
-  const getProyectoSeleccionado = () => {
-    const proyectoUniqueId = form.getFieldValue("proyecto_id");
-    return proyectos.find((p) => p.uniqueId === proyectoUniqueId);
-  };
 
   // ✅ Determinar si el botón de upload debe estar deshabilitado
   const isUploadDisabled = !form.getFieldValue("proyecto_id");
@@ -465,8 +561,8 @@ export const CargueExcelMaterial = () => {
                         >
                           {proyectosFiltrados.map((proyecto) => (
                             <Option key={proyecto.uniqueId} value={proyecto.uniqueId}>
-                              {proyecto.descripcion_proyecto} 
-                              {proyecto.tipoProyecto_id === 1 ? " (Apartamentos)" : " (Casas)"}
+                              {proyecto.descripcion_proyecto} ({proyecto.codigo_proyecto})
+                              {proyecto.tipoProyecto_id === 1 ? " - Apartamentos" : " - Casas"}
                             </Option>
                           ))}
                         </Select>
@@ -509,8 +605,20 @@ export const CargueExcelMaterial = () => {
                   )}
 
                   <Text type="warning" style={{ fontSize: "12px" }}>
-                    <strong>Nota:</strong> Solo se permiten archivos Excel (.xlsx, .xls)
+                    <strong>Nota:</strong> Los códigos vacíos se auto-rellenarán automáticamente
                   </Text>
+
+                  {/* ✅ MOSTRAR BOTÓN PARA NUEVO ARCHIVO DESPUÉS DE ÉXITO */}
+                  {uploadSuccess && (
+                    <Button
+                      type="dashed"
+                      icon={<RedoOutlined />}
+                      onClick={handleNuevoArchivo}
+                      style={{ marginTop: 16 }}
+                    >
+                      Cargar Nuevo Archivo
+                    </Button>
+                  )}
                 </Space>
               </Card>
             </Space>
@@ -522,7 +630,8 @@ export const CargueExcelMaterial = () => {
                   registros)
                 </Title>
                 <Text type="secondary">
-                  Revise los datos antes de confirmar el cargue al proyecto
+                  Revise los datos antes de confirmar el cargue al proyecto. 
+                  <Text type="warning"> Los códigos vacíos se auto-rellenaron.</Text>
                 </Text>
                 <div style={{ marginTop: 8 }}>
                   <Text strong>Tipo de Obra: </Text>
@@ -530,7 +639,15 @@ export const CargueExcelMaterial = () => {
                   <Text strong style={{ marginLeft: 16 }}>
                     Proyecto:{" "}
                   </Text>
-                  <Text>{getProyectoSeleccionado()?.descripcion_proyecto}</Text>
+                  <Text>{getProyectoSeleccionado()?.descripcion_proyecto} ({getProyectoSeleccionado()?.codigo_proyecto})</Text>
+                </div>
+                <div style={{ marginTop: 8 }}>
+                  <Text strong>ID Proyecto: </Text>
+                  <Text>{getProyectoInfo().id}</Text>
+                  <Text strong style={{ marginLeft: 16 }}>
+                    Código Proyecto:{" "}
+                  </Text>
+                  <Text>{getProyectoInfo().codigo}</Text>
                 </div>
               </div>
 
@@ -556,6 +673,7 @@ export const CargueExcelMaterial = () => {
                   icon={<CheckOutlined />}
                   onClick={handleConfirmUpload}
                   size="large"
+                  loading={loader}
                 >
                   Confirmar Cargue al Proyecto
                 </Button>
@@ -564,6 +682,7 @@ export const CargueExcelMaterial = () => {
                   icon={<CloseOutlined />}
                   onClick={handleCancelUpload}
                   size="large"
+                  disabled={loader}
                 >
                   Cancelar
                 </Button>
