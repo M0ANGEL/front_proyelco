@@ -34,6 +34,7 @@ export const FormFichasObra = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const methods = useForm();
   const [categoria, setCategoria] = useState<AmClientes>();
+  const [foto, setFoto] = useState<string>();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -41,7 +42,8 @@ export const FormFichasObra = () => {
     // Si hay un id ejecutamos una consulta para traer datos de esa categoría
     if (id) {
       getFicha(id).then(({ data }) => {
-        setCategoria(data);
+        setCategoria(data.empleado);
+        setFoto(data.foto_url);
         setLoaderSave(false);
       });
     } else {
@@ -61,60 +63,6 @@ export const FormFichasObra = () => {
       placement: "bottomRight",
     });
   };
-
-  // Guardado de los datos modificado para manejar archivos
-  // const onFinish: SubmitHandler<any> = async (data) => {
-  //   setLoaderSave(true);
-
-  //   try {
-  //     // Crear FormData para enviar archivos
-  //     const formData = new FormData();
-
-  //     // Agregar todos los campos del formulario al FormData
-  //     Object.keys(data).forEach(key => {
-  //       if (key === 'foto' && data[key] instanceof File) {
-  //         // Agregar la foto como archivo
-  //         formData.append('foto', data[key]);
-  //       } else if (key === 'fecha_expedicion' || key === 'fecha_nacimiento' || key === 'fecha_ingreso') {
-  //         // Formatear fechas si es necesario
-  //         if (data[key]) {
-  //           formData.append(key, dayjs(data[key]).format('YYYY-MM-DD'));
-  //         }
-  //       } else if (key === 'salario' || key === 'numero_hijos') {
-  //         // Manejar campos numéricos
-  //         formData.append(key, data[key]?.toString() || '');
-  //       } else {
-  //         // Agregar otros campos como strings
-  //         formData.append(key, data[key]?.toString() || '');
-  //       }
-  //     });
-
-  //     if (categoria) {
-  //       // Actualizar empleado existente
-  //       await updateFicha(formData, id);
-  //       pushNotification({ title: "Empleado actualizado con éxito!" });
-  //       setTimeout(() => {
-  //         navigate("..");
-  //       }, 800);
-  //     } else {
-  //       // Crear nuevo empleado
-  //       await crearFicha(formData);
-  //       pushNotification({ title: "Empleado creado con éxito!" });
-  //       setTimeout(() => {
-  //         navigate(-1);
-  //       }, 800);
-  //     }
-
-  //   } catch (error: any) {
-  //     const msg = error.response?.data?.message || "Ocurrió un error inesperado";
-  //     pushNotification({
-  //       type: "error",
-  //       title: "Error",
-  //       description: msg,
-  //     });
-  //     setLoaderSave(false);
-  //   }
-  // };
 
   // Guardado de los datos modificado para manejar archivos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -287,7 +235,7 @@ export const FormFichasObra = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: <DatosBasicos TkCategoria={categoria} />,
+                    children: <DatosBasicos TkCategoria={categoria} foto={foto} />,
                   },
                 ]}
               />

@@ -14,7 +14,7 @@ export const DescargaPlantillaMaterial = () => {
   
       const link = document.createElement("a");
       link.href = URL.createObjectURL(file);
-      link.download = `plantilla_compras.xlsx`;
+      link.download = `PLANTILLA_MATERIALES.xlsx`;
       link.click();
   
       // ✅ 

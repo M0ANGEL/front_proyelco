@@ -23,6 +23,7 @@ import {
 import * as XLSX from "xlsx";
 import { BASE_URL } from "@/config/api";
 import { getProyectosMaterial } from "@/services/material/general.API";
+import { DescargaPlantillaMaterial } from "../components/DescargarPlantilla/DescargaPlantillaMaterial";
 
 const { Text, Title } = Typography;
 const { Option } = Select;
@@ -61,7 +62,9 @@ export const CargueExcelMaterial = () => {
   const [erroresPlano, setErroresPlano] = useState<string[]>([]);
   const [openModalErrores, setOpenModalErrores] = useState<boolean>(false);
   const [proyectos, setProyectos] = useState<ProyectoType[]>([]);
-  const [proyectosFiltrados, setProyectosFiltrados] = useState<ProyectoType[]>([]);
+  const [proyectosFiltrados, setProyectosFiltrados] = useState<ProyectoType[]>(
+    []
+  );
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [form] = Form.useForm();
 
@@ -76,10 +79,12 @@ export const CargueExcelMaterial = () => {
       const response = await getProyectosMaterial();
 
       if (response.data.status === "success") {
-        const proyectosConUniqueId = response.data.data.map((proyecto: any) => ({
-          ...proyecto,
-          uniqueId: `${proyecto.id}-${proyecto.tipoProyecto_id}`
-        }));
+        const proyectosConUniqueId = response.data.data.map(
+          (proyecto: any) => ({
+            ...proyecto,
+            uniqueId: `${proyecto.id}-${proyecto.tipoProyecto_id}`,
+          })
+        );
         setProyectos(proyectosConUniqueId);
       }
     } catch (error) {
@@ -116,14 +121,15 @@ export const CargueExcelMaterial = () => {
   // ✅ Validar tipo de archivo - SOLO EXCEL
   const validateFileType = (file: File) => {
     const allowedTypes = [
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      'application/vnd.ms-excel.sheet.macroEnabled.12'
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/vnd.ms-excel.sheet.macroEnabled.12",
     ];
-    
-    const fileExtension = file.name.split('.').pop()?.toLowerCase();
-    const isValidType = allowedTypes.includes(file.type) || 
-                       (fileExtension && ['xlsx', 'xls'].includes(fileExtension));
+
+    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const isValidType =
+      allowedTypes.includes(file.type) ||
+      (fileExtension && ["xlsx", "xls"].includes(fileExtension));
 
     if (!isValidType) {
       notificationApi.error({
@@ -139,10 +145,10 @@ export const CargueExcelMaterial = () => {
   // ✅ FUNCIÓN MEJORADA: Auto-rellenar códigos vacíos
   const autoRellenarCodigos = (jsonData: any[]) => {
     let ultimoCodigo = "";
-    
+
     return jsonData.map((item) => {
       const CODIGO = item.CODIGO?.toString().trim();
-      
+
       // Si la fila actual tiene código, actualizamos el último código
       if (CODIGO && CODIGO !== "") {
         ultimoCodigo = CODIGO;
@@ -151,24 +157,29 @@ export const CargueExcelMaterial = () => {
       else if (ultimoCodigo && ultimoCodigo !== "") {
         item.CODIGO = ultimoCodigo;
       }
-      
+
       return item;
     });
   };
 
   // ✅ FUNCIÓN MEJORADA: Procesar valores numéricos
   const procesarValorNumerico = (valor: any): number => {
-    if (valor === null || valor === undefined || valor === '' || valor === ' ') {
+    if (
+      valor === null ||
+      valor === undefined ||
+      valor === "" ||
+      valor === " "
+    ) {
       return 0;
     }
-    const numero = parseFloat(valor.toString().replace(',', '.'));
+    const numero = parseFloat(valor.toString().replace(",", "."));
     return isNaN(numero) ? 0 : numero;
   };
 
   // ✅ FUNCIÓN MEJORADA: Procesar valores de texto
   const procesarValorTexto = (valor: any): string => {
     if (valor === null || valor === undefined) {
-      return '';
+      return "";
     }
     return valor.toString().trim();
   };
@@ -245,7 +256,7 @@ export const CargueExcelMaterial = () => {
         setLoader(false);
 
         console.log("Datos finales formateados:", formattedData);
-        
+
         notificationApi.success({
           message: "Archivo procesado correctamente",
           description: `Se encontraron ${formattedData.length} registros del módulo 4. Códigos auto-rellenados.`,
@@ -283,10 +294,10 @@ export const CargueExcelMaterial = () => {
   const getProyectoInfo = () => {
     const proyecto = getProyectoSeleccionado();
     if (!proyecto) return { id: null, codigo: null };
-    
+
     return {
       id: proyecto.id,
-      codigo: proyecto.codigo_proyecto
+      codigo: proyecto.codigo_proyecto,
     };
   };
 
@@ -331,25 +342,22 @@ export const CargueExcelMaterial = () => {
       formData.append("tipo_obra", tipoObra);
       formData.append("proyecto_id", proyectoInfo.id.toString());
       formData.append("codigo_proyecto", proyectoInfo.codigo || "");
-      
+
       console.log("Enviando datos:", {
         tipo_obra: tipoObra,
         proyecto_id: proyectoInfo.id,
         codigo_proyecto: proyectoInfo.codigo,
         archivo: fileToUpload.name,
-        registros: dataSource.length
+        registros: dataSource.length,
       });
 
-      const response = await fetch(
-        `${BASE_URL}cargueProyecion`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(`${BASE_URL}cargueProyecion`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: formData,
+      });
 
       const data = await response.json();
 
@@ -371,17 +379,18 @@ export const CargueExcelMaterial = () => {
       // ✅ ÉXITO - Mostrar mensaje y resetear estado
       notificationApi.success({
         message: "Archivo subido exitosamente",
-        description: `Se han cargado ${data.cantidad || dataSource.length} registros del módulo 4 al proyecto ${proyectoInfo.codigo}`,
+        description: `Se han cargado ${
+          data.cantidad || dataSource.length
+        } registros del módulo 4 al proyecto ${proyectoInfo.codigo}`,
         duration: 5,
       });
 
       setUploadSuccess(true);
-      
+
       // ✅ NO resetear el formulario para mantener la selección del proyecto
       // Solo resetear los datos del archivo
       setDataSource([]);
       setFileToUpload(null);
-      
     } catch (error: any) {
       console.error("Error en upload:", error);
       notificationApi.error({
@@ -466,7 +475,7 @@ export const CargueExcelMaterial = () => {
       dataIndex: "iva",
       key: "iva",
       width: 80,
-      render: (value: number) => value ? `${value}%` : "0%",
+      render: (value: number) => (value ? `${value}%` : "0%"),
     },
     {
       title: "VrUnitSinIVA",
@@ -560,9 +569,15 @@ export const CargueExcelMaterial = () => {
                           }
                         >
                           {proyectosFiltrados.map((proyecto) => (
-                            <Option key={proyecto.uniqueId} value={proyecto.uniqueId}>
-                              {proyecto.descripcion_proyecto} ({proyecto.codigo_proyecto})
-                              {proyecto.tipoProyecto_id === 1 ? " - Apartamentos" : " - Casas"}
+                            <Option
+                              key={proyecto.uniqueId}
+                              value={proyecto.uniqueId}
+                            >
+                              {proyecto.descripcion_proyecto} (
+                              {proyecto.codigo_proyecto})
+                              {proyecto.tipoProyecto_id === 1
+                                ? " - Apartamentos"
+                                : " - Casas"}
                             </Option>
                           ))}
                         </Select>
@@ -591,11 +606,11 @@ export const CargueExcelMaterial = () => {
                       icon={<UploadOutlined />}
                       disabled={isUploadDisabled}
                     >
-                      {isUploadDisabled 
-                        ? "Seleccione un proyecto primero" 
-                        : "Seleccionar Archivo Excel de Presupuesto"
-                      }
+                      {isUploadDisabled
+                        ? "Seleccione un proyecto primero"
+                        : "Seleccionar Archivo Excel de Presupuesto"}
                     </Button>
+                    <DescargaPlantillaMaterial />
                   </Upload>
 
                   {isUploadDisabled && (
@@ -605,7 +620,8 @@ export const CargueExcelMaterial = () => {
                   )}
 
                   <Text type="warning" style={{ fontSize: "12px" }}>
-                    <strong>Nota:</strong> Los códigos vacíos se auto-rellenarán automáticamente
+                    <strong>Nota:</strong> Los códigos vacíos se auto-rellenarán
+                    automáticamente
                   </Text>
 
                   {/* ✅ MOSTRAR BOTÓN PARA NUEVO ARCHIVO DESPUÉS DE ÉXITO */}
@@ -630,8 +646,11 @@ export const CargueExcelMaterial = () => {
                   registros)
                 </Title>
                 <Text type="secondary">
-                  Revise los datos antes de confirmar el cargue al proyecto. 
-                  <Text type="warning"> Los códigos vacíos se auto-rellenaron.</Text>
+                  Revise los datos antes de confirmar el cargue al proyecto.
+                  <Text type="warning">
+                    {" "}
+                    Los códigos vacíos se auto-rellenaron.
+                  </Text>
                 </Text>
                 <div style={{ marginTop: 8 }}>
                   <Text strong>Tipo de Obra: </Text>
@@ -639,7 +658,10 @@ export const CargueExcelMaterial = () => {
                   <Text strong style={{ marginLeft: 16 }}>
                     Proyecto:{" "}
                   </Text>
-                  <Text>{getProyectoSeleccionado()?.descripcion_proyecto} ({getProyectoSeleccionado()?.codigo_proyecto})</Text>
+                  <Text>
+                    {getProyectoSeleccionado()?.descripcion_proyecto} (
+                    {getProyectoSeleccionado()?.codigo_proyecto})
+                  </Text>
                 </div>
                 <div style={{ marginTop: 8 }}>
                   <Text strong>ID Proyecto: </Text>

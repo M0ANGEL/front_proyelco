@@ -30,12 +30,6 @@ export const updatePersonal = async (data: any, id: any): Promise<any> => {
   });
 };
 
-//cambiar el estado de la categoria 
-export const DeletePersonal = async ( id: any): Promise<any> => {
-  return await client.delete<any>(`administar-th/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-  });
-};
 
 //paises
 export const paisesTH = async (): Promise<ResponsePaisTH> => {
@@ -103,3 +97,27 @@ export const getEmpleadoByCedula = async (cedula: string) => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+//dar debaja personal
+
+export const checkActivosPendientes = async (empleadoId: number) => {
+  return await client.get(`/activos/verificar-pendientes/${empleadoId}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+// services/talento-humano/personalAPI.js
+export const DeletePersonal = async (id: React.Key, motivo?: string) => {
+  return await client.post(`/personal/${id}/inactivar`, 
+    { motivo },
+    {
+      headers: { 
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+};
+
+

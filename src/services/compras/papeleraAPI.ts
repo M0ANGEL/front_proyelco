@@ -22,3 +22,13 @@ export const enviarCotizacion = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+export const DocPlantillaMateriales = async () => {
+  return await client.get("plantilla-papelera-descarga", {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    responseType: "blob",
+  });
+};
