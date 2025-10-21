@@ -5,3 +5,4 @@ export { DatosBasicos } from "./DatosBasicos";
 export { ModalTerceros } from "./ModalTerceros";
 export { VistaProcesoProyectos } from "./VistaProceso";
 export { ResumenManzanas } from "./Casas";
+export {Documentacion} from './Documentacion';

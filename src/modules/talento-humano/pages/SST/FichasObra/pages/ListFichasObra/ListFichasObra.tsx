@@ -7,7 +7,10 @@ import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsu
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
-import { DeleteFicha, getFichasObra } from "@/services/talento-humano/fichaObraAPI";
+import {
+  DeleteFicha,
+  getFichasObra,
+} from "@/services/talento-humano/fichaObraAPI";
 
 interface DataType {
   key: number;
@@ -44,18 +47,21 @@ export const ListFichasObra = () => {
           nombres: categoria.nombre_completo,
           estado: categoria.estado.toString(),
           tipo_documento: categoria.tipo_documento,
-          tipo_empleado: categoria.tipo_empleado == 1 ? "PROYELCO" : "NO PROYELCO",
+          tipo_empleado:
+            categoria.tipo_empleado == 1 ? "PROYELCO" : "NO PROYELCO",
           identificacion: categoria.identificacion,
           telefono_celular: categoria.telefono_celular,
           genero: categoria.genero,
           cargo: categoria.cargo,
           estado_civil: categoria.estado_civil,
-          salario:  Number(categoria.salario).toLocaleString("es-CO"),
-          valor_hora:  Number(categoria.valor_hora).toLocaleString("es-CO"),
+          salario: Number(categoria.salario).toLocaleString("es-CO"),
+          valor_hora: Number(categoria.valor_hora).toLocaleString("es-CO"),
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
           fecha_ingreso: dayjs(categoria?.fecha_ingreso).format("DD-MM-YYYY"),
-          fecha_nacimiento: dayjs(categoria?.fecha_nacimiento).format("DD-MM-YYYY"),
+          fecha_nacimiento: dayjs(categoria?.fecha_nacimiento).format(
+            "DD-MM-YYYY"
+          ),
         };
       });
 
@@ -95,7 +101,7 @@ export const ListFichasObra = () => {
       key: "tipo_empleado",
       sorter: (a, b) => a.tipo_empleado.localeCompare(b.tipo_empleado),
     },
-       {
+    {
       title: "Fecha Nacimiento",
       dataIndex: "fecha_nacimiento",
       key: "fecha_nacimiento",
@@ -159,9 +165,16 @@ export const ListFichasObra = () => {
             placement="left"
           >
             <ButtonTag
+              disabled={record.estado == "2" ? true : ""}
               color={color}
             >
-              <Tooltip title="Cambiar estado">
+              <Tooltip
+                title={
+                  record.estado == "2"
+                    ? "Usuario retirado de la empresa"
+                    : "Cambiar estado"
+                }
+              >
                 <Tag
                   color={color}
                   key={estadoString}
@@ -230,4 +243,3 @@ export const ListFichasObra = () => {
     </StyledCard>
   );
 };
-

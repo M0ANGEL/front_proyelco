@@ -21,6 +21,7 @@ import {
   FaUserTie,
   FaSync,
   FaBook,
+  FaCloudUploadAlt,
 } from "react-icons/fa";
 import {
   BsCalendarRange,
@@ -37,6 +38,7 @@ import {
 } from "react-icons/lia";
 import { MdGroup, MdLocalGroceryStore, MdOutlineAddHomeWork } from "react-icons/md";
 import { IoTicketOutline } from "react-icons/io5";
+import { TbBusinessplan } from "react-icons/tb";
 
 interface Props {
   onLoader: (value: boolean) => void;
@@ -78,6 +80,8 @@ const moduleIcons = [
   { cod: "DSH", icon: <RiDashboardLine  /> },
   { cod: "ACTIV", icon: <AiFillBank /> },
   { cod: "LOGI", icon:<AiOutlineFileDone  /> },
+  { cod: "SLM", icon:<TbBusinessplan /> },
+  { cod: "DOC", icon:<FaCloudUploadAlt /> },
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {

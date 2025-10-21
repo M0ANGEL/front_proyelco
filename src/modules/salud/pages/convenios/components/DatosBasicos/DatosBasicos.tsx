@@ -177,7 +177,7 @@ export const DatosBasicos = ({ usuariosCorreo }: Props) => {
                   showCount
                   {...field}
                   maxLength={150}
-                  placeholder="Descripción"
+                  placeholder="Nombre"
                   status={error && "error"}
                 />
                 <Text type="danger">{error?.message}</Text>
