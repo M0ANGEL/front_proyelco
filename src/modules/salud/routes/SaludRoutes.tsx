@@ -8,7 +8,6 @@ import {
 import { GestionProyectoRoutes } from "../pages/gestionProyecto/routes";
 import { GestionEncargadoObraRoutes } from "../pages/gestionEncargadoObra/routes";
 import { UnidadMedidaRoutes } from "../pages/unidadMedida/routes";
-import { InformePoryectos } from "@/modules/powerBI";
 
 export const SaludRoutes = () => {
   return (
@@ -19,7 +18,6 @@ export const SaludRoutes = () => {
         <Route path="/gestion-proyectos/*" element={<GestionProyectoRoutes />} />
         <Route path="/gestion-encargado-obra/*" element={<GestionEncargadoObraRoutes />} />
         <Route path="/unidad-medida/*" element={<UnidadMedidaRoutes/>} />
-        <Route path="/informes-poryectos" element={<InformePoryectos/>} />
       </Route>
     </RoutesWithNotFound>
   );

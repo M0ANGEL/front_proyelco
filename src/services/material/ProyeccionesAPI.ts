@@ -9,3 +9,9 @@ export const getProyectosProyeciones = async (): Promise<ResponseProyeccion> => 
   });
 };
 
+//llamar por id la proyeccion
+export const getProyeccionUnica= async (codigo_proyecto: React.Key): Promise<any> => {
+  return await client.get<any>(`proyeccionData/${codigo_proyecto}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
