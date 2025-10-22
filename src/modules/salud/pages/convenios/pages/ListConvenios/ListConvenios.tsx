@@ -246,12 +246,13 @@ export const ListConvenios = () => {
                       </div>
 
                       {/* Sección derecha con información */}
-                      <div className="info-section">
+                      {/* <div className="info-section">
                         <List.Item.Meta
                           title={
                             item.estado == "1" ? (
-                              <Link
-                                to={`${location.pathname}/edit/${item.key}`}
+                               {item.tipo == "Casa" ? (<>
+                               <Link
+                                to={`${location.pathname}/edit/${item.key}`} //editar de pende proyecto
                                 className="title-link"
                               >
                                 <span className="title-text">
@@ -261,6 +262,20 @@ export const ListConvenios = () => {
                                   <EditFilled style={{ color: "#FFB380" }} />
                                 </span>
                               </Link>
+                               </>):(<>
+                               <Link
+                                to={`${location.pathname}/edit/${item.key}`} //editar de pende proyecto
+                                className="title-link"
+                              >
+                                <span className="title-text">
+                                  {item.descripcion_proyecto.toUpperCase()}
+                                </span>
+                                <span className="title-icon">
+                                  <EditFilled style={{ color: "#FFB380" }} />
+                                </span>
+                              </Link>
+                               </>)}
+                              
                             ) : (
                               <span className="title-text">
                                 {item.descripcion_proyecto.toUpperCase()}
@@ -422,6 +437,153 @@ export const ListConvenios = () => {
                         >
                           {item.tipo}
                         </span>
+                      </div> */}
+                      <div className="info-section">
+                        <List.Item.Meta
+                          title={
+                            item.estado === "1" ? (
+                              <Link
+                                // 🔹 El link cambia según el tipo de proyecto
+                                to={`${location.pathname}/${
+                                  item.tipo === "Casa" ? "edit-casa" : "edit"
+                                }/${item.key}`}
+                                className="title-link"
+                              >
+                                <span className="title-text">
+                                  {item.descripcion_proyecto.toUpperCase()}
+                                </span>
+                                <span className="title-icon">
+                                  <EditFilled style={{ color: "#FFB380" }} />
+                                </span>
+                              </Link>
+                            ) : (
+                              <span className="title-text">
+                                {item.descripcion_proyecto.toUpperCase()}
+                              </span>
+                            )
+                          }
+                          description={
+                            <>
+                              <Typography.Text
+                                strong
+                                style={{ color: "#FFB380" }}
+                              >
+                                CLIENTE: {item.emp_nombre}
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text strong>
+                                INGENIEROS: {item.nombreIngeniero.toUpperCase()}
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text strong>
+                                ENCARGADOS: {item.nombreEncargado.toUpperCase()}
+                              </Typography.Text>
+                              <br />
+                              <Typography.Text
+                                strong
+                                style={{ color: "#FF9D9D" }}
+                              >
+                                CÓDIGO PROYECTO:{" "}
+                                {item.codigo_proyecto.toUpperCase()}
+                              </Typography.Text>
+                            </>
+                          }
+                        />
+
+                        <div className="actions-container">
+                          {/* 🔹 Cambiar estado */}
+                          <div className="status-container">
+                            <Popconfirm
+                              title="¿Desea cambiar el estado?"
+                              onConfirm={() =>
+                                item.tipo === "Casa"
+                                  ? handleStatusCasas(item.key)
+                                  : handleStatus(item.key)
+                              }
+                              placement="left"
+                            >
+                              <ButtonTag className="custom-button-tag">
+                                <Tooltip title="Cambiar estado">
+                                  <Tag
+                                    color={
+                                      item.estado === "1"
+                                        ? "#C2E5C2"
+                                        : "#FFCCCB"
+                                    }
+                                    key={item.estado}
+                                    style={{
+                                      color:
+                                        item.estado === "1"
+                                          ? "#2E8B57"
+                                          : "#D32F2F",
+                                      border: "none",
+                                    }}
+                                    icon={
+                                      loadingRow.includes(item.key) ? (
+                                        <SyncOutlined spin />
+                                      ) : (
+                                        <CheckCircleFilled
+                                          style={{
+                                            color:
+                                              item.estado === "1"
+                                                ? "#2E8B57"
+                                                : "#D32F2F",
+                                          }}
+                                        />
+                                      )
+                                    }
+                                  >
+                                    {item.estado === "1"
+                                      ? "ACTIVO"
+                                      : "INACTIVO"}
+                                  </Tag>
+                                </Tooltip>
+                              </ButtonTag>
+                            </Popconfirm>
+                          </div>
+
+                          {/* 🔹 Ver proceso */}
+                          <div className="status-container">
+                            <Tooltip title="Ver Proceso Proyecto">
+                              <Link
+                                to={`${location.pathname}/${
+                                  item.tipo === "Casa"
+                                    ? "proceso-casa"
+                                    : "proceso"
+                                }/${item.key}`}
+                              >
+                                <ButtonTag
+                                  style={{
+                                    padding: 5,
+                                    borderRadius: 8,
+                                    width: 40,
+                                    backgroundColor: "#B5EAD7",
+                                    border: "none",
+                                    color: "#2C5F2D",
+                                  }}
+                                >
+                                  <AiOutlineExpandAlt />
+                                </ButtonTag>
+                              </Link>
+                            </Tooltip>
+                          </div>
+
+                          {/* 🔹 Modal de informe */}
+                          <div className="status-container">
+                            {item.tipo === "Casa" ? (
+                              <ModalInformeCasa proyecto={item} />
+                            ) : (
+                              <ModalInforme proyecto={item} />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 🔹 Tipo de proyecto */}
+                        <span
+                          style={{ color: "red", fontSize: 15, marginTop: 5 }}
+                        >
+                          {item.tipo}
+                        </span>
                       </div>
                     </div>
                   </Card>
@@ -430,7 +592,7 @@ export const ListConvenios = () => {
               pagination={{
                 pageSize: 100, // cantidad de cards por página
                 showSizeChanger: true, // permite cambiar el tamaño de página
-                pageSizeOptions: [ "200", "300"], // opciones de items por página
+                pageSizeOptions: ["200", "300"], // opciones de items por página
                 showTotal: (total: number, range: [number, number]) =>
                   `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
               }}

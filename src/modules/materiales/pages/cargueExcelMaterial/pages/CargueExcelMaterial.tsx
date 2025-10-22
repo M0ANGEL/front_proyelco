@@ -599,12 +599,12 @@ export const CargueExcelMaterial = () => {
                     accept=".xlsx,.xls"
                     beforeUpload={handleExcelUpload}
                     showUploadList={false}
-                    disabled={isUploadDisabled}
+                    // disabled={isUploadDisabled}
                   >
                     <Button
                       type="primary"
                       icon={<UploadOutlined />}
-                      disabled={isUploadDisabled}
+                      // disabled={isUploadDisabled}
                     >
                       {isUploadDisabled
                         ? "Seleccione un proyecto primero"

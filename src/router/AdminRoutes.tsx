@@ -19,6 +19,7 @@ import { ActivosRoutes } from "@/modules/activos-fijos";
 import { LogisticaAdminRouter } from "@/modules/logistica/routes";
 import { MaterialesRoutes } from "@/modules/materiales";
 import { DocumentacionRoutes } from "@/modules/documentacion/routes";
+import { InformePowerBiRouter } from "@/modules/powerBI";
 
 export const AdminRoutes = () => {
   return (
@@ -63,6 +64,7 @@ export const AdminRoutes = () => {
             <Route path={"logistica/*"} element={<LogisticaAdminRouter />} />
             <Route path={"soliciudmaterial/*"} element={<MaterialesRoutes />} />
             <Route path={"documentacion/*"} element={<DocumentacionRoutes />} />
+            <Route path={"informes/*"} element={<InformePowerBiRouter />} />
             {/* <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
           </Route>
         </RoutesWithNotFound>

@@ -1,7 +1,7 @@
 import useSessionStorage from "../../hooks/useSessionStorage";
 import { FaRegCalendarXmark } from "react-icons/fa6";
 import { IoDocumentsOutline } from "react-icons/io5";
-import { AiFillBank, AiOutlineBarChart, AiOutlineFileDone, AiOutlineSolution } from "react-icons/ai";
+import { AiFillBank, AiFillFilePpt, AiOutlineBarChart, AiOutlineFileDone, AiOutlineSolution } from "react-icons/ai";
 import { LogoSider, SiderMenu } from "./styled";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -82,6 +82,7 @@ const moduleIcons = [
   { cod: "LOGI", icon:<AiOutlineFileDone  /> },
   { cod: "SLM", icon:<TbBusinessplan /> },
   { cod: "DOC", icon:<FaCloudUploadAlt /> },
+  { cod: "PBY", icon:<AiFillFilePpt />},
 ];
 
 export const CustomMenu = ({ onLoader, user, collapsed }: Props) => {
