@@ -1,1345 +1,34 @@
-// // // // import { useParams } from "react-router-dom";
-// // // // import { Card, Typography, Tag, Collapse, Spin, Alert, Button, Row, Col } from "antd";
-// // // // import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
-// // // // import { useState, useEffect, useMemo } from "react";
-// // // // import { FileTextOutlined, ProjectOutlined } from "@ant-design/icons";
-
-// // // // const { Title, Text } = Typography;
-// // // // const { Panel } = Collapse;
-
-// // // // interface ProyeccionItem {
-// // // //   id: number;
-// // // //   codigo: string;
-// // // //   descripcion: string;
-// // // //   padre: string;
-// // // //   um: string;
-// // // //   cantidad: string;
-// // // //   cant_total: string;
-// // // //   cant_restante: string;
-// // // //   cant_solicitada: string;
-// // // //   valor_sin_iva: string;
-// // // //   tipo_insumo: string;
-// // // //   agrupacion: string;
-// // // //   estado: number;
-// // // // }
-
-// // // // export const ShowProyeccion = () => {
-// // // //   const { codigo_proyecto } = useParams<{ codigo_proyecto: string }>();
-// // // //   const [proyeccion, setProyeccion] = useState<ProyeccionItem[]>([]);
-// // // //   const [loading, setLoading] = useState(true);
-// // // //   const [error, setError] = useState<string | null>(null);
-
-// // // //   // =============================
-// // // //   // 🔹 Cargar datos desde API
-// // // //   // =============================
-// // // //   useEffect(() => {
-// // // //     const fetchProyeccion = async () => {
-// // // //       try {
-// // // //         setLoading(true);
-// // // //         const response = await getProyeccionUnica(codigo_proyecto!);
-// // // //         if (response.data?.status === "success" && Array.isArray(response.data.data)) {
-// // // //           setProyeccion(response.data.data);
-// // // //         } else {
-// // // //           setError("No se encontraron datos válidos para este proyecto");
-// // // //         }
-// // // //       } catch (err: any) {
-// // // //         setError(`Error al conectar con el servidor: ${err.message}`);
-// // // //       } finally {
-// // // //         setLoading(false);
-// // // //       }
-// // // //     };
-// // // //     if (codigo_proyecto) fetchProyeccion();
-// // // //     else {
-// // // //       setError("No se proporcionó código de proyecto");
-// // // //       setLoading(false);
-// // // //     }
-// // // //   }, [codigo_proyecto]);
-
-// // // //   // =============================
-// // // //   // 🔹 Funciones auxiliares
-// // // //   // =============================
-// // // //   const getTipoInsumoColor = (tipo: string) =>
-// // // //     ({ V: "red", M: "blue", T: "green", A: "orange" }[tipo] || "default");
-
-// // // //   const getTipoInsumoText = (tipo: string) =>
-// // // //     ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] || "OTRO");
-
-// // // //   // =============================
-// // // //   // ⚙️ Crear mapa jerárquico de hijos
-// // // //   // =============================
-// // // //   const hijosMap = useMemo(() => {
-// // // //     const map = new Map<string, ProyeccionItem[]>();
-// // // //     proyeccion.forEach((item) => {
-// // // //       const key = item.padre?.trim() || "";
-// // // //       if (!map.has(key)) map.set(key, []);
-// // // //       map.get(key)!.push(item);
-// // // //     });
-// // // //     return map;
-// // // //   }, [proyeccion]);
-
-// // // //   // =============================
-// // // //   // 🎨 Componente de información
-// // // //   // =============================
-// // // //   const ItemInfo = ({ item }: { item: ProyeccionItem }) => (
-// // // //     <div
-// // // //       style={{
-// // // //         padding: "12px",
-// // // //         backgroundColor: "#fafafa",
-// // // //         borderRadius: "8px",
-// // // //         border: "1px solid #e8e8e8",
-// // // //         marginBottom: "12px",
-// // // //       }}
-// // // //     >
-// // // //       <Row gutter={[16, 8]}>
-// // // //         <Col xs={24} sm={12}>
-// // // //           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-// // // //             <FileTextOutlined style={{ color: "#1890ff" }} />
-// // // //             <div>
-// // // //               <Text strong style={{ fontSize: "12px", color: "#666" }}>Código</Text><br />
-// // // //               <Text copyable style={{ fontFamily: "monospace" }}>{item.codigo}</Text>
-// // // //             </div>
-// // // //           </div>
-// // // //         </Col>
-// // // //         <Col xs={24} sm={12}>
-// // // //           <Text strong style={{ fontSize: "12px", color: "#666" }}>Descripción</Text><br />
-// // // //           <Text>{item.descripcion}</Text>
-// // // //         </Col>
-// // // //       </Row>
-// // // //     </div>
-// // // //   );
-
-// // // //   // =============================
-// // // //   // 🔁 Renderizado recursivo optimizado
-// // // //   // =============================
-// // // //   const RenderNodo = ({ item }: { item: ProyeccionItem }) => {
-// // // //     const hijos = hijosMap.get(item.codigo) || hijosMap.get(item.descripcion) || [];
-
-// // // //     return (
-// // // //       <Collapse accordion bordered={false} style={{backgroundColor: "white"}}>
-// // // //         <Panel
-// // // //           key={item.id}
-// // // //           header={
-// // // //             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-// // // //               <ProjectOutlined style={{ color: "#1890ff" }} />
-// // // //               <Text strong>{item.descripcion}</Text>
-// // // //               {hijos.length > 0 && (
-// // // //                 <Tag color="green" style={{ marginLeft: "auto" }}>
-// // // //                   {hijos.length} subitems
-// // // //                 </Tag>
-// // // //               )}
-// // // //             </div>
-// // // //           }
-// // // //         >
-// // // //           <ItemInfo item={item} />
-// // // //           {hijos.length > 0 && (
-// // // //             <div style={{ marginLeft: "24px", marginTop: "8px" }}>
-// // // //               {hijos.map((hijo) => (
-// // // //                 <RenderNodo key={hijo.id} item={hijo} />
-// // // //               ))}
-// // // //             </div>
-// // // //           )}
-// // // //         </Panel>
-// // // //       </Collapse>
-// // // //     );
-// // // //   };
-
-// // // //   // =============================
-// // // //   // 🔹 Filtrar raíz
-// // // //   // =============================
-// // // //   const itemsPrincipales = hijosMap.get("4") || [];
-
-// // // //   // =============================
-// // // //   // 🧩 Render principal
-// // // //   // =============================
-// // // //   if (loading)
-// // // //     return (
-// // // //       <div style={{ padding: "40px", textAlign: "center" }}>
-// // // //         <Spin size="large" tip="Cargando proyección..." />
-// // // //       </div>
-// // // //     );
-
-// // // //   if (error)
-// // // //     return (
-// // // //       <div style={{ padding: "20px" }}>
-// // // //         <Alert
-// // // //           message="Error al cargar la proyección"
-// // // //           description={error}
-// // // //           type="error"
-// // // //           showIcon
-// // // //           action={
-// // // //             <Button size="small" type="primary" onClick={() => window.location.reload()}>
-// // // //               Reintentar
-// // // //             </Button>
-// // // //           }
-// // // //           style={{ borderRadius: "8px" }}
-// // // //         />
-// // // //       </div>
-// // // //     );
-
-// // // //   return (
-// // // //     <div style={{ padding: "24px", background: "#f5f5f5", minHeight: "100vh" }}>
-// // // //       <Card
-// // // //         style={{
-// // // //           borderRadius: "12px",
-// // // //           boxShadow: "0 4px 12px rgba(133, 133, 133, 1)",
-// // // //           border: "none",
-// // // //         }}
-// // // //         bodyStyle={{ padding: "24px" }}
-// // // //       >
-// // // //         <Title level={2} style={{ color: "#ffffffff", marginBottom: "16px" }}>
-// // // //           Detalles de la Proyección
-// // // //         </Title>
-
-// // // //         <div
-// // // //           style={{
-// // // //             display: "flex",
-// // // //             gap: "16px",
-// // // //             flexWrap: "wrap",
-// // // //             padding: "12px 16px",
-// // // //             backgroundColor: "#f8fdff",
-// // // //             borderRadius: "8px",
-// // // //             border: "1px solid #e6f7ff",
-// // // //             marginBottom: "20px",
-// // // //           }}
-// // // //         >
-// // // //           <Text strong style={{ color: "#595959" }}>Código del Proyecto:</Text>
-// // // //           <Tag color="blue" style={{ fontSize: "14px", fontWeight: "bold" }}>
-// // // //             {codigo_proyecto}
-// // // //           </Tag>
-// // // //         </div>
-
-// // // //         <Title level={4} style={{ color: "#262626", marginBottom: "20px" }}>
-// // // //           Estructura de la Proyección
-// // // //         </Title>
-
-// // // //         {itemsPrincipales.length > 0 ? (
-// // // //           itemsPrincipales.map((item) => (
-// // // //             <RenderNodo key={item.id} item={item} />
-// // // //           ))
-// // // //         ) : (
-// // // //           <Alert
-// // // //             message="No hay datos de proyección"
-// // // //             description={`No se encontraron items principales para el proyecto ${codigo_proyecto}`}
-// // // //             type="warning"
-// // // //             showIcon
-// // // //             style={{ borderRadius: "8px" }}
-// // // //           />
-// // // //         )}
-// // // //       </Card>
-// // // //     </div>
-// // // //   );
-// // // // };
-// // // import { useParams } from "react-router-dom";
-// // // import { Card, Typography, Tag, Collapse, Spin, Alert, Button, Row, Col } from "antd";
-// // // import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
-// // // import { useState, useEffect, useMemo } from "react";
-// // // import { FileTextOutlined, ProjectOutlined } from "@ant-design/icons";
-
-// // // const { Title, Text } = Typography;
-// // // const { Panel } = Collapse;
-
-// // // // ===========================================
-// // // // 🧩 Interfaz del tipo de dato ProyeccionItem
-// // // // ===========================================
-// // // interface ProyeccionItem {
-// // //   id: number;
-// // //   codigo: string;
-// // //   descripcion: string;
-// // //   padre: string;
-// // //   um: string;
-// // //   cantidad: string;
-// // //   cant_total: string;
-// // //   cant_restante: string;
-// // //   cant_solicitada: string;
-// // //   valor_sin_iva: string;
-// // //   tipo_insumo: string;
-// // //   agrupacion: string;
-// // //   estado: number;
-// // // }
-
-// // // // ===========================================
-// // // // 📦 Componente principal: ShowProyeccion
-// // // // ===========================================
-// // // export const ShowProyeccion = () => {
-// // //   // Obtener parámetro de la URL
-// // //   const { codigo_proyecto } = useParams<{ codigo_proyecto: string }>();
-
-// // //   // Estados locales
-// // //   const [proyeccion, setProyeccion] = useState<ProyeccionItem[]>([]);
-// // //   const [loading, setLoading] = useState(true);
-// // //   const [error, setError] = useState<string | null>(null);
-
-// // //   // ===========================================
-// // //   // 🔹 Cargar datos desde la API
-// // //   // ===========================================
-// // //   useEffect(() => {
-// // //     const fetchProyeccion = async () => {
-// // //       try {
-// // //         setLoading(true);
-// // //         const response = await getProyeccionUnica(codigo_proyecto!);
-
-// // //         // Validar respuesta
-// // //         if (response.data?.status === "success" && Array.isArray(response.data.data)) {
-// // //           setProyeccion(response.data.data);
-// // //         } else {
-// // //           setError("No se encontraron datos válidos para este proyecto");
-// // //         }
-// // //       } catch (err: any) {
-// // //         setError(`Error al conectar con el servidor: ${err.message}`);
-// // //       } finally {
-// // //         setLoading(false);
-// // //       }
-// // //     };
-
-// // //     // Ejecutar solo si hay código de proyecto
-// // //     if (codigo_proyecto) fetchProyeccion();
-// // //     else {
-// // //       setError("No se proporcionó código de proyecto");
-// // //       setLoading(false);
-// // //     }
-// // //   }, [codigo_proyecto]);
-
-// // //   // ===========================================
-// // //   // 🎨 Funciones auxiliares (colores y textos)
-// // //   // ===========================================
-// // //   const getTipoInsumoColor = (tipo: string) =>
-// // //     ({ V: "red", M: "blue", T: "green", A: "orange" }[tipo] || "default");
-
-// // //   const getTipoInsumoText = (tipo: string) =>
-// // //     ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] || "OTRO");
-
-// // //   // ===========================================
-// // //   // ⚙️ Construir mapa jerárquico (padre → hijos)
-// // //   // ===========================================
-// // //   const hijosMap = useMemo(() => {
-// // //     const map = new Map<string, ProyeccionItem[]>();
-
-// // //     proyeccion.forEach((item) => {
-// // //       const key = item.padre?.trim() || "";
-// // //       if (!map.has(key)) map.set(key, []);
-// // //       map.get(key)!.push(item);
-// // //     });
-
-// // //     return map;
-// // //   }, [proyeccion]);
-
-// // //   // ===========================================
-// // //   // 🧱 Componente para mostrar info de cada item
-// // //   // ===========================================
-// // //   const ItemInfo = ({ item }: { item: ProyeccionItem }) => (
-// // //     <div
-// // //       style={{
-// // //         padding: "12px",
-// // //         backgroundColor: "#fafafa",
-// // //         borderRadius: "8px",
-// // //         border: "1px solid #e8e8e8",
-// // //         marginBottom: "12px",
-// // //       }}
-// // //     >
-// // //       <Row gutter={[16, 8]}>
-// // //         {/* Columna: Código */}
-// // //         <Col xs={24} sm={12}>
-// // //           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-// // //             <FileTextOutlined style={{ color: "#1890ff" }} />
-// // //             <div>
-// // //               <Text strong style={{ fontSize: "12px", color: "#666" }}>Código</Text><br />
-// // //               <Text copyable style={{ fontFamily: "monospace" }}>{item.codigo}</Text>
-// // //             </div>
-// // //           </div>
-// // //         </Col>
-
-// // //         {/* Columna: Descripción */}
-// // //         <Col xs={24} sm={12}>
-// // //           <Text strong style={{ fontSize: "12px", color: "#666" }}>Descripción</Text><br />
-// // //           <Text>{item.descripcion}</Text>
-// // //         </Col>
-// // //       </Row>
-// // //     </div>
-// // //   );
-
-// // //   // ===========================================
-// // //   // 🔁 Renderizado recursivo de estructura
-// // //   // ===========================================
-// // //   const RenderNodo = ({ item }: { item: ProyeccionItem }) => {
-// // //     // Obtener los hijos de este item (pueden ser por código o descripción)
-// // //     const hijos = hijosMap.get(item.codigo) || hijosMap.get(item.descripcion) || [];
-
-// // //     // Si el ítem no tiene hijos, se muestra solo su información sin desplegable
-// // //     if (hijos.length === 0) {
-// // //       return <ItemInfo item={item} />;
-// // //     }
-
-// // //     // Si tiene hijos, se muestra en un Collapse
-// // //     return (
-// // //       <Collapse accordion bordered={false} style={{ backgroundColor: "white" }}>
-// // //         <Panel
-// // //           key={item.id}
-// // //           header={
-// // //             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-// // //               <ProjectOutlined style={{ color: "#1890ff" }} />
-// // //               <Text strong>{item.descripcion}</Text>
-// // //               <Tag color="green" style={{ marginLeft: "auto" }}>
-// // //                 {hijos.length} subitems
-// // //               </Tag>
-// // //             </div>
-// // //           }
-// // //         >
-// // //           {/* Info del item actual */}
-// // //           <ItemInfo item={item} />
-
-// // //           {/* Renderizar hijos recursivamente */}
-// // //           <div style={{ marginLeft: "24px", marginTop: "8px" }}>
-// // //             {hijos.map((hijo) => (
-// // //               <RenderNodo key={hijo.id} item={hijo} />
-// // //             ))}
-// // //           </div>
-// // //         </Panel>
-// // //       </Collapse>
-// // //     );
-// // //   };
-
-// // //   // ===========================================
-// // //   // 🔹 Filtrar ítems raíz (nivel superior)
-// // //   // ===========================================
-// // //   const itemsPrincipales = hijosMap.get("4") || [];
-
-// // //   // ===========================================
-// // //   // 🧭 Estados de carga o error
-// // //   // ===========================================
-// // //   if (loading) {
-// // //     return (
-// // //       <div style={{ padding: "40px", textAlign: "center" }}>
-// // //         <Spin size="large" tip="Cargando proyección..." />
-// // //       </div>
-// // //     );
-// // //   }
-
-// // //   if (error) {
-// // //     return (
-// // //       <div style={{ padding: "20px" }}>
-// // //         <Alert
-// // //           message="Error al cargar la proyección"
-// // //           description={error}
-// // //           type="error"
-// // //           showIcon
-// // //           action={
-// // //             <Button size="small" type="primary" onClick={() => window.location.reload()}>
-// // //               Reintentar
-// // //             </Button>
-// // //           }
-// // //           style={{ borderRadius: "8px" }}
-// // //         />
-// // //       </div>
-// // //     );
-// // //   }
-
-// // //   // ===========================================
-// // //   // 🧩 Render principal del componente
-// // //   // ===========================================
-// // //   return (
-// // //     <div style={{ padding: "24px", background: "#f5f5f5", minHeight: "100vh" }}>
-// // //       <Card
-// // //         style={{
-// // //           borderRadius: "12px",
-// // //           boxShadow: "0 4px 12px rgba(133, 133, 133, 0.5)",
-// // //           border: "none",
-// // //         }}
-// // //         bodyStyle={{ padding: "24px" }}
-// // //       >
-// // //         {/* Título */}
-// // //         <Title level={2} style={{ color: "#262626", marginBottom: "16px" }}>
-// // //           Detalles de la Proyección
-// // //         </Title>
-
-// // //         {/* Código del proyecto */}
-// // //         <div
-// // //           style={{
-// // //             display: "flex",
-// // //             gap: "16px",
-// // //             flexWrap: "wrap",
-// // //             padding: "12px 16px",
-// // //             backgroundColor: "#f8fdff",
-// // //             borderRadius: "8px",
-// // //             border: "1px solid #e6f7ff",
-// // //             marginBottom: "20px",
-// // //           }}
-// // //         >
-// // //           <Text strong style={{ color: "#595959" }}>Código del Proyecto:</Text>
-// // //           <Tag color="blue" style={{ fontSize: "14px", fontWeight: "bold" }}>
-// // //             {codigo_proyecto}
-// // //           </Tag>
-// // //         </div>
-
-// // //         {/* Estructura jerárquica */}
-// // //         <Title level={4} style={{ color: "#262626", marginBottom: "20px" }}>
-// // //           Estructura de la Proyección
-// // //         </Title>
-
-// // //         {/* Mostrar estructura o mensaje vacío */}
-// // //         {itemsPrincipales.length > 0 ? (
-// // //           itemsPrincipales.map((item) => (
-// // //             <RenderNodo key={item.id} item={item} />
-// // //           ))
-// // //         ) : (
-// // //           <Alert
-// // //             message="No hay datos de proyección"
-// // //             description={`No se encontraron ítems principales para el proyecto ${codigo_proyecto}`}
-// // //             type="warning"
-// // //             showIcon
-// // //             style={{ borderRadius: "8px" }}
-// // //           />
-// // //         )}
-// // //       </Card>
-// // //     </div>
-// // //   );
-// // // };
-// // import { useParams } from "react-router-dom";
-// // import { Card, Typography, Tag, Collapse, Spin, Alert, Button, Row, Col, Table } from "antd";
-// // import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
-// // import { useState, useEffect, useMemo } from "react";
-// // import { FileTextOutlined, FolderOutlined, ProjectOutlined, CaretDownOutlined } from "@ant-design/icons";
-
-// // const { Title, Text } = Typography;
-// // const { Panel } = Collapse;
-
-// // // ===========================================
-// // // 🧩 Interfaz del tipo de dato ProyeccionItem
-// // // ===========================================
-// // interface ProyeccionItem {
-// //   id: number;
-// //   user_id: number;
-// //   codigo_proyecto: string;
-// //   codigo: string;
-// //   descripcion: string;
-// //   padre: string;
-// //   nivel: number;
-// //   um: string;
-// //   cantidad: string;
-// //   subcapitulo: string;
-// //   cant_apu: string;
-// //   rend: string;
-// //   iva: number;
-// //   valor_sin_iva: string;
-// //   tipo_insumo: string;
-// //   agrupacion: string;
-// //   cant_total: string;
-// //   cant_restante: string;
-// //   cant_solicitada: string;
-// //   estado: number;
-// //   created_at: string;
-// //   updated_at: string;
-// // }
-
-// // // ===========================================
-// // // 📦 Componente principal: ShowProyeccion
-// // // ===========================================
-// // export const ShowProyeccion = () => {
-// //   const { codigo_proyecto } = useParams<{ codigo_proyecto: string }>();
-// //   const [proyeccion, setProyeccion] = useState<ProyeccionItem[]>([]);
-// //   const [loading, setLoading] = useState(true);
-// //   const [error, setError] = useState<string | null>(null);
-// //   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
-
-// //   // ===========================================
-// //   // 🔹 Cargar datos desde la API
-// //   // ===========================================
-// //   useEffect(() => {
-// //     const fetchProyeccion = async () => {
-// //       try {
-// //         setLoading(true);
-// //         const response = await getProyeccionUnica(codigo_proyecto!);
-
-// //         if (response.data?.status === "success" && Array.isArray(response.data.data)) {
-// //           setProyeccion(response.data.data);
-// //         } else {
-// //           setError("No se encontraron datos válidos para este proyecto");
-// //         }
-// //       } catch (err: any) {
-// //         setError(`Error al conectar con el servidor: ${err.message}`);
-// //       } finally {
-// //         setLoading(false);
-// //       }
-// //     };
-
-// //     if (codigo_proyecto) fetchProyeccion();
-// //     else {
-// //       setError("No se proporcionó código de proyecto");
-// //       setLoading(false);
-// //     }
-// //   }, [codigo_proyecto]);
-
-// //   // ===========================================
-// //   // 🎨 Funciones auxiliares
-// //   // ===========================================
-// //   const getTipoInsumoColor = (tipo: string) =>
-// //     ({ V: "red", M: "blue", T: "green", A: "orange" }[tipo] || "default");
-
-// //   const getTipoInsumoText = (tipo: string) =>
-// //     ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] || "OTRO");
-
-// //   const getNivelColor = (nivel: number) =>
-// //     ({ 1: "blue", 2: "green", 3: "orange", 4: "red" }[nivel] || "default");
-
-// //   // ===========================================
-// //   // ⚙️ Construir estructura jerárquica
-// //   // ===========================================
-// //   const { itemsPrincipales, hijosMap } = useMemo(() => {
-// //     const map = new Map<string, ProyeccionItem[]>();
-    
-// //     // Agrupar por padre
-// //     proyeccion.forEach((item) => {
-// //       const key = item.padre?.trim() || "";
-// //       if (!map.has(key)) map.set(key, []);
-// //       map.get(key)!.push(item);
-// //     });
-
-// //     // Items principales son los de nivel 1 (padre = "4")
-// //     const principales = proyeccion.filter(item => item.padre === "4");
-
-// //     return { itemsPrincipales: principales, hijosMap: map };
-// //   }, [proyeccion]);
-
-// //   // ===========================================
-// //   // 🧱 Componente para mostrar tabla de hijos
-// //   // ===========================================
-// //   const TablaHijos = ({ hijos }: { hijos: ProyeccionItem[] }) => {
-// //     const columnas = [
-// //       {
-// //         title: 'Código',
-// //         dataIndex: 'codigo',
-// //         key: 'codigo',
-// //         width: 100,
-// //         render: (codigo: string) => (
-// //           <Text copyable style={{ fontFamily: "monospace", fontSize: "12px" }}>
-// //             {codigo}
-// //           </Text>
-// //         )
-// //       },
-// //       {
-// //         title: 'Descripción',
-// //         dataIndex: 'descripcion',
-// //         key: 'descripcion',
-// //         render: (descripcion: string) => (
-// //           <Text style={{ fontSize: "12px" }}>{descripcion}</Text>
-// //         )
-// //       },
-// //       {
-// //         title: 'UM',
-// //         dataIndex: 'um',
-// //         key: 'um',
-// //         width: 80,
-// //         render: (um: string) => (
-// //           <Tag color="blue" style={{ fontSize: "11px" }}>{um}</Tag>
-// //         )
-// //       },
-// //       {
-// //         title: 'Cantidad',
-// //         dataIndex: 'cantidad',
-// //         key: 'cantidad',
-// //         width: 90,
-// //         render: (cantidad: string) => (
-// //           <Text strong style={{ fontSize: "12px" }}>{parseFloat(cantidad).toFixed(2)}</Text>
-// //         )
-// //       },
-// //       {
-// //         title: 'Valor',
-// //         dataIndex: 'valor_sin_iva',
-// //         key: 'valor_sin_iva',
-// //         width: 120,
-// //         render: (valor: string) => (
-// //           <Text style={{ fontSize: "12px" }}>
-// //             ${parseFloat(valor).toLocaleString()}
-// //           </Text>
-// //         )
-// //       },
-// //       {
-// //         title: 'Tipo',
-// //         dataIndex: 'tipo_insumo',
-// //         key: 'tipo_insumo',
-// //         width: 100,
-// //         render: (tipo: string) => tipo ? (
-// //           <Tag color={getTipoInsumoColor(tipo)} style={{ fontSize: "11px" }}>
-// //             {getTipoInsumoText(tipo)}
-// //           </Tag>
-// //         ) : null
-// //       }
-// //     ];
-
-// //     return (
-// //       <Table
-// //         size="small"
-// //         columns={columnas}
-// //         dataSource={hijos}
-// //         rowKey="id"
-// //         pagination={false}
-// //         style={{ marginTop: 12 }}
-// //         scroll={{ x: 600 }}
-// //       />
-// //     );
-// //   };
-
-// //   // ===========================================
-// //   // 🔁 Renderizado recursivo de estructura
-// //   // ===========================================
-// //   const RenderNodo = ({ item, nivel = 0 }: { item: ProyeccionItem; nivel?: number }) => {
-// //     const hijos = hijosMap.get(item.codigo) || [];
-// //     const tieneHijos = hijos.length > 0;
-// //     const esPadrePrincipal = nivel === 0;
-
-// //     const togglePanel = (itemId: string) => {
-// //       setExpandedPanels(prev => 
-// //         prev.includes(itemId) 
-// //           ? prev.filter(id => id !== itemId)
-// //           : [...prev, itemId]
-// //       );
-// //     };
-
-// //     const estaExpandido = expandedPanels.includes(item.id.toString());
-
-// //     // Información básica del item
-// //     const ItemBasico = () => (
-// //       <div style={{ 
-// //         padding: "12px",
-// //         backgroundColor: "#fafafa",
-// //         borderRadius: "8px",
-// //         border: "1px solid #e8e8e8",
-// //         marginBottom: "8px"
-// //       }}>
-// //         <Row gutter={[16, 8]} align="middle">
-// //           <Col flex="none">
-// //             {tieneHijos ? (
-// //               <FolderOutlined style={{ color: "#faad14" }} />
-// //             ) : (
-// //               <FileTextOutlined style={{ color: "#52c41a" }} />
-// //             )}
-// //           </Col>
-// //           <Col flex="auto">
-// //             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-// //               <Text strong style={{ fontSize: "14px" }}>{item.descripcion}</Text>
-// //               <Tag color={getNivelColor(item.nivel)} size="small">
-// //                 Nivel {item.nivel}
-// //               </Tag>
-// //               {item.tipo_insumo && (
-// //                 <Tag color={getTipoInsumoColor(item.tipo_insumo)} size="small">
-// //                   {getTipoInsumoText(item.tipo_insumo)}
-// //                 </Tag>
-// //               )}
-// //             </div>
-// //             <Text type="secondary" style={{ fontSize: "12px" }}>
-// //               Código: {item.codigo} | UM: {item.um} | Cantidad: {parseFloat(item.cantidad).toFixed(2)} | 
-// //               Valor: ${parseFloat(item.valor_sin_iva || "0").toLocaleString()}
-// //             </Text>
-// //           </Col>
-// //           {tieneHijos && (
-// //             <Col flex="none">
-// //               <Button 
-// //                 type="text" 
-// //                 size="small" 
-// //                 icon={<CaretDownOutlined rotate={estaExpandido ? 0 : -90} />}
-// //                 onClick={() => togglePanel(item.id.toString())}
-// //               >
-// //                 {hijos.length} items
-// //               </Button>
-// //             </Col>
-// //           )}
-// //         </Row>
-// //       </div>
-// //     );
-
-// //     if (!tieneHijos) {
-// //       return <ItemBasico />;
-// //     }
-
-// //     return (
-// //       <div style={{ marginBottom: "8px" }}>
-// //         <ItemBasico />
-        
-// //         {/* Contenido expandido */}
-// //         {estaExpandido && (
-// //           <div style={{ 
-// //             marginLeft: "24px", 
-// //             marginTop: "8px",
-// //             borderLeft: "2px solid #e8e8e8",
-// //             paddingLeft: "16px"
-// //           }}>
-// //             {/* Mostrar hijos como tabla */}
-// //             <TablaHijos hijos={hijos} />
-            
-// //             {/* Renderizar sub-hijos recursivamente */}
-// //             {hijos.map((hijo) => (
-// //               <RenderNodo key={hijo.id} item={hijo} nivel={nivel + 1} />
-// //             ))}
-// //           </div>
-// //         )}
-// //       </div>
-// //     );
-// //   };
-
-// //   // ===========================================
-// //   // 🧭 Estados de carga o error
-// //   // ===========================================
-// //   if (loading) {
-// //     return (
-// //       <div style={{ padding: "40px", textAlign: "center" }}>
-// //         <Spin size="large" tip="Cargando proyección..." />
-// //       </div>
-// //     );
-// //   }
-
-// //   if (error) {
-// //     return (
-// //       <div style={{ padding: "20px" }}>
-// //         <Alert
-// //           message="Error al cargar la proyección"
-// //           description={error}
-// //           type="error"
-// //           showIcon
-// //           action={
-// //             <Button size="small" type="primary" onClick={() => window.location.reload()}>
-// //               Reintentar
-// //             </Button>
-// //           }
-// //           style={{ borderRadius: "8px" }}
-// //         />
-// //       </div>
-// //     );
-// //   }
-
-// //   // ===========================================
-// //   // 🧩 Render principal del componente
-// //   // ===========================================
-// //   return (
-// //     <div style={{ padding: "24px", background: "#f5f5f5", minHeight: "100vh" }}>
-// //       <Card
-// //         style={{
-// //           borderRadius: "12px",
-// //           boxShadow: "0 4px 12px rgba(133, 133, 133, 0.5)",
-// //           border: "none",
-// //         }}
-// //         bodyStyle={{ padding: "24px" }}
-// //       >
-// //         {/* Título */}
-// //         <Title level={2} style={{ color: "#262626", marginBottom: "16px" }}>
-// //           Detalles de la Proyección
-// //         </Title>
-
-// //         {/* Código del proyecto */}
-// //         <div
-// //           style={{
-// //             display: "flex",
-// //             gap: "16px",
-// //             flexWrap: "wrap",
-// //             padding: "12px 16px",
-// //             backgroundColor: "#f8fdff",
-// //             borderRadius: "8px",
-// //             border: "1px solid #e6f7ff",
-// //             marginBottom: "20px",
-// //           }}
-// //         >
-// //           <Text strong style={{ color: "#595959" }}>Código del Proyecto:</Text>
-// //           <Tag color="blue" style={{ fontSize: "14px", fontWeight: "bold" }}>
-// //             {codigo_proyecto}
-// //           </Tag>
-// //           <Text strong style={{ color: "#595959" }}>Total Items:</Text>
-// //           <Tag color="green" style={{ fontSize: "14px", fontWeight: "bold" }}>
-// //             {proyeccion.length}
-// //           </Tag>
-// //         </div>
-
-// //         {/* Estructura jerárquica */}
-// //         <Title level={4} style={{ color: "#262626", marginBottom: "20px" }}>
-// //           Estructura de la Proyección
-// //         </Title>
-
-// //         {/* Mostrar estructura o mensaje vacío */}
-// //         {itemsPrincipales.length > 0 ? (
-// //           itemsPrincipales.map((item) => (
-// //             <RenderNodo key={item.id} item={item} nivel={0} />
-// //           ))
-// //         ) : (
-// //           <Alert
-// //             message="No hay datos de proyección"
-// //             description={`No se encontraron ítems principales para el proyecto ${codigo_proyecto}`}
-// //             type="warning"
-// //             showIcon
-// //             style={{ borderRadius: "8px" }}
-// //           />
-// //         )}
-// //       </Card>
-// //     </div>
-// //   );
-// // };
-
-// import { useParams } from "react-router-dom";
-// import { Card, Typography, Tag, Collapse, Spin, Alert, Button, Row, Col, Table } from "antd";
-// import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
-// import { useState, useEffect, useMemo } from "react";
-// import { FileTextOutlined, FolderOutlined, ProjectOutlined, CaretDownOutlined } from "@ant-design/icons";
-
-// const { Title, Text } = Typography;
-// const { Panel } = Collapse;
-
-// // ===========================================
-// // 🧩 Interfaz del tipo de dato ProyeccionItem
-// // ===========================================
-// interface ProyeccionItem {
-//   id: number;
-//   user_id: number;
-//   codigo_proyecto: string;
-//   codigo: string;
-//   descripcion: string;
-//   padre: string;
-//   nivel: number;
-//   um: string;
-//   cantidad: string;
-//   subcapitulo: string;
-//   cant_apu: string;
-//   rend: string;
-//   iva: number;
-//   valor_sin_iva: string;
-//   tipo_insumo: string;
-//   agrupacion: string;
-//   cant_total: string;
-//   cant_restante: string;
-//   cant_solicitada: string;
-//   estado: number;
-//   created_at: string;
-//   updated_at: string;
-// }
-
-// // ===========================================
-// // 📦 Componente principal: ShowProyeccion
-// // ===========================================
-// export const ShowProyeccion = () => {
-//   const { codigo_proyecto } = useParams<{ codigo_proyecto: string }>();
-//   const [proyeccion, setProyeccion] = useState<ProyeccionItem[]>([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState<string | null>(null);
-//   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
-
-//   // ===========================================
-//   // 🔹 Cargar datos desde la API
-//   // ===========================================
-//   useEffect(() => {
-//     const fetchProyeccion = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await getProyeccionUnica(codigo_proyecto!);
-
-//         if (response.data?.status === "success" && Array.isArray(response.data.data)) {
-//           setProyeccion(response.data.data);
-//         } else {
-//           setError("No se encontraron datos válidos para este proyecto");
-//         }
-//       } catch (err: any) {
-//         setError(`Error al conectar con el servidor: ${err.message}`);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     if (codigo_proyecto) fetchProyeccion();
-//     else {
-//       setError("No se proporcionó código de proyecto");
-//       setLoading(false);
-//     }
-//   }, [codigo_proyecto]);
-
-//   // ===========================================
-//   // 🎨 Funciones auxiliares
-//   // ===========================================
-//   const getTipoInsumoColor = (tipo: string) =>
-//     ({ V: "red", M: "blue", T: "green", A: "orange" }[tipo] || "default");
-
-//   const getTipoInsumoText = (tipo: string) =>
-//     ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] || "OTRO");
-
-//   const getNivelColor = (nivel: number) =>
-//     ({ 1: "blue", 2: "green", 3: "orange", 4: "red" }[nivel] || "default");
-
-//   // ===========================================
-//   // ⚙️ Construir estructura jerárquica
-//   // ===========================================
-//   const { itemsPrincipales, hijosMap, itemsConHijos } = useMemo(() => {
-//     const map = new Map<string, ProyeccionItem[]>();
-//     const conHijos = new Set<string>();
-    
-//     // Agrupar por padre
-//     proyeccion.forEach((item) => {
-//       const key = item.padre?.trim() || "";
-//       if (!map.has(key)) map.set(key, []);
-//       map.get(key)!.push(item);
-      
-//       // Marcar que este padre tiene hijos
-//       if (key !== "4") { // No marcar el nivel raíz "4" como que tiene hijos
-//         conHijos.add(key);
-//       }
-//     });
-
-//     // Items principales son los de nivel 1 (padre = "4")
-//     const principales = proyeccion.filter(item => item.padre === "4");
-
-//     return { 
-//       itemsPrincipales: principales, 
-//       hijosMap: map,
-//       itemsConHijos: conHijos
-//     };
-//   }, [proyeccion]);
-
-//   // ===========================================
-//   // 🔄 Auto-expandir niveles con hijos
-//   // ===========================================
-//   useEffect(() => {
-//     if (proyeccion.length > 0) {
-//       // Auto-expandir los items principales (nivel 1) que tienen hijos
-//       const itemsParaExpandir: string[] = [];
-      
-//       itemsPrincipales.forEach(item => {
-//         const hijos = hijosMap.get(item.codigo) || [];
-//         if (hijos.length > 0) {
-//           itemsParaExpandir.push(item.id.toString());
-//         }
-//       });
-
-//       setExpandedPanels(itemsParaExpandir);
-//     }
-//   }, [proyeccion, itemsPrincipales, hijosMap]);
-
-//   // ===========================================
-//   // 🧱 Componente para mostrar tabla de hijos
-//   // ===========================================
-//   const TablaHijos = ({ hijos }: { hijos: ProyeccionItem[] }) => {
-//     const columnas = [
-//       {
-//         title: 'Código',
-//         dataIndex: 'codigo',
-//         key: 'codigo',
-//         width: 100,
-//         render: (codigo: string) => (
-//           <Text copyable style={{ fontFamily: "monospace", fontSize: "12px" }}>
-//             {codigo}
-//           </Text>
-//         )
-//       },
-//       {
-//         title: 'Descripción',
-//         dataIndex: 'descripcion',
-//         key: 'descripcion',
-//         render: (descripcion: string) => (
-//           <Text style={{ fontSize: "12px" }}>{descripcion}</Text>
-//         )
-//       },
-//       {
-//         title: 'UM',
-//         dataIndex: 'um',
-//         key: 'um',
-//         width: 80,
-//         render: (um: string) => (
-//           <Tag color="blue" style={{ fontSize: "11px" }}>{um}</Tag>
-//         )
-//       },
-//       {
-//         title: 'Cantidad',
-//         dataIndex: 'cantidad',
-//         key: 'cantidad',
-//         width: 90,
-//         render: (cantidad: string) => (
-//           <Text strong style={{ fontSize: "12px" }}>{parseFloat(cantidad).toFixed(2)}</Text>
-//         )
-//       },
-//       {
-//         title: 'Valor',
-//         dataIndex: 'valor_sin_iva',
-//         key: 'valor_sin_iva',
-//         width: 120,
-//         render: (valor: string) => (
-//           <Text style={{ fontSize: "12px" }}>
-//             ${parseFloat(valor || "0").toLocaleString()}
-//           </Text>
-//         )
-//       },
-//       {
-//         title: 'Tipo',
-//         dataIndex: 'tipo_insumo',
-//         key: 'tipo_insumo',
-//         width: 100,
-//         render: (tipo: string) => tipo ? (
-//           <Tag color={getTipoInsumoColor(tipo)} style={{ fontSize: "11px" }}>
-//             {getTipoInsumoText(tipo)}
-//           </Tag>
-//         ) : null
-//       }
-//     ];
-
-//     return (
-//       <Table
-//         size="small"
-//         columns={columnas}
-//         dataSource={hijos}
-//         rowKey="id"
-//         pagination={false}
-//         style={{ marginTop: 12 }}
-//         scroll={{ x: 600 }}
-//       />
-//     );
-//   };
-
-//   // ===========================================
-//   // 🔁 Renderizado recursivo de estructura
-//   // ===========================================
-//   const RenderNodo = ({ item, nivel = 0 }: { item: ProyeccionItem; nivel?: number }) => {
-//     const hijos = hijosMap.get(item.codigo) || [];
-//     const tieneHijos = hijos.length > 0;
-//     const esPadrePrincipal = nivel === 0;
-
-//     const togglePanel = (itemId: string) => {
-//       setExpandedPanels(prev => 
-//         prev.includes(itemId) 
-//           ? prev.filter(id => id !== itemId)
-//           : [...prev, itemId]
-//       );
-//     };
-
-//     const estaExpandido = expandedPanels.includes(item.id.toString());
-
-//     // Información básica del item
-//     const ItemBasico = () => (
-//       <div 
-//         style={{ 
-//           padding: "12px",
-//           backgroundColor: esPadrePrincipal ? "#f0f8ff" : "#fafafa",
-//           borderRadius: "8px",
-//           border: `1px solid ${esPadrePrincipal ? "#bae7ff" : "#e8e8e8"}`,
-//           marginBottom: "8px",
-//           cursor: tieneHijos ? "pointer" : "default",
-//         }}
-//         onClick={() => tieneHijos && togglePanel(item.id.toString())}
-//       >
-//         <Row gutter={[16, 8]} align="middle">
-//           <Col flex="none">
-//             {tieneHijos ? (
-//               <FolderOutlined style={{ 
-//                 color: esPadrePrincipal ? "#1890ff" : "#faad14",
-//                 fontSize: esPadrePrincipal ? "18px" : "16px"
-//               }} />
-//             ) : (
-//               <FileTextOutlined style={{ color: "#52c41a" }} />
-//             )}
-//           </Col>
-//           <Col flex="auto">
-//             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "4px" }}>
-//               <Text strong style={{ 
-//                 fontSize: esPadrePrincipal ? "16px" : "14px",
-//                 color: esPadrePrincipal ? "#1890ff" : "#000"
-//               }}>
-//                 {item.descripcion}
-//               </Text>
-//               <Tag color={getNivelColor(item.nivel)} size="small">
-//                 Nivel {item.nivel}
-//               </Tag>
-//               {item.tipo_insumo && (
-//                 <Tag color={getTipoInsumoColor(item.tipo_insumo)} size="small">
-//                   {getTipoInsumoText(item.tipo_insumo)}
-//                 </Tag>
-//               )}
-//             </div>
-//             <Text type="secondary" style={{ fontSize: "12px" }}>
-//               Código: {item.codigo} | UM: {item.um} | Cantidad: {parseFloat(item.cantidad).toFixed(2)} | 
-//               {item.valor_sin_iva !== "0.0000" && ` Valor: $${parseFloat(item.valor_sin_iva || "0").toLocaleString()}`}
-//             </Text>
-//           </Col>
-//           {tieneHijos && (
-//             <Col flex="none">
-//               <Button 
-//                 type="text" 
-//                 size="small" 
-//                 icon={<CaretDownOutlined rotate={estaExpandido ? 0 : -90} />}
-//                 onClick={(e) => {
-//                   e.stopPropagation();
-//                   togglePanel(item.id.toString());
-//                 }}
-//               >
-//                 {hijos.length} {hijos.length === 1 ? 'item' : 'items'}
-//               </Button>
-//             </Col>
-//           )}
-//         </Row>
-//       </div>
-//     );
-
-//     if (!tieneHijos) {
-//       return <ItemBasico />;
-//     }
-
-//     return (
-//       <div style={{ marginBottom: "8px" }}>
-//         <ItemBasico />
-        
-//         {/* Contenido expandido */}
-//         {estaExpandido && (
-//           <div style={{ 
-//             marginLeft: "20px", 
-//             marginTop: "8px",
-//             borderLeft: "2px solid #e8e8e8",
-//             paddingLeft: "16px"
-//           }}>
-//             {/* Mostrar hijos como tabla */}
-//             <div style={{ marginBottom: "16px" }}>
-//               <Text strong style={{ display: "block", marginBottom: 8, fontSize: "14px" }}>
-//                 Items detallados ({hijos.length}):
-//               </Text>
-//               <TablaHijos hijos={hijos} />
-//             </div>
-            
-//             {/* Renderizar sub-hijos recursivamente */}
-//             <div style={{ marginTop: "16px" }}>
-//               <Text strong style={{ display: "block", marginBottom: 8, fontSize: "14px" }}>
-//                 Estructura jerárquica:
-//               </Text>
-//               {hijos.map((hijo) => (
-//                 <RenderNodo key={hijo.id} item={hijo} nivel={nivel + 1} />
-//               ))}
-//             </div>
-//           </div>
-//         )}
-//       </div>
-//     );
-//   };
-
-//   // ===========================================
-//   // 🎛️ Controles de expansión
-//   // ===========================================
-//   const expandirTodos = () => {
-//     const todosLosIds = proyeccion
-//       .filter(item => hijosMap.has(item.codigo))
-//       .map(item => item.id.toString());
-//     setExpandedPanels(todosLosIds);
-//   };
-
-//   const contraerTodos = () => {
-//     setExpandedPanels([]);
-//   };
-
-//   // ===========================================
-//   // 🧭 Estados de carga o error
-//   // ===========================================
-//   if (loading) {
-//     return (
-//       <div style={{ padding: "40px", textAlign: "center" }}>
-//         <Spin size="large" tip="Cargando proyección..." />
-//       </div>
-//     );
-//   }
-
-//   if (error) {
-//     return (
-//       <div style={{ padding: "20px" }}>
-//         <Alert
-//           message="Error al cargar la proyección"
-//           description={error}
-//           type="error"
-//           showIcon
-//           action={
-//             <Button size="small" type="primary" onClick={() => window.location.reload()}>
-//               Reintentar
-//             </Button>
-//           }
-//           style={{ borderRadius: "8px" }}
-//         />
-//       </div>
-//     );
-//   }
-
-//   // ===========================================
-//   // 🧩 Render principal del componente
-//   // ===========================================
-//   return (
-//     <div style={{ padding: "24px", background: "#f5f5f5", minHeight: "100vh" }}>
-//       <Card
-//         style={{
-//           borderRadius: "12px",
-//           boxShadow: "0 4px 12px rgba(133, 133, 133, 0.5)",
-//           border: "none",
-//         }}
-//         bodyStyle={{ padding: "24px" }}
-//       >
-//         {/* Título */}
-//         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-//           <Title level={2} style={{ color: "#262626", margin: 0 }}>
-//             Detalles de la Proyección
-//           </Title>
-//           <div style={{ display: "flex", gap: "8px" }}>
-//             <Button size="small" onClick={expandirTodos}>
-//               Expandir Todos
-//             </Button>
-//             <Button size="small" onClick={contraerTodos}>
-//               Contraer Todos
-//             </Button>
-//           </div>
-//         </div>
-
-//         {/* Código del proyecto */}
-//         <div
-//           style={{
-//             display: "flex",
-//             gap: "16px",
-//             flexWrap: "wrap",
-//             padding: "12px 16px",
-//             backgroundColor: "#f8fdff",
-//             borderRadius: "8px",
-//             border: "1px solid #e6f7ff",
-//             marginBottom: "20px",
-//           }}
-//         >
-//           <Text strong style={{ color: "#595959" }}>Código del Proyecto:</Text>
-//           <Tag color="blue" style={{ fontSize: "14px", fontWeight: "bold" }}>
-//             {codigo_proyecto}
-//           </Tag>
-//           <Text strong style={{ color: "#595959" }}>Total Items:</Text>
-//           <Tag color="green" style={{ fontSize: "14px", fontWeight: "bold" }}>
-//             {proyeccion.length}
-//           </Tag>
-//           <Text strong style={{ color: "#595959" }}>Items con hijos:</Text>
-//           <Tag color="orange" style={{ fontSize: "14px", fontWeight: "bold" }}>
-//             {Array.from(new Set(proyeccion.filter(item => hijosMap.has(item.codigo)).map(item => item.codigo))).length}
-//           </Tag>
-//         </div>
-
-//         {/* Estructura jerárquica */}
-//         <Title level={4} style={{ color: "#262626", marginBottom: "20px" }}>
-//           Estructura de la Proyección
-//         </Title>
-
-//         {/* Mostrar estructura o mensaje vacío */}
-//         {itemsPrincipales.length > 0 ? (
-//           itemsPrincipales.map((item) => (
-//             <RenderNodo key={item.id} item={item} nivel={0} />
-//           ))
-//         ) : (
-//           <Alert
-//             message="No hay datos de proyección"
-//             description={`No se encontraron ítems principales para el proyecto ${codigo_proyecto}`}
-//             type="warning"
-//             showIcon
-//             style={{ borderRadius: "8px" }}
-//           />
-//         )}
-//       </Card>
-//     </div>
-//   );
-// };
-
-import { useParams } from "react-router-dom";
-import { Card, Typography, Tag, Spin, Alert, Button, Row, Col, Table } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  Card,
+  Typography,
+  Tag,
+  Spin,
+  Alert,
+  Button,
+  Row,
+  Col,
+  Table,
+  InputNumber,
+  message,
+  Collapse,
+  Input,
+} from "antd";
 import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
+import { PostgenerarExcelAxuiliarMaterial } from "@/services/material/ProyeccionesAPI"; // 👈 Importar el servicio correcto
 import { useState, useEffect, useMemo } from "react";
-import { FileTextOutlined, FolderOutlined, CaretDownOutlined } from "@ant-design/icons";
+import {
+  FileTextOutlined,
+  FolderOutlined,
+  CaretDownOutlined,
+  SearchOutlined,
+  ArrowLeftOutlined,
+} from "@ant-design/icons";
 
 const { Title, Text } = Typography;
+const { Panel } = Collapse;
+const { Search } = Input;
 
-// ===========================================
-// 🧩 Interfaz del tipo de dato ProyeccionItem
-// ===========================================
 interface ProyeccionItem {
   id: number;
   user_id: number;
@@ -1365,26 +54,42 @@ interface ProyeccionItem {
   updated_at: string;
 }
 
-// ===========================================
-// 📦 Componente principal: ShowProyeccion
-// ===========================================
-// ===========================================
-// 🧩 Componente ShowProyeccion optimizado
-// ===========================================
+interface BloqueProyeccion {
+  bloque: string;
+  items: ProyeccionItem[];
+}
+
 export const ShowProyeccion = () => {
   const { codigo_proyecto } = useParams<{ codigo_proyecto: string }>();
-  const [proyeccion, setProyeccion] = useState<ProyeccionItem[]>([]);
+  const navigate = useNavigate();
+  const [bloques, setBloques] = useState<BloqueProyeccion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedPanels, setExpandedPanels] = useState<string[]>([]);
+  const [cantidades, setCantidades] = useState<Record<number, number>>({});
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [guardando, setGuardando] = useState(false);
 
   useEffect(() => {
     const fetchProyeccion = async () => {
       try {
         setLoading(true);
         const response = await getProyeccionUnica(codigo_proyecto!);
-        if (response.data?.status === "success" && Array.isArray(response.data.data)) {
-          setProyeccion(response.data.data);
+        if (
+          response.data?.status === "success" &&
+          Array.isArray(response.data.data)
+        ) {
+          setBloques(response.data.data);
+          // Inicializar cantidades en 0 para todos los niveles 2
+          const initialCantidades: Record<number, number> = {};
+          response.data.data.forEach((bloque: BloqueProyeccion) => {
+            bloque.items.forEach((item: ProyeccionItem) => {
+              if (item.nivel === 2) {
+                initialCantidades[item.id] = 0; // 👈 Todos empiezan en 0
+              }
+            });
+          });
+          setCantidades(initialCantidades);
         } else {
           setError("No se encontraron datos válidos para este proyecto");
         }
@@ -1401,126 +106,311 @@ export const ShowProyeccion = () => {
     }
   }, [codigo_proyecto]);
 
-  // ===========================================
-  // ⚙️ Crear mapa de hijos y niveles con hijos
-  // ===========================================
-  const { itemsPrincipales, hijosMap } = useMemo(() => {
-    const map = new Map<string, ProyeccionItem[]>();
-    proyeccion.forEach(item => {
-      const key = item.padre?.trim() || "";
-      if (!map.has(key)) map.set(key, []);
-      map.get(key)!.push(item);
-    });
-    const principales = proyeccion.filter(item => item.padre === "4"); // Nivel raíz
-    return { itemsPrincipales: principales, hijosMap: map };
-  }, [proyeccion]);
+  // Construir estructura jerárquica por bloque
+  const construirJerarquiaPorBloque = (items: ProyeccionItem[]) => {
+    const hijosMap = new Map<string, ProyeccionItem[]>();
+    const itemsNivel1: ProyeccionItem[] = [];
+    const itemsNivel2: ProyeccionItem[] = [];
 
-  // ===========================================
-  // 🎨 Funciones auxiliares de color y texto
-  // ===========================================
+    // Primero, identificar todos los items
+    items.forEach((item) => {
+      if (item.nivel === 1) {
+        itemsNivel1.push(item);
+      } else if (item.nivel === 2) {
+        itemsNivel2.push(item);
+      }
+    });
+
+    // Para niveles 2: padre es el código del nivel 1
+    itemsNivel2.forEach((item) => {
+      const key = item.padre;
+      if (!hijosMap.has(key)) hijosMap.set(key, []);
+      hijosMap.get(key)!.push(item);
+    });
+
+    // Para niveles 3: padre es la descripción del nivel 2
+    items.forEach((item) => {
+      if (item.nivel === 3) {
+        const padreNivel2 = itemsNivel2.find(
+          (n2) => n2.descripcion === item.padre
+        );
+        if (padreNivel2) {
+          const key = padreNivel2.id.toString();
+          if (!hijosMap.has(key)) hijosMap.set(key, []);
+          hijosMap.get(key)!.push(item);
+        }
+      }
+    });
+
+    return { itemsNivel1, hijosMap };
+  };
+
+  // Obtener el título del nivel 1 para un bloque
+  const getTituloNivel1 = (bloque: BloqueProyeccion): string => {
+    const nivel1 = bloque.items.find((item) => item.nivel === 1);
+    return nivel1 ? nivel1.descripcion : `Bloque ${bloque.bloque}`;
+  };
+
+  // Filtrar bloques y items nivel 1 por término de búsqueda
+  const bloquesFiltrados = useMemo(() => {
+    if (!searchTerm.trim()) return bloques;
+
+    return bloques
+      .map((bloque) => {
+        const itemsNivel1Filtrados = bloque.items.filter(
+          (item) =>
+            item.nivel === 1 &&
+            item.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        if (itemsNivel1Filtrados.length === 0) return null;
+
+        // Para mantener la estructura jerárquica, necesitamos incluir también los hijos de los niveles 1 filtrados
+        const codigosNivel1Filtrados = itemsNivel1Filtrados.map(
+          (item) => item.codigo
+        );
+        const itemsIncluir = bloque.items.filter(
+          (item) =>
+            (item.nivel === 1 &&
+              codigosNivel1Filtrados.includes(item.codigo)) ||
+            (item.nivel === 2 && codigosNivel1Filtrados.includes(item.padre)) ||
+            (item.nivel === 3 &&
+              itemsNivel1Filtrados.some((n1) =>
+                bloque.items.some(
+                  (n2) =>
+                    n2.nivel === 2 &&
+                    n2.padre === n1.codigo &&
+                    n2.descripcion === item.padre
+                )
+              ))
+        );
+
+        return {
+          ...bloque,
+          items: itemsIncluir,
+        };
+      })
+      .filter(Boolean) as BloqueProyeccion[];
+  }, [bloques, searchTerm]);
+
   const getTipoInsumoColor = (tipo: string) =>
     ({ V: "red", M: "blue", T: "green", A: "orange" }[tipo] || "default");
+
   const getTipoInsumoText = (tipo: string) =>
-    ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] || "OTRO");
+    ({ V: "ACTIVIDAD", M: "MATERIAL", T: "TRANSPORTE", A: "APU" }[tipo] ||
+    "OTRO");
+
   const getNivelColor = (nivel: number) =>
-    ({ 1: "blue", 2: "green", 3: "orange", 4: "red" }[nivel] || "default");
+    ({ 1: "blue", 2: "green", 3: "orange" }[nivel] || "default");
 
-  // ===========================================
-  // 🔄 Renderizado de cada item
-  // ===========================================
-  const RenderNodo = ({ item, nivel = 0 }: { item: ProyeccionItem; nivel?: number }) => {
-    const hijos = hijosMap.get(item.codigo) || [];
+  const togglePanel = (id: string) => {
+    setExpandedPanels((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+    );
+  };
+
+  // Función para manejar el cambio en el InputNumber
+  const handleCantidadChange = (
+    value: number | null,
+    record: ProyeccionItem
+  ) => {
+    if (value === null) return;
+
+    const cantApu = parseFloat(record.cant_total || "0");
+
+    if (value > cantApu) {
+      message.error(`No puede ingresar un valor mayor a ${cantApu}`);
+      return;
+    }
+
+    setCantidades((prev) => ({
+      ...prev,
+      [record.id]: value,
+    }));
+  };
+
+  // Función para enviar las cantidades - MODIFICADA PARA USAR EL SERVICIO CORRECTO
+  const enviarCantidades = async () => {
+    setGuardando(true);
+
+    try {
+      // Preparar los datos para enviar
+      const datosAEnviar = Object.entries(cantidades)
+        .filter(([id, cantidad]) => {
+          let itemEncontrado = false;
+          bloques.forEach((bloque) => {
+            const item = bloque.items.find((p) => p.id === parseInt(id));
+            if (item && item.nivel === 2 && cantidad > 0) {
+              itemEncontrado = true;
+            }
+          });
+          return itemEncontrado;
+        })
+        .map(([id, cantidad]) => {
+          const item = bloques
+            .flatMap((b) => b.items)
+            .find((p) => p.id === parseInt(id));
+          return {
+            id: parseInt(id),
+            cantidad: cantidad,
+            padre: item?.padre || "",
+            codigo: item?.codigo || "",
+            codigo_proyecto: codigo_proyecto,
+            // Incluir otros datos que puedan ser necesarios
+            descripcion: item?.descripcion || "",
+            um: item?.um || "",
+            cant_total: item?.cant_total || "0",
+            valor_sin_iva: item?.valor_sin_iva || "0",
+          };
+        });
+
+      if (datosAEnviar.length === 0) {
+        message.warning("No hay cantidades para guardar");
+        setGuardando(false);
+        return;
+      }
+
+      console.log("Enviando datos:", datosAEnviar);
+
+      // Llamar a la API para generar el Excel usando el servicio correcto
+      const response = await PostgenerarExcelAxuiliarMaterial({
+        items: datosAEnviar,
+        codigo_proyecto: codigo_proyecto,
+        fecha: new Date().toISOString(),
+      });
+
+      message.success("Cantidades guardadas y Excel generado correctamente");
+      console.log("Respuesta del servidor:", response);
+    } catch (error: any) {
+      console.error("Error al guardar cantidades:", error);
+      message.error(`Error al guardar las cantidades: ${error.message}`);
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  const RenderNivel2 = (
+    item: ProyeccionItem,
+    hijosMap: Map<string, ProyeccionItem[]>
+  ) => {
+    const hijos = hijosMap.get(item.id.toString()) || [];
     const tieneHijos = hijos.length > 0;
-    const estaExpandido = expandedPanels.includes(item.id.toString());
+    const expandido = expandedPanels.includes(item.id.toString());
+    // TODOS los niveles 2 tienen input ahora (tengan o no hijos)
+    const mostrarInput = true;
 
-    const togglePanel = (itemId: string) => {
-      setExpandedPanels(prev =>
-        prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
-      );
-    };
+    const columnasNivel3 = [
+      {
+        title: "Código",
+        dataIndex: "codigo",
+        key: "codigo",
+        width: 120,
+      },
+      {
+        title: "Descripción",
+        dataIndex: "descripcion",
+        key: "descripcion",
+      },
+      {
+        title: "UM",
+        dataIndex: "um",
+        key: "um",
+        width: 80,
+      },
+      {
+        title: "Tipo",
+        dataIndex: "tipo_insumo",
+        key: "tipo_insumo",
+        width: 120,
+        render: (tipo: string) =>
+          tipo && (
+            <Tag color={getTipoInsumoColor(tipo)}>
+              {getTipoInsumoText(tipo)}
+            </Tag>
+          ),
+      },
+    ];
 
     return (
-      <div style={{ marginBottom: "8px" }}>
+      <div key={item.id} style={{ marginBottom: 8, marginLeft: 20 }}>
         <div
           style={{
-            padding: "12px",
-            backgroundColor: nivel === 0 ? "#f0f8ff" : "#fafafa",
-            borderRadius: "8px",
-            border: `1px solid ${nivel === 0 ? "#bae7ff" : "#e8e8e8"}`,
+            padding: "10px 12px",
+            borderRadius: 8,
+            background: tieneHijos ? "#fafafa" : "#fff",
+            border: "1px solid #d9d9d9",
             cursor: tieneHijos ? "pointer" : "default",
           }}
           onClick={() => tieneHijos && togglePanel(item.id.toString())}
         >
-          <Row gutter={[16, 8]} align="middle">
+          <Row align="middle">
             <Col flex="none">
               {tieneHijos ? (
                 <FolderOutlined
-                  style={{
-                    color: nivel === 0 ? "#1890ff" : "#faad14",
-                    fontSize: nivel === 0 ? "18px" : "16px",
-                  }}
+                  style={{ color: "#1890ff", fontSize: "16px", marginRight: 8 }}
                 />
               ) : (
-                <FileTextOutlined style={{ color: "#52c41a" }} />
+                <FileTextOutlined
+                  style={{ color: "#52c41a", marginRight: 8 }}
+                />
               )}
             </Col>
             <Col flex="auto">
-              <Text strong style={{ fontSize: nivel === 0 ? "16px" : "14px" }}>
-                {item.descripcion}
-              </Text>
-              <Tag color={getNivelColor(item.nivel)} size="small">
-                Nivel {item.nivel}
-              </Tag>
-              {item.tipo_insumo && (
-                <Tag color={getTipoInsumoColor(item.tipo_insumo)} size="small">
-                  {getTipoInsumoText(item.tipo_insumo)}
-                </Tag>
-              )}
-              <div style={{ fontSize: "12px", marginTop: 4 }}>
-                Código: {item.codigo} | UM: {item.um} | Cantidad: {parseFloat(item.cantidad).toFixed(2)}
-                {item.valor_sin_iva !== "0.0000" &&
-                  ` | Valor: $${parseFloat(item.valor_sin_iva).toLocaleString()}`}
-              </div>
+              <Text strong>{item.descripcion}</Text>{" "}
+              <Tag color={getNivelColor(item.nivel)}>Nivel {item.nivel}</Tag>
+              {/* {item.cant_apu && item.cant_apu !== "0.0000" && (
+                <Tag color="purple">Cant. APU: {parseFloat(item.cant_apu).toFixed(2)}</Tag>
+              )} */}
+              {tieneHijos && <Tag color="orange">Nivel 3</Tag>}
             </Col>
-            {tieneHijos && (
-              <Col flex="none">
+            <Col
+              flex="none"
+              style={{ display: "flex", alignItems: "center", gap: 8 }}
+            >
+              {mostrarInput && (
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <InputNumber
+                    min={0}
+                    max={parseFloat(item.cant_total || "0")}
+                    value={cantidades[item.id] || 0} // 👈 Siempre empieza en 0
+                    onChange={(value) => handleCantidadChange(value, item)}
+                    style={{ width: "100px" }}
+                    precision={2}
+                    formatter={(value) =>
+                      `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    }
+                    parser={(value) => value?.replace(/\$\s?|(,*)/g, "") as any}
+                  />
+                  <Text type="secondary" style={{ fontSize: "12px" }}>
+                    Máx: {parseFloat(item.cant_total || "0").toFixed(2)}
+                  </Text>
+                </div>
+              )}
+              {tieneHijos && (
                 <Button
                   type="text"
+                  icon={<CaretDownOutlined rotate={expandido ? 0 : -90} />}
                   size="small"
-                  icon={<CaretDownOutlined rotate={estaExpandido ? 0 : -90} />}
-                  onClick={e => {
+                  onClick={(e) => {
                     e.stopPropagation();
                     togglePanel(item.id.toString());
                   }}
                 >
-                  {hijos.length} {hijos.length === 1 ? "item" : "items"}
+                  {hijos.length} hijos
                 </Button>
-              </Col>
-            )}
+              )}
+            </Col>
           </Row>
         </div>
 
-        {/* Solo desplegar si tiene hijos */}
-        {tieneHijos && estaExpandido && (
-          <div style={{ marginLeft: "20px", marginTop: "8px" }}>
+        {expandido && tieneHijos && (
+          <div style={{ marginLeft: 20, marginTop: 8 }}>
             <Table
-              size="small"
-              columns={[
-                { title: "Código", dataIndex: "codigo", key: "codigo" },
-                { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
-                { title: "UM", dataIndex: "um", key: "um" },
-                { title: "Cantidad", dataIndex: "cantidad", key: "cantidad", render: (c) => parseFloat(c).toFixed(2) },
-                { title: "Valor", dataIndex: "valor_sin_iva", key: "valor_sin_iva", render: (v) => `$${parseFloat(v).toLocaleString()}` },
-                {
-                  title: "Tipo",
-                  dataIndex: "tipo_insumo",
-                  key: "tipo_insumo",
-                  render: (tipo) => tipo && <Tag color={getTipoInsumoColor(tipo)}>{getTipoInsumoText(tipo)}</Tag>
-                }
-              ]}
+              columns={columnasNivel3}
               dataSource={hijos}
               rowKey="id"
               pagination={false}
+              size="small"
             />
           </div>
         )}
@@ -1528,27 +418,197 @@ export const ShowProyeccion = () => {
     );
   };
 
-  const expandirTodos = () => setExpandedPanels(proyeccion.filter(item => hijosMap.has(item.codigo)).map(i => i.id.toString()));
-  const contraerTodos = () => setExpandedPanels([]);
+  const RenderNivel1 = (
+    item: ProyeccionItem,
+    hijosMap: Map<string, ProyeccionItem[]>
+  ) => {
+    const hijos = hijosMap.get(item.codigo) || [];
+    const tieneHijos = hijos.length > 0;
+    const expandido = expandedPanels.includes(item.id.toString());
 
-  if (loading) return <Spin size="large" tip="Cargando proyección..." style={{ display: "block", margin: "40px auto" }} />;
-  if (error) return <Alert message="Error" description={error} type="error" showIcon style={{ margin: 20 }} />;
+    return (
+      <div key={item.id} style={{ marginBottom: 16 }}>
+        <div
+          style={{
+            padding: "12px 16px",
+            borderRadius: 8,
+            background: tieneHijos ? "#f0f8ff" : "#fff",
+            border: "2px solid #1890ff",
+            cursor: tieneHijos ? "pointer" : "default",
+          }}
+          onClick={() => tieneHijos && togglePanel(item.id.toString())}
+        >
+          <Row align="middle">
+            <Col flex="none">
+              {tieneHijos ? (
+                <FolderOutlined
+                  style={{ color: "#1890ff", fontSize: "18px", marginRight: 8 }}
+                />
+              ) : (
+                <FileTextOutlined
+                  style={{ color: "#52c41a", fontSize: "18px", marginRight: 8 }}
+                />
+              )}
+            </Col>
+            <Col flex="auto">
+              <Text strong style={{ fontSize: "16px" }}>
+                {item.descripcion}
+              </Text>{" "}
+              <Tag color={getNivelColor(item.nivel)}>Nivel {item.nivel}</Tag>
+              {tieneHijos && <Tag color="blue">Con hijos nivel 2</Tag>}
+            </Col>
+            {tieneHijos && (
+              <Col flex="none">
+                <Button
+                  type="text"
+                  icon={<CaretDownOutlined rotate={expandido ? 0 : -90} />}
+                  size="small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    togglePanel(item.id.toString());
+                  }}
+                >
+                  {hijos.length} hijos nivel 2
+                </Button>
+              </Col>
+            )}
+          </Row>
+        </div>
+
+        {expandido && tieneHijos && (
+          <div style={{ marginTop: 8 }}>
+            {hijos.map((hijoNivel2) => RenderNivel2(hijoNivel2, hijosMap))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const RenderBloque = (bloque: BloqueProyeccion) => {
+    const { itemsNivel1, hijosMap } = construirJerarquiaPorBloque(bloque.items);
+    const tituloNivel1 = getTituloNivel1(bloque);
+
+    return (
+      <Panel
+        header={
+          <div>
+            <Text style={{ color: "white", marginRight: "50px" }} strong>
+              {tituloNivel1}
+            </Text>
+            <Tag style={{ marginLeft: 8 }}>Código: {bloque.bloque}</Tag>
+            <Tag style={{ marginLeft: 4 }}>{bloque.items.length} items</Tag>
+          </div>
+        }
+        key={bloque.bloque}
+      >
+        {itemsNivel1.length > 0 ? (
+          itemsNivel1.map((item) => RenderNivel1(item, hijosMap))
+        ) : (
+          <Alert
+            message="No hay datos de nivel 1 en este bloque"
+            type="warning"
+            showIcon
+          />
+        )}
+      </Panel>
+    );
+  };
+
+  if (loading)
+    return (
+      <Spin
+        size="large"
+        tip="Cargando proyección..."
+        style={{ display: "block", margin: "40px auto" }}
+      />
+    );
+
+  if (error)
+    return (
+      <Alert
+        message="Error"
+        description={error}
+        type="error"
+        showIcon
+        style={{ margin: 20 }}
+      />
+    );
 
   return (
     <div style={{ padding: 24, background: "#f5f5f5", minHeight: "100vh" }}>
-      <Card style={{ borderRadius: 12, boxShadow: "0 4px 12px rgba(133,133,133,0.5)" }}>
-        <Row justify="space-between" style={{ marginBottom: 16 }}>
-          <Title level={2} style={{ margin: 0 }}>Detalles de la Proyección</Title>
+      <Card
+        style={{ borderRadius: 12, boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+      >
+        {/* Botón de volver atrás */}
+        <Row style={{ marginBottom: 16 }}>
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)}
+            style={{ padding: 0 }}
+          >
+            Volver atrás
+          </Button>
+        </Row>
+
+        <Row
+          justify="space-between"
+          align="middle"
+          style={{ marginBottom: 16 }}
+        >
+          <Title level={3}>Detalles de la Proyección</Title>
           <div style={{ display: "flex", gap: 8 }}>
-            <Button size="small" onClick={expandirTodos}>Expandir Todos</Button>
-            <Button size="small" onClick={contraerTodos}>Contraer Todos</Button>
+            <Button
+              type="primary"
+              onClick={enviarCantidades}
+              loading={guardando}
+              disabled={guardando}
+            >
+              {guardando ? "Guardando..." : "Guardar Cantidades"}
+            </Button>
+            <Button onClick={() => setExpandedPanels([])}>
+              Contraer Todos
+            </Button>
           </div>
         </Row>
 
-        {itemsPrincipales.length > 0 ? (
-          itemsPrincipales.map(item => <RenderNodo key={item.id} item={item} />)
+        {/* Barra de búsqueda */}
+        <div style={{ marginBottom: 16 }}>
+          <Search
+            placeholder="Buscar por nombre de nivel 1..."
+            allowClear
+            enterButton={<SearchOutlined />}
+            size="large"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ maxWidth: 400 }}
+          />
+          {searchTerm && (
+            <Text type="secondary" style={{ marginLeft: 8 }}>
+              {
+                bloquesFiltrados.flatMap((b) =>
+                  b.items.filter((i) => i.nivel === 1)
+                ).length
+              }{" "}
+              resultados encontrados
+            </Text>
+          )}
+        </div>
+
+        {bloquesFiltrados.length > 0 ? (
+          <Collapse defaultActiveKey={bloquesFiltrados.map((b) => b.bloque)}>
+            {bloquesFiltrados.map((bloque) => RenderBloque(bloque))}
+          </Collapse>
         ) : (
-          <Alert message="No hay datos de proyección" type="warning" showIcon />
+          <Alert
+            message={
+              searchTerm
+                ? "No se encontraron resultados para la búsqueda"
+                : "No hay datos de proyección"
+            }
+            type="warning"
+            showIcon
+          />
         )}
       </Card>
     </div>
