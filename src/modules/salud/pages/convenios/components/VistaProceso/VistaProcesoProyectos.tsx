@@ -311,12 +311,23 @@ export const VistaProcesoProyectos = () => {
                                         return "Apartamento no habilitado";
                                       };
 
-                                      const getBackgroundColor = () => {
-                                        if (apt.estado === "1")
+                                      // const getBackgroundColor = () => {
+                                      //   if (apt.estado === "1")
+                                      //     return "linear-gradient(135deg, #1890ff, #36cfc9)";
+                                      //   if (apt.estado === "2")
+                                      //     return "linear-gradient(135deg, #4caf50, #66bb6a)";
+                                      //   return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
+                                      // };
+                                       const getBackgroundColor = () => {
+                                        if(apt.eb == true){
+                                          return "linear-gradient(135deg, #209aff83, #a8a8a8ff)";
+                                        }else{
+                                           if (apt.estado === "1")
                                           return "linear-gradient(135deg, #1890ff, #36cfc9)";
                                         if (apt.estado === "2")
                                           return "linear-gradient(135deg, #4caf50, #66bb6a)";
                                         return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
+                                        }
                                       };
 
                                       const opacity =
