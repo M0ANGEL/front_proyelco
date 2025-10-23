@@ -385,7 +385,7 @@ export const VistaProcesoProyectosING = () => {
 
                                       const getBackgroundColor = () => {
                                         if(apt.eb == true){
-                                          return "linear-gradient(135deg, #f3f3f3ff, #e92424ff)";
+                                          return "linear-gradient(135deg, #209aff83, #a8a8a8ff)";
                                         }else{
                                            if (apt.estado === "1")
                                           return "linear-gradient(135deg, #1890ff, #36cfc9)";
