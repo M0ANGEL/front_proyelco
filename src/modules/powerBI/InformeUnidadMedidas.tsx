@@ -5,7 +5,7 @@ export const InformeUnidadMedidas = () => {
         title="Avance Obras"
         width="100%"
         height="800"
-        src="https://app.powerbi.com/view?r=eyJrIjoiMzUzOTdlNDQtNmUxMC00OTg0LWI3OTEtZThmNDUzYzY1YWViIiwidCI6IjEyMzY1MWQ2LTdkYzEtNDI4OC04YzczLTI3ZjhlN2NiZjllYyJ9"
+        src="https://app.powerbi.com/view?r=eyJrIjoiMzc0MjM0MWMtMmFmNi00YjQ3LWE3MjktNWViZjBiYTkzMmVmIiwidCI6IjEyMzY1MWQ2LTdkYzEtNDI4OC04YzczLTI3ZjhlN2NiZjllYyJ9"
         frameBorder="0"
         allowFullScreen={true}
         className="rounded-2xl shadow-lg"

@@ -15,3 +15,10 @@ export const getProyeccionUnica= async (codigo_proyecto: React.Key): Promise<any
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+//envio para crear excel
+export const PostgenerarExcelAxuiliarMaterial = async (data: any): Promise<any> => {
+  return await client.post<any>("generarExcelAxuiliarMaterial", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
