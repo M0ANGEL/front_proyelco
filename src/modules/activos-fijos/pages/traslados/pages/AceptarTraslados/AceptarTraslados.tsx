@@ -45,6 +45,7 @@ interface DataType {
   codigo_traslado: string;
   bodega_origen: string;
   bodega_destino: string;
+  mensajero: string;
   aceptacion: number;
 }
 
@@ -70,6 +71,7 @@ export const AceptarTraslados = () => {
           numero_activo: categoria.numero_activo,
           valor: categoria.valor,
           condicion: categoria.condicion.toString(),
+          mensajero: categoria.mensajero.toString(),
           usuario: categoria.usuario,
           descripcion: categoria.descripcion,
           categoria: categoria.categoria,
@@ -205,39 +207,59 @@ export const AceptarTraslados = () => {
       },
       sorter: (a, b) => a.aceptacion - b.aceptacion, // numeric sorter
     },
-    {
-      title: "Acciones",
-      dataIndex: "acciones",
-      key: "acciones",
-      align: "center",
-      render: (_, record) => (
-        <Space>
-          <ModalRechazarActivo
-            data={record}
-            fetchList={() => fetchCategorias()}
+   {
+  title: "Acciones",
+  dataIndex: "acciones",
+  key: "acciones",
+  align: "center",
+  render: (_, record) => (
+    <Space>
+      {record.mensajero == "1" ? (
+        <Tag color="orange" icon={<SyncOutlined spin />}>
+          Esperando mensajero
+        </Tag>
+      ) : (
+        <>
+          <ModalRechazarActivo 
+            data={record} 
+            fetchList={() => fetchCategorias()} 
           />
 
-          <Tooltip title="¿Aceptar Traslado?">
+          <Tooltip title="Aceptar Traslado">
             <Popconfirm
-              title="¿Aceptar Traslado?"
+              title="¿Confirmar aceptación del traslado?"
+              description="¿Está seguro de que desea aceptar este traslado?"
               onConfirm={() => AceptarTraslado(record.key)}
-              placement="left"
+              onCancel={() => {}}
+              okText="Sí, aceptar"
+              cancelText="Cancelar"
+              placement="leftTop"
+              okButtonProps={{ 
+                type: 'primary', 
+                danger: false,
+                style: { background: '#52c41a' }
+              }}
             >
               <Button
                 icon={<AiOutlineCheck />}
                 size="small"
                 type="primary"
-                style={{ backgroundColor: "green" }}
+                style={{ 
+                  backgroundColor: "#52c41a",
+                  borderColor: "#52c41a"
+                }}
               />
             </Popconfirm>
           </Tooltip>
 
           <VerFoto id={record.key} />
-        </Space>
-      ),
-      fixed: "right",
-      width: 150,
-    },
+        </>
+      )}
+    </Space>
+  ),
+  fixed: "right",
+  width: 180,
+}
   ];
 
   return (

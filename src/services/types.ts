@@ -6126,3 +6126,27 @@ export interface Proyeccion {
 }
 
 
+//documentacion
+
+export interface ResponseDocumentacion {
+  data: {
+    status: string;
+    data: Documentacion[];
+  };
+}
+export interface Documentacion {
+  id: number;
+  codigo_proyecto: string;
+  descripcion_proyecto: string;
+  tipo_proyecto: string;
+  total_registros: number;
+  fecha_ultimo_registro: string;
+  fecha_primer_registro: string;
+  cantidad_total: string;
+  valor_total_sin_iva: string;
+  usuario_carga: string;
+  created_at: string;
+  updated_at: string;
+}
+
+

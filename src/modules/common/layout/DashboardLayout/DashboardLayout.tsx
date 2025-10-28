@@ -300,7 +300,7 @@ export const DashboardLayout = () => {
               scrollbarWidth: "thin",
               scrollbarGutter: "stable",
               transition: ".6s all",
-              backgroundColor: "#000000ff", //color sidebar azul estadnar 1976d2
+              backgroundColor: "#1976d2", //color sidebar azul estadnar 1976d2
               zIndex: 0,
             }}
           >
@@ -336,7 +336,7 @@ export const DashboardLayout = () => {
               </Space>
               <Alerts />
              {/* <CartaAmorAmistad/> */}
-             <CartaHallowen/>
+             {/* <CartaHallowen/> */}
              
               
               <CustomAvatarDescription
@@ -364,7 +364,7 @@ export const DashboardLayout = () => {
                 position: "relative",
                 background: "#f8f8f8",
                 minHeight: "calc(130vh - 1px)",
-                backgroundImage: "url(./fiestas/logo.hallowen.png)",  //logo de dashboard
+                backgroundImage: "url(./logo_dash3.png)",  //logo de dashboard
                 backgroundRepeat: "no-repeat",
                 backgroundPosition: "center",
                 overflow: "initial",

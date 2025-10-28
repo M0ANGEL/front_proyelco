@@ -62,3 +62,5 @@ export const getActiActivosDeBaja = async (): Promise<ResponseActivosS> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+

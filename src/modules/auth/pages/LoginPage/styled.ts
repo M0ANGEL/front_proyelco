@@ -52,7 +52,7 @@ export const LoginLayout = styled(Layout)`
   background-color: grey;
   border-radius: 0px;
   padding: 10px;
-  background-image: url("./bg.jpg");
+  background-image: url("./bg1.jpg");
   background-size: cover;
   background-position: center;
   height: 100vh;
