@@ -222,7 +222,7 @@ export const ListConvenios = () => {
                         </div>
 
                         {/* porcentaje de documentacion */}
-                        <div className="circle-progress-container">
+                        {/* <div className="circle-progress-container">
                           <div className="circle-progress-wrapper">
                             <div className="circle-progress">
                               <div
@@ -238,7 +238,7 @@ export const ListConvenios = () => {
                           </div>
                           <span className="circle-progress-label">Atraso</span>
                         </div>
-                      </div>
+                      </div> */}
 
                       {/* Sección derecha con información */}
                       {/* <div className="info-section">
