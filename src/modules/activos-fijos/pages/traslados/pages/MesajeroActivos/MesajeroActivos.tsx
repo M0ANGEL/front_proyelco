@@ -14,7 +14,6 @@ import {
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
 import { entregaMensajero, getActiActivosMensajeros } from "@/services/activosFijos/TrasladosActivosAPI";
 import TextArea from "antd/es/input/TextArea";
 
@@ -249,7 +248,6 @@ export const MesajeroActivos = () => {
             numero_activo: traslado.numero_activo,
             descripcion: traslado.descripcion,
             condicion: traslado.condicion,
-            descripcion: traslado.descripcion,
           };
         });
 
