@@ -6,7 +6,7 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
-import "./CustomList.css";
+import "./CustomListIng.css";
 import { Typography, Tooltip, Input, Card, List, Col, Row, Spin } from "antd";
 import { AiOutlineExpandAlt } from "react-icons/ai";
 import { getGestionProyecto } from "@/services/proyectos/gestionProyectoAPI";

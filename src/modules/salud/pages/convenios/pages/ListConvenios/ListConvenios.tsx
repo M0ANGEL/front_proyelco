@@ -6,7 +6,7 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
-import "./CustomList.css";
+// import "./CustomList.css";
 import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
   Popconfirm,
@@ -45,29 +45,6 @@ export const ListConvenios = () => {
   useEffect(() => {
     fetchConvenios();
   }, []);
-
-  // const fetchConvenios = () => {
-  //   getProyectos().then(({ data: { data } }) => {
-  //     const convenios = data.map((convenio: any) => {
-  //       return {
-  //         key: convenio.id,
-  //         nombreEncargado: (convenio.nombresEncargados || []).join(", "),
-  //         nombreIngeniero: (convenio.nombresIngenieros || []).join(", "),
-  //         descripcion_proyecto: convenio.descripcion_proyecto,
-  //         emp_nombre: convenio.emp_nombre,
-  //         estado: convenio.estado.toString(),
-  //         fec_ini: convenio.fecha_inicio,
-  //         fec_fin: convenio.fec_fin,
-  //         codigo_proyecto: convenio.codigo_proyecto,
-  //         porcentaje: convenio.porcentaje,
-  //         avance: convenio.avance,
-  //       };
-  //     });
-  //     setInitialData(convenios);
-  //     setLoadingRow([]);
-  //     setLoading(false);
-  //   });
-  // };
 
   const fetchConvenios = () => {
     getProyectos().then(({ data: { data, data_casas } }) => {

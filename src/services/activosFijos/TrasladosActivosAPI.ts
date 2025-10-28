@@ -84,3 +84,18 @@ export const rechazarActivo = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
+
+export const getActiActivosMensajeros = async (): Promise<ResponseActivosS> => {
+  return await client.get("mensajero-activos", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
+
+
+//confirmar entrega mensajero
+export const entregaMensajero = async (data: any): Promise<any> => {
+  return await client.post<any>("confirmar-entrega-mensajero", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
