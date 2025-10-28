@@ -19,7 +19,7 @@ export const TrasladosActivosPage = () => {
     { id: 1, codigo: "RST", descripcion: "Realizar Traslado de mis activos" },
     { id: 2, codigo: "APT", descripcion: "Aceptar Traslado" },
     { id: 3, codigo: "SLA", descripcion: "Solicitar Activo" },
-    { id: 4, codigo: "TRM", descripcion: "Traslados Mensajero" },
+    { id: 4, codigo: "TRM", descripcion: "Traslados Logistica" },
     { id: 5, codigo: "TRSDM", descripcion: "Traslados Admin" },
     // { id: 6, codigo: "TRSDPM", descripcion: "Traslados Pendiente Admin" },
   ];
