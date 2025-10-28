@@ -5,6 +5,7 @@ import { ListConvenios, FormConvenios } from "../pages";
 import { ResumenManzanas, VistaProcesoProyectos } from "../components";
 import { ResumenTorres } from "../components/VistaProceso";
 import { VistaProcesoCasa } from "../components/Casas";
+import { ModuloNoDisponilble } from "@/modules/common/components/Mantenimiento";
 
 export const ConveniosRoutes = () => {
   return (
@@ -12,7 +13,7 @@ export const ConveniosRoutes = () => {
       <Route element={<AuthGuard />}>
         <Route path="/" element={<ListConvenios />} />
         <Route path="/create" element={<FormConvenios />} />
-        <Route path="/edit/:id" element={<FormConvenios />} />
+        <Route path="/edit/:id" element={<ModuloNoDisponilble />} />
         <Route path="/edit-casa/:id" element={<FormConvenios />} />
         <Route path="/proceso/:id" element={<ResumenTorres />} />
         <Route path="/proceso/:id/detalle" element={<VistaProcesoProyectos />} />

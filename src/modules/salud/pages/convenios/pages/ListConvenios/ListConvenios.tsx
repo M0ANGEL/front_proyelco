@@ -220,6 +220,24 @@ export const ListConvenios = () => {
                           </div>
                           <span className="circle-progress-label">Atraso</span>
                         </div>
+
+                        {/* porcentaje de documentacion */}
+                        <div className="circle-progress-container">
+                          <div className="circle-progress-wrapper">
+                            <div className="circle-progress">
+                              <div
+                                className="circle-progress-fill"
+                                style={{
+                                  background: `conic-gradient(#FFB7B7 ${item.porcentaje}%, #F0F0F0 ${item.porcentaje}% 100%)`,
+                                }}
+                              ></div>
+                              <div className="circle-progress-text">
+                                <span>{item.porcentaje}%</span>
+                              </div>
+                            </div>
+                          </div>
+                          <span className="circle-progress-label">Atraso</span>
+                        </div>
                       </div>
 
                       {/* Sección derecha con información */}
