@@ -1,1 +1,0 @@
-export {Documentacion} from './Documentacion'

@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Input, Typography, Button, Tag } from "antd";
+import { Input, Typography, Button, Tag, Collapse, Row, Col, Badge } from "antd";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
+import {  getProyectosDocumentacionCelsia, getProyectosDocumentacionEmcali } from "@/services/documentacion/documentacionAPI";
 import { useNavigate } from "react-router-dom";
-import { getProyectosDocumentacionCelsia } from "@/services/documentacion/documentacionAPI";
+import { CaretRightOutlined, FileTextOutlined } from "@ant-design/icons";
 
 // Interfaces
 interface DocumentacionType {
   codigo_proyecto: string;
   codigo_documento: string;
   etapa: number;
+  operador: number;
 }
 
 interface DataType {
@@ -25,15 +27,39 @@ interface DataType {
 }
 
 const { Text } = Typography;
+const { Panel } = Collapse;
 
-//funcion
+// Función para obtener el texto de la etapa
+const getTextoEtapa = (etapa: number) => {
+  const etapas: { [key: number]: string } = {
+    1: "ET1",
+    2: "ET2", 
+    3: "ET3",
+    // Agrega más etapas según necesites
+  };
+  return etapas[etapa] || `ET${etapa}`;
+};
+
+// Función para obtener el color del tag de etapa
+const getColorEtapa = (etapa: number) => {
+  const colores: { [key: number]: string } = {
+    1: "blue",
+    2: "green",
+    3: "orange",
+    4: "purple",
+    5: "cyan",
+  };
+  return colores[etapa] || "default";
+};
+
 export const ListCelsiaDocumento = () => {
   const navigate = useNavigate();
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
-  //ejecucion
+  // Ejecución
   useEffect(() => {
     fetchTicketsAbiertosGestion();
   }, []);
@@ -41,25 +67,25 @@ export const ListCelsiaDocumento = () => {
   const fetchTicketsAbiertosGestion = () => {
     setLoading(true);
     getProyectosDocumentacionCelsia().then(({ data: { data } }) => {
-      const tikects = data.map((tikect) => {
+      const proyectos = data.map((proyecto) => {
         return {
-          key: tikect?.id,
-          id: tikect?.id,
-          descripcion_proyecto: tikect?.descripcion_proyecto,
-          codigo_proyecto: tikect?.codigo_proyecto,
-          tipoProyecto_id: tikect?.tipoProyecto_id,
-          documentacion: tikect?.documentacion || [],
-          created_at: dayjs(tikect.created_at).format("DD-MM-YYYY HH:mm"),
+          key: proyecto?.id,
+          id: proyecto?.id,
+          descripcion_proyecto: proyecto?.descripcion_proyecto,
+          codigo_proyecto: proyecto?.codigo_proyecto,
+          tipoProyecto_id: proyecto?.tipoProyecto_id,
+          documentacion: proyecto?.documentacion || [],
+          created_at: dayjs(proyecto.created_at).format("DD-MM-YYYY HH:mm"),
         };
       });
 
-      setInitialData(tikects);
-      setDataSource(tikects);
+      setInitialData(proyectos);
+      setDataSource(proyectos);
       setLoading(false);
     });
   };
 
-  //barra de busqueda
+  // Barra de búsqueda
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
     const filterTable = initialData?.filter((o: any) =>
@@ -70,95 +96,182 @@ export const ListCelsiaDocumento = () => {
     setDataSource(filterTable);
   };
 
-  // Función para obtener el primer código de documentación
-  const getPrimerCodigoDocumento = (documentacion: DocumentacionType[]) => {
-    if (!documentacion || documentacion.length === 0) return "-";
-    return documentacion[0]?.codigo_documento || "-";
-  };
-
-  // Función para obtener el texto de la etapa
-  const getTextoEtapa = (documentacion: DocumentacionType[]) => {
-    if (!documentacion || documentacion.length === 0) return "-";
-    const etapa = documentacion[0]?.etapa?.toString();
-    if (!etapa || etapa === "-") return "-";
-    return etapa === "1" ? "Principal" : "Secundaria";
-  };
-
-  // Función para obtener el color del tag de etapa
-  const getColorEtapa = (documentacion: DocumentacionType[]) => {
-    if (!documentacion || documentacion.length === 0) return "default";
-    const etapa = documentacion[0]?.etapa?.toString();
-    if (!etapa || etapa === "-") return "default";
-    return etapa === "1" ? "blue" : "green";
-  };
-
   // Navegar a la lista de actividades
-  const verActividades = (proyecto: DataType) => {
-    // Sin parámetro en la URL, todo va en el state
-    navigate("actividades", {
-      state: { proyecto },
+  const verActividades = (proyecto: DataType, documento: DocumentacionType) => {
+    navigate("actividades-celsia", {
+      state: { 
+        codigo_documento: documento
+      },
     });
   };
 
-  //columnas de la tabla con sus datos
+  // Manejar expansión de acordeones
+  const handlePanelChange = (keys: string | string[]) => {
+    setExpandedKeys(Array.isArray(keys) ? keys : [keys]);
+  };
+
+  // Renderizar el contenido expandible (acordeón)
+  const renderDocumentosExpandible = (record: DataType) => {
+    if (!record.documentacion || record.documentacion.length === 0) {
+      return <Text type="secondary">No hay documentos</Text>;
+    }
+
+    return (
+      <Collapse 
+        accordion
+        activeKey={expandedKeys}
+        onChange={handlePanelChange}
+        expandIcon={({ isActive }) => (
+          <CaretRightOutlined rotate={isActive ? 90 : 0} />
+        )}
+        style={{ background: 'transparent' }}
+      >
+        <Panel 
+          header={
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Badge 
+                count={record.documentacion.length} 
+                showZero 
+                style={{ backgroundColor: '#1890ff' }} 
+              />
+              <Text strong>Documentos del Proyecto ({record.documentacion.length})</Text>
+            </div>
+          } 
+          key={record.key}
+        >
+          <Row gutter={[16, 12]}>
+            {record.documentacion.map((documento, index) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={index}>
+                <div 
+                  style={{
+                    border: '1px solid #d9d9d9',
+                    borderRadius: '6px',
+                    padding: '12px',
+                    background: '#fafafa'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                    <FileTextOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
+                    <Text strong>Código: {documento.codigo_documento}</Text>
+                  </div>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Tag color={getColorEtapa(documento.etapa)}>
+                      {getTextoEtapa(documento.etapa)}
+                    </Tag>
+                    
+                    <Button 
+                      type="primary" 
+                      size="small"
+                      onClick={() => verActividades(record, documento)}
+                    >
+                      Ver Actividades
+                    </Button>
+                  </div>
+                </div>
+              </Col>
+            ))}
+          </Row>
+        </Panel>
+      </Collapse>
+    );
+  };
+
+  // Columnas de la tabla
   const columns: ColumnsType<DataType> = [
     {
-      title: "Fecha Creacion",
+      title: "Fecha Creación",
       dataIndex: "created_at",
       key: "created_at",
+      width: 120,
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
     },
     {
-      title: "Código",
-      key: "codigo_documento",
-      render: (_, record) => getPrimerCodigoDocumento(record.documentacion),
-      sorter: (a, b) =>
-        getPrimerCodigoDocumento(a.documentacion).localeCompare(
-          getPrimerCodigoDocumento(b.documentacion)
-        ),
+      title: "Código Proyecto",
+      dataIndex: "codigo_proyecto",
+      key: "codigo_proyecto",
+      width: 120,
+      sorter: (a, b) => a.codigo_proyecto.localeCompare(b.codigo_proyecto),
     },
     {
       title: "Proyecto",
       dataIndex: "descripcion_proyecto",
       key: "descripcion_proyecto",
-      sorter: (a, b) =>
-        a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
+      sorter: (a, b) => a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
+      render: (text: string) => (
+        <Text strong style={{ fontSize: '12px' }}>
+          {text}
+        </Text>
+      ),
     },
     {
-      title: "Etapa",
-      key: "etapa",
+      title: "Cant. Documentos",
+      key: "cantidad_documentos",
+      width: 120,
+      align: 'center' as const,
       render: (_, record) => (
-        <Tag color={getColorEtapa(record.documentacion)}>
-          {getTextoEtapa(record.documentacion)}
-        </Tag>
+        <Badge 
+          count={record.documentacion?.length || 0} 
+          showZero 
+          style={{ backgroundColor: record.documentacion?.length > 0 ? '#52c41a' : '#d9d9d9' }} 
+        />
       ),
-      sorter: (a, b) => {
-        const etapaA = a.documentacion?.[0]?.etapa?.toString() || "0";
-        const etapaB = b.documentacion?.[0]?.etapa?.toString() || "0";
-        return etapaA.localeCompare(etapaB);
+      sorter: (a, b) => (a.documentacion?.length || 0) - (b.documentacion?.length || 0),
+    },
+    {
+      title: "Etapas",
+      key: "etapas",
+      width: 150,
+      render: (_, record) => {
+        if (!record.documentacion || record.documentacion.length === 0) {
+          return <Tag>-</Tag>;
+        }
+        
+        // Obtener etapas únicas
+        const etapasUnicas = [...new Set(record.documentacion.map(doc => doc.etapa))];
+        
+        return (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+            {etapasUnicas.slice(0, 2).map(etapa => (
+              <Tag key={etapa} color={getColorEtapa(etapa)}>
+                {getTextoEtapa(etapa)}
+              </Tag>
+            ))}
+            {etapasUnicas.length > 2 && (
+              <Tag>+{etapasUnicas.length - 2}</Tag>
+            )}
+          </div>
+        );
       },
     },
-    {
-      title: "Acción",
-      align: "center",
-      key: "accion",
-      render: (_, record: DataType) => (
-        <Button
-          type="primary"
-          size="small"
-          onClick={() => verActividades(record)}
-        >
-          Ver Actividades
-        </Button>
-      ),
-    },
   ];
+
+  // Expandible row configuration
+  const expandableConfig = {
+    expandedRowRender: (record: DataType) => renderDocumentosExpandible(record),
+    expandIcon: ({ expanded, onExpand, record }: any) =>
+      record.documentacion?.length > 0 ? (
+        <Button
+          type="text"
+          icon={<CaretRightOutlined rotate={expanded ? 90 : 0} />}
+          onClick={e => onExpand(record, e)}
+          style={{ marginRight: '8px' }}
+        />
+      ) : null,
+    rowExpandable: (record: DataType) => record.documentacion?.length > 0,
+  };
 
   return (
     <StyledCard title={"Panel de administración de documentos Emcali"}>
       <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
+        <Input 
+          placeholder="Buscar por proyecto, código, etapa..." 
+          onChange={handleSearch}
+          style={{ maxWidth: '100%' }}
+          allowClear
+        />
       </SearchBar>
+      
       <Table
         className="custom-table"
         size="small"
@@ -166,15 +279,16 @@ export const ListCelsiaDocumento = () => {
         columns={columns}
         loading={loading}
         scroll={{ x: 800 }}
+        expandable={expandableConfig}
         pagination={{
           total: initialData?.length,
           showSizeChanger: true,
-          defaultPageSize: 30,
-          pageSizeOptions: ["5", "15", "30"],
+          defaultPageSize: 10,
+          pageSizeOptions: ["5", "10", "20", "30"],
           showTotal: (total: number) => {
             return (
               <>
-                <Text>Total Registros: {total}</Text>
+                <Text>Total Proyectos: {total}</Text>
               </>
             );
           },

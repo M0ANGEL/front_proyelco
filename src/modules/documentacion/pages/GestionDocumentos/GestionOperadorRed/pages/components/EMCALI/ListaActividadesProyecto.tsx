@@ -7,7 +7,7 @@ import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacion } from "./ModalConfirmacion";
-import { FaFileAlt } from "react-icons/fa";
+import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 
 const { Title } = Typography;
 
@@ -27,6 +27,7 @@ interface DocumentacionDetalle {
   estado: string;
   operador: number;
   observacion: string;
+  nombre_etapa: string;
   created_at: string | null;
   updated_at: string | null;
   actividad?: {
@@ -50,17 +51,18 @@ export const ListaActividadesProyecto = () => {
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<DocumentacionDetalle | null>(null);
 
-  const proyecto = location.state?.proyecto;
+  const proyecto = location.state?.codigo_documento;
+  console.log(proyecto);
 
   useEffect(() => {
-    if (proyecto?.codigo_proyecto) {
+    if (proyecto?.codigo_documento) {
       cargarActividades();
     }
-  }, [proyecto?.codigo_proyecto]);
+  }, [proyecto?.codigo_documento]);
 
   const cargarActividades = () => {
     setLoading(true);
-    getDocumentaCIonProyecto(proyecto.codigo_proyecto)
+    getDocumentaCIonProyecto(proyecto.codigo_documento)
       .then(({ data }) => {
         setData(data.data || []);
         setLoading(false);
@@ -158,13 +160,22 @@ export const ListaActividadesProyecto = () => {
     {
       title: "Acciones",
       key: "acciones",
+      align: "center",
       render: (_, record: DocumentacionDetalle) => (
         <>
-          <Button
-            icon={<FaFileAlt />}
-            style={{ color: "blue", marginRight:10}}
-            size="small"
-          />
+          {record.estado == "2" ? (
+            <>
+              <VerDocumentoRed
+                codigo_proyecto={record?.codigo_proyecto}
+                codigo_documento={record?.codigo_documento}
+                etapa={record?.etapa}
+                actividad_id={record?.actividad_id}
+                nombreProyecto={record.nombre_etapa}
+              />
+            </>
+          ) : (
+            ""
+          )}
           <Button
             type="primary"
             size="small"
@@ -194,15 +205,16 @@ export const ListaActividadesProyecto = () => {
         <div>
           <Title level={3}>
             Actividades del Proyecto:{" "}
-            {proyecto?.descripcion_proyecto || "Proyecto no encontrado"}
+            {proyecto?.nombre_etapa || "Proyecto no encontrado"}
           </Title>
-          <p>
-            Código: {proyecto?.codigo_proyecto} | Etapa:{" "}
-            {proyecto?.documentacion?.[0]?.etapa}
-          </p>
+          <p>Código: {proyecto?.codigo_documento}</p>
         </div>
       }
-      extra={<Button onClick={() => navigate(-1)}>Volver</Button>}
+      extra={
+        <Button type="primary" onClick={() => navigate(-1)}>
+          Volver
+        </Button>
+      }
     >
       {data.length === 0 ? (
         <div style={{ textAlign: "center", padding: "20px" }}>

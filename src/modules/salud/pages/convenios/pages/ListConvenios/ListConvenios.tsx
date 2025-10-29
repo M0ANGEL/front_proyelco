@@ -6,7 +6,7 @@ import { useLocation } from "react-router";
 import { Link } from "react-router-dom";
 import { SearchBar } from "./styled";
 import { DataType } from "./types";
-// import "./CustomList.css";
+import "./CustomList.css";
 import { CheckCircleFilled, SyncOutlined, EditFilled } from "@ant-design/icons";
 import {
   Popconfirm,
@@ -222,7 +222,7 @@ export const ListConvenios = () => {
                         </div>
 
                         {/* porcentaje de documentacion */}
-                       {/*  <div className="circle-progress-container">
+                        {/* <div className="circle-progress-container">
                           <div className="circle-progress-wrapper">
                             <div className="circle-progress">
                               <div
@@ -241,198 +241,6 @@ export const ListConvenios = () => {
                       </div>
 
                       {/* Sección derecha con información */}
-                      {/* <div className="info-section">
-                        <List.Item.Meta
-                          title={
-                            item.estado == "1" ? (
-                               {item.tipo == "Casa" ? (<>
-                               <Link
-                                to={`${location.pathname}/edit/${item.key}`} //editar de pende proyecto
-                                className="title-link"
-                              >
-                                <span className="title-text">
-                                  {item.descripcion_proyecto.toUpperCase()}
-                                </span>
-                                <span className="title-icon">
-                                  <EditFilled style={{ color: "#FFB380" }} />
-                                </span>
-                              </Link>
-                               </>):(<>
-                               <Link
-                                to={`${location.pathname}/edit/${item.key}`} //editar de pende proyecto
-                                className="title-link"
-                              >
-                                <span className="title-text">
-                                  {item.descripcion_proyecto.toUpperCase()}
-                                </span>
-                                <span className="title-icon">
-                                  <EditFilled style={{ color: "#FFB380" }} />
-                                </span>
-                              </Link>
-                               </>)}
-                              
-                            ) : (
-                              <span className="title-text">
-                                {item.descripcion_proyecto.toUpperCase()}
-                              </span>
-                            )
-                          }
-                          description={
-                            <>
-                              <Typography.Text
-                                className="razon-soc"
-                                strong
-                                style={{ color: "#FFB380" }}
-                              >
-                                <span>CLIENTE: {item.emp_nombre}</span>
-                              </Typography.Text>
-                              <br />
-                              <Typography.Text className="nombre" strong>
-                                <span>
-                                  INGENIEROS:{" "}
-                                  {item.nombreIngeniero.toUpperCase()}
-                                </span>
-                              </Typography.Text>
-                              <br />
-                              <Typography.Text className="nombre" strong>
-                                <span>
-                                  ENCARGADOS:{" "}
-                                  {item.nombreEncargado.toUpperCase()}
-                                </span>
-                              </Typography.Text>
-                              <br />
-                              <Typography.Text
-                                className="codigo_proyecto"
-                                strong
-                                style={{ color: "#FF9D9D" }}
-                              >
-                                <span>
-                                  CODIGO PROYECTO:{" "}
-                                  {item.codigo_proyecto.toUpperCase()}
-                                </span>
-                              </Typography.Text>
-                            </>
-                          }
-                        />
-                        <div className="actions-container">
-                          <div className="status-container">
-                            <Popconfirm
-                              title="¿Desea cambiar el estado?"
-                              onConfirm={
-                                item.tipo === "Casa"
-                                  ? () => handleStatusCasas(item.key)
-                                  : () => handleStatus(item.key)
-                              }
-                              placement="left"
-                            >
-                              <ButtonTag className="custom-button-tag">
-                                <Tooltip title="Cambiar estado">
-                                  <Tag
-                                    color={
-                                      item.estado === "1"
-                                        ? "#C2E5C2"
-                                        : "#FFCCCB"
-                                    }
-                                    key={item.estado}
-                                    style={{
-                                      color:
-                                        item.estado === "1"
-                                          ? "#2E8B57"
-                                          : "#D32F2F",
-                                      border: "none",
-                                    }}
-                                    icon={
-                                      loadingRow.includes(item.key) ? (
-                                        <SyncOutlined spin />
-                                      ) : (
-                                        <CheckCircleFilled
-                                          style={{
-                                            color:
-                                              item.estado === "1"
-                                                ? "#2E8B57"
-                                                : "#D32F2F",
-                                          }}
-                                        />
-                                      )
-                                    }
-                                  >
-                                    {item.estado === "1"
-                                      ? "ACTIVO"
-                                      : "INACTIVO"}
-                                  </Tag>
-                                </Tooltip>
-                              </ButtonTag>
-                            </Popconfirm>
-                          </div>
-                          {item.tipo == "Casa" ? (
-                            <>
-                              <div className="status-container">
-                                <Tooltip title="Ver Proceso Proyecto">
-                                  <Link
-                                    to={`${location.pathname}/proceso-casa/${item.key}`}
-                                  >
-                                    <ButtonTag
-                                      style={{
-                                        padding: 5,
-                                        borderRadius: 8,
-                                        width: 40,
-                                        backgroundColor: "#B5EAD7",
-                                        border: "none",
-                                        color: "#2C5F2D",
-                                      }}
-                                    >
-                                      <AiOutlineExpandAlt />
-                                    </ButtonTag>
-                                  </Link>
-                                </Tooltip>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="status-container">
-                                <Tooltip title="Ver Proceso Proyecto">
-                                  <Link
-                                    to={`${location.pathname}/proceso/${item.key}`}
-                                  >
-                                    <ButtonTag
-                                      style={{
-                                        padding: 5,
-                                        borderRadius: 8,
-                                        width: 40,
-                                        backgroundColor: "#B5EAD7",
-                                        border: "none",
-                                        color: "#2C5F2D",
-                                      }}
-                                    >
-                                      <AiOutlineExpandAlt />
-                                    </ButtonTag>
-                                  </Link>
-                                </Tooltip>
-                              </div>
-                            </>
-                          )}
-
-                          {item.tipo == "Casa" ? (
-                            <>
-                              <div className="status-container">
-                                <ModalInformeCasa proyecto={item} />
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="status-container">
-                                <ModalInforme proyecto={item} />
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        <span
-                          style={{ color: "red", fontSize: 15, marginTop: 5 }}
-                          className="title-text"
-                        >
-                          {item.tipo}
-                        </span>
-                      </div> */}
                       <div className="info-section">
                         <List.Item.Meta
                           title={
