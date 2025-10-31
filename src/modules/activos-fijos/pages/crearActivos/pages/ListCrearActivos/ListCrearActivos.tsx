@@ -183,6 +183,7 @@ export const ListCrearActivos = () => {
           </Popconfirm>
         );
       },
+      
     },
     {
       title: "Tipo Activo",
@@ -310,6 +311,8 @@ export const ListCrearActivos = () => {
           </Tag>
         );
       },
+      sorter: (a, b) => a.aceptacion.localeCompare(b.aceptacion),
+
     },
     {
       title: "Valor",
