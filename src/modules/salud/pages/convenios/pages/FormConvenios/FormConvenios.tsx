@@ -5,7 +5,6 @@ import {
   DatosBasicos,
   DatosConfigProyecto,
   DatosFacturacion,
-  Documentacion,
 } from "../../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
@@ -422,35 +421,10 @@ export const FormConvenios = () => {
                         },
                       ]
                     : []),
-                    ...(!id
-                    ? [
-                        {
-                          key: "4",
-                          label: (
-                            <Space>
-                              <Text
-                                type={
-                                  Object.keys(control.formState.errors).length >
-                                  0
-                                    ? "danger"
-                                    : undefined
-                                }
-                              >
-                                Documentacion
-                              </Text>
-                            </Space>
-                          ),
-                          children: (
-                            <Documentacion/>
-                          ),
-                          forceRender: true,
-                        },
-                      ]
-                    : []),
                   ...(id
                     ? [
                         {
-                          key: "5",
+                          key: "4",
                           label: (
                             <Space>
                               <Text
