@@ -73,6 +73,7 @@ export const AceptarTraslados = () => {
           condicion: categoria.condicion.toString(),
           mensajero: categoria.mensajero.toString(),
           usuario: categoria.usuario,
+          descripcion: categoria.descripcion,
           categoria: categoria.categoria,
           subcategoria: categoria.subcategoria,
           bodega_origen: categoria.bodega_origen,
