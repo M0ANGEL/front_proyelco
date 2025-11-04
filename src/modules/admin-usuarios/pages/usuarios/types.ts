@@ -80,6 +80,7 @@ export interface User {
   has_limite_reportes: string;
   moderador_tickets: string;
   horario_id: string;
+  can_config_telefono: string;
 
 }
 

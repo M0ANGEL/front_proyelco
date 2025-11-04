@@ -78,6 +78,7 @@ export const AceptarTraslados = () => {
           subcategoria: categoria.subcategoria,
           bodega_origen: categoria.bodega_origen,
           bodega_destino: categoria.bodega_destino,
+          descripcion: categoria.descripcion,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
@@ -116,26 +117,12 @@ export const AceptarTraslados = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Categoria",
-      dataIndex: "categoria",
-      key: "categoria",
-      sorter: (a, b) => a.categoria.localeCompare(b.categoria),
-      render: (text) => text?.toUpperCase(),
-      fixed: "left",
-    },
-    {
-      title: "Subcategoria",
-      dataIndex: "subcategoria",
-      key: "subcategoria",
-      sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
       title: "Descripcion",
       dataIndex: "descripcion",
       key: "descripcion",
       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Area Origen",
@@ -207,59 +194,59 @@ export const AceptarTraslados = () => {
       },
       sorter: (a, b) => a.aceptacion - b.aceptacion, // numeric sorter
     },
-   {
-  title: "Acciones",
-  dataIndex: "acciones",
-  key: "acciones",
-  align: "center",
-  render: (_, record) => (
-    <Space>
-      {record.mensajero == "1" ? (
-        <Tag color="orange" icon={<SyncOutlined spin />}>
-          Esperando mensajero
-        </Tag>
-      ) : (
-        <>
-          <ModalRechazarActivo 
-            data={record} 
-            fetchList={() => fetchCategorias()} 
-          />
-
-          <Tooltip title="Aceptar Traslado">
-            <Popconfirm
-              title="¿Confirmar aceptación del traslado?"
-              description="¿Está seguro de que desea aceptar este traslado?"
-              onConfirm={() => AceptarTraslado(record.key)}
-              onCancel={() => {}}
-              okText="Sí, aceptar"
-              cancelText="Cancelar"
-              placement="leftTop"
-              okButtonProps={{ 
-                type: 'primary', 
-                danger: false,
-                style: { background: '#52c41a' }
-              }}
-            >
-              <Button
-                icon={<AiOutlineCheck />}
-                size="small"
-                type="primary"
-                style={{ 
-                  backgroundColor: "#52c41a",
-                  borderColor: "#52c41a"
-                }}
+    {
+      title: "Acciones",
+      dataIndex: "acciones",
+      key: "acciones",
+      align: "center",
+      render: (_, record) => (
+        <Space>
+          {record.mensajero == "1" ? (
+            <Tag color="orange" icon={<SyncOutlined spin />}>
+              Esperando mensajero
+            </Tag>
+          ) : (
+            <>
+              <ModalRechazarActivo
+                data={record}
+                fetchList={() => fetchCategorias()}
               />
-            </Popconfirm>
-          </Tooltip>
 
-          <VerFoto id={record.key} />
-        </>
-      )}
-    </Space>
-  ),
-  fixed: "right",
-  width: 180,
-}
+              <Tooltip title="Aceptar Traslado">
+                <Popconfirm
+                  title="¿Confirmar aceptación del traslado?"
+                  description="¿Está seguro de que desea aceptar este traslado?"
+                  onConfirm={() => AceptarTraslado(record.key)}
+                  onCancel={() => {}}
+                  okText="Sí, aceptar"
+                  cancelText="Cancelar"
+                  placement="leftTop"
+                  okButtonProps={{
+                    type: "primary",
+                    danger: false,
+                    style: { background: "#52c41a" },
+                  }}
+                >
+                  <Button
+                    icon={<AiOutlineCheck />}
+                    size="small"
+                    type="primary"
+                    style={{
+                      backgroundColor: "#52c41a",
+                      borderColor: "#52c41a",
+                    }}
+                  />
+                </Popconfirm>
+              </Tooltip>
+
+              <VerFoto id={record.key} />
+            </>
+          )}
+        </Space>
+      ),
+      fixed: "right",
+      width: 180,
+    },
   ];
 
   return (

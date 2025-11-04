@@ -1,20 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  validarUsuario,
-} from "@/services/maestras/maestrasAPI";
+import { validarUsuario } from "@/services/maestras/maestrasAPI";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Controller, useFormContext } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { Usuario } from "../../types";
-import {
-  Typography,
-  Select,
-  Input,
-  Col,
-  Row,
-} from "antd";
+import { Typography, Select, Input, Col, Row, Checkbox } from "antd";
 
 const { Text } = Typography;
 
@@ -31,6 +23,12 @@ export const DatosBasicos = ({ usuario }: Props) => {
     methods.setValue("rol", methods.watch("rol"));
   }, [methods.watch("rol")]);
 
+  useEffect(() => {
+    methods.setValue(
+      "can_config_telefono",
+      methods.watch("can_config_telefono")
+    );
+  }, [methods.watch("can_config_telefono")]);
 
   useEffect(() => {
     usuario?.user ? setPhoneValue(usuario.user.telefono) : "";
@@ -46,6 +44,7 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: usuario.user.username,
             password: "",
             correo: usuario.user.correo,
+            can_config_telefono: usuario.user.can_config_telefono,
           }
         : {
             nombre: null,
@@ -56,9 +55,9 @@ export const DatosBasicos = ({ usuario }: Props) => {
             username: null,
             password: "",
             correo: null,
+            can_config_telefono: 0,
           }
     );
-   
   }, [usuario]);
 
   const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -231,7 +230,10 @@ export const DatosBasicos = ({ usuario }: Props) => {
                       { value: "Gerente", label: "Gerente" },
                       { value: "Ingeniero Obra", label: "Ingeniero Obra" },
                       { value: "Encargado Obras", label: "Encargado Obras" },
-                      { value: "Directora Proyectos", label: "Directora Proyectos" },
+                      {
+                        value: "Directora Proyectos",
+                        label: "Directora Proyectos",
+                      },
                       { value: "Administrativo", label: "Administrativo" },
                       { value: "Activos", label: "Activos" },
                       { value: "Logistica", label: "Logistica" },
@@ -316,6 +318,32 @@ export const DatosBasicos = ({ usuario }: Props) => {
                     status={error && "error"}
                     autoComplete="off"
                   />
+                  <Text type="danger">{error?.message}</Text>
+                </StyledFormItem>
+              )}
+            />
+          </Col>
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <Controller
+              name="can_config_telefono"
+              control={methods.control}
+              rules={{
+                required: {
+                  value: true,
+                  message: "Configuración de telefono",
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <StyledFormItem>
+                  <Checkbox
+                    {...field}
+                    checked={methods.getValues("can_config_telefono") === "1"}
+                    onChange={(e) =>
+                      field.onChange(e.target.checked ? "1" : "0")
+                    }
+                  >
+                    Configuración de telefono
+                  </Checkbox>
                   <Text type="danger">{error?.message}</Text>
                 </StyledFormItem>
               )}
