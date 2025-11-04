@@ -111,19 +111,12 @@ export const TrasladarActivos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Categoria",
-      dataIndex: "categoria",
-      key: "categoria",
-      sorter: (a, b) => a.categoria.localeCompare(b.categoria),
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
       fixed: "left",
-    },
-    {
-      title: "Subcategoria",
-      dataIndex: "subcategoria",
-      key: "subcategoria",
-      sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
-      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Condición",
@@ -218,7 +211,10 @@ export const TrasladarActivos = () => {
         <>
           <FormTraslados data={record} fetchList={() => fetchCategorias()} />
           <VerFoto id={record.key} />
-          <FormLiberarActivo data={record} fetchList={() => fetchCategorias()} />
+          <FormLiberarActivo
+            data={record}
+            fetchList={() => fetchCategorias()}
+          />
         </>
       ),
       fixed: "right",

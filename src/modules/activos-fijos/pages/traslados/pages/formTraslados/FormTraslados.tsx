@@ -43,12 +43,12 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
     if (visible == true) {
       fetchUsuarios();
       fechBodegas();
-      // Resetear form cuando se abre el modal
-      form.resetFields();
-      setUsuarioSeleccionado([]);
-      setRequiereMensajero(null);
-      setBodegaSelecionadaDestino(null);
-      setObservacionActivo("");
+      // // Resetear form cuando se abre el modal
+      // form.resetFields();
+      // setUsuarioSeleccionado([]);
+      // setRequiereMensajero(null);
+      // setBodegaSelecionadaDestino(null);
+      // setObservacionActivo("");
     }
   }, [visible]);
 
@@ -276,7 +276,7 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
                   </StyledFormItem>
                 </Col>
 
-                {/* campo de usuarios - OBLIGATORIO */}
+                {/* campo de usuarios - OBLIGATORIO (CUANDO SE USE VARIOS USAURIOS) */}
                 <Col xs={24} sm={24} style={{ width: "100%" }}>
                   <StyledFormItem
                     label="Usuarios para asignación"
