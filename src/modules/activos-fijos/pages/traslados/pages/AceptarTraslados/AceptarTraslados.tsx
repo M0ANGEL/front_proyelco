@@ -75,7 +75,6 @@ export const AceptarTraslados = () => {
           subcategoria: categoria.subcategoria,
           bodega_origen: categoria.bodega_origen,
           bodega_destino: categoria.bodega_destino,
-          descripcion: categoria.descripcion,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
