@@ -3,10 +3,8 @@ import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Button,
   Input,
-  Popconfirm,
   Space,
   Tag,
-  Tooltip,
   Typography,
 } from "antd";
 import { Link } from "react-router-dom";
@@ -15,12 +13,11 @@ import Table, { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
-  aceptarActivo,
   getActiActivosAceptar,
 } from "@/services/activosFijos/TrasladosActivosAPI";
-import { AiOutlineCheck } from "react-icons/ai";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { ModalRechazarActivo } from "./ModalRechazarActivo";
+import { ModalAceptarActivo } from "./ModalAceptarActivo";
 
 interface DataType {
   key: number;
@@ -78,7 +75,6 @@ export const AceptarTraslados = () => {
           subcategoria: categoria.subcategoria,
           bodega_origen: categoria.bodega_origen,
           bodega_destino: categoria.bodega_destino,
-          descripcion: categoria.descripcion,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
@@ -104,16 +100,6 @@ export const AceptarTraslados = () => {
     setDataSource(filterTable);
   };
 
-  //aceptar activo traslado
-  const AceptarTraslado = (id: React.Key) => {
-    aceptarActivo(id)
-      .then(() => {
-        fetchCategorias();
-      })
-      .catch(() => {
-        setLoadingRow([]);
-      });
-  };
 
   const columns: ColumnsType<DataType> = [
     {
@@ -211,33 +197,10 @@ export const AceptarTraslados = () => {
                 data={record}
                 fetchList={() => fetchCategorias()}
               />
-
-              <Tooltip title="Aceptar Traslado">
-                <Popconfirm
-                  title="¿Confirmar aceptación del traslado?"
-                  description="¿Está seguro de que desea aceptar este traslado?"
-                  onConfirm={() => AceptarTraslado(record.key)}
-                  onCancel={() => {}}
-                  okText="Sí, aceptar"
-                  cancelText="Cancelar"
-                  placement="leftTop"
-                  okButtonProps={{
-                    type: "primary",
-                    danger: false,
-                    style: { background: "#52c41a" },
-                  }}
-                >
-                  <Button
-                    icon={<AiOutlineCheck />}
-                    size="small"
-                    type="primary"
-                    style={{
-                      backgroundColor: "#52c41a",
-                      borderColor: "#52c41a",
-                    }}
-                  />
-                </Popconfirm>
-              </Tooltip>
+              <ModalAceptarActivo
+                data={record}
+                fetchList={() => fetchCategorias()}
+              />
 
               <VerFoto id={record.key} />
             </>
