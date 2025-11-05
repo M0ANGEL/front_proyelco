@@ -4956,7 +4956,7 @@ export interface Vacaciones {
   tipo_vacaciones: string;
   user_sys: string;
   periodo: string;
-  dias_vacaciones: string; 
+  dias_vacaciones: string;
   dias_compensados: string;
 }
 export interface ResponseVacacion {
@@ -5183,7 +5183,6 @@ export interface TkCategoria {
   updated_at: string;
 }
 
-
 /* type de datos */
 export interface ResponseAmClientes {
   data: {
@@ -5204,7 +5203,6 @@ export interface AmClientes {
   created_at: string;
   updated_at: string;
 }
-
 
 export interface ResponseTkSubCategorias {
   data: {
@@ -5465,13 +5463,13 @@ export interface ResponseRetirarCesantias {
 export interface RetirarCesantias {
   id: number;
   empleado: string;
-  asunto : string;
-  concepto: string
+  asunto: string;
+  concepto: string;
   valor: string;
   consecutivo: string;
-  user : string;
+  user: string;
   created_at: string;
-  empleado_id : string;
+  empleado_id: string;
 }
 
 //horarios
@@ -5491,22 +5489,20 @@ export interface Horarios {
   usuarios_autorizados: string;
 }
 
-
 export interface ResponseHorariosAdicionales {
   status: string;
   data: HorariosAdicional[];
 }
 
 export interface HorariosAdicional {
-  id?: number; 
+  id?: number;
   observacion: string;
   dia: string;
   fecha_inicio: string;
   fecha_final: string;
-  horario_id: string; 
+  horario_id: string;
   usuarios_autorizados: string;
 }
-
 
 export interface ResponsePerfilesHorarios {
   status: string;
@@ -5519,9 +5515,7 @@ export interface HorariosPerfiles {
   nombre_perfil: string;
 }
 
-
 //fin horarios
-
 
 //marcaciones asistencias
 
@@ -5541,8 +5535,6 @@ export interface MaLink {
   created_at: string;
 }
 
-
-
 export interface ResponseMaTelefonos {
   data: {
     status: string;
@@ -5559,7 +5551,6 @@ export interface MaTelefonos {
   estado: string;
   created_at: string;
 }
-
 
 export interface ResponseMaRegistroMarcaciones {
   data: {
@@ -5578,7 +5569,6 @@ export interface MaRegistroMarcaiones {
   bodega_registro: string;
   tipo_marcacion: string;
 }
-
 
 export interface ResponseMaFarmcias {
   data: {
@@ -5603,15 +5593,15 @@ export interface ResponseUsuarioRegistrados {
 }
 
 export interface MaUsuariosRegistrados {
-  id: number
-  nombre_completo: string
-  cedula: string
-  telefono: number
-  bod_nombre: string
-  nombre_cargo: string
-  foto: string
-  foto_url: string
-  created_at: string
+  id: number;
+  nombre_completo: string;
+  cedula: string;
+  telefono: number;
+  bod_nombre: string;
+  nombre_cargo: string;
+  foto: string;
+  foto_url: string;
+  created_at: string;
 }
 
 //fin marcación
@@ -5631,8 +5621,6 @@ export interface TipoProyectos {
   nombre: string;
   created_at: string;
 }
-
-
 
 /* type de proceos proyecos */
 export interface ResponseProcesosProyectos {
@@ -5686,7 +5674,6 @@ export interface Proyectos {
   updated_at: string;
 }
 
-
 /* info proyectos dashboard */
 export interface ResponseInfoProyectosDash {
   data: {
@@ -5724,9 +5711,6 @@ export interface Papeleria {
 }
 
 //fin papeleria
-
-
-
 
 /* type de datos categorias */
 export interface ResponseProveedores {
@@ -5768,7 +5752,6 @@ export interface Papeleria {
   created_at: string;
   updated_at: string;
 }
-
 
 /* type de datos personal */
 export interface ResponsePersonales {
@@ -5813,7 +5796,7 @@ export interface Asistencia {
   usurioConfirma: string;
   descripcion_proyecto: string;
   created_at: string;
-  activo?: string;  //columna virtual
+  activo?: string; //columna virtual
   updated_at: string;
   created_at_string: string;
 }
@@ -5911,9 +5894,9 @@ export interface ProjectsResponse {
   data: Project[];
 }
 
-//activos fijos 
+//activos fijos
 
-export interface ResponseBodegas_areas{
+export interface ResponseBodegas_areas {
   data: {
     status: string;
     data: Bodegas_Areas[];
@@ -5930,7 +5913,7 @@ export interface Bodegas_Areas {
   usuario: string;
 }
 
-export interface ResponseActivosCategoria{
+export interface ResponseActivosCategoria {
   data: {
     status: string;
     data: ActivosCategoria[];
@@ -5948,7 +5931,7 @@ export interface ActivosCategoria {
   updated_at: string;
 }
 
-export interface ResponseActivosSubCategoria{
+export interface ResponseActivosSubCategoria {
   data: {
     status: string;
     data: ActivosSubCategoria[];
@@ -5967,7 +5950,7 @@ export interface ActivosSubCategoria {
   updated_at: string;
 }
 
-export interface ResponseActivosS{
+export interface ResponseActivosS {
   data: {
     status: string;
     data: ActivosData[];
@@ -5999,7 +5982,7 @@ export interface ActivosData {
   usuario_solicita: string;
 }
 
-export interface ResponseActivosMantenimiento{
+export interface ResponseActivosMantenimiento {
   data: {
     status: string;
     data: ActivosMantenimiento[];
@@ -6051,7 +6034,6 @@ export interface EmpleadosTH {
   updated_at: string;
 }
 
-
 export interface ResponseCargoTH {
   data: {
     status: string;
@@ -6102,7 +6084,6 @@ export interface ContratistasSST {
   updated_at: string;
 }
 
-
 /* type de proceos proyecos */
 export interface ResponseProyeccion {
   data: {
@@ -6124,7 +6105,6 @@ export interface Proyeccion {
   created_at: string;
   updated_at: string;
 }
-
 
 //documentacion
 
@@ -6149,4 +6129,15 @@ export interface Documentacion {
   updated_at: string;
 }
 
-
+export interface ResponseObrasPermisosAsistencia {
+  data: {
+    status: string;
+    data: PermisosAsistencia[];
+  };
+}
+export interface PermisosAsistencia {
+  id: number;
+  nombre: string;
+  rango: string;
+  usuarios_permisos: string;
+}

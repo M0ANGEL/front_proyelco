@@ -39,11 +39,12 @@ export const getActiActivosAceptar = async (): Promise<ResponseActivosS> => {
 //aceptar activo
 
 //cambiar el estado de la categoria 
-export const aceptarActivo = async ( id: any): Promise<any> => {
-  return await client.get<any>(`activo-aceptarActivo/${id}`, {
+export const aceptarActivo = async (data: any): Promise<any> => {
+  return await client.post<any>("activo-aceptarActivo", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
+
 
 
 //historico activos-historico
