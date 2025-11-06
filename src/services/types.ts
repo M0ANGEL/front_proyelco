@@ -6141,3 +6141,29 @@ export interface PermisosAsistencia {
   rango: string;
   usuarios_permisos: string;
 }
+
+
+/* CONTABILIDAD */
+/* control gasolina */
+export interface ResponsePlacas {
+  data: {
+    status: string;
+    data: placas[];
+  };
+}
+export interface placas {
+  id: number;
+  palca: string;
+}
+
+
+export interface ResponseCondcutores {
+  data: {
+    status: string;
+    data: Condcutores[];
+  };
+}
+export interface Condcutores {
+  id: number;
+  nombre_completo: string;
+}

@@ -141,6 +141,11 @@ export const ListRed = () => {
               label: <Text>CELSIA</Text>,
               children: <CelsiaRoute />,
             },
+            {
+              key: "3",
+              label: <Text>ORGANISMOS DE INSPECCION</Text>,
+              children: <CelsiaRoute />,
+            },
           ]}
         />
       </>
