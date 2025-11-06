@@ -21,6 +21,7 @@ import { MaterialesRoutes } from "@/modules/materiales";
 import { DocumentacionRoutes } from "@/modules/documentacion/routes";
 import { InformePowerBiRouter } from "@/modules/powerBI";
 import { ContabilidadRoutes } from "@/modules/contabilidad";
+import { ExtrasRoutes } from "@/modules/extras/routes";
 
 export const AdminRoutes = () => {
   return (
@@ -67,7 +68,7 @@ export const AdminRoutes = () => {
             <Route path={"documentacion/*"} element={<DocumentacionRoutes />} />
             <Route path={"informes/*"} element={<InformePowerBiRouter />} />
             <Route path={"contabilidad/*"} element={<ContabilidadRoutes />} />
-            {/* <Route path={"marcaciones/*"} element={<MarcacionAsistenciasRoutes />} /> */}
+            <Route path={"extras/*"} element={<ExtrasRoutes />} />
           </Route>
         </RoutesWithNotFound>
       </GlobalProvider>
