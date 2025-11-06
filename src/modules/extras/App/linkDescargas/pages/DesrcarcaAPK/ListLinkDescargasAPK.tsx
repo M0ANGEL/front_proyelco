@@ -167,19 +167,17 @@ export const ListLinkDescargasAPK = () => {
           onClick={async () => {
             const token = localStorage.getItem("token");
 
-            const response = await fetch(`${BASE_URL}descargar-apk`, {
+            const res = await fetch(`${BASE_URL}link-apk`, {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
             });
 
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "asistencias.apk";
-            link.click();
-            window.URL.revokeObjectURL(url);
+            const data = await res.json();
+            if (data?.url) {
+              // En móvil esto sí descarga correctamente
+              window.open(data.url, "_blank");
+            }
           }}
         >
           Descargar
