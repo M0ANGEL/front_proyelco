@@ -30,6 +30,7 @@ const systemRoutes = [
   "/documentacion",
   "/informes",
   "/contabilidad",
+  "/extras",
 ];
 
 // 🔐 Construir rutas jerárquicas desde userData

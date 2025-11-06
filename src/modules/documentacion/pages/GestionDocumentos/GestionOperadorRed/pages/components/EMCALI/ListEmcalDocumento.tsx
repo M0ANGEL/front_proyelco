@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Input, Typography, Button, Tag, Collapse, Row, Col, Badge } from "antd";
+import { Input, Typography, Button, Tag, Row, Col, Badge } from "antd";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
@@ -27,7 +27,6 @@ interface DataType {
 }
 
 const { Text } = Typography;
-const { Panel } = Collapse;
 
 // Función para obtener el texto de la etapa
 const getTextoEtapa = (etapa: number) => {
@@ -57,7 +56,6 @@ export const ListEmcalDocumento = () => {
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
 
   // Ejecución
   useEffect(() => {
@@ -105,75 +103,61 @@ export const ListEmcalDocumento = () => {
     });
   };
 
-  // Manejar expansión de acordeones
-  const handlePanelChange = (keys: string | string[]) => {
-    setExpandedKeys(Array.isArray(keys) ? keys : [keys]);
-  };
-
-  // Renderizar el contenido expandible (acordeón)
+  // Renderizar el contenido expandible (documentos directamente)
   const renderDocumentosExpandible = (record: DataType) => {
     if (!record.documentacion || record.documentacion.length === 0) {
-      return <Text type="secondary">No hay documentos</Text>;
+      return (
+        <div style={{ padding: "16px", textAlign: "center" }}>
+          <Text type="secondary">No hay documentos para este proyecto</Text>
+        </div>
+      );
     }
 
     return (
-      <Collapse 
-        accordion
-        activeKey={expandedKeys}
-        onChange={handlePanelChange}
-        expandIcon={({ isActive }) => (
-          <CaretRightOutlined rotate={isActive ? 90 : 0} />
-        )}
-        style={{ background: 'transparent' }}
-      >
-        <Panel 
-          header={
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <Badge 
-                count={record.documentacion.length} 
-                showZero 
-                style={{ backgroundColor: '#1890ff' }} 
-              />
-              <Text strong>Documentos del Proyecto ({record.documentacion.length})</Text>
-            </div>
-          } 
-          key={record.key}
-        >
-          <Row gutter={[16, 12]}>
-            {record.documentacion.map((documento, index) => (
-              <Col xs={24} sm={12} md={8} lg={6} key={index}>
-                <div 
-                  style={{
-                    border: '1px solid #d9d9d9',
-                    borderRadius: '6px',
-                    padding: '12px',
-                    background: '#fafafa'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                    <FileTextOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
-                    <Text strong>Código: {documento.codigo_documento}</Text>
-                  </div>
-                  
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Tag color={getColorEtapa(documento.etapa)}>
-                      {getTextoEtapa(documento.etapa)}
-                    </Tag>
-                    
-                    <Button 
-                      type="primary" 
-                      size="small"
-                      onClick={() => verActividades(record, documento)}
-                    >
-                      Ver Actividades
-                    </Button>
-                  </div>
+      <div style={{ padding: "16px", background: "#fafafa" }}>
+        <div style={{ marginBottom: "16px" }}>
+          <Text strong style={{ fontSize: "14px" }}>
+            Documentos del Proyecto ({record.documentacion.length})
+          </Text>
+        </div>
+        
+        <Row gutter={[16, 12]}>
+          {record.documentacion.map((documento, index) => (
+            <Col xs={24} sm={12} md={8} lg={6} key={index}>
+              <div 
+                style={{
+                  border: '1px solid #d9d9d9',
+                  borderRadius: '6px',
+                  padding: '12px',
+                  background: 'white',
+                  height: '100%'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                  <FileTextOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
+                  <Text strong style={{ fontSize: "12px" }}>
+                    Código: {documento.codigo_documento}
+                  </Text>
                 </div>
-              </Col>
-            ))}
-          </Row>
-        </Panel>
-      </Collapse>
+                
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Tag color={getColorEtapa(documento.etapa)} style={{ margin: 0 }}>
+                    {getTextoEtapa(documento.etapa)}
+                  </Tag>
+                  
+                  <Button 
+                    type="primary" 
+                    size="small"
+                    onClick={() => verActividades(record, documento)}
+                  >
+                    Ver Actividades
+                  </Button>
+                </div>
+              </div>
+            </Col>
+          ))}
+        </Row>
+      </div>
     );
   };
 

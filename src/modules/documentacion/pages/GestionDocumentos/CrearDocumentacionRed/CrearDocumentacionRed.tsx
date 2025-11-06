@@ -13,7 +13,11 @@ import {
   Spin,
   Card,
 } from "antd";
-import { InfoCircleOutlined, SaveOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  InfoCircleOutlined,
+  SaveOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/config/api";
 import { getProyectosCodigo } from "@/services/documentacion/documentacionAPI";
@@ -42,11 +46,19 @@ export const CrearDocumentacionRed = () => {
   const [loading, setLoading] = useState(false);
   const [loadingProyectos, setLoadingProyectos] = useState(false);
   const [selectProyecto, setSelectProyecto] = useState<ProyectoOption[]>([]);
+  const [selectedOrganismo, setSelectedOrganismo] = useState("0");
 
   const opcionOperadorRed = [
     { value: "1", label: "EMCALI" },
     { value: "2", label: "CELSIA" },
   ];
+
+  const RequeireOpcionOrganismo = [
+    { value: "1", label: "SI" },
+    { value: "2", label: "NO" },
+  ];
+
+  const organismoSI = selectedOrganismo === "1" ? true : false;
 
   const opcionOrganismo = [
     { value: "1", label: "RETIE" },
@@ -75,12 +87,14 @@ export const CrearDocumentacionRed = () => {
       // Validaciones antes del envío
       const errores = validarDatosEnvio(datos);
       if (errores.length > 0) {
-        throw new Error(errores.join(', '));
+        throw new Error(errores.join(", "));
       }
 
       const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("Sesión expirada. Por favor, inicie sesión nuevamente.");
+        throw new Error(
+          "Sesión expirada. Por favor, inicie sesión nuevamente."
+        );
       }
 
       // Preparar datos para enviar
@@ -101,7 +115,7 @@ export const CrearDocumentacionRed = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(datosEnviar),
         signal: controller.signal,
@@ -113,28 +127,33 @@ export const CrearDocumentacionRed = () => {
       const resultado = await response.json();
 
       // Manejar errores de la API
-      if (!response.ok || resultado.status === 'error') {
-        const mensajeError = resultado.message || `Error ${response.status}: ${response.statusText}`;
+      if (!response.ok || resultado.status === "error") {
+        const mensajeError =
+          resultado.message ||
+          `Error ${response.status}: ${response.statusText}`;
         throw new Error(mensajeError);
       }
 
       // Validar respuesta exitosa
-      if (resultado.status !== 'success') {
+      if (resultado.status !== "success") {
         throw new Error("Respuesta inesperada del servidor");
       }
 
       return resultado;
-
     } catch (error: any) {
       console.error("Error al enviar datos:", error);
-      
+
       // Mensajes de error específicos
-      if (error.name === 'AbortError') {
-        throw new Error("La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.");
+      if (error.name === "AbortError") {
+        throw new Error(
+          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente."
+        );
       }
-      
-      if (error.message.includes('Failed to fetch')) {
-        throw new Error("Error de conexión. Verifique su internet e intente nuevamente.");
+
+      if (error.message.includes("Failed to fetch")) {
+        throw new Error(
+          "Error de conexión. Verifique su internet e intente nuevamente."
+        );
       }
 
       throw error;
@@ -147,20 +166,23 @@ export const CrearDocumentacionRed = () => {
   const validarDatosEnvio = (datos: FormData): string[] => {
     const errores: string[] = [];
 
-    if (!datos.codigo_proyecto) errores.push('Proyecto es requerido');
-    if (!datos.operadorRed) errores.push('Operador de red es requerido');
-    if (!datos.organismoInspeccion) errores.push('Organismo de inspección es requerido');
-    if (!datos.etapaProyecto) errores.push('Etapa del proyecto es requerida');
-    if (!datos.codigoDocumentos?.trim()) errores.push('Código de documentos es requerido');
-    if (!datos.fechaEntrega) errores.push('Fecha de entrega es requerida');
-    if (!datos.nombre_etapa?.trim()) errores.push('Nombre de la etapa es requerido');
+    if (!datos.codigo_proyecto) errores.push("Proyecto es requerido");
+    if (!datos.operadorRed) errores.push("Operador de red es requerido");
+    if (!datos.organismoInspeccion)
+      errores.push("Organismo de inspección es requerido");
+    if (!datos.etapaProyecto) errores.push("Etapa del proyecto es requerida");
+    if (!datos.codigoDocumentos?.trim())
+      errores.push("Código de documentos es requerido");
+    if (!datos.fechaEntrega) errores.push("Fecha de entrega es requerida");
+    if (!datos.nombre_etapa?.trim())
+      errores.push("Nombre de la etapa es requerido");
 
     if (datos.codigoDocumentos && datos.codigoDocumentos.length > 20) {
-      errores.push('Código de documentos no puede exceder 20 caracteres');
+      errores.push("Código de documentos no puede exceder 20 caracteres");
     }
 
     if (datos.nombre_etapa && datos.nombre_etapa.length > 199) {
-      errores.push('Nombre de la etapa no puede exceder 199 caracteres');
+      errores.push("Nombre de la etapa no puede exceder 199 caracteres");
     }
 
     return errores;
@@ -185,10 +207,10 @@ export const CrearDocumentacionRed = () => {
     try {
       setLoadingProyectos(true);
       const response = await getProyectosCodigo();
-      
-      if (response.data.status === 'success') {
+
+      if (response.data.status === "success") {
         const proyectos = response.data.data.map((item: any) => ({
-          label: `${item.descripcion_proyecto} (Código: ${item.codigo_proyecto})`,
+          label: `${item.descripcion_proyecto} `,
           value: item.codigo_proyecto,
           descripcion: item.descripcion_proyecto,
         }));
@@ -208,11 +230,12 @@ export const CrearDocumentacionRed = () => {
   const handleSubmit = async (values: FormData) => {
     try {
       console.log("Datos del formulario:", values);
-      
+
       const resultado = await enviarDatosAPI(values);
 
       // Mostrar mensaje de éxito específico
-      const mensajeExito = resultado.message || "Documentación creada exitosamente";
+      const mensajeExito =
+        resultado.message || "Documentación creada exitosamente";
       message.success(mensajeExito);
 
       // Resetear formulario
@@ -222,20 +245,22 @@ export const CrearDocumentacionRed = () => {
       if (resultado.data) {
         console.log("Datos creados:", resultado.data);
       }
-
     } catch (error: any) {
       console.error("Error al crear documentación:", error);
-      
+
       // Mensajes de error específicos
-      if (error.message.includes('ya tinene una')) {
+      if (error.message.includes("ya tinene una")) {
         message.error(error.message);
-      } else if (error.message.includes('Sesión expirada')) {
+      } else if (error.message.includes("Sesión expirada")) {
         message.error(error.message);
         // Opcional: redirigir al login
-      } else if (error.message.includes('Error de conexión')) {
+      } else if (error.message.includes("Error de conexión")) {
         message.error(error.message);
       } else {
-        message.error(error.message || "Error al crear la documentación. Por favor, intente nuevamente.");
+        message.error(
+          error.message ||
+            "Error al crear la documentación. Por favor, intente nuevamente."
+        );
       }
     }
   };
@@ -243,7 +268,9 @@ export const CrearDocumentacionRed = () => {
   // Manejar errores de validación
   const handleFailedSubmit = (errorInfo: any) => {
     console.log("Error de validación:", errorInfo);
-    const camposFaltantes = errorInfo.errorFields.map((field: any) => field.name[0]).join(', ');
+    const camposFaltantes = errorInfo.errorFields
+      .map((field: any) => field.name[0])
+      .join(", ");
     message.warning(`Complete los campos requeridos: ${camposFaltantes}`);
   };
 
@@ -253,9 +280,9 @@ export const CrearDocumentacionRed = () => {
   };
 
   return (
-    <Card 
-      title="Crear Documentación de Red" 
-      style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
+    <Card
+      title="Crear Documentación de Red"
+      style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
     >
       <Form
         form={form}
@@ -282,9 +309,11 @@ export const CrearDocumentacionRed = () => {
               name="codigo_proyecto"
               label={
                 <span>
-                  Proyecto 
+                  Proyecto
                   <Tooltip title="Seleccione el proyecto para la documentación">
-                    <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                    <InfoCircleOutlined
+                      style={{ marginLeft: 8, color: "#1890ff" }}
+                    />
                   </Tooltip>
                 </span>
               }
@@ -294,20 +323,28 @@ export const CrearDocumentacionRed = () => {
               <Select
                 options={selectProyecto}
                 placeholder={
-                  loadingProyectos ? "Cargando proyectos..." : "Seleccione proyecto"
+                  loadingProyectos
+                    ? "Cargando proyectos..."
+                    : "Seleccione proyecto"
                 }
                 allowClear
                 showSearch
                 filterOption={(input, option) =>
-                  (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
                 }
                 notFoundContent={
-                  loadingProyectos ? <Spin size="small" /> : "No se encontraron proyectos"
+                  loadingProyectos ? (
+                    <Spin size="small" />
+                  ) : (
+                    "No se encontraron proyectos"
+                  )
                 }
                 suffixIcon={
-                  <ReloadOutlined 
+                  <ReloadOutlined
                     onClick={handleRecargarProyectos}
-                    style={{ cursor: 'pointer' }}
+                    style={{ cursor: "pointer" }}
                     title="Recargar proyectos"
                   />
                 }
@@ -317,7 +354,7 @@ export const CrearDocumentacionRed = () => {
           </Col>
 
           {/* Operador de red */}
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={6}>
             <StyledFormItem
               name="operadorRed"
               label="Operador de Red"
@@ -332,23 +369,45 @@ export const CrearDocumentacionRed = () => {
             </StyledFormItem>
           </Col>
 
-          {/* Organismo de inspección */}
-          <Col xs={24} sm={12} md={8}>
+          {/* RQUIERE ORGANISMO??*/}
+          <Col xs={24} sm={12} md={4}>
             <StyledFormItem
-             
-              name="organismoInspeccion"
-              label="Organismo de Inspección"
-              rules={[{ required: true, message: "Seleccione el organismo" }]}
+              name="requiereOrganismos"
+              label="Organismo de inspección"
+              rules={[{ required: true, message: "Seleccione el operador" }]}
               required
             >
               <Select
-              mode="multiple"
-                options={opcionOrganismo}
-                placeholder="Seleccione organismo"
+                options={RequeireOpcionOrganismo}
+                placeholder="Seleccione operador"
+                onChange={(value) => setSelectedOrganismo(value)}
                 allowClear
               />
             </StyledFormItem>
           </Col>
+
+          {organismoSI && (
+            <>
+              {/* Organismo de inspección */}
+              <Col xs={24} sm={12} md={4}>
+                <StyledFormItem
+                  name="organismoInspeccion"
+                  label="Organismo"
+                  rules={[
+                    { required: true, message: "Seleccione el organismo" },
+                  ]}
+                  required
+                >
+                  <Select
+                    mode="multiple"
+                    options={opcionOrganismo}
+                    placeholder="Seleccione organismo"
+                    allowClear
+                  />
+                </StyledFormItem>
+              </Col>
+            </>
+          )}
 
           {/* Etapa del proyecto */}
           <Col xs={24} sm={12} md={8}>
@@ -381,9 +440,9 @@ export const CrearDocumentacionRed = () => {
               ]}
               required
             >
-              <Input 
-                showCount 
-                maxLength={20} 
+              <Input
+                showCount
+                maxLength={20}
                 placeholder="Ej: DOC-001-2024"
                 allowClear
               />
@@ -398,11 +457,15 @@ export const CrearDocumentacionRed = () => {
                 <span>
                   Fecha de Entrega del Proyecto
                   <Tooltip title="Fecha límite para la entrega de toda la documentación">
-                    <InfoCircleOutlined style={{ marginLeft: 8, color: '#1890ff' }} />
+                    <InfoCircleOutlined
+                      style={{ marginLeft: 8, color: "#1890ff" }}
+                    />
                   </Tooltip>
                 </span>
               }
-              rules={[{ required: true, message: "Seleccione la fecha de entrega" }]}
+              rules={[
+                { required: true, message: "Seleccione la fecha de entrega" },
+              ]}
               required
             >
               <DatePicker
