@@ -1,0 +1,1 @@
+export {ContabilidadPages} from './ContabilidadPages'

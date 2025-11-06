@@ -49,8 +49,9 @@ export const CrearDocumentacionRed = () => {
   ];
 
   const opcionOrganismo = [
-    { value: "1", label: "EMCALI" },
-    { value: "2", label: "CELSIA" },
+    { value: "1", label: "RETIE" },
+    { value: "2", label: "RITEL" },
+    { value: "3", label: "RETILAP" },
   ];
 
   const opcionEtapa = [
@@ -334,12 +335,14 @@ export const CrearDocumentacionRed = () => {
           {/* Organismo de inspección */}
           <Col xs={24} sm={12} md={8}>
             <StyledFormItem
+             
               name="organismoInspeccion"
               label="Organismo de Inspección"
               rules={[{ required: true, message: "Seleccione el organismo" }]}
               required
             >
               <Select
+              mode="multiple"
                 options={opcionOrganismo}
                 placeholder="Seleccione organismo"
                 allowClear
