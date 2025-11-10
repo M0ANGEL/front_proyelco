@@ -127,3 +127,15 @@ export const getReporteAsistenciasTH = async (filtros: FiltroReporteAsistencia):
     },
   });
 };
+
+// En tu reporteAPI.ts
+// En tu reporteAPI.ts
+// En tu reporteAPI.ts
+export const exportReporteCompletoAsistenciasTH = async (filtros: FiltroReporteAsistencia) => {
+  return await client.post(`export-reporte-completo-asistencias-th`, filtros, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("token")}`,
+    },
+    responseType: "blob",
+  });
+};

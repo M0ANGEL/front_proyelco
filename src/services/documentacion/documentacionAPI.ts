@@ -17,6 +17,14 @@ export const getProyectosDocumentacionCelsia =
     });
   };
 
+
+  export const getProyectosDocumentacionOrganismos =
+  async (): Promise<ResponseProcesosProyectos> => {
+    return await client.get("gestion-documentos-organismo", {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+  };
+
 //detalle de la documentacion
 export const getDocumentaCIonProyecto = async (id: React.Key): Promise<any> => {
   return await client.get<any>(`gestion-documentosDetalle/${id}`, {
@@ -32,3 +40,10 @@ export const getProyectosCodigo =
     });
   };
 
+
+  //detalle de la documentacion organismos
+export const getDocumentaCIonOrganismos = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`detalleDocumentosOrganismos/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
+};
