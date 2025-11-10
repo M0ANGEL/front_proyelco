@@ -1,6 +1,11 @@
 import { client } from "../client";
 import { ResponseActivosS } from "../types";
 
+export interface PaginationParams {
+  page?: number;
+  per_page?: number;
+  search?: string;
+}
 
 //crear traslados
 export const trasladarActiActivo = async (data: any): Promise<any> => {
@@ -22,7 +27,6 @@ export const getActiActivosPendientes = async (): Promise<ResponseActivosS> => {
   });
 };
 
-
 export const getActiInfo = async (id: React.Key): Promise<any> => {
   return await client.get<any>(`activo-informacion/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -38,23 +42,40 @@ export const getActiActivosAceptar = async (): Promise<ResponseActivosS> => {
 
 //aceptar activo
 
-//cambiar el estado de la categoria 
+//cambiar el estado de la categoria
 export const aceptarActivo = async (data: any): Promise<any> => {
   return await client.post<any>("activo-aceptarActivo", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
 
-
-
 //historico activos-historico
 
-export const getActiHistorico = async (): Promise<ResponseActivosS> => {
-  return await client.get("activos-historico", {
+// export const getActiHistorico = async (): Promise<ResponseActivosS> => {
+//   return await client.get("activos-historico", {
+//     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+//   });
+// };
+
+export const getActiHistorico = async (
+  params: PaginationParams = {}
+): Promise<{ data: any }> => {
+  const queryParams = new URLSearchParams();
+
+  if (params.page) queryParams.append("page", params.page.toString());
+  if (params.per_page)
+    queryParams.append("per_page", params.per_page.toString());
+  if (params.search) queryParams.append("search", params.search);
+
+  const queryString = queryParams.toString();
+  const url = queryString
+    ? `activos-historico?${queryString}`
+    : "activos-historico";
+
+  return await client.get(url, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
-
 
 //Solicitar Traslados de otras bodegas
 export const getActiSolicitar = async (): Promise<ResponseActivosS> => {
@@ -62,7 +83,6 @@ export const getActiSolicitar = async (): Promise<ResponseActivosS> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
-
 
 //crear Solicitud del actiivo
 export const envioSolicitudActivo = async (data: any): Promise<any> => {
@@ -78,7 +98,6 @@ export const LiberarActiActivo = async (data: any): Promise<any> => {
   });
 };
 
-
 //rechazar traslado de activo
 export const rechazarActivo = async (data: any): Promise<any> => {
   return await client.post<any>("activo-rechazarActivo", data, {
@@ -86,13 +105,11 @@ export const rechazarActivo = async (data: any): Promise<any> => {
   });
 };
 
-
 export const getActiActivosMensajeros = async (): Promise<ResponseActivosS> => {
   return await client.get("mensajero-activos", {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
-
 
 //confirmar entrega mensajero
 export const entregaMensajero = async (data: any): Promise<any> => {

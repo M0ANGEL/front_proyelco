@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Button,
@@ -22,6 +22,7 @@ import {
   FiltroReporteAsistencia,
 } from "@/services/talento-humano/reporteAPI";
 import dayjs, { Dayjs } from "dayjs";
+import { DescargarReporteAsistencias } from "./DescargarReporteAsistencias"; // Ajusta la ruta
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;
@@ -54,14 +55,12 @@ export const ReporteAsistenciaTH = () => {
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [contratistasStats, setContratistasStats] = useState<
-    ContratistaStats[]
-  >([]);
+  const [contratistasStats, setContratistasStats] = useState<ContratistaStats[]>([]);
   const [fechas, setFechas] = useState<[Dayjs, Dayjs] | null>(null);
   const [fechaError, setFechaError] = useState<string>("");
-  const [filtrosAplicados, setFiltrosAplicados] =
-    useState<FiltroReporteAsistencia | null>(null);
-    const [personalProyelcoTotal, setPersonalProyelcoTotal] = useState(0)
+  const [filtrosAplicados, setFiltrosAplicados] = useState<FiltroReporteAsistencia | null>(null);
+  const [personalProyelcoTotal, setPersonalProyelcoTotal] = useState(0);
+  const tableRef = useRef<HTMLDivElement>(null);
 
   // Función para calcular solo las asistencias activas por contratista
   const calcularActivosPorContratista = (data: DataType[]) => {
@@ -158,8 +157,6 @@ export const ReporteAsistenciaTH = () => {
           };
         });
 
-        
-
         setInitialData(asistencias);
         setPersonalProyelcoTotal(response.totalPersonalProyelco)
         setDataSource(asistencias);
@@ -204,6 +201,8 @@ export const ReporteAsistenciaTH = () => {
       dataIndex: "estado_asistencia",
       key: "estado_asistencia",
       align: "center",
+      fixed: 'left',
+      width: 120,
       render: (estado) => (
         <Tag
           color={estado === "activa" ? "green" : "blue"}
@@ -218,6 +217,7 @@ export const ReporteAsistenciaTH = () => {
       title: "Fecha Ingreso",
       dataIndex: "fecha_ingreso",
       key: "fecha_ingreso",
+      width: 120,
       sorter: (a, b) => {
         return (
           dayjs(b.fecha_ingreso, "DD-MM-YYYY").unix() -
@@ -230,27 +230,14 @@ export const ReporteAsistenciaTH = () => {
       title: "Hora Ingreso",
       dataIndex: "hora_ingreso",
       key: "hora_ingreso",
+      width: 100,
       sorter: (a, b) => a.hora_ingreso.localeCompare(b.hora_ingreso),
-    },
-    {
-      title: "Fecha Salida",
-      dataIndex: "fecha_salida",
-      key: "fecha_salida",
-      render: (fecha, record) => (
-        <span
-          style={{
-            color: fecha === "En curso" ? "#ff4d4f" : "inherit",
-            fontWeight: fecha === "En curso" ? "bold" : "normal",
-          }}
-        >
-          {fecha}
-        </span>
-      ),
     },
     {
       title: "Hora Salida",
       dataIndex: "hora_salida",
       key: "hora_salida",
+      width: 100,
       render: (hora, record) => (
         <span
           style={{
@@ -261,11 +248,13 @@ export const ReporteAsistenciaTH = () => {
           {hora}
         </span>
       ),
+      sorter: (a, b) => a.hora_salida.localeCompare(b.hora_salida),
     },
     {
       title: "Horas Laboradas",
       dataIndex: "horas_laborales",
       key: "horas_laborales",
+      width: 130,
       render: (horas) => (
         <span
           style={{
@@ -281,52 +270,41 @@ export const ReporteAsistenciaTH = () => {
       title: "Nombre Completo",
       dataIndex: "nombre_completo",
       key: "nombre_completo",
+      width: 200,
       sorter: (a, b) => a.nombre_completo.localeCompare(b.nombre_completo),
-    },
-    {
-      title: "Tipo Documento",
-      dataIndex: "tipo_documento",
-      key: "tipo_documento",
     },
     {
       title: "Identificación",
       dataIndex: "identificacion",
       key: "identificacion",
+      width: 120,
     },
     {
       title: "Teléfono",
       dataIndex: "telefono_celular",
       key: "telefono_celular",
+      width: 120,
     },
     {
       title: "Cargo",
       dataIndex: "cargo",
       key: "cargo",
+      width: 150,
     },
     {
-      title: "Obra",
+      title: "Ubicacion",
       dataIndex: "nombre_obra",
       key: "nombre_obra",
+      width: 150,
       render: (obra) => obra || "Sin obra asignada",
-    },
-    {
-      title: "Tipo Obra",
-      dataIndex: "tipo_obra_texto",
-      key: "tipo_obra_texto",
+      sorter: (a, b) => a.nombre_obra.localeCompare(b.nombre_obra),
     },
     {
       title: "Contratista",
       dataIndex: "nombre_contratista",
       key: "nombre_contratista",
+      width: 150,
       render: (contratista) => contratista || "No asignado",
-    },
-    {
-      title: "Tipo Empleado",
-      dataIndex: "tipo_empleado_texto",
-      key: "tipo_empleado_texto",
-      render: (tipo) => (
-        <Tag color={tipo.includes("Proyelco") ? "blue" : "orange"}>{tipo}</Tag>
-      ),
     },
   ];
 
@@ -344,6 +322,10 @@ export const ReporteAsistenciaTH = () => {
       extra={
         <Space>
           <Button onClick={limpiarFiltros}>Limpiar</Button>
+          <DescargarReporteAsistencias 
+            filtros={filtrosAplicados || { fecha_inicio: '', fecha_fin: '' }}
+            disabled={!filtrosAplicados || dataSource.length === 0}
+          />
           <Button
             onClick={fetchAsistencias}
             loading={loading}
@@ -355,6 +337,7 @@ export const ReporteAsistenciaTH = () => {
         </Space>
       }
     >
+      {/* El resto de tu código permanece igual */}
       {/* Filtros */}
       <Card size="small" style={{ marginBottom: 16 }}>
         <Space direction="vertical" style={{ width: "100%" }} size="middle">
@@ -508,29 +491,37 @@ export const ReporteAsistenciaTH = () => {
           image={Empty.PRESENTED_IMAGE_SIMPLE}
         />
       ) : (
-        <Table
-          className="custom-table"
-          rowKey={(record) => record.key}
-          size="small"
-          dataSource={dataSource}
-          columns={columns}
-          loading={loading}
-          scroll={{ x: 1800 }}
-          pagination={{
-            total: dataSource?.length,
-            showSizeChanger: true,
-            defaultPageSize: 20,
-            pageSizeOptions: ["10", "20", "50", "100"],
-            showTotal: (total: number, range: [number, number]) => {
-              return (
-                <Text strong>
-                  Mostrando {range[0]}-{range[1]} de {total} registros
-                </Text>
-              );
-            },
-          }}
-          bordered
-        />
+        <div ref={tableRef}>
+          <Table
+            className="custom-table"
+            rowKey={(record) => record.key}
+            size="small"
+            dataSource={dataSource}
+            columns={columns}
+            loading={loading}
+            scroll={{ 
+              x: 1800,
+              y: 600
+            }}
+            pagination={{
+              total: dataSource?.length,
+              showSizeChanger: true,
+              defaultPageSize: 100,
+              pageSizeOptions: ["10", "20", "50", "100"],
+              showTotal: (total: number, range: [number, number]) => {
+                return (
+                  <Text strong>
+                    Mostrando {range[0]}-{range[1]} de {total} registros
+                  </Text>
+                );
+              },
+            }}
+            bordered
+            sticky={{
+              offsetHeader: 0,
+            }}
+          />
+        </div>
       )}
     </StyledCard>
   );

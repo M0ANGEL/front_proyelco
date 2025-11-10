@@ -9,36 +9,6 @@ interface Idpros {
 }
 
 export const DescargarInforme = ({ id }: Idpros) => {
-  //   const DescargarExcelInfo = () => {
-  //   ExportInformeExcelProyecto(id)
-  //     .then((response) => {
-  //       // Obtener nombre sugerido (opcional)
-  //       const contentDisposition = response.headers['content-disposition'];
-  //       let filename = `informe-proyecto-${id}.xlsx`;
-
-  //       if (contentDisposition) {
-  //         const match = contentDisposition.match(/filename="?([^"]+)"?/);
-  //         if (match && match[1]) {
-  //           filename = match[1];
-  //         }
-  //       }
-
-  //       // Forzar descarga
-  //       saveAs(response.data, filename);
-
-  //       // Notificación de éxito
-  //       pushNotification({
-  //         title: "Documento descargado con éxito",
-  //         type: "success",
-  //       });
-  //     })
-  //     .catch((err) => {
-  //       pushNotification({
-  //         title: `Error al descargar documento: ${err.message}`,
-  //         type: "error",
-  //       });
-  //     });
-  // };
 
   const DescargarExcelInfo = () => {
     // Notificación inicial opcional
