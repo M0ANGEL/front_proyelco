@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Table, Tag, Button, Typography, Spin, notification } from "antd";
+import { Table, Tag, Button, Typography, Spin, notification, Space } from "antd";
 import { ColumnsType } from "antd/es/table";
-import { CheckOutlined } from "@ant-design/icons";
-import dayjs from "dayjs";
-import { getDocumentaCIonOrganismos, getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
+import { CheckOutlined, DownOutlined, RightOutlined } from "@ant-design/icons";
+import { getDocumentaCIonOrganismos } from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacionOrganismo } from "./ModalConfirmacionOrganismo";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 
@@ -13,6 +12,7 @@ const { Title } = Typography;
 
 interface DocumentacionDetalle {
   id: number;
+  nombre_etapa: string;
   codigo_proyecto: string;
   codigo_documento: string;
   etapa: number;
@@ -20,26 +20,24 @@ interface DocumentacionDetalle {
   actividad_depende_id: number | null;
   tipo: string;
   orden: number;
-  fecha_proyeccion: string;
-  fecha_actual: string;
   fecha_confirmacion: string | null;
-  usaurio_id: number;
-  estado: string;
+  usuario_id: number | null;
+  estado: number; // Cambiado de string a number
   operador: number;
-  observacion: string;
-  nombre_etapa: string;
+  observacion: string | null;
   created_at: string | null;
   updated_at: string | null;
   actividad?: {
     id: number;
     actividad: string;
-    tiempo: number;
-    descripcion: string;
     tipo: number;
-    etapa: number;
+    padre: string;
     operador: number;
     estado: number;
+    created_at: string | null;
+    updated_at: string | null;
   };
+  hijos?: DocumentacionDetalle[];
 }
 
 export const ListaActividadesOrganismos = () => {
@@ -48,21 +46,28 @@ export const ListaActividadesOrganismos = () => {
   const [data, setData] = useState<DocumentacionDetalle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [actividadSeleccionada, setActividadSeleccionada] =
-    useState<DocumentacionDetalle | null>(null);
+  const [actividadSeleccionada, setActividadSeleccionada] = useState<DocumentacionDetalle | null>(null);
+  const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
 
-  const proyecto = location.state?.codigo_documento;
-  console.log(proyecto);
+  const proyecto = location.state?.proyecto || location.state;
 
   useEffect(() => {
-    if (proyecto?.codigo_documento) {
+    if (proyecto) {
       cargarActividades();
+    } else {
+      console.error("No se encontró código de documento en location.state");
+      setLoading(false);
+      notification.warning({
+        message: "Datos incompletos",
+        description: "No se encontró información del proyecto",
+      });
     }
-  }, [proyecto?.codigo_documento]);
+  }, [proyecto]);
 
   const cargarActividades = () => {
     setLoading(true);
-    getDocumentaCIonOrganismos(proyecto.codigo_documento)
+    
+    getDocumentaCIonOrganismos(proyecto)
       .then(({ data }) => {
         setData(data.data || []);
         setLoading(false);
@@ -87,7 +92,7 @@ export const ListaActividadesOrganismos = () => {
     setActividadSeleccionada(null);
   };
 
-  // Función para obtener el texto del estado
+  // CORREGIDO: Ahora maneja números en lugar de strings
   const getEstadoTexto = (estado: number) => {
     switch (estado) {
       case 0:
@@ -101,28 +106,31 @@ export const ListaActividadesOrganismos = () => {
     }
   };
 
-  // Función para obtener el color del tag
+  // CORREGIDO: Ahora maneja números en lugar de strings
   const getEstadoColor = (estado: number) => {
     switch (estado) {
       case 0:
-        return "orange"; // Pendiente - naranja
+        return "orange";
       case 1:
-        return "blue"; // Disponible - azul
+        return "blue";
       case 2:
-        return "green"; // Completado - verde
+        return "green";
       default:
         return "default";
     }
   };
 
+  const toggleExpand = (record: DocumentacionDetalle) => {
+    const key = record.id;
+    if (expandedRowKeys.includes(key)) {
+      setExpandedRowKeys(expandedRowKeys.filter(k => k !== key));
+    } else {
+      setExpandedRowKeys([...expandedRowKeys, key]);
+    }
+  };
+
+  // Columnas principales
   const columns: ColumnsType<DocumentacionDetalle> = [
-    {
-      title: "Orden",
-      dataIndex: "orden",
-      key: "orden",
-      width: 80,
-      sorter: (a, b) => a.orden - b.orden,
-    },
     {
       title: "Actividad",
       dataIndex: ["actividad", "actividad"],
@@ -130,8 +138,13 @@ export const ListaActividadesOrganismos = () => {
       render: (text: string, record: DocumentacionDetalle) => (
         <div>
           <strong>{text || "Sin nombre"}</strong>
-          <br />
-          <small style={{ color: "#666" }}>Tipo: {record.tipo}</small>
+          {record.hijos && record.hijos.length > 0 && (
+            <div>
+              <small style={{ color: "#666" }}>
+                {record.hijos.length} sub-actividad(es)
+              </small>
+            </div>
+          )}
         </div>
       ),
     },
@@ -139,56 +152,119 @@ export const ListaActividadesOrganismos = () => {
       title: "Estado",
       dataIndex: "estado",
       key: "estado",
-      render: (estado: number) => (
+      width: 120,
+      render: (estado: number) => ( // CORREGIDO: ahora recibe number
         <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>
       ),
     },
     {
-      title: "Fecha Proyección",
-      dataIndex: "fecha_proyeccion",
-      key: "fecha_proyeccion",
-      render: (fecha: string) =>
-        fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-    },
-    {
-      title: "Fecha Real",
-      dataIndex: "fecha_actual",
-      key: "fecha_actual",
-      render: (fecha: string) =>
-        fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-    },
-    {
       title: "Acciones",
       key: "acciones",
-      align: "center",
+      width: 150,
       render: (_, record: DocumentacionDetalle) => (
-        <>
-          {record.estado == "2" ? (
-            <>
-              <VerDocumentoRed
-                codigo_proyecto={record?.codigo_proyecto}
-                codigo_documento={record?.codigo_documento}
-                etapa={record?.etapa}
-                actividad_id={record?.actividad_id}
-                nombreProyecto={record.nombre_etapa}
-              />
-            </>
-          ) : (
-            ""
+        <Space size="small">
+          {/* Botón para expandir/contraer si tiene hijos */}
+          {record.hijos && record.hijos.length > 0 && (
+            <Button
+              type="text"
+              size="small"
+              icon={expandedRowKeys.includes(record.id) ? <DownOutlined /> : <RightOutlined />}
+              onClick={() => toggleExpand(record)}
+              title={expandedRowKeys.includes(record.id) ? "Contraer" : "Expandir"}
+            />
           )}
-          <Button
-            type="primary"
-            size="small"
-            icon={<CheckOutlined />}
-            onClick={() => abrirModalConfirmacion(record)}
-            disabled={record.estado == "1" ? false : true}
-          >
-            Confirmar
-          </Button>
-        </>
+          
+          {/* Botón Ver Documento cuando está completado - SOLO para items sin hijos */}
+          {record.estado === 2 && !record.hijos && ( // CORREGIDO: ahora usa número 2
+            <VerDocumentoRed
+              codigo_proyecto={record.codigo_proyecto}
+              codigo_documento={record.codigo_documento}
+              etapa={record.etapa}
+              actividad_id={record.actividad_id}
+              nombreProyecto={record.nombre_etapa}
+            />
+          )}
+          
+          {/* Botón Confirmar cuando está disponible - SOLO para items sin hijos */}
+          {!record.hijos && (
+            <Button
+              type="primary"
+              size="small"
+              icon={<CheckOutlined />}
+              onClick={() => abrirModalConfirmacion(record)}
+              disabled={record.estado !== 1} // CORREGIDO: ahora usa número 1
+            >
+              Confirmar
+            </Button>
+          )}
+        </Space>
       ),
     },
   ];
+
+  // Configuración expandible
+  const expandable = {
+    expandedRowKeys,
+    onExpandedRowsChange: setExpandedRowKeys,
+    expandedRowRender: (record: DocumentacionDetalle) => (
+      <div style={{ margin: 0, padding: 0 }}>
+        {record.hijos && record.hijos.map((hijo) => (
+          <div 
+            key={hijo.id} 
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              padding: '12px 16px',
+              borderBottom: '1px solid #f0f0f0',
+              backgroundColor: '#fafafa',
+              marginLeft: '20px'
+            }}
+          >
+            {/* Actividad */}
+            <div style={{ flex: 1 }}>
+              <strong>{hijo.actividad?.actividad || "Sin nombre"}</strong>
+            </div>
+            
+            {/* Estado */}
+            <div style={{ width: 120 }}>
+              <Tag color={getEstadoColor(hijo.estado)}>
+                {getEstadoTexto(hijo.estado)}
+              </Tag>
+            </div>
+            
+            {/* Acciones para hijos */}
+            <div style={{ width: 150 }}>
+              <Space size="small">
+                {/* Botón Ver Documento cuando está completado */}
+                {hijo.estado === 2 && ( // CORREGIDO: ahora usa número 2
+                  <VerDocumentoRed
+                    codigo_proyecto={hijo.codigo_proyecto}
+                    codigo_documento={hijo.codigo_documento}
+                    etapa={hijo.etapa}
+                    actividad_id={hijo.actividad_id}
+                    nombreProyecto={hijo.nombre_etapa}
+                  />
+                )}
+                
+                {/* Botón Confirmar cuando está disponible */}
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<CheckOutlined />}
+                  onClick={() => abrirModalConfirmacion(hijo)}
+                  disabled={hijo.estado !== 1} // CORREGIDO: ahora usa número 1
+                >
+                  Confirmar
+                </Button>
+              </Space>
+            </div>
+          </div>
+        ))}
+      </div>
+    ),
+    rowExpandable: (record: DocumentacionDetalle) => 
+      record.hijos !== undefined && record.hijos.length > 0,
+  };
 
   if (loading) {
     return (
@@ -227,12 +303,13 @@ export const ListaActividadesOrganismos = () => {
           columns={columns}
           loading={loading}
           rowKey="id"
+          expandable={expandable}
           pagination={{
             pageSize: 100,
             showSizeChanger: true,
             showTotal: (total) => `Total ${total} actividades`,
           }}
-          scroll={{ x: 1000 }}
+          scroll={{ x: 800 }}
         />
       )}
 
