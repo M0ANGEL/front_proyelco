@@ -1,20 +1,12 @@
 import { useEffect, useState } from "react";
 import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  Button,
-  Input,
-  Space,
-  Tag,
-  Typography,
-} from "antd";
+import { Button, Input, Space, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
 import Table, { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import {
-  getActiActivosAceptar,
-} from "@/services/activosFijos/TrasladosActivosAPI";
+import { getActiActivosAceptar } from "@/services/activosFijos/TrasladosActivosAPI";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { ModalRechazarActivo } from "./ModalRechazarActivo";
 import { ModalAceptarActivo } from "./ModalAceptarActivo";
@@ -100,7 +92,6 @@ export const AceptarTraslados = () => {
     setDataSource(filterTable);
   };
 
-
   const columns: ColumnsType<DataType> = [
     {
       title: "Descripcion",
@@ -109,6 +100,12 @@ export const AceptarTraslados = () => {
       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
       render: (text) => text?.toUpperCase(),
       fixed: "left",
+    },
+    {
+      title: "Categoria",
+      dataIndex: "categoria",
+      key: "categoria",
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Area Origen",

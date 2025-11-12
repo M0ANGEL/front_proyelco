@@ -8,9 +8,22 @@ import {
   UploadFile,
   UploadProps,
   notification,
+  Card,
+  Space,
+  Typography,
+  Divider
 } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { 
+  UploadOutlined, 
+  CheckCircleOutlined,
+  CloseOutlined,
+  PaperClipOutlined,
+  DeleteOutlined
+} from "@ant-design/icons";
 import { BASE_URL } from "@/config/api";
+
+const { Title, Text } = Typography;
+const { TextArea } = Input;
 
 interface ModalConfirmacionProps {
   visible: boolean;
@@ -29,7 +42,7 @@ export const ModalConfirmacionOrganismo = ({
   const [file, setFile] = useState<UploadFile>();
   const [loading, setLoading] = useState(false);
 
-  // Función para validar el tipo de archivo por extensión
+  // Función para validar el tipo de archivo
   const validarArchivo = (file: File): boolean => {
     const extensionesPermitidas = ['.jpg', '.jpeg', '.png', '.pdf'];
     const extension = '.' + file.name.toLowerCase().split('.').pop();
@@ -42,24 +55,8 @@ export const ModalConfirmacionOrganismo = ({
       return false;
     }
 
-    // Validar por tipo MIME también
-    const tiposMimePermitidos = [
-      'image/jpeg',
-      'image/jpg', 
-      'image/png',
-      'application/pdf'
-    ];
-    
-    if (!tiposMimePermitidos.includes(file.type)) {
-      notification.error({
-        message: "Tipo de archivo no válido",
-        description: "El archivo no es un JPG, PNG o PDF válido",
-      });
-      return false;
-    }
-
     // Validar tamaño (10MB)
-    const tamanoMaximo = 10 * 1024 * 1024; // 10MB en bytes
+    const tamanoMaximo = 10 * 1024 * 1024;
     if (file.size > tamanoMaximo) {
       notification.error({
         message: "Archivo muy grande",
@@ -78,54 +75,39 @@ export const ModalConfirmacionOrganismo = ({
       if (!validarArchivo(file)) {
         return false;
       }
-      
       setFile(file);
-      return false; // Evitar subida automática
+      return false;
     },
     onRemove: () => setFile(undefined),
-    fileList: file ? [file] : [], // Mostrar el archivo seleccionado
+    fileList: file ? [file] : [],
+    showUploadList: false,
   };
 
   const handleConfirmar = async () => {
     try {
       const values = await form.validateFields();
       
-      // Validar archivo si existe (no es obligatorio)
+      // Validar archivo si existe
       if (file && !validarArchivo(file as any)) {
         return;
       }
 
       setLoading(true);
       
-      // Crear FormData para enviar archivo y datos
+      // Crear FormData solo con lo necesario
       const formData = new FormData();
       
-      // Datos internos
+      // Solo enviar datos esenciales
       formData.append("id", actividad.id.toString());
-      formData.append("codigo_proyecto", actividad.codigo_proyecto);
-      formData.append("codigo_documento", actividad.codigo_documento);
-      formData.append("etapa", actividad.etapa.toString());
-      formData.append("actividad_id", actividad.actividad_id.toString());
-      formData.append("actividad_depende_id", actividad.actividad_depende_id?.toString() || "");
-      formData.append("tipo", actividad.tipo);
-      formData.append("orden", actividad.orden.toString());
-      formData.append("fecha_proyeccion", actividad.fecha_proyeccion);
-      formData.append("fecha_actual", actividad.fecha_actual);
-      formData.append("operador", actividad.operador.toString());
-      formData.append("actividad_nombre", actividad.actividad?.actividad || "");
       formData.append("observacion", values.observacion);
       
       // Agregar archivo solo si existe
       if (file) {
         formData.append("archivo", file as any);
       }
-      
-      formData.append("estado", "2");
-      formData.append("fecha_confirmacion", new Date().toISOString().split('T')[0]);
-      formData.append("usaurio_id", "1");
 
       try {
-        const response = await fetch(BASE_URL + "gestion-documentos-confirmar", {
+        const response = await fetch(BASE_URL + "gestion-documentos-confirmar-organismos", {
           method: "POST",
           headers: { 
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -141,7 +123,7 @@ export const ModalConfirmacionOrganismo = ({
         
         if (result.status === "success") {
           notification.success({
-            message: "Actividad confirmada",
+            message: "✅ Actividad confirmada",
             description: `"${actividad.actividad?.actividad}" ha sido confirmada exitosamente`,
           });
           form.resetFields();
@@ -155,7 +137,7 @@ export const ModalConfirmacionOrganismo = ({
       } catch (error: any) {
         console.error("Error en la petición:", error);
         notification.error({
-          message: "Error",
+          message: "❌ Error",
           description: error.message || "No se pudo confirmar la actividad",
         });
       }
@@ -176,11 +158,21 @@ export const ModalConfirmacionOrganismo = ({
 
   return (
     <Modal
-      title={`Confirmar Actividad: ${actividad?.actividad?.actividad}`}
+      title={
+        <Space>
+          <CheckCircleOutlined style={{ color: '#52c41a', fontSize: '20px' }} />
+          <span>Confirmar Actividad</span>
+        </Space>
+      }
       open={visible}
       onCancel={handleCancel}
       footer={[
-        <Button key="cancel" onClick={handleCancel}>
+        <Button 
+          key="cancel" 
+          onClick={handleCancel}
+          icon={<CloseOutlined />}
+          disabled={loading}
+        >
           Cancelar
         </Button>,
         <Button
@@ -188,23 +180,54 @@ export const ModalConfirmacionOrganismo = ({
           type="primary"
           loading={loading}
           onClick={handleConfirmar}
+          icon={<CheckCircleOutlined />}
+          style={{
+            background: 'linear-gradient(135deg, #52c41a 0%, #73d13d 100%)',
+            border: 'none',
+            fontWeight: 'bold'
+          }}
         >
-          Confirmar Actividad
+          {loading ? 'Confirmando...' : 'Confirmar'}
         </Button>,
       ]}
-      width={600}
+      width={500}
+      styles={{
+        body: { padding: '20px 0' }
+      }}
+      closeIcon={<CloseOutlined />}
+      destroyOnClose
     >
-      <Form form={form} layout="vertical">
+      {/* Información de la actividad */}
+      <Card 
+        size="small" 
+        style={{ 
+          marginBottom: 20,
+          borderLeft: '4px solid #1890ff'
+        }}
+        bodyStyle={{ padding: '12px' }}
+      >
+        <Text strong style={{ fontSize: '14px' }}>
+          {actividad?.actividad?.actividad || "Actividad"}
+        </Text>
+      </Card>
+
+      <Form form={form} layout="vertical" requiredMark="optional">
         <Form.Item
           name="observacion"
           label="Observación"
           rules={[
-            { required: true, message: "Por favor ingrese una observación" },
-            { min: 5, message: "La observación debe tener al menos 5 caracteres" }
+            { 
+              required: true, 
+              message: "Por favor ingrese una observación" 
+            },
+            { 
+              min: 5, 
+              message: "La observación debe tener al menos 5 caracteres" 
+            }
           ]}
         >
-          <Input.TextArea
-            rows={4}
+          <TextArea
+            rows={3}
             placeholder="Ingrese observaciones sobre la actividad..."
             maxLength={500}
             showCount
@@ -212,27 +235,40 @@ export const ModalConfirmacionOrganismo = ({
         </Form.Item>
 
         <Form.Item
-          label="Subir Archivo (Opcional)"
-          extra={
-            <div>
-              <p><strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF</p>
-              <p><strong>Tamaño máximo:</strong> 10MB</p>
-              <p><strong>Opcional:</strong> Puede confirmar la actividad sin subir archivo</p>
-            </div>
-          }
+          label="Archivo de soporte (Opcional)"
         >
-          <Upload {...uploadProps}>
-            <Button icon={<UploadOutlined />}>
-              Seleccionar archivo
-            </Button>
-          </Upload>
-          {file && (
-            <div style={{ marginTop: 8, padding: 8, backgroundColor: '#e6f7ff', borderRadius: 4 }}>
-              <p><strong>Archivo seleccionado:</strong> {file.name}</p>
-              <p><strong>Tamaño:</strong> {(file.size / 1024 / 1024).toFixed(2)} MB</p>
-              <p><strong>Tipo:</strong> {(file as any).type}</p>
-            </div>
-          )}
+          <Space direction="vertical" style={{ width: '100%' }} size="small">
+            {!file ? (
+              <Upload {...uploadProps}>
+                <Button icon={<UploadOutlined />}>
+                  Seleccionar archivo
+                </Button>
+              </Upload>
+            ) : (
+              <Card
+                size="small"
+                style={{ backgroundColor: '#fafafa' }}
+                bodyStyle={{ padding: '8px 12px' }}
+              >
+                <Space style={{ width: '100%', justifyContent: 'space-between' }}>
+                  <Space>
+                    <PaperClipOutlined />
+                    <Text>{file.name}</Text>
+                  </Space>
+                  <Button
+                    type="text"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => setFile(undefined)}
+                    size="small"
+                  />
+                </Space>
+              </Card>
+            )}
+            <Text type="secondary" style={{ fontSize: '12px' }}>
+              Formatos: JPG, PNG, PDF • Máx. 10MB
+            </Text>
+          </Space>
         </Form.Item>
       </Form>
     </Modal>

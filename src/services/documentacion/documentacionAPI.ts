@@ -42,8 +42,9 @@ export const getProyectosCodigo =
 
 
   //detalle de la documentacion organismos
-export const getDocumentaCIonOrganismos = async (id: React.Key): Promise<any> => {
-  return await client.get<any>(`detalleDocumentosOrganismos/${id}`, {
+
+export const getDocumentaCIonOrganismos = async (data: any): Promise<any> => {
+  return await client.post<any>("detalleDocumentosOrganismos", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
   });
 };
