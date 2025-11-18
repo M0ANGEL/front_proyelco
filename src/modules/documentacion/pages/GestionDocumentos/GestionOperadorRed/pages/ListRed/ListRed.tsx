@@ -14,7 +14,7 @@ export const ListRed = () => {
   const location = useLocation();
 
   // Determinar si estamos en la ruta base o en una ruta interna
-  const isBaseRoute = location.pathname === "/documentacion/operador-red";
+  const isBaseRoute = location.pathname === "/tramites/documentacion-all";
   const isInternalRoute = !isBaseRoute;
 
   const handleShowCreate = () => {

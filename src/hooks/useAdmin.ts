@@ -1,14 +1,37 @@
+// src/hooks/useAdmin.ts
 import { useAuth } from "./useAuth";
 
+// Definir los roles que se consideran administradores
+const ADMIN_ROLES = [
+  'Administrador'
+  // 'Administrador TI', 
+  // 'Super Administrador',
+  // 'Admin',
+  // 'SuperAdmin'
+];
+
 export const useAdmin = () => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
-  const isAdmin =
-    user?.rol?.includes("Administrador") ||
-    user?.cargo?.includes("Administrador") ||
-    user?.perfiles?.some((perfil) =>
-      perfil.nom_perfil.includes("Administrador")
-    );
+  // ✅ Verificación de roles administrativos (exactos)
+  const isAdmin = Boolean(
+    user?.rol && 
+    (
+      // Caso 1: Rol está en la lista de ADMIN_ROLES
+      ADMIN_ROLES.includes(user.rol) ||
+      // Caso 2: Rol es array que contiene algún rol administrativo
+      (Array.isArray(user.rol) && user.rol.some(role => 
+        role && ADMIN_ROLES.includes(role)
+      ))
+    )
+  );
 
-  return { isAdmin };
+  const hasAdminAccess = isAuthenticated && isAdmin;
+
+  return { 
+    isAdmin, 
+    hasAdminAccess,
+    userRole: user?.rol,
+    adminRoles: ADMIN_ROLES
+  };
 };

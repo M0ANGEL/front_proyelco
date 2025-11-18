@@ -69,7 +69,7 @@ const AppRouter: React.FC = () => {
                   <Route path="logistica/*" element={<LogisticaAdminRouter />} />
                   <Route path="informes/*" element={<InformePowerBiRouter />} />
                   <Route path="solicitudmaterial/*" element={<MaterialesRoutes />} />
-                  <Route path="documentacion/*" element={<DocumentacionRoutes />} />
+                  <Route path="tramites/*" element={<DocumentacionRoutes />} />
                   <Route path="contabilidad/*" element={<ContabilidadRoutes />} />
 
                   {/* Ruta por defecto */}
