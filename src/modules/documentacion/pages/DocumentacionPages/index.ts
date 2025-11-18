@@ -1,0 +1,1 @@
+export {DocumentacionPages} from './DocumentacionPages'

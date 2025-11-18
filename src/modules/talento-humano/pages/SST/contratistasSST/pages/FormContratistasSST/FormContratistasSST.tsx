@@ -14,13 +14,13 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosCategoria } from "@/services/types";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
 import { crearContratista, getContratista, updateContratista } from "@/services/talento-humano/contratistasAPI";
+import useSerialize from "@/hooks/useUpperCase";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
+import { ActivosCategoria } from "@/types/typesGlobal";
 
 const { Text } = Typography;
 
@@ -45,18 +45,7 @@ export const FormContratistasSST = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
+
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -67,7 +56,7 @@ export const FormContratistasSST = () => {
     if (categoria) {
       updateContratista(data, id)
         .then(() => {
-          pushNotification({ title: "Bodega / Area actualizado con éxito!" });
+          notify.success("Bodega / Area actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
@@ -75,29 +64,19 @@ export const FormContratistasSST = () => {
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
 
-          pushNotification({
-            type: "error",
-            title: "Error al actualizar",
-            description: error.message || "Ocurrió un error inesperado",
-          });
+          notify.success("Error al actualizar",error);
           setLoaderSave(false);
         });
     } else {
       crearContratista(data)
         .then(() => {
-          pushNotification({ title: "Bodega / Area creado con éxito!" });
+          notify.success("Bodega / Area creado con éxito!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.error,
-            description: error.response?.data?.errors?.prefijo
-              ? "PREFIJO EN USO"
-              : error.message,
-          });
+          notify.success(error);
           setLoaderSave(false);
         });
     }

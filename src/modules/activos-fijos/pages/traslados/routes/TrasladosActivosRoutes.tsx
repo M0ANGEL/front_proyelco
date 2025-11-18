@@ -1,5 +1,4 @@
-import { RoutesWithNotFound } from "@/modules/common/components";
-import { AuthGuard } from "@/modules/common/guards";
+import { AuthGuard, RoutesWithNotFound } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
 import { TrasladosActivosPage } from "../pages/TrasladosActivosPage";
 import { TrasladarActivosAdmin, AceptarTraslados, TrasladarActivos, MesajeroActivos, TrasladarPendientesActivosAdmin, SolicitarTraslado } from "../pages";

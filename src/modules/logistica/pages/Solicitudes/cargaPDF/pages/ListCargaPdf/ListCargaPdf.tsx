@@ -64,7 +64,7 @@ export const ListCargaPdf = () => {
   };
 
   return (
-    <Card title="Carga de PDFs" style={{ maxWidth: "100%", margin: "20px auto", textAlign: "center" }}>
+    <Card title="Carga de PDFs" style={{ maxWidth: "100%", margin: "20px auto", textAlign: "center", width: '90%' }}>
       <Dragger {...props} fileList={fileList} style={{ padding: 20 }}>
         <p className="ant-upload-drag-icon">
           <InboxOutlined style={{ fontSize: 48, color: "#1890ff" }} />

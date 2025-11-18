@@ -1,1 +1,0 @@
-export {ObservacionModalCliente} from "./ObservacionModalCliente"

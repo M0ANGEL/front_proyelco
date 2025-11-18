@@ -9,7 +9,6 @@ import {
   Typography,
 } from "antd";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
 import {
   cargosTH,
@@ -17,6 +16,7 @@ import {
   paisesTH,
 } from "@/services/talento-humano/personalAPI";
 import dayjs from "dayjs";
+import { StyledFormItem } from "@/components/layout/styled";
 // import { getContratistas } from "@/services/talento-humano/contratistasAPI";
 
 const { Text } = Typography;

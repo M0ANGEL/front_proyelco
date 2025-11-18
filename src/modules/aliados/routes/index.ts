@@ -1,1 +1,0 @@
-export { AliadosRoutes } from "./AliadosRoutes";

@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Tag, Typography } from "antd";
+import { Button, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { DeleteActiActivos } from "@/services/activosFijos/CrearActivosAPI";
 import { FormTraslados } from "../formTraslados/FormTraslados";
 import { getActiAdministrarActivosAdmin } from "@/services/activosFijos/AdministarActivosAdminAPI";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -45,6 +45,12 @@ export const TrasladarActivosAdmin = () => {
   const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
 
+  // Estados para filtros
+  const [condicionFilter, setCondicionFilter] = useState<string>();
+  const [categoriaFilter, setCategoriaFilter] = useState<string>();
+  const [subcategoriaFilter, setSubcategoriaFilter] = useState<string>();
+  const [bodegaFilter, setBodegaFilter] = useState<string>();
+
   useEffect(() => {
     fetchCategorias();
   }, []);
@@ -78,8 +84,13 @@ export const TrasladarActivosAdmin = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
@@ -88,16 +99,69 @@ export const TrasladarActivosAdmin = () => {
     setDataSource(filterTable);
   };
 
-  //cambio de estado
-  const handleStatus = (id: React.Key) => {
-    setLoadingRow([...loadingRow, id]);
-    DeleteActiActivos(id)
-      .then(() => {
-        fetchCategorias();
-      })
-      .catch(() => {
-        setLoadingRow([]);
-      });
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: any) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por categoría
+    if (categoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por subcategoría
+    if (subcategoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.subcategoria?.toLowerCase().includes(subcategoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega
+    if (bodegaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_actual?.toLowerCase().includes(bodegaFilter.toLowerCase())
+      );
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setCondicionFilter(undefined);
+    setCategoriaFilter(undefined);
+    setSubcategoriaFilter(undefined);
+    setBodegaFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [condicionFilter, categoriaFilter, subcategoriaFilter, bodegaFilter, initialData]);
+
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
   };
 
   const columns: ColumnsType<DataType> = [
@@ -121,6 +185,13 @@ export const TrasladarActivosAdmin = () => {
       dataIndex: "descripcion",
       key: "descripcion",
       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Bodega Actual",
+      dataIndex: "bodega_actual",
+      key: "bodega_actual",
+      sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -163,7 +234,6 @@ export const TrasladarActivosAdmin = () => {
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
     },
-
     {
       title: "Valor",
       dataIndex: "valor",
@@ -176,13 +246,40 @@ export const TrasladarActivosAdmin = () => {
       key: "acciones",
       align: "center",
       render: (_, record) => (
-        <>
-          <FormTraslados data={record} fetchList={() => fetchCategorias()} />
-        </>
+        <FormTraslados data={record} fetchList={() => fetchCategorias()} />
       ),
       fixed: "right",
-      width: 70,
+      width: 100,
     },
+  ];
+
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "condicion",
+      label: "Condición",
+      options: [
+        { label: "Bueno", value: "1" },
+        { label: "Regular", value: "2" },
+        { label: "Malo", value: "3" }
+      ],
+      value: condicionFilter,
+      onChange: setCondicionFilter
+    },
+    {
+      key: "categoria",
+      label: "Categoría",
+      options: getUniqueOptions(initialData, 'categoria'),
+      value: categoriaFilter,
+      onChange: setCategoriaFilter
+    },
+    {
+      key: "bodega",
+      label: "Bodega Actual",
+      options: getUniqueOptions(initialData, 'bodega_actual'),
+      value: bodegaFilter,
+      onChange: setBodegaFilter
+    }
   ];
 
   return (
@@ -196,22 +293,27 @@ export const TrasladarActivosAdmin = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
-      </SearchBar>
-      <Table
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar activos para traslado..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
+      
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"
-        dataSource={dataSource ?? initialData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
-        scroll={{ x: 800 }}
+        scroll={{ x: 1200 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
           defaultPageSize: 100,
-          pageSizeOptions: ["5", "15", "30"],
+          pageSizeOptions: ["5", "15", "30", "50", "100"],
           showTotal: (total: number) => {
             return <Text>Total Registros: {total}</Text>;
           },

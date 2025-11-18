@@ -1,0 +1,1 @@
+export {ContabilidadRoutes} from './ContabilidadRoutes'

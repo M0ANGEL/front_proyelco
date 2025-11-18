@@ -1,1 +1,0 @@
-export { ListTicketsGenerados } from "./ListGestioGenerados";

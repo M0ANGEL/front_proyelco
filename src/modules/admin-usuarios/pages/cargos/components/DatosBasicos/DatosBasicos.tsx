@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import { getEmpresas } from "@/services/maestras/empresasAPI";
 import { Col, Input, Row, Select, SelectProps, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Cargo } from "@/services/types";
+import { Cargo } from "@/types/typesGlobal";
+import { getEmpresas } from "@/services/administrarUsuarios/empresaAPI";
+import { StyledFormItem } from "@/components/layout/styled";
+import { notify } from "@/components/global/NotificationHandler";
 
 const { Text } = Typography;
 
 interface Props {
-  onPushNotification: (data: Notification) => void;
   cargo?: Cargo;
 }
 
-export const DatosBasicos = ({ onPushNotification, cargo }: Props) => {
+export const DatosBasicos = ({ cargo }: Props) => {
   const [loaderEmp, setLoaderEmp] = useState<boolean>(false);
   const [selectEmpresa, setSelectEmpresas] = useState<SelectProps["options"]>(
     []
@@ -48,11 +47,7 @@ export const DatosBasicos = ({ onPushNotification, cargo }: Props) => {
         setLoaderEmp(false);
       })
       .catch((error) => {
-        onPushNotification({
-          type: "error",
-          title: error.code,
-          description: error.message,
-        });
+        notify.error(error);
         setLoaderEmp(false);
       });
   }, [cargo]);

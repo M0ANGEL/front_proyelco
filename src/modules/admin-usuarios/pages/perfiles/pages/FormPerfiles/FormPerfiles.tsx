@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  Button,
   Form,
   Space,
   Spin,
@@ -12,22 +11,22 @@ import {
 import { useEffect, useState } from "react";
 import {
   LoadingOutlined,
-  ArrowLeftOutlined,
-  SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { DatosBasicos, ModulosPerfil } from "../../components";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
+import { Modulo, Perfil } from "@/types/auth.types";
+import useSerialize from "@/hooks/useUpperCase";
 import {
   crearPerfil,
   getPerfil,
   updatePerfil,
-} from "@/services/maestras/perfilesAPI";
-import { Modulo, Perfil } from "@/services/types";
-import { getModulos } from "@/services/maestras/modulosAPI";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
+} from "@/services/administrarUsuarios/perfilesAPI";
+import { getModulos } from "@/services/administrarUsuarios/modulosAPI";
+import { StyledCard } from "@/components/layout/styled";
+import { Notification } from "@/components/global/NotificationHandler";
+import { BackButton } from "@/components/global/BackButton";
+import { SaveButton } from "@/components/global/SaveButton";
 
 const { Text } = Typography;
 
@@ -39,6 +38,7 @@ export const FormPerfiles = () => {
   const [loaderModulos, setLoaderModulos] = useState<boolean>(false);
   const [generalErrors, setGeneralErrors] = useState<boolean>(false);
   const [api, contextHolder] = notification.useNotification();
+  const [loading, setLoading] = useState(false);
   const { transformToUpperCase } = useSerialize();
   const navigate = useNavigate();
   const control = useForm();
@@ -80,6 +80,7 @@ export const FormPerfiles = () => {
   };
 
   const onFinish: SubmitHandler<any> = async (data: any) => {
+    setLoading(true);
     data = transformToUpperCase(data, ["nom_perfil", "desc_perfil"]);
     setLoaderSave(true);
     if (control.getValues("modulos")) {
@@ -133,35 +134,10 @@ export const FormPerfiles = () => {
               title={(perfil ? "Editar" : "Crear") + " perfil"}
               extra={
                 <Space>
-                  <Button
-                    htmlType="submit"
-                    type="primary"
-                    icon={<SaveOutlined />}
-                  >
-                    Guardar
-                  </Button>
-
-                  {perfil ? (
-                    <Link to="../.." relative="path">
-                      <Button
-                        danger
-                        type="primary"
-                        icon={<ArrowLeftOutlined />}
-                      >
-                        Volver
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Link to=".." relative="path">
-                      <Button
-                        danger
-                        type="primary"
-                        icon={<ArrowLeftOutlined />}
-                      >
-                        Volver
-                      </Button>
-                    </Link>
-                  )}
+                  <SaveButton loading={loading} />
+                  <Link to={perfil ? "../.." : ".."} relative="path">
+                    <BackButton />
+                  </Link>
                 </Space>
               }
             >

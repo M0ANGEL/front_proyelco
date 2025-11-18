@@ -1,1 +1,0 @@
-export { TagAutorizacion } from "./TagAutorizacion";

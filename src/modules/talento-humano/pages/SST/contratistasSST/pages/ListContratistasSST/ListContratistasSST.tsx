@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { SyncOutlined } from "@ant-design/icons";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
 import { DeleteContratista, getContratistas } from "@/services/talento-humano/contratistasAPI";
+import { DataTable } from "@/components/global/DataTable";
+import { BotonesOpciones } from "@/components/global/BotonesOpciones";
+import { notify } from "@/components/global/NotificationHandler";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { StyledCard } from "@/components/layout/styled";
 
 interface DataType {
   key: number;
@@ -25,6 +27,7 @@ interface DataType {
   user_id: string;
   created_at: string;
   updated_at: string;
+  estado: string;
 }
 
 const { Text } = Typography;
@@ -56,7 +59,6 @@ export const ListContratistasSST = () => {
           telefono: categoria.telefono,
           direccion: categoria.direccion,
           correo: categoria.correo,
-
           user_id: categoria.user_id,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -70,8 +72,7 @@ export const ListContratistasSST = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  const handleSearch = (value: string) => {
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
@@ -85,11 +86,19 @@ export const ListContratistasSST = () => {
     setLoadingRow([...loadingRow, id]);
     DeleteContratista(id)
       .then(() => {
+        notify.success("Estado del contratista actualizado con éxito");
         fetchCategorias();
       })
-      .catch(() => {
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Error al cambiar el estado";
+        notify.error("Error", msg);
         setLoadingRow([]);
       });
+  };
+
+  const handleEdit = (record: DataType) => {
+    // Navegar a la página de edición
+    window.location.href = `${location.pathname}/edit/${record.key}`;
   };
 
   const columns: ColumnsType<DataType> = [
@@ -99,6 +108,7 @@ export const ListContratistasSST = () => {
       key: "nombre",
       sorter: (a, b) => a.nombre.localeCompare(b.nombre),
       render: (text) => text?.toUpperCase(),
+      fixed: "left" as const,
     },
     {
       title: "Nit",
@@ -108,10 +118,22 @@ export const ListContratistasSST = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Telefono",
+      title: "Teléfono",
       dataIndex: "telefono",
       key: "telefono",
       sorter: (a, b) => a.telefono.localeCompare(b.telefono),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Correo",
+      dataIndex: "correo",
+      key: "correo",
+      render: (text) => text?.toLowerCase(),
+    },
+    {
+      title: "Contacto",
+      dataIndex: "contacto",
+      key: "contacto",
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -119,7 +141,7 @@ export const ListContratistasSST = () => {
       dataIndex: "estado",
       key: "estado",
       align: "center",
-      render: (_, record: { key: React.Key; estado: string }) => {
+      render: (_, record: DataType) => {
         let estadoString = "";
         let color;
         if (record.estado === "1") {
@@ -135,9 +157,7 @@ export const ListContratistasSST = () => {
             onConfirm={() => handleStatus(record.key)}
             placement="left"
           >
-            <ButtonTag
-              color={color}
-            >
+            <ButtonTag color={color}>
               <Tooltip title="Cambiar estado">
                 <Tag
                   color={color}
@@ -162,13 +182,20 @@ export const ListContratistasSST = () => {
       dataIndex: "acciones",
       key: "acciones",
       align: "center",
-      render: (_, record: { key: React.Key }) => {
+      fixed: "right" as const,
+      render: (_, record: DataType) => {
         return (
-          <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
-            </Link>
-          </Tooltip>
+          <BotonesOpciones
+            botones={[
+              {
+                tipo: "editar",
+                label: "Editar contratista",
+                onClick: () => handleEdit(record),
+              }
+            ]}
+            soloIconos={true}
+            size="small"
+          />
         );
       },
     },
@@ -183,27 +210,32 @@ export const ListContratistasSST = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
-      </SearchBar>
-      <Table
-        className="custom-table"
-        rowKey={(record) => record.key}
-        size="small"
-        dataSource={dataSource ?? initialData}
+      <div style={{ marginBottom: 16 }}>
+        <Input 
+          placeholder="Buscar contratista..." 
+          onChange={(e) => handleSearch(e.target.value)}
+          style={{ width: 300, borderRadius: 8 }}
+          allowClear
+        />
+      </div>
+      
+      <DataTable
         columns={columns}
+        dataSource={dataSource}
         loading={loading}
-        scroll={{ x: 800 }}
+        withPagination={true}
+        hasFixedColumn={true}
+        stickyHeader={true}
+        scroll={{ x: 1200, y: 500 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
-          defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
-          showTotal: (total: number) => {
-            return <Text>Total Registros: {total}</Text>;
-          },
+          showQuickJumper: true,
+          showTotal: (total, range) => 
+            `${range[0]}-${range[1]} de ${total} registros`,
+          pageSizeOptions: ["10", "20", "50"],
+          defaultPageSize: 10,
         }}
-        bordered
       />
     </StyledCard>
   );

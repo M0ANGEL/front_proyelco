@@ -1,7 +1,8 @@
-import { RoutesWithNotFound } from "@/modules/common/components";
-import { AuthGuard } from "@/modules/common/guards";
+
 import { Route } from "react-router-dom";
 import { FormUsuarios, ListUsuarios } from "..";
+import { RoutesWithNotFound } from "@/modules/common/guards/NotFound/RoutesWithNotFound";
+import { AuthGuard } from "@/modules/common/guards";
 
 export const UsuariosRoutes = () => {
   return (

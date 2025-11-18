@@ -9,14 +9,14 @@ import {
   Tooltip,
 } from "antd";
 import { useEffect, useState } from "react";
-import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   getActiBodegas,
 } from "@/services/activosFijos/BodegasAPI";
 import { envioSolicitudActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineIssuesClose } from "react-icons/ai";
+import { ActivosData } from "@/types/typesGlobal";
+import { StyledFormItem } from "@/components/layout/styled";
 
 interface GenerarQRProps {
   data: ActivosData;

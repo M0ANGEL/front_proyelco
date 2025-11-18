@@ -1,1 +1,0 @@
-export { ListaDispensacionesRoutes } from "./ListaDispensacionesRoutes";

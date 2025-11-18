@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
 // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
 import { DeleteActiSubCategoria, getActiSubCategorias } from "@/services/activosFijos/SubCategoriasAPI";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -173,7 +174,7 @@ export const ListSubCategoriasActivos = () => {
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />
       </SearchBar>
-      <Table
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"

@@ -1,11 +1,10 @@
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Col, Collapse, Row, Space, Typography, Button } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { StyledCardGrid } from "./styled";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
-
+import { StyledCard } from "@/components/layout/styled";
+import useSessionStorage from "@/hooks/useSessionStorage";
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -19,7 +18,7 @@ export const TrasladosActivosPage = () => {
     { id: 1, codigo: "RST", descripcion: "Realizar Traslado de mis activos" },
     { id: 2, codigo: "APT", descripcion: "Aceptar Traslado" },
     { id: 3, codigo: "SLA", descripcion: "Solicitar Activo" },
-    // { id: 4, codigo: "TRM", descripcion: "Traslados Mensajero" },
+    { id: 4, codigo: "TRM", descripcion: "Traslados Logistica" },
     { id: 5, codigo: "TRSDM", descripcion: "Traslados Admin" },
     // { id: 6, codigo: "TRSDPM", descripcion: "Traslados Pendiente Admin" },
   ];
@@ -27,7 +26,10 @@ export const TrasladosActivosPage = () => {
   // Filtrar los traslados según el rol del usuario
   const trasladosFiltrados = traslados.filter((traslado) => {
     if (rol === 'Administrador' || rol === 'Admin Activos' || rol === 'Directora Proyectos'||  rol === 'Administrador TI' || rol === 'Activos'){
-      return ['RST','APT', 'SLA', 'TRSDM'].includes(traslado.codigo)
+      return ['RST','APT', 'SLA', 'TRSDM','TRM'].includes(traslado.codigo)
+    }
+    if (rol === 'Logistica'){
+      return ['TRM','RST', 'APT','SLA'].includes(traslado.codigo)
     }
     return ['RST', 'APT','SLA'].includes(traslado.codigo);
   });
@@ -74,5 +76,4 @@ export const TrasladosActivosPage = () => {
       </Collapse>
     </StyledCard>
   );
-  
 };

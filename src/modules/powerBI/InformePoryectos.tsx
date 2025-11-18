@@ -5,7 +5,7 @@ export const InformePoryectos = () => {
         title="Avance Obras"
         width="100%"
         height="800"
-        src="https://app.powerbi.com/view?r=eyJrIjoiODhlMWVhN2ItZDMwYS00ZjA1LWI5ZjgtZTI2NTgwOWJjNmRjIiwidCI6IjEyMzY1MWQ2LTdkYzEtNDI4OC04YzczLTI3ZjhlN2NiZjllYyJ9"
+        src="https://app.powerbi.com/view?r=eyJrIjoiZjBkNTliNTctNDc0OC00OGQ4LWFhMzctZjUzOThlNDA4YTU3IiwidCI6IjEyMzY1MWQ2LTdkYzEtNDI4OC04YzczLTI3ZjhlN2NiZjllYyJ9"
         frameBorder="0"
         allowFullScreen={true}
         className="rounded-2xl shadow-lg"

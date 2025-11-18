@@ -2,18 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useFormContext } from "react-hook-form";
 import { Col, Row } from "antd";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ItemModulo, Props } from "./types";
 import Tree, { DataNode, TreeProps } from "antd/es/tree";
-import { GlobalContext } from "@/router/GlobalContext";
 
 export const ModulosPerfil = ({ perfil, modulos }: Props) => {
-  const context = useContext(GlobalContext);
-  if (!context) {
-    throw new Error("ModulosPerfil: No se encuentra en el contexto GlobalContext");
-  }
-
-  const { userGlobal } = context;  
   const methods = useFormContext();
   const [modules, setModules] = useState<ItemModulo[]>([]);
   const [selectKeysGlobal, setSelectedKeysGlobal] = useState<string[]>([]);
@@ -25,7 +18,6 @@ export const ModulosPerfil = ({ perfil, modulos }: Props) => {
         {
           key: `modulo_${modulo.id}`,
           title: modulo.nom_modulo,
-          disabled: modulo.cod_modulo == 'GSTHUM' && userGlobal?.perfiles[0].nom_perfil != 'SUPER_ADMIN',
           children: modulo.menus.map((menu) => {
             return {
               key: `menu_${modulo.id}_${menu.id}`,
@@ -138,3 +130,4 @@ export const ModulosPerfil = ({ perfil, modulos }: Props) => {
     </>
   );
 };
+

@@ -1,0 +1,2 @@
+export {MaterialesPages} from "./MaterialesPages";
+

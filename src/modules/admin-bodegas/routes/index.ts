@@ -1,1 +1,0 @@
-export { AdminBodegasRoutes } from "./AdminBodegasRoutes";

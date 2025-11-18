@@ -1,1 +1,0 @@
-export {FormConfiguracion} from "./FormConfiguracion"

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Form,
-  notification,
   Space,
   Spin,
   Tabs,
@@ -14,21 +13,20 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosSubCategoria } from "@/services/types";
 import { DatosBasicos } from "../components";
 import {
   crearActiSubCategoria,
   getActiSubCategoria,
   updateActiSubCategoria,
 } from "@/services/activosFijos/SubCategoriasAPI";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
+import { ActivosSubCategoria } from "@/types/typesGlobal";
 
 const { Text } = Typography;
 
 export const FormSubCategoriasActivos = () => {
-  const [api, contextHolder] = notification.useNotification();
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<ActivosSubCategoria>();
@@ -47,18 +45,6 @@ export const FormSubCategoriasActivos = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -67,35 +53,26 @@ export const FormSubCategoriasActivos = () => {
     if (categoria) {
       updateActiSubCategoria(data, id)
         .then(() => {
-          pushNotification({ title: "Subcategoria actualizado con éxito!" });
+          notify.success("Subcategoria actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-
-          pushNotification({
-            type: "error",
-            title: "Error al actualizar",
-            description: error.message || "Ocurrió un error inesperado",
-          });
+        notify.error(error);
           setLoaderSave(false);
         });
     } else {
       crearActiSubCategoria(data)
         .then(() => {
-          pushNotification({ title: "Cliente creado con éxito!" });
+          notify.success( "Cliente creado con éxito!" );
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.error,
-            description: error.message,
-          });
+          notify.error(error);
           setLoaderSave(false);
         });
     }
@@ -104,7 +81,6 @@ export const FormSubCategoriasActivos = () => {
   //retorno ed la vista
   return (
     <>
-      {contextHolder}
       <Spin
         spinning={loaderSave}
         indicator={

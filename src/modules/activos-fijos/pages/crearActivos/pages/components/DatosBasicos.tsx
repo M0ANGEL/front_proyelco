@@ -11,7 +11,6 @@ import {
   UploadProps,
 } from "antd";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
 import TextArea from "antd/es/input/TextArea";
 import { getActiCategorias } from "@/services/activosFijos/CategoriasAPI";
@@ -20,6 +19,7 @@ import { CustomUpload } from "./styled";
 import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getActiBodegas } from "@/services/activosFijos/BodegasAPI";
+import { StyledFormItem } from "@/components/layout/styled";
 
 const { Text } = Typography;
 

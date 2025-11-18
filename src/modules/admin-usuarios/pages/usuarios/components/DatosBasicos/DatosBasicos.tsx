@@ -1,327 +1,426 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import {
-  validarUsuario,
-} from "@/services/maestras/maestrasAPI";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { Usuario } from "../../types";
+import { Typography, Select, Input, Col, Row, Checkbox, Form } from "antd";
 import {
-  Typography,
-  Select,
-  Input,
-  Col,
-  Row,
-} from "antd";
+  LockOutlined,
+  UserOutlined,
+  MailOutlined,
+  PhoneOutlined,
+  LoadingOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from "@ant-design/icons";
+
+// Servicios
+import { validarUsuario } from "@/services/administrarUsuarios/usuariosAPI";
+// Notificaciones
+
+// Types
+import { Usuario } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
 
 const { Text } = Typography;
 
 interface Props {
-  usuario?: Usuario;
+  usuario?: Usuario | null;
 }
 
-export const DatosBasicos = ({ usuario }: Props) => {
+export const DatosBasicos: React.FC<Props> = ({ usuario }) => {
+  const {
+    control,
+    setValue,
+    clearErrors,
+    setError,
+    formState: { errors },
+    watch,
+  } = useFormContext();
+
   const [phoneValue, setPhoneValue] = useState<string>("");
-  const [timer, setTimer] = useState<any>(null);
-  const methods = useFormContext();
+  const [usernameTimer, setUsernameTimer] = useState<NodeJS.Timeout | null>(null);
+  const [checkingUsername, setCheckingUsername] = useState<boolean>(false);
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean>(true);
 
+  // Opciones de roles
+  const rolesOptions = [
+    { value: "Administrador", label: "Administrador" },
+    { value: "Administrador TI", label: "Administrador TI" },
+    { value: "Gerente", label: "Gerente" },
+    { value: "Ingeniero Obra", label: "Ingeniero Obra" },
+    { value: "Encargado Obras", label: "Encargado Obras" },
+    { value: "Directora Proyectos", label: "Directora Proyectos" },
+    { value: "Administrativo", label: "Administrativo" },
+    { value: "Activos", label: "Activos" },
+    { value: "Logistica", label: "Logistica" },
+  ];
+
+  // Inicializar valores cuando se carga un usuario
   useEffect(() => {
-    methods.setValue("rol", methods.watch("rol"));
-  }, [methods.watch("rol")]);
+    if (usuario?.user) {
+      setPhoneValue(usuario.user.telefono || "");
+      setUsernameAvailable(true);
 
+      setValue("nombre", usuario.user.nombre || "");
+      setValue("cedula", usuario.user.cedula || "");
+      setValue("telefono", usuario.user.telefono || "");
+      setValue("rol", usuario.user.rol || "");
+      setValue("username", usuario.user.username || "");
+      setValue("correo", usuario.user.correo || "");
+      setValue(
+        "can_config_telefono",
+        usuario.user.can_config_telefono?.toString() || "0"
+      );
+    }
+  }, [usuario, setValue]);
 
-  useEffect(() => {
-    usuario?.user ? setPhoneValue(usuario.user.telefono) : "";
+  // 💡 Validar username único
+  const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const username = e.target.value.trim();
+    setValue("username", username);
+    setUsernameAvailable(true);
 
-    methods.reset(
-      usuario?.user
-        ? {
-            nombre: usuario.user.nombre,
-            cedula: usuario.user.cedula,
-            cargo: usuario.user.cargo,
-            telefono: usuario.user.telefono,
-            rol: usuario.user.rol,
-            username: usuario.user.username,
-            password: "",
-            correo: usuario.user.correo,
-          }
-        : {
-            nombre: null,
-            cedula: null,
-            cargo: "NA",
-            telefono: null,
-            rol: null,
-            username: null,
-            password: "",
-            correo: null,
-          }
-    );
-   
-  }, [usuario]);
+    // Si se está editando un usuario existente, no validar
+    if (usuario) {
+      clearErrors("username");
+      return;
+    }
 
-  const onUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!usuario) {
-      methods.setValue("username", e.target.value);
-      if (timer) {
-        clearTimeout(timer);
+    // Cancelar validación anterior
+    if (usernameTimer) clearTimeout(usernameTimer);
+
+    // Validaciones básicas
+    if (!username || username.length < 5) {
+      clearErrors("username");
+      setUsernameAvailable(true);
+      setCheckingUsername(false);
+      return;
+    }
+
+    // Iniciar nueva validación con retardo
+    setCheckingUsername(true);
+    const timer = setTimeout(async () => {
+      try {
+        const response = await validarUsuario(username);
+
+        if (response && Object.keys(response).length === 0) {
+          clearErrors("username");
+          setUsernameAvailable(true);
+          notify.success("Usuario disponible");
+        } else {
+          setError("username", {
+            type: "manual",
+            message: "Usuario no disponible",
+          });
+          setUsernameAvailable(false);
+          notify.error("El nombre de usuario ya está en uso");
+        }
+      } catch (error) {
+        clearErrors("username");
+        setUsernameAvailable(true);
+        notify.warning("No se pudo validar el usuario");
+      } finally {
+        setCheckingUsername(false);
       }
+    }, 800);
 
-      const newTimer = setTimeout(() => {
-        validarUsuario(e.target.value).then(({ data }) => {
-          Object.entries(data).length === 0
-            ? methods.clearErrors("username")
-            : methods.setError("username", {
-                message: "Usuario existente, ingresa otro.",
-              });
+    setUsernameTimer(timer);
+  };
+
+  // Manejar cambio de teléfono
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericValue = value.replace(/\D/g, "");
+
+    if (numericValue.length <= 10) {
+      setPhoneValue(numericValue);
+      setValue("telefono", numericValue, { shouldValidate: true });
+
+      if (numericValue.length > 0 && numericValue.length !== 10) {
+        setError("telefono", {
+          type: "manual",
+          message: "El teléfono debe tener 10 dígitos",
         });
-      }, 600);
-
-      setTimer(newTimer);
+      } else {
+        clearErrors("telefono");
+      }
     }
   };
 
-  const handleChangePhone = (e: React.ChangeEvent<HTMLInputElement>) => {
-    methods.setValue("telefono", e.target.value);
-    const { value: inputValue } = e.target;
-    const reg = /^-?\d*(\d*)?$/;
-    if (
-      reg.test(inputValue) ||
-      (inputValue === "" && inputValue.length == 10)
-    ) {
-      setPhoneValue(inputValue);
-      methods.clearErrors("telefono");
-    }
+  // Obtener estado del input de username
+  const getUsernameStatus = () => {
+    const username = watch("username");
+
+    if (!username || username.length < 5) return undefined;
+    if (checkingUsername) return "validating";
+    if (usernameAvailable && username.length >= 5) return "success";
+    if (!usernameAvailable) return "error";
+    return undefined;
   };
 
-  const handleBlurPhone = () => {
-    let valueTemp = phoneValue;
-    if (phoneValue.charAt(phoneValue.length - 1) === ".") {
-      valueTemp = phoneValue.slice(0, -1);
-    }
-    setPhoneValue(valueTemp.replace(/0*(\d+)/, "$1"));
+  // Obtener sufijo del input de username
+  const getUsernameSuffix = () => {
+    const username = watch("username");
+
+    if (!username || username.length < 5) return null;
+    if (checkingUsername) return <LoadingOutlined />;
+    if (usernameAvailable && username.length >= 5)
+      return <CheckCircleOutlined style={{ color: "#52c41a" }} />;
+    if (!usernameAvailable)
+      return <CloseCircleOutlined style={{ color: "#ff4d4f" }} />;
+    return null;
   };
+
+  // Cleanup del timer
+  useEffect(() => {
+    return () => {
+      if (usernameTimer) {
+        clearTimeout(usernameTimer);
+      }
+    };
+  }, [usernameTimer]);
 
   return (
-    <Row gutter={[12, 12]}>
-      <Col xs={24} md={12}>
-        <Row gutter={[12, 12]}>
-          <Col span={24} style={{ width: "100%" }}>
+    <Row gutter={[24, 16]}>
+      {/* Columna izquierda - Información personal */}
+      <Col xs={24} lg={12}>
+        <div style={{ paddingRight: "12px" }}>
+          <Form.Item
+            label="Nombre completo"
+            required
+            validateStatus={errors.nombre ? "error" : ""}
+            help={errors.nombre?.message as string}
+          >
             <Controller
               name="nombre"
-              control={methods.control}
+              control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Nombre completo es requerido",
-                },
-                minLength: {
-                  value: 10,
-                  message: "Nombre completo debe tener mínimo 10 caracteres",
-                },
-                maxLength: {
-                  value: 60,
-                  message: "Nombre completo debe tener máximo 60 caracteres",
-                },
+                required: "Nombre completo es requerido",
+                minLength: { value: 10, message: "Mínimo 10 caracteres" },
+                maxLength: { value: 60, message: "Máximo 60 caracteres" },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Nombre completo:">
-                  <Input
-                    {...field}
-                    placeholder="Nombre completo"
-                    status={error && "error"}
-                    maxLength={60}
-                    style={{ textTransform: "uppercase" }}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Ingrese el nombre completo"
+                  size="large"
+                  style={{ textTransform: "uppercase" }}
+                  maxLength={60}
+                  showCount
+                />
               )}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Cédula"
+            required
+            validateStatus={errors.cedula ? "error" : ""}
+            help={errors.cedula?.message as string}
+          >
             <Controller
               name="cedula"
-              control={methods.control}
+              control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Cédula es requerido",
-                },
-                minLength: {
-                  value: 8,
-                  message: "La cédula debe tener más de 8 caracteres",
-                },
-                maxLength: {
-                  value: 15,
-                  message: "La cédula debe tener hasta 15 caracteres",
-                },
+                required: "Cédula es requerida",
+                minLength: { value: 8, message: "Mínimo 8 caracteres" },
+                maxLength: { value: 15, message: "Máximo 15 caracteres" },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Cédula:">
-                  <Input
-                    {...field}
-                    placeholder="Cédula"
-                    status={error && "error"}
-                    style={{ width: "100%" }}
-                    maxLength={10}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="Ingrese la cédula"
+                  size="large"
+                  maxLength={15}
+                  showCount
+                />
               )}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Teléfono"
+            required
+            validateStatus={errors.telefono ? "error" : ""}
+            help={errors.telefono?.message as string}
+          >
             <Controller
               name="telefono"
-              control={methods.control}
+              control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Telefono es requerido",
-                },
-                minLength: {
-                  value: 10,
-                  message: "El teléfono debe tener 10 caracteres",
-                },
-                maxLength: {
-                  value: 10,
-                  message: "El teléfono debe tener 10 caracteres",
+                required: "Teléfono es requerido",
+                minLength: { value: 10, message: "Debe tener 10 dígitos" },
+                maxLength: { value: 10, message: "Debe tener 10 dígitos" },
+                pattern: {
+                  value: /^\d{10}$/,
+                  message: "Debe ser un número de 10 dígitos",
                 },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Teléfono:">
-                  <Input
-                    {...field}
-                    placeholder="Teléfono"
-                    value={phoneValue}
-                    onChange={handleChangePhone}
-                    onBlur={handleBlurPhone}
-                    status={error && "error"}
-                    maxLength={10}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  value={phoneValue}
+                  onChange={handlePhoneChange}
+                  placeholder="3001234567"
+                  size="large"
+                  prefix={<PhoneOutlined />}
+                  maxLength={10}
+                  showCount
+                />
               )}
             />
-          </Col>
-        </Row>
+          </Form.Item>
+        </div>
       </Col>
-      <Col xs={24} md={12}>
-        <Row gutter={[12, 12]}>
-          <Col span={24}>
+
+      {/* Columna derecha - Credenciales y configuración */}
+      <Col xs={24} lg={12}>
+        <div style={{ paddingLeft: "12px" }}>
+          <Form.Item
+            label="Rol"
+            required
+            validateStatus={errors.rol ? "error" : ""}
+            help={errors.rol?.message as string}
+          >
             <Controller
               name="rol"
-              control={methods.control}
-              rules={{
-                required: {
-                  value: true,
-                  message: "Rol es requerido",
-                },
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Rol:">
-                  <Select
-                    {...field}
-                    showSearch
-                    filterOption={(input, option) =>
-                      (option?.label?.toString() ?? "")
-                        .toLowerCase()
-                        .includes(input.toString().toLowerCase())
-                    }
-                    options={[
-                      { value: "Administrador", label: "Administrador" },
-                      { value: "Administrador TI", label: "Administrador TI" },
-                      { value: "Gerente", label: "Gerente" },
-                      { value: "Ingeniero Obra", label: "Ingeniero Obra" },
-                      { value: "Encargado Obras", label: "Encargado Obras" },
-                      { value: "Directora Proyectos", label: "Directora Proyectos" },
-                      { value: "Administrativo", label: "Administrativo" },
-                      { value: "Activos", label: "Activos" },
-                      { value: "Logistica", label: "Logistica" },
-                    ]}
-                    status={error && "error"}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              control={control}
+              rules={{ required: "Rol es requerido" }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={rolesOptions}
+                  placeholder="Seleccione un rol"
+                  size="large"
+                  showSearch
+                  filterOption={(input, option) =>
+                    (option?.label ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                />
               )}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Nombre de usuario"
+            required
+            validateStatus={errors.username ? "error" : getUsernameStatus()}
+            help={
+              errors.username?.message ||
+              (checkingUsername
+                ? "Verificando disponibilidad..."
+                : usernameAvailable && watch("username")?.length >= 5
+                ? "✓ Usuario disponible"
+                : "")
+            }
+          >
             <Controller
               name="username"
-              control={methods.control}
+              control={control}
               rules={{
-                required: {
-                  value: true,
-                  message: "Nombre de usuario es requerido",
-                },
-                minLength: {
-                  value: 5,
-                  message: "El usuario debe tener mas de 5 caracteres",
+                required: "Nombre de usuario es requerido",
+                minLength: { value: 5, message: "Mínimo 5 caracteres" },
+                validate: {
+                  available: () => usernameAvailable || "Usuario no disponible",
                 },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Nombre de usuario:">
-                  <Input
-                    {...field}
-                    prefix={<UserOutlined style={{ color: "grey" }} />}
-                    placeholder="Nombre de usuario"
-                    status={error && "error"}
-                    disabled={usuario ? true : false}
-                    onChange={onUsernameChange}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  onChange={handleUsernameChange}
+                  placeholder="Ingrese el nombre de usuario"
+                  size="large"
+                  prefix={<UserOutlined />}
+                  disabled={!!usuario}
+                  suffix={getUsernameSuffix()}
+                  status={getUsernameStatus()}
+                />
               )}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Correo electrónico"
+            validateStatus={errors.correo ? "error" : ""}
+            help={errors.correo?.message as string}
+          >
             <Controller
               name="correo"
-              control={methods.control}
+              control={control}
               rules={{
                 pattern: {
-                  value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                   message: "Ingrese un correo válido",
                 },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem label="Correo:">
-                  <Input
-                    {...field}
-                    placeholder="Correo"
-                    status={error && "error"}
-                    maxLength={255}
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  placeholder="usuario@empresa.com"
+                  size="large"
+                  prefix={<MailOutlined />}
+                  maxLength={255}
+                />
               )}
             />
+          </Form.Item>
+
+          <Form.Item
+            label="Contraseña"
+            required={!usuario}
+            validateStatus={errors.password ? "error" : ""}
+            help={
+              (errors.password?.message as string) ||
+              (usuario
+                ? "Dejar en blanco para mantener la contraseña actual"
+                : "")
+            }
+          >
             <Controller
               name="password"
-              control={methods.control}
+              control={control}
               rules={{
-                required: {
-                  value: usuario?.user ? false : true,
-                  message: "Contraseña es requerido",
-                },
-                minLength: {
-                  value: 6,
-                  message: "La contraseña debe tener un minimo de 6 caracteres",
-                },
-                maxLength: {
-                  value: 8,
-                  message: "La contraseña debe tener un máximo de 8 caracteres",
-                },
+                required: usuario ? false : "Contraseña es requerida",
+                minLength: { value: 6, message: "Mínimo 6 caracteres" },
+                maxLength: { value: 8, message: "Máximo 8 caracteres" },
               }}
-              render={({ field, fieldState: { error } }) => (
-                <StyledFormItem required label="Contraseña:">
-                  <Input.Password
-                    {...field}
-                    prefix={<LockOutlined style={{ color: "grey" }} />}
-                    placeholder="Contraseña de usuario"
-                    status={error && "error"}
-                    autoComplete="off"
-                  />
-                  <Text type="danger">{error?.message}</Text>
-                </StyledFormItem>
+              render={({ field }) => (
+                <Input.Password
+                  {...field}
+                  placeholder={
+                    usuario
+                      ? "Dejar en blanco para no cambiar"
+                      : "Ingrese la contraseña"
+                  }
+                  size="large"
+                  prefix={<LockOutlined />}
+                  autoComplete="new-password"
+                />
               )}
             />
-          </Col>
-        </Row>
+          </Form.Item>
+
+          <Form.Item>
+            <Controller
+              name="can_config_telefono"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  checked={field.value === "1"}
+                  onChange={(e) => field.onChange(e.target.checked ? "1" : "0")}
+                >
+                  <Text strong>Permitir configuración de teléfono</Text>
+                  <div style={{ marginTop: 4 }}>
+                    <Text type="secondary" style={{ fontSize: "12px" }}>
+                      El usuario podrá configurar opciones relacionadas con
+                      teléfono en el sistema
+                    </Text>
+                  </div>
+                </Checkbox>
+              )}
+            />
+          </Form.Item>
+        </div>
       </Col>
     </Row>
   );

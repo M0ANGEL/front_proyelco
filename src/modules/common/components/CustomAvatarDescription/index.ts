@@ -1,1 +1,0 @@
-export { CustomAvatarDescription } from "./CustomAvatarDescription";

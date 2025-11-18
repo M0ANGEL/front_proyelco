@@ -1,1 +1,0 @@
-export { ListPorcentajes } from './ListPorcentajes';

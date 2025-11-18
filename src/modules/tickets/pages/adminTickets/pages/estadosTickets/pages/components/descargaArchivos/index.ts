@@ -1,1 +1,0 @@
-export {DescargaDocTk} from './DescargaDocTk'

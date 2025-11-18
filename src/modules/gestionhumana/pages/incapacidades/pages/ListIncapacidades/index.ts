@@ -1,1 +1,0 @@
-export { ListIncapacidades } from './ListIncapacidades'; 

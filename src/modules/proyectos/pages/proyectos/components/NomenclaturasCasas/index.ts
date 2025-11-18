@@ -1,0 +1,1 @@
+export {NomenclaturasCasas} from './NomenclaturasCasas'

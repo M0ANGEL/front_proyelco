@@ -1,1 +1,0 @@
-export { GestionHumanaRoutes } from "./GestionHumanaRoutes";

@@ -14,16 +14,16 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { AmClientes } from "@/services/types";
 import { DatosBasicos } from "../components/DatosBasicos";
 import {
   crearPersonalNo,
   getPersonalNo,
   updatePersonalNo,
 } from "@/services/talento-humano/personalAPI";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
+import { AmClientes } from "@/types/typesGlobal";
 
 const { Text } = Typography;
 
@@ -47,19 +47,6 @@ export const FormPersonalNoProyelco = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
-
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
     setLoaderSave(true);
@@ -67,35 +54,27 @@ export const FormPersonalNoProyelco = () => {
     if (categoria) {
       updatePersonalNo(data, id)
         .then(() => {
-          pushNotification({ title: "Empleado actualizado con éxito!" });
+          notify.success("Empleado actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: "Error",
-            description: error + "No se puede actualizar el Empleado.",
-          });
+          notify.error(error);
 
           setLoaderSave(false);
         });
     } else {
       crearPersonalNo(data)
         .then(() => {
-          pushNotification({ title: "Empleado creado con éxito!" });
+          notify.success("Empleado creado con éxito!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
           const msg = error.response?.data?.message || "Ocurrió un error inesperado";
-          pushNotification({
-            type: "error",
-            title: error.error,
-             description: msg,
-          });
+          notify.error(msg);
           setLoaderSave(false);
         });
     }

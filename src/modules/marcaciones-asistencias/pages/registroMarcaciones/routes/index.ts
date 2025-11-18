@@ -1,1 +1,0 @@
-export {RegistroMarcacionesRoutes} from './RegistroMarcacionesRoutes'

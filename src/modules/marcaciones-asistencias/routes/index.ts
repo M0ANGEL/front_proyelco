@@ -1,1 +1,0 @@
-export {MarcacionAsistenciasRoutes} from './MarcacionAsistenciaRoutes'

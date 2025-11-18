@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { Button, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -12,6 +10,9 @@ import { GenerarQR } from "../../../crearActivos/pages/ListCrearActivos/GenerarQ
 import { ModalInfo } from "../../../traslados/pages/AceptarTraslados/ModalInfo";
 import { getActiAdministrarActivosPendientesAdmin } from "@/services/activosFijos/AdministarActivosAdminAPI";
 import { Link } from "react-router-dom";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -33,6 +34,9 @@ interface DataType {
   usuario: string;
   categoria: string;
   subcategoria: string;
+  codigo_traslado: string;
+  bodega_origen: string;
+  bodega_destino: string;
 }
 
 const { Text } = Typography;
@@ -42,6 +46,13 @@ export const TrasladarPendientesActivosAdmin = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Estados para filtros
+  const [condicionFilter, setCondicionFilter] = useState<string>();
+  const [categoriaFilter, setCategoriaFilter] = useState<string>();
+  const [bodegaOrigenFilter, setBodegaOrigenFilter] = useState<string>();
+  const [bodegaDestinoFilter, setBodegaDestinoFilter] = useState<string>();
+  const [estadoFilter, setEstadoFilter] = useState<string>();
 
   useEffect(() => {
     fetchCategorias();
@@ -77,8 +88,13 @@ export const TrasladarPendientesActivosAdmin = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
@@ -86,6 +102,68 @@ export const TrasladarPendientesActivosAdmin = () => {
     );
     setDataSource(filterTable);
   };
+
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: any) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por categoría
+    if (categoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega origen
+    if (bodegaOrigenFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_origen?.toLowerCase().includes(bodegaOrigenFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega destino
+    if (bodegaDestinoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_destino?.toLowerCase().includes(bodegaDestinoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por estado
+    if (estadoFilter) {
+      filteredData = filteredData.filter(item => item.estado === estadoFilter);
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setCondicionFilter(undefined);
+    setCategoriaFilter(undefined);
+    setBodegaOrigenFilter(undefined);
+    setBodegaDestinoFilter(undefined);
+    setEstadoFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [condicionFilter, categoriaFilter, bodegaOrigenFilter, bodegaDestinoFilter, estadoFilter, initialData]);
 
   //cambio de estado
   const handleStatus = (id: React.Key) => {
@@ -99,6 +177,15 @@ export const TrasladarPendientesActivosAdmin = () => {
       });
   };
 
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "ID",
@@ -107,19 +194,20 @@ export const TrasladarPendientesActivosAdmin = () => {
       fixed: "left",
     },
     {
-      title: "Nuero Traslado",
+      title: "Código Traslado",
       dataIndex: "codigo_traslado",
       key: "codigo_traslado",
+      render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Fecha creacion",
+      title: "Fecha creación",
       dataIndex: "created_at",
       key: "created_at",
       sorter: (a, b) => a.created_at.localeCompare(b.created_at),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Fecha fin garantia",
+      title: "Fecha fin garantía",
       dataIndex: "fecha_fin_garantia",
       key: "fecha_fin_garantia",
       sorter: (a, b) =>
@@ -134,28 +222,28 @@ export const TrasladarPendientesActivosAdmin = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Categoria",
+      title: "Categoría",
       dataIndex: "categoria",
       key: "categoria",
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Subcategoria",
+      title: "Subcategoría",
       dataIndex: "subcategoria",
       key: "subcategoria",
       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Area Origen",
+      title: "Área Origen",
       dataIndex: "bodega_origen",
       key: "bodega_origen",
       sorter: (a, b) => a.bodega_origen.localeCompare(b.bodega_origen),
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Area Destino",
+      title: "Área Destino",
       dataIndex: "bodega_destino",
       key: "bodega_destino",
       sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
@@ -196,12 +284,11 @@ export const TrasladarPendientesActivosAdmin = () => {
       sorter: (a, b) => a.condicion.localeCompare(b.condicion),
     },
     {
-      title: "Numero Activo",
+      title: "Número Activo",
       dataIndex: "numero_activo",
       key: "numero_activo",
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
     },
-
     {
       title: "Valor",
       dataIndex: "valor",
@@ -262,8 +349,47 @@ export const TrasladarPendientesActivosAdmin = () => {
         </>
       ),
       fixed: "right",
-      width: 70,
+      width: 120,
     },
+  ];
+
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "condicion",
+      label: "Condición",
+      options: [
+        { label: "Bueno", value: "1" },
+        { label: "Regular", value: "2" },
+        { label: "Malo", value: "3" }
+      ],
+      value: condicionFilter,
+      onChange: setCondicionFilter
+    },
+    {
+      key: "estado",
+      label: "Estado",
+      options: [
+        { label: "Activo", value: "1" },
+        { label: "Inactivo", value: "2" }
+      ],
+      value: estadoFilter,
+      onChange: setEstadoFilter
+    },
+    {
+      key: "bodega_origen",
+      label: "Bodega Origen",
+      options: getUniqueOptions(initialData, 'bodega_origen'),
+      value: bodegaOrigenFilter,
+      onChange: setBodegaOrigenFilter
+    },
+    {
+      key: "bodega_destino",
+      label: "Bodega Destino",
+      options: getUniqueOptions(initialData, 'bodega_destino'),
+      value: bodegaDestinoFilter,
+      onChange: setBodegaDestinoFilter
+    }
   ];
 
   return (
@@ -277,21 +403,27 @@ export const TrasladarPendientesActivosAdmin = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
-      </SearchBar>
-      <Table
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar traslados pendientes..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
+      
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"
-        dataSource={dataSource ?? initialData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
+        scroll={{ x: 1500 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
           defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
+          pageSizeOptions: ["5", "15", "30", "50"],
           showTotal: (total: number) => {
             return <Text>Total Registros: {total}</Text>;
           },
