@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Tooltip, Typography } from "antd";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { Button, Tooltip, Typography } from "antd";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ColumnsType } from "antd/es/table";
 import { EditOutlined, UploadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getProyectosProyeciones } from "@/services/material/ProyeccionesAPI";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -32,6 +33,11 @@ export const Proyeccion = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Estados para filtros
+  const [tipoProyectoFilter, setTipoProyectoFilter] = useState<string>();
+  const [usuarioFilter, setUsuarioFilter] = useState<string>();
+  const [rangoRegistrosFilter, setRangoRegistrosFilter] = useState<string>();
 
   useEffect(() => {
     fetchCategorias();
@@ -63,15 +69,84 @@ export const Proyeccion = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const filterTable = initialData?.filter((o: any) =>
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
+    const filterTable = initialData?.filter((o: DataType) =>
       Object.keys(o).some((k) =>
-        String(o[k]).toLowerCase().includes(value.toLowerCase())
+        String(o[k as keyof DataType])
+          .toLowerCase()
+          .includes(value.toLowerCase())
       )
     );
     setDataSource(filterTable);
   };
+
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: DataType) =>
+        Object.keys(o).some((k) =>
+          String(o[k as keyof DataType])
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por tipo de proyecto
+    if (tipoProyectoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.tipo_proyecto?.toLowerCase().includes(tipoProyectoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por usuario
+    if (usuarioFilter) {
+      filteredData = filteredData.filter(item => 
+        item.usuario_carga?.toLowerCase().includes(usuarioFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por rango de registros
+    if (rangoRegistrosFilter) {
+      switch (rangoRegistrosFilter) {
+        case "bajo":
+          filteredData = filteredData.filter(item => item.total_registros < 100);
+          break;
+        case "medio":
+          filteredData = filteredData.filter(item => item.total_registros >= 100 && item.total_registros < 500);
+          break;
+        case "alto":
+          filteredData = filteredData.filter(item => item.total_registros >= 500);
+          break;
+        default:
+          break;
+      }
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setTipoProyectoFilter(undefined);
+    setUsuarioFilter(undefined);
+    setRangoRegistrosFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [tipoProyectoFilter, usuarioFilter, rangoRegistrosFilter, initialData]);
 
   // ✅ Función para navegar a cargar Excel con parámetros
   const handleCargarExcel = () => {
@@ -83,6 +158,15 @@ export const Proyeccion = () => {
     navigate(`${location.pathname}/showproyeccion/${codigo_proyecto}`);
   };
 
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "Proyecto",
@@ -90,12 +174,15 @@ export const Proyeccion = () => {
       key: "descripcion_proyecto",
       sorter: (a, b) => a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
+      width: 200,
     },
     {
       title: "Código",
       dataIndex: "codigo_proyecto",
       key: "codigo_proyecto",
       sorter: (a, b) => a.codigo_proyecto.localeCompare(b.codigo_proyecto),
+      width: 120,
     },
     {
       title: "Tipo Proyecto",
@@ -103,6 +190,7 @@ export const Proyeccion = () => {
       key: "tipo_proyecto",
       sorter: (a, b) => a.tipo_proyecto.localeCompare(b.tipo_proyecto),
       render: (text) => text?.toUpperCase(),
+      width: 150,
     },
     {
       title: "Registros",
@@ -110,6 +198,8 @@ export const Proyeccion = () => {
       key: "total_registros",
       sorter: (a, b) => a.total_registros - b.total_registros,
       render: (total) => total?.toLocaleString("es-CO"),
+      align: "center",
+      width: 100,
     },
     {
       title: "Fecha Cargue Excel",
@@ -117,6 +207,7 @@ export const Proyeccion = () => {
       key: "fecha_ultimo_registro",
       sorter: (a, b) => a.fecha_ultimo_registro.localeCompare(b.fecha_ultimo_registro),
       render: (fecha) => dayjs(fecha).format("DD-MM-YYYY HH:mm"),
+      width: 150,
     },
     {
       title: "Valor Total",
@@ -128,6 +219,8 @@ export const Proyeccion = () => {
         return valA - valB;
       },
       render: (valor) => `$${valor}`,
+      align: "right",
+      width: 130,
     },
     {
       title: "Usuario",
@@ -135,6 +228,15 @@ export const Proyeccion = () => {
       key: "usuario_carga",
       sorter: (a, b) => a.usuario_carga.localeCompare(b.usuario_carga),
       render: (text) => text?.toUpperCase(),
+      width: 150,
+    },
+    {
+      title: "Fecha Creación",
+      dataIndex: "created_at",
+      key: "created_at",
+      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+      render: (fecha) => dayjs(fecha).format("DD-MM-YYYY HH:mm"),
+      width: 150,
     },
     {
       title: "Acciones",
@@ -147,12 +249,44 @@ export const Proyeccion = () => {
             <Button 
               icon={<EditOutlined />} 
               type="primary" 
+              size="small"
               onClick={() => handleEditarProyeccion(record.codigo_proyecto)}
             />
           </Tooltip>
         );
       },
+      fixed: "right",
+      width: 100,
     },
+  ];
+
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "tipo_proyecto",
+      label: "Tipo Proyecto",
+      options: getUniqueOptions(initialData, 'tipo_proyecto'),
+      value: tipoProyectoFilter,
+      onChange: setTipoProyectoFilter
+    },
+    {
+      key: "usuario",
+      label: "Usuario",
+      options: getUniqueOptions(initialData, 'usuario_carga'),
+      value: usuarioFilter,
+      onChange: setUsuarioFilter
+    },
+    {
+      key: "rango_registros",
+      label: "Rango Registros",
+      options: [
+        { label: "Bajo (< 100)", value: "bajo" },
+        { label: "Medio (100-500)", value: "medio" },
+        { label: "Alto (≥ 500)", value: "alto" }
+      ],
+      value: rangoRegistrosFilter,
+      onChange: setRangoRegistrosFilter
+    }
   ];
 
   return (
@@ -168,28 +302,29 @@ export const Proyeccion = () => {
         </Button>
       }
     >
-      <SearchBar>
-        <Input 
-          placeholder="Buscar por proyecto, código, usuario..." 
-          onChange={handleSearch} 
-        //   style={{ width: 300 }}
-        />
-      </SearchBar>
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar por proyecto, código, usuario..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
       
-      <Table
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"
-        dataSource={dataSource ?? initialData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
+        scroll={{ x: 1300 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
           defaultPageSize: 15,
           pageSizeOptions: ["5", "15", "30", "50"],
           showTotal: (total: number) => {
-            return <Text>Total Proyectos: {total}</Text>;
+            return <Text strong>Total Proyectos: {total}</Text>;
           },
         }}
         bordered

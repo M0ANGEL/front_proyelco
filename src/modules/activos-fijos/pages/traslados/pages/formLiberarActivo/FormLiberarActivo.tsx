@@ -1,11 +1,11 @@
 import { Button, Col, Input, Modal, notification, Row, Tooltip } from "antd";
 import { useState } from "react";
-import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 
 import { LiberarActiActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineRedo } from "react-icons/ai";
+import { ActivosData } from "@/types/typesGlobal";
+import { StyledFormItem } from "@/components/layout/styled";
 
 interface GenerarQRProps {
   data: ActivosData;

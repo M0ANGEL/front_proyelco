@@ -14,8 +14,7 @@ import {
   Collapse,
   Input,
 } from "antd";
-import { getProyeccionUnica } from "@/services/material/ProyeccionesAPI";
-import { PostgenerarExcelAxuiliarMaterial } from "@/services/material/ProyeccionesAPI"; // 👈 Importar el servicio correcto
+import { getProyeccionUnica, PostgenerarExcelAxuiliarMaterial } from "@/services/material/ProyeccionesAPI";
 import { useState, useEffect, useMemo } from "react";
 import {
   FileTextOutlined,
@@ -270,8 +269,6 @@ export const ShowProyeccion = () => {
         return;
       }
 
-      console.log("Enviando datos:", datosAEnviar);
-
       // Llamar a la API para generar el Excel usando el servicio correcto
       const response = await PostgenerarExcelAxuiliarMaterial({
         items: datosAEnviar,
@@ -280,7 +277,6 @@ export const ShowProyeccion = () => {
       });
 
       message.success("Cantidades guardadas y Excel generado correctamente");
-      console.log("Respuesta del servidor:", response);
     } catch (error: any) {
       console.error("Error al guardar cantidades:", error);
       message.error(`Error al guardar las cantidades: ${error.message}`);

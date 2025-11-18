@@ -1,1 +1,0 @@
-export {ModalObservacion} from "./ModalObservacion"

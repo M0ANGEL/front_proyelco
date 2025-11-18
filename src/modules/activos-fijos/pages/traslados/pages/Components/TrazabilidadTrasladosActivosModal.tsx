@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+/* import { useEffect, useState } from "react";
 import { Props } from "./types";
 import {
   Col,
@@ -152,3 +152,11 @@ export const TrazabilidadTrasladosActivosModal = ({
     </>
   );
 };
+ */
+
+
+export const TrazabilidadTrasladosActivosModal = () => {
+  return (
+    <div>TrazabilidadTrasladosActivosModal</div>
+  )
+}

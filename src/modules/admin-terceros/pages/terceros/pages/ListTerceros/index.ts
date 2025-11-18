@@ -1,1 +1,0 @@
-export { ListTerceros } from "./ListTerceros";

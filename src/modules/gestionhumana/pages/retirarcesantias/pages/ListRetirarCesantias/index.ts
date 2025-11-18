@@ -1,1 +1,0 @@
-export { ListRetirarCesantias } from './ListRetiarCesantias';

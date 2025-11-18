@@ -1,1 +1,0 @@
-export { FormBancos } from './FormBancos';

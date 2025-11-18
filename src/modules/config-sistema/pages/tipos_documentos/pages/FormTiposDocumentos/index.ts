@@ -1,1 +1,0 @@
-export { FormTiposDocumentos } from "./FormTiposDocumentos";

@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Button,
   Input,
@@ -16,13 +15,14 @@ import {
   message,
 } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
-import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
 import {
   getReporteAsistenciasTH,
   FiltroReporteAsistencia,
 } from "@/services/talento-humano/reporteAPI";
 import dayjs, { Dayjs } from "dayjs";
 import { DescargarReporteAsistencias } from "./DescargarReporteAsistencias"; // Ajusta la ruta
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
 
 const { RangePicker } = DatePicker;
 const { Text } = Typography;

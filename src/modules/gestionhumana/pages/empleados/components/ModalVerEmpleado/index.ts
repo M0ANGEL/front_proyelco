@@ -1,1 +1,0 @@
-export { ModalVerEmpleado } from './ModalVerEmpleado';

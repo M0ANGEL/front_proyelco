@@ -1,1 +1,0 @@
-export { GestionEmpresasPage } from "./GestionEmpresasPage";

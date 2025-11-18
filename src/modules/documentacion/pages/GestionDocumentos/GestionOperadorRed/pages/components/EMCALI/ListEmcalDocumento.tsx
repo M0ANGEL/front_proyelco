@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Input, Typography, Button, Tag, Row, Col, Badge } from "antd";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { Typography, Button, Tag, Row, Col, Badge } from "antd";
+import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import {  getProyectosDocumentacionEmcali } from "@/services/documentacion/documentacionAPI";
 import { useNavigate } from "react-router-dom";
 import { CaretRightOutlined, FileTextOutlined } from "@ant-design/icons";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 // Interfaces
 interface DocumentacionType {
@@ -34,7 +35,8 @@ const getTextoEtapa = (etapa: number) => {
     1: "ET1",
     2: "ET2", 
     3: "ET3",
-    // Agrega más etapas según necesites
+    4: "ET4",
+    5: "ET5",
   };
   return etapas[etapa] || `ET${etapa}`;
 };
@@ -56,6 +58,11 @@ export const ListEmcalDocumento = () => {
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Estados para filtros
+  const [etapaFilter, setEtapaFilter] = useState<string>();
+  const [tipoProyectoFilter, setTipoProyectoFilter] = useState<string>();
+  const [rangoDocumentosFilter, setRangoDocumentosFilter] = useState<string>();
 
   // Ejecución
   useEffect(() => {
@@ -83,16 +90,89 @@ export const ListEmcalDocumento = () => {
     });
   };
 
-  // Barra de búsqueda
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const filterTable = initialData?.filter((o: any) =>
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
+    const filterTable = initialData?.filter((o: DataType) =>
       Object.keys(o).some((k) =>
-        String(o[k]).toLowerCase().includes(value.toLowerCase())
+        String(o[k as keyof DataType])
+          .toLowerCase()
+          .includes(value.toLowerCase())
       )
     );
     setDataSource(filterTable);
   };
+
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: DataType) =>
+        Object.keys(o).some((k) =>
+          String(o[k as keyof DataType])
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por etapa
+    if (etapaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.documentacion?.some(doc => doc.etapa.toString() === etapaFilter)
+      );
+    }
+
+    // Filtro por tipo de proyecto
+    if (tipoProyectoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.tipoProyecto_id?.toLowerCase().includes(tipoProyectoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por rango de documentos
+    if (rangoDocumentosFilter) {
+      const cantidadDocumentos = item => item.documentacion?.length || 0;
+      
+      switch (rangoDocumentosFilter) {
+        case "sin_documentos":
+          filteredData = filteredData.filter(item => cantidadDocumentos(item) === 0);
+          break;
+        case "pocos":
+          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 0 && cantidadDocumentos(item) <= 3);
+          break;
+        case "moderados":
+          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 3 && cantidadDocumentos(item) <= 10);
+          break;
+        case "muchos":
+          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 10);
+          break;
+        default:
+          break;
+      }
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setEtapaFilter(undefined);
+    setTipoProyectoFilter(undefined);
+    setRangoDocumentosFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [etapaFilter, tipoProyectoFilter, rangoDocumentosFilter, initialData]);
 
   // Navegar a la lista de actividades
   const verActividades = (proyecto: DataType, documento: DocumentacionType) => {
@@ -161,6 +241,28 @@ export const ListEmcalDocumento = () => {
     );
   };
 
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
+  };
+
+  // Obtener todas las etapas únicas de todos los documentos
+  const getEtapasUnicas = (data: DataType[]) => {
+    const todasEtapas = data.flatMap(item => 
+      item.documentacion?.map(doc => doc.etapa) || []
+    );
+    const etapasUnicas = [...new Set(todasEtapas)].sort();
+    
+    return etapasUnicas.map(etapa => ({
+      label: getTextoEtapa(etapa),
+      value: etapa.toString()
+    }));
+  };
+
   // Columnas de la tabla
   const columns: ColumnsType<DataType> = [
     {
@@ -176,6 +278,7 @@ export const ListEmcalDocumento = () => {
       key: "codigo_proyecto",
       width: 120,
       sorter: (a, b) => a.codigo_proyecto.localeCompare(b.codigo_proyecto),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Proyecto",
@@ -184,7 +287,7 @@ export const ListEmcalDocumento = () => {
       sorter: (a, b) => a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
       render: (text: string) => (
         <Text strong style={{ fontSize: '12px' }}>
-          {text}
+          {text?.toUpperCase()}
         </Text>
       ),
     },
@@ -208,7 +311,7 @@ export const ListEmcalDocumento = () => {
       width: 150,
       render: (_, record) => {
         if (!record.documentacion || record.documentacion.length === 0) {
-          return <Tag>-</Tag>;
+          return <Tag color="default">SIN DOCS</Tag>;
         }
         
         // Obtener etapas únicas
@@ -245,35 +348,57 @@ export const ListEmcalDocumento = () => {
     rowExpandable: (record: DataType) => record.documentacion?.length > 0,
   };
 
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "etapa",
+      label: "Etapa",
+      options: getEtapasUnicas(initialData),
+      value: etapaFilter,
+      onChange: setEtapaFilter
+    },
+    {
+      key: "rango_documentos",
+      label: "Cant. Documentos",
+      options: [
+        { label: "Sin Documentos", value: "sin_documentos" },
+        { label: "Pocos (1-3)", value: "pocos" },
+        { label: "Moderados (4-10)", value: "moderados" },
+        { label: "Muchos (>10)", value: "muchos" }
+      ],
+      value: rangoDocumentosFilter,
+      onChange: setRangoDocumentosFilter
+    }
+  ];
+
   return (
     <StyledCard title={"Panel de administración de documentos Emcali"}>
-      <SearchBar>
-        <Input 
-          placeholder="Buscar por proyecto, código, etapa..." 
-          onChange={handleSearch}
-          style={{ maxWidth: '100%' }}
-          allowClear
-        />
-      </SearchBar>
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar por proyecto, código, Proyecto..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
       
-      <Table
+      <DataTable
         className="custom-table"
         size="small"
-        dataSource={dataSource ?? initialData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
-        scroll={{ x: 800 }}
+        scroll={{ x: 1000 }}
         expandable={expandableConfig}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
           defaultPageSize: 10,
           pageSizeOptions: ["5", "10", "20", "30"],
           showTotal: (total: number) => {
             return (
-              <>
-                <Text>Total Proyectos: {total}</Text>
-              </>
+              <Text strong>
+                Total Proyectos: {total}
+              </Text>
             );
           },
         }}

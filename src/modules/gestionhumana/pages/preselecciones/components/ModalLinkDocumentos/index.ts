@@ -1,1 +1,0 @@
-export { ModalLinkDocumentos } from './ModalLinkDocumentos';

@@ -1,4 +1,4 @@
-import { GreenButton } from "@/modules/common/components/ExportExcel/styled";
+import { GreenButton } from "@/components/layout/styled";
 import { 
   exportReporteCompletoAsistenciasTH, 
   // exportReporteAsistenciasTH // ← Mantén este si quieres ambas opciones

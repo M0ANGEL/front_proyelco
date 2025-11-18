@@ -1,1 +1,0 @@
-export {UsuariosRegistradosRouter} from './usuariosRegistradosRouter';

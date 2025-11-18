@@ -1,4 +1,3 @@
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Alert,
   Col,
@@ -21,6 +20,7 @@ import {
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/config/api";
 import { getProyectosCodigo } from "@/services/documentacion/documentacionAPI";
+import { StyledFormItem } from "@/components/layout/styled";
 
 interface FormData {
   codigo_proyecto: string;
@@ -229,8 +229,6 @@ export const CrearDocumentacionRed = () => {
   // Manejar envío del formulario
   const handleSubmit = async (values: FormData) => {
     try {
-      console.log("Datos del formulario:", values);
-
       const resultado = await enviarDatosAPI(values);
 
       // Mostrar mensaje de éxito específico
@@ -241,10 +239,6 @@ export const CrearDocumentacionRed = () => {
       // Resetear formulario
       form.resetFields();
 
-      // Log para debugging
-      if (resultado.data) {
-        console.log("Datos creados:", resultado.data);
-      }
     } catch (error: any) {
       console.error("Error al crear documentación:", error);
 
@@ -267,7 +261,6 @@ export const CrearDocumentacionRed = () => {
 
   // Manejar errores de validación
   const handleFailedSubmit = (errorInfo: any) => {
-    console.log("Error de validación:", errorInfo);
     const camposFaltantes = errorInfo.errorFields
       .map((field: any) => field.name[0])
       .join(", ");

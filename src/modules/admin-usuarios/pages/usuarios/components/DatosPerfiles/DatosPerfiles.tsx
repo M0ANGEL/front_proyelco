@@ -1,172 +1,271 @@
-import { getPerfiles } from "@/services/maestras/perfilesAPI";
+import React, { useState, useEffect } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { useEffect, useState } from "react";
-import { Col, Row, Select, SelectProps, Typography } from "antd";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import { getEmpresas } from "@/services/maestras/empresasAPI";
-import { getCargos } from "@/services/maestras/cargosAPI";
-import { Usuario } from "../../types";
+import { Col, Row, Select, Form, Typography, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+
+// Servicios
+import { getCargos } from "@/services/administrarUsuarios/carosAPI";
+import { getEmpresas } from "@/services/administrarUsuarios/empresaAPI";
+import { getPerfiles } from "@/services/administrarUsuarios/perfilesAPI";
+
+// Notificaciones
+
+// Types
+import { Usuario } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
 
 const { Text } = Typography;
 
 interface Props {
-  usuario?: Usuario;
+  usuario?: Usuario | null;
 }
 
-export const DatosPerfiles = ({ usuario }: Props) => {
-  const methods = useFormContext();
-  const [selectEmpresa, setSelectEmpresa] = useState<SelectProps["options"]>(
-    []
-  );
-  const [selectCargos, setSelectCargos] = useState<SelectProps["options"]>([]);
-  const [selectPperfiles, setSelectPperfiles] = useState<
-    SelectProps["options"]
-  >([]);
+interface SelectOption {
+  label: string;
+  value: number;
+}
 
+export const DatosPerfiles: React.FC<Props> = ({ usuario }) => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext();
+
+  const [loading, setLoading] = useState(true);
+
+  // Estados para las opciones
+  const [empresas, setEmpresas] = useState<SelectOption[]>([]);
+  const [perfiles, setPerfiles] = useState<SelectOption[]>([]);
+  const [cargos, setCargos] = useState<SelectOption[]>([]);
+
+  // Cargar datos iniciales
   useEffect(() => {
-    fetchEmpresa();
-    fetchPerfiles();
-    fetchCargos();
-    //si tenemos datos en categoria agregamos a metho los datos
-    if (usuario) {
-      methods.setValue("empresas", usuario?.empresas?.[0]?.id_empresa);
-      methods.setValue("perfiles", usuario?.perfiles?.[0]?.id_perfil);
-      methods.setValue("cargos", usuario?.cargos?.[0]?.id_cargo);
-    }
-  }, [usuario]);
+    let isMounted = true;
 
-  //llamada empres
-  const fetchEmpresa = () => {
-    getEmpresas().then(({ data }) => {
-      const categoriasPadres = data.data.map((item) => ({
-        label: item.emp_nombre,
-        value: item.id,
-      }));
-      setSelectEmpresa(categoriasPadres);
-    });
-  };
+    const loadInitialData = async () => {
+      try {
+        setLoading(true);
 
-  //llamada perfiles
-  const fetchPerfiles = () => {
-    getPerfiles().then(({ data }) => {
-      const categoriasPadres = data.map((item) => ({
-        label: item.nom_perfil,
-        value: item.id,
-      }));
-      setSelectPperfiles(categoriasPadres);
-    });
-  };
+        const [empresasRes, perfilesRes, cargosRes] = await Promise.all([
+          getEmpresas(),
+          getPerfiles(),
+          getCargos(),
+        ]);
 
-  //llamada cargos
-  const fetchCargos = () => {
-    getCargos().then(({ data }) => {
-      const categoriasPadres = data.data.map((item) => ({
-        label: item.nombre,
-        value: item.id,
-      }));
-      setSelectCargos(categoriasPadres);
-    });
-  };
+        if (!isMounted) return;
+
+        // Transformar datos de empresas
+        let empresasData: any[] = [];
+        if (empresasRes?.data?.data) {
+          empresasData = empresasRes.data.data;
+        } else if (empresasRes?.data) {
+          empresasData = Array.isArray(empresasRes.data)
+            ? empresasRes.data
+            : [empresasRes.data];
+        } else if (Array.isArray(empresasRes)) {
+          empresasData = empresasRes;
+        }
+
+        setEmpresas(
+          empresasData.map((emp: any) => ({
+            label: emp.emp_nombre,
+            value: emp.id,
+          }))
+        );
+
+        // Transformar datos de perfiles
+        let perfilesData: any[] = [];
+        if (perfilesRes?.data) {
+          perfilesData = Array.isArray(perfilesRes.data)
+            ? perfilesRes.data
+            : [perfilesRes.data];
+        } else if (Array.isArray(perfilesRes)) {
+          perfilesData = perfilesRes;
+        }
+
+        setPerfiles(
+          perfilesData.map((perf: any) => ({
+            label: perf.nom_perfil,
+            value: perf.id,
+          }))
+        );
+
+        // Transformar datos de cargos
+        let cargosData: any[] = [];
+        if (cargosRes?.data?.data) {
+          cargosData = cargosRes.data.data;
+        } else if (cargosRes?.data) {
+          cargosData = Array.isArray(cargosRes.data)
+            ? cargosRes.data
+            : [cargosRes.data];
+        } else if (Array.isArray(cargosRes)) {
+          cargosData = cargosRes;
+        }
+
+        setCargos(
+          cargosData.map((cargo: any) => ({
+            label: cargo.nombre,
+            value: cargo.id,
+          }))
+        );
+
+        notify.success("Opciones cargadas correctamente");
+      } catch (error) {
+        console.error("Error al cargar datos:", error);
+        notify.error(
+          "Error al cargar las opciones del formulario",
+          "Verifica tu conexión o contacta con soporte."
+        );
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    loadInitialData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <div style={{ textAlign: "center", padding: "40px" }}>
+        <Spin
+          indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+          size="large"
+        />
+        <div style={{ marginTop: 16 }}>
+          <Text type="secondary">Cargando opciones...</Text>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <Row style={{ padding: 10 }} gutter={12}>
-        {/* campo selecion de empresa */}
-        <Col xs={24} sm={8}>
+    <Row gutter={[24, 16]}>
+      <Col xs={24} md={8}>
+        <Form.Item
+          label="Empresa"
+          required
+          validateStatus={errors.empresas ? "error" : ""}
+          help={errors.empresas?.message as string}
+        >
           <Controller
             name="empresas"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true, //validacion diamica si es o no olbigatoriaaa jaja
-                message: "La empresa es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Empresa">
-                <Select
-                  {...field}
-                  showSearch
-                  allowClear
-                  options={selectEmpresa}
-                  placeholder={
-                    selectEmpresa?.length
-                      ? "Selecciona la empresa"
-                      : "HAY PROBEMAS PARA MOSTRAR EMPRESAS"
-                  }
-                  status={error ? "error" : ""}
-                  style={{ width: "100%" }}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
+            control={control}
+            rules={{ required: "Empresa es requerida" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={empresas}
+                placeholder={
+                  empresas.length > 0
+                    ? "Seleccione empresa"
+                    : "No hay empresas disponibles"
+                }
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                loading={loading}
+                disabled={loading || empresas.length === 0}
+              />
             )}
           />
-        </Col>
+        </Form.Item>
+      </Col>
 
-        {/* campo selecion de perfil */}
-        <Col xs={24} sm={8}>
+      <Col xs={24} md={8}>
+        <Form.Item
+          label="Perfil"
+          required
+          validateStatus={errors.perfiles ? "error" : ""}
+          help={errors.perfiles?.message as string}
+        >
           <Controller
             name="perfiles"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "El perfil es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Perfil">
-                <Select
-                  {...field}
-                  showSearch
-                  allowClear
-                  options={selectPperfiles}
-                  placeholder={
-                    selectPperfiles?.length
-                      ? "Selecciona un perfil"
-                      : "HAY PROBLEMAS PARA MOSTRAR PERFILES"
-                  }
-                  status={error ? "error" : ""}
-                  style={{ width: "100%" }}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
+            control={control}
+            rules={{ required: "Perfil es requerido" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={perfiles}
+                placeholder={
+                  perfiles.length > 0
+                    ? "Seleccione perfil"
+                    : "No hay perfiles disponibles"
+                }
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                loading={loading}
+                disabled={loading || perfiles.length === 0}
+              />
             )}
           />
-        </Col>
+        </Form.Item>
+      </Col>
 
-        {/* campo selecion cargo */}
-        <Col xs={24} sm={8}>
+      <Col xs={24} md={8}>
+        <Form.Item
+          label="Cargo"
+          required
+          validateStatus={errors.cargos ? "error" : ""}
+          help={errors.cargos?.message as string}
+        >
           <Controller
             name="cargos"
-            control={methods.control}
-            rules={{
-              required: {
-                value: true,
-                message: "El cargo es requerido",
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <StyledFormItem required label="Cargo">
-                <Select
-                  {...field}
-                  showSearch
-                  allowClear
-                  options={selectCargos}
-                  placeholder={
-                    selectCargos?.length
-                      ? "Selecciona un cargo"
-                      : "HAY PROBLEMAS PARA MOSTRAR CARGOS"
-                  }
-                  status={error ? "error" : ""}
-                  style={{ width: "100%" }}
-                />
-                <Text type="danger">{error?.message}</Text>
-              </StyledFormItem>
+            control={control}
+            rules={{ required: "Cargo es requerido" }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                options={cargos}
+                placeholder={
+                  cargos.length > 0
+                    ? "Seleccione cargo"
+                    : "No hay cargos disponibles"
+                }
+                size="large"
+                showSearch
+                filterOption={(input, option) =>
+                  (option?.label ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
+                loading={loading}
+                disabled={loading || cargos.length === 0}
+              />
             )}
           />
-        </Col>
-      </Row>
-    </>
+        </Form.Item>
+      </Col>
+
+      {/* Información adicional */}
+      <Col span={24}>
+        <div
+          style={{
+            marginTop: 16,
+            padding: "16px",
+            backgroundColor: "#f0f9ff",
+            borderRadius: "8px",
+            border: "1px solid #bae6fd",
+          }}
+        >
+          <Text type="secondary">
+            💼 <strong>Nota:</strong> Estos permisos determinan el acceso del
+            usuario a diferentes módulos y funcionalidades del sistema.
+          </Text>
+        </div>
+      </Col>
+    </Row>
   );
 };

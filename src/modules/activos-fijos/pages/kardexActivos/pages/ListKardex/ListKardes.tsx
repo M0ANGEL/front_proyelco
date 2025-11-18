@@ -1,340 +1,5 @@
-// import { useEffect, useState } from "react";
-// import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-// import { Input, Select, Row, Col, Tag, Typography } from "antd";
-// import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-// import Table, { ColumnsType } from "antd/es/table";
-// import { SyncOutlined } from "@ant-design/icons";
-// import dayjs from "dayjs";
-// import { getActiHistorico } from "@/services/activosFijos/TrasladosActivosAPI";
-// import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
-// import { GenerarQR } from "../../../crearActivos/pages/ListCrearActivos/GenerarQR";
-// import { ModalInfo } from "../../../traslados/pages/AceptarTraslados/ModalInfo";
-
-// interface DataType {
-//   key: number;
-//   id: number;
-//   numero_activo: string;
-//   categoria_id: string;
-//   subcategoria_id: string;
-//   descripcion: string;
-//   ubicacion_id: string;
-//   valor: string;
-//   fecha_fin_garantia: string;
-//   condicion: string;
-//   updated_at: string;
-//   created_at: string;
-//   marca: string;
-//   serial: string;
-//   observacion: string;
-//   estado: string;
-//   usuario: string;
-//   categoria: string;
-//   subcategoria: string;
-//   codigo_traslado: string;
-//   bodega_origen: string;
-//   bodega_destino: string;
-//   aceptacion: string;
-// }
-
-// const { Text } = Typography;
-
-// export const ListKardex = () => {
-//   const [initialData, setInitialData] = useState<DataType[]>([]);
-//   const [dataSource, setDataSource] = useState<DataType[]>([]);
-//   const [loadingRow, setLoadingRow] = useState<any>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
-
-//   // estados de filtros
-//   const [filterTraslado, setFilterTraslado] = useState<string | null>(null);
-//   const [filterActivo, setFilterActivo] = useState<string | null>(null);
-//   const [filterBodegaDestino, setFilterBodegaDestino] = useState<string | null>(
-//     null
-//   );
-
-//   useEffect(() => {
-//     fetchCategorias();
-//   }, []);
-
-//   const fetchCategorias = () => {
-//     getActiHistorico().then(({ data: { data } }) => {
-//       const categorias = data.map((categoria) => {
-//         return {
-//           key: categoria.id,
-//           codigo_traslado: categoria.codigo_traslado,
-//           activo_id: categoria.activo_id,
-//           user_id: categoria.user_id,
-//           aceptacion: categoria.aceptacion,
-//           bodega_origen: categoria.bodega_origen,
-//           bodega_destino: categoria.bodega_destino,
-//           usuario: categoria.usuario,
-//           categoria: categoria.categoria,
-//           subcategoria: categoria.subcategoria,
-//           numero_activo: categoria.numero_activo,
-//           valor: Number(categoria.valor).toLocaleString("es-CO"),
-//           descripcion: categoria.descripcion,
-//           condicion: categoria.condicion.toString(),
-//           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
-//           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
-//           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
-//             "DD-MM-YYYY HH:mm"
-//           ),
-//           responsable: (categoria.usuariosAsignados || []).join(", "),
-
-//         };
-//       });
-
-//       setInitialData(categorias);
-//       setDataSource(categorias);
-//       setLoadingRow([]);
-//       setLoading(false);
-//     });
-//   };
-
-//   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { value } = e.target;
-//     const filterTable = initialData?.filter((o: any) =>
-//       Object.keys(o).some((k) =>
-//         String(o[k]).toLowerCase().includes(value.toLowerCase())
-//       )
-//     );
-//     setDataSource(filterTable);
-//   };
-
-//   // aplicar filtros
-//   useEffect(() => {
-//     let filtered = [...initialData];
-
-//     if (filterTraslado) {
-//       filtered = filtered.filter((item) =>
-//         item.codigo_traslado?.toString().includes(filterTraslado)
-//       );
-//     }
-
-//     if (filterActivo) {
-//       filtered = filtered.filter((item) =>
-//         item.numero_activo?.toString().includes(filterActivo)
-//       );
-//     }
-
-//     if (filterBodegaDestino) {
-//       filtered = filtered.filter(
-//         (item) =>
-//           item.bodega_destino?.toLowerCase() ===
-//           filterBodegaDestino.toLowerCase()
-//       );
-//     }
-
-//     setDataSource(filtered);
-//   }, [filterTraslado, filterActivo, filterBodegaDestino, initialData]);
-
-//   const columns: ColumnsType<DataType> = [
-//     {
-//       title: "Numero Activo",
-//       dataIndex: "numero_activo",
-//       key: "numero_activo",
-//       fixed: "left",
-//       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
-//     },
-//     {
-//       title: "Numero Traslado",
-//       dataIndex: "codigo_traslado",
-//       key: "codigo_traslado",
-//     },
-//     {
-//       title: "Categoria",
-//       dataIndex: "categoria",
-//       key: "categoria",
-//       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
-//     },
-//     {
-//       title: "Subcategoria",
-//       dataIndex: "subcategoria",
-//       key: "subcategoria",
-//       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Descripcion",
-//       dataIndex: "descripcion",
-//       key: "descripcion",
-//       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Area Origen",
-//       dataIndex: "bodega_origen",
-//       key: "bodega_origen",
-//       sorter: (a, b) => a.bodega_origen.localeCompare(b.bodega_origen),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Area Destino",
-//       dataIndex: "bodega_destino",
-//       key: "bodega_destino",
-//       sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Responsable",
-//       dataIndex: "responsable",
-//       key: "responsable",
-//     },
-//     {
-//       title: "Condición",
-//       dataIndex: "condicion",
-//       key: "condicion",
-//       align: "center",
-//       render: (_, record: { key: React.Key; condicion: string }) => {
-//         let estadoString = "";
-//         let color = "";
-
-//         if (record.condicion === "1") {
-//           estadoString = "BUENO";
-//           color = "green";
-//         } else if (record.condicion === "2") {
-//           estadoString = "REGULAR";
-//           color = "yellow";
-//         } else {
-//           estadoString = "MALO";
-//           color = "red";
-//         }
-
-//         return (
-//           <Tag
-//             color={color}
-//             key={estadoString}
-//             icon={
-//               loadingRow.includes(record.key) ? <SyncOutlined spin /> : null
-//             }
-//           >
-//             {estadoString.toUpperCase()}
-//           </Tag>
-//         );
-//       },
-//       sorter: (a, b) => a.condicion.localeCompare(b.condicion),
-//     },
-//     {
-//       title: "Estado Traslado",
-//       dataIndex: "aceptacion",
-//       key: "aceptacion",
-//       align: "center",
-//       render: (_, record: { key: React.Key; aceptacion: string }) => {
-//         let estadoString;
-//         let color;
-
-//         if (record.aceptacion == "0") {
-//           estadoString = "Sin Trasladar";
-//           color = "yellow";
-//         } else if (record.aceptacion == "1") {
-//           estadoString = "Pendiente";
-//           color = "red";
-//         } else if (record.aceptacion == "2") {
-//           estadoString = "Aceptado";
-//           color = "green";
-//         } else {
-//           estadoString = "Rechazado";
-//           color = "red";
-//         }
-
-//         return (
-//           <Tag color={color} key={estadoString}>
-//             {estadoString.toUpperCase()}
-//           </Tag>
-//         );
-//       },
-//     },
-//     {
-//       title: "Valor",
-//       dataIndex: "valor",
-//       key: "valor",
-//       sorter: (a, b) => a.valor.localeCompare(b.valor),
-//     },
-//     {
-//       title: "Acciones",
-//       dataIndex: "acciones",
-//       key: "acciones",
-//       align: "center",
-//       render: (_, record) => (
-//         <>
-//           <ModalInfo data={record} />
-//           <VerFoto id={record.key} />
-//           <GenerarQR id={record.key} numero_activo={record.numero_activo} />
-//         </>
-//       ),
-//       fixed: "right",
-//       width: 120,
-//     },
-//   ];
-
-//   return (
-//     <StyledCard title={"Lista de Activos Fijos para traslado"}>
-//       <SearchBar>
-//         <Row gutter={10}>
-//           <Col>
-//             <Input placeholder="Buscar general..." onChange={handleSearch} />
-//           </Col>
-//           <Col>
-//             <Select
-//               allowClear
-//               placeholder="Filtrar por Traslado"
-//               style={{ width: 180 }}
-//               onChange={(value) => setFilterTraslado(value)}
-//               options={[
-//                 ...new Set(initialData.map((i) => i.codigo_traslado)),
-//               ].map((v) => ({ label: v, value: v }))}
-//             />
-//           </Col>
-//           <Col>
-//             <Select
-//               allowClear
-//               placeholder="Filtrar por Activo"
-//               style={{ width: 180 }}
-//               onChange={(value) => setFilterActivo(value)}
-//               options={[
-//                 ...new Set(initialData.map((i) => i.numero_activo)),
-//               ].map((v) => ({ label: v, value: v }))}
-//             />
-//           </Col>
-//           <Col>
-//             <Select
-//               allowClear
-//               placeholder="Filtrar por Bodega Destino"
-//               style={{ width: 200 }}
-//               onChange={(value) => setFilterBodegaDestino(value)}
-//               options={[
-//                 ...new Set(initialData.map((i) => i.bodega_destino)),
-//               ].map((v) => ({ label: v, value: v }))}
-//             />
-//           </Col>
-//         </Row>
-//       </SearchBar>
-
-//       <Table
-//         className="custom-table"
-//         rowKey={(record) => record.key}
-//         size="small"
-//         dataSource={dataSource ?? initialData}
-//         columns={columns}
-//         loading={loading}
-//         scroll={{ x: 800 }}
-//         pagination={{
-//           total: initialData?.length,
-//           showSizeChanger: true,
-//           defaultPageSize: 100,
-//           pageSizeOptions: ["5", "15", "30", "100", "200"],
-//           showTotal: (total: number) => {
-//             return <Text>Total Registros: {total}</Text>;
-//           },
-//         }}
-//         bordered
-//       />
-//     </StyledCard>
-//   );
-// };
 import { useEffect, useState, useCallback } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Input, Select, Row, Col, Tag, Typography, Table, message } from "antd";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
+import { Tag, message, Typography } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -342,8 +7,9 @@ import { getActiHistorico } from "@/services/activosFijos/TrasladosActivosAPI";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { GenerarQR } from "../../../crearActivos/pages/ListCrearActivos/GenerarQR";
 import { ModalInfo } from "../../../traslados/pages/AceptarTraslados/ModalInfo";
-
-const { Text } = Typography;
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -404,8 +70,11 @@ function debounce<T extends (...args: any[]) => any>(
   };
 }
 
+const { Text } = Typography;
+
 export const ListKardex = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
+  const [initialData, setInitialData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingRow, setLoadingRow] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>("");
@@ -415,12 +84,13 @@ export const ListKardex = () => {
     total: 0,
   });
 
-  // estados de filtros
-  const [filterTraslado, setFilterTraslado] = useState<string | null>(null);
-  const [filterActivo, setFilterActivo] = useState<string | null>(null);
-  const [filterBodegaDestino, setFilterBodegaDestino] = useState<string | null>(
-    null
-  );
+  // Estados para filtros
+  const [codigoTrasladoFilter, setCodigoTrasladoFilter] = useState<string>();
+  const [numeroActivoFilter, setNumeroActivoFilter] = useState<string>();
+  const [bodegaDestinoFilter, setBodegaDestinoFilter] = useState<string>();
+  const [bodegaOrigenFilter, setBodegaOrigenFilter] = useState<string>();
+  const [condicionFilter, setCondicionFilter] = useState<string>();
+  const [estadoTrasladoFilter, setEstadoTrasladoFilter] = useState<string>();
 
   // ✅ Debounce para búsqueda
   const debouncedSearch = useCallback(
@@ -473,6 +143,7 @@ export const ListKardex = () => {
       }));
 
       setDataSource(formattedData);
+      setInitialData(formattedData);
       setPagination((prev) => ({
         ...prev,
         current: response.pagination.current_page,
@@ -487,11 +158,97 @@ export const ListKardex = () => {
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
     setSearchText(value);
-    debouncedSearch(value);
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
+    const filterTable = initialData?.filter((o: DataType) =>
+      Object.keys(o).some((k) =>
+        String(o[k as keyof DataType])
+          .toLowerCase()
+          .includes(value.toLowerCase())
+      )
+    );
+    setDataSource(filterTable);
   };
+
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: DataType) =>
+        Object.keys(o).some((k) =>
+          String(o[k as keyof DataType])
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por código de traslado
+    if (codigoTrasladoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.codigo_traslado?.toLowerCase().includes(codigoTrasladoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por número de activo
+    if (numeroActivoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.numero_activo?.toLowerCase().includes(numeroActivoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega destino
+    if (bodegaDestinoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_destino?.toLowerCase().includes(bodegaDestinoFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega origen
+    if (bodegaOrigenFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_origen?.toLowerCase().includes(bodegaOrigenFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por estado de traslado
+    if (estadoTrasladoFilter) {
+      filteredData = filteredData.filter(item => item.aceptacion === estadoTrasladoFilter);
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setCodigoTrasladoFilter(undefined);
+    setNumeroActivoFilter(undefined);
+    setBodegaDestinoFilter(undefined);
+    setBodegaOrigenFilter(undefined);
+    setCondicionFilter(undefined);
+    setEstadoTrasladoFilter(undefined);
+    setSearchText("");
+    setDataSource(initialData);
+    fetchHistorico(1, pagination.pageSize, "");
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters(searchText);
+  }, [codigoTrasladoFilter, numeroActivoFilter, bodegaDestinoFilter, bodegaOrigenFilter, condicionFilter, estadoTrasladoFilter, initialData]);
 
   const handleTableChange = (newPagination: TablePaginationConfig) => {
     const { current = 1, pageSize = 50 } = newPagination;
@@ -499,53 +256,42 @@ export const ListKardex = () => {
     fetchHistorico(current, pageSize, searchText);
   };
 
-  // ✅ Aplicar filtros locales (sin recargar del servidor)
-  const filteredData = dataSource.filter((item) => {
-    if (
-      filterTraslado &&
-      !item.codigo_traslado?.toString().includes(filterTraslado)
-    ) {
-      return false;
-    }
-    if (
-      filterActivo &&
-      !item.numero_activo?.toString().includes(filterActivo)
-    ) {
-      return false;
-    }
-    if (
-      filterBodegaDestino &&
-      item.bodega_destino?.toLowerCase() !== filterBodegaDestino.toLowerCase()
-    ) {
-      return false;
-    }
-    return true;
-  });
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
+  };
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Numero Activo",
+      title: "Número Activo",
       dataIndex: "numero_activo",
       key: "numero_activo",
       fixed: "left",
       width: 120,
       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
+      render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Numero Traslado",
+      title: "Código Traslado",
       dataIndex: "codigo_traslado",
       key: "codigo_traslado",
       width: 120,
+      render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Categoria",
+      title: "Categoría",
       dataIndex: "categoria",
       key: "categoria",
       width: 120,
       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
+      render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Subcategoria",
+      title: "Subcategoría",
       dataIndex: "subcategoria",
       key: "subcategoria",
       width: 120,
@@ -553,7 +299,7 @@ export const ListKardex = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Descripcion",
+      title: "Descripción",
       dataIndex: "descripcion",
       key: "descripcion",
       width: 150,
@@ -561,7 +307,7 @@ export const ListKardex = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Area Origen",
+      title: "Área Origen",
       dataIndex: "bodega_origen",
       key: "bodega_origen",
       width: 120,
@@ -569,7 +315,7 @@ export const ListKardex = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Area Destino",
+      title: "Área Destino",
       dataIndex: "bodega_destino",
       key: "bodega_destino",
       width: 120,
@@ -581,6 +327,7 @@ export const ListKardex = () => {
       dataIndex: "responsable",
       key: "responsable",
       width: 120,
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Condición",
@@ -611,75 +358,41 @@ export const ListKardex = () => {
               loadingRow.includes(record.key) ? <SyncOutlined spin /> : null
             }
           >
-            {estadoString.toUpperCase()}
+            {estadoString}
           </Tag>
         );
       },
       sorter: (a, b) => a.condicion.localeCompare(b.condicion),
     },
-    // {
-    //   title: "Estado Traslado",
-    //   dataIndex: "aceptacion",
-    //   key: "aceptacion",
-    //   align: "center",
-    //   width: 120,
-    //   render: (_, record) => {
-    //     let estadoString;
-    //     let color;
-
-    //     if (record.aceptacion == "0") {
-    //       estadoString = "Sin Trasladar";
-    //       color = "yellow";
-    //     } else if (record.aceptacion == "1") {
-    //       estadoString = "Pendiente";
-    //       color = "red";
-    //     } else if (record.aceptacion == "2") {
-    //       estadoString = "Aceptado";
-    //       color = "green";
-    //     } else {
-    //       estadoString = "Rechazado";
-    //       color = "red";
-    //     }
-
-    //     return (
-    //       <Tag color={color} key={estadoString}>
-    //         {estadoString.toUpperCase()}
-    //       </Tag>
-    //     );
-    //   },
-    //   sorter: (a, b) => a.aceptacion.localeCompare(b.aceptacion),
-    // },
     {
       title: "Estado Traslado",
       dataIndex: "aceptacion",
       key: "aceptacion",
       align: "center",
       width: 120,
-      render: (aceptacion, record) => {
-        // Recibir el valor directamente
+      render: (aceptacion) => {
         let estadoString;
         let color;
 
-        // Asegurar que sea string para las comparaciones
         const acepStr = String(aceptacion);
 
         if (acepStr === "0") {
-          estadoString = "Sin Trasladar";
+          estadoString = "SIN TRASLADAR";
           color = "yellow";
         } else if (acepStr === "1") {
-          estadoString = "Pendiente";
+          estadoString = "PENDIENTE";
           color = "red";
         } else if (acepStr === "2") {
-          estadoString = "Aceptado";
+          estadoString = "ACEPTADO";
           color = "green";
         } else {
-          estadoString = "Rechazado";
+          estadoString = "RECHAZADO";
           color = "red";
         }
 
         return (
           <Tag color={color} key={estadoString}>
-            {estadoString.toUpperCase()}
+            {estadoString}
           </Tag>
         );
       },
@@ -691,6 +404,15 @@ export const ListKardex = () => {
       key: "valor",
       width: 100,
       sorter: (a, b) => a.valor.localeCompare(b.valor),
+      align: "right",
+    },
+    {
+      title: "Fecha Traslado",
+      dataIndex: "created_at",
+      key: "created_at",
+      width: 120,
+      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Acciones",
@@ -709,76 +431,60 @@ export const ListKardex = () => {
     },
   ];
 
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "codigo_traslado",
+      label: "Código Traslado",
+      options: getUniqueOptions(initialData, 'codigo_traslado'),
+      value: codigoTrasladoFilter,
+      onChange: setCodigoTrasladoFilter
+    },
+    {
+      key: "numero_activo",
+      label: "Número Activo",
+      options: getUniqueOptions(initialData, 'numero_activo'),
+      value: numeroActivoFilter,
+      onChange: setNumeroActivoFilter
+    },
+    {
+      key: "bodega_destino",
+      label: "Bodega Destino",
+      options: getUniqueOptions(initialData, 'bodega_destino'),
+      value: bodegaDestinoFilter,
+      onChange: setBodegaDestinoFilter
+    },
+  ];
+
   return (
     <StyledCard title={"Histórico de Traslados de Activos"}>
-      <SearchBar>
-        <Row gutter={[10, 10]}>
-          <Col xs={24} sm={8}>
-            <Input
-              placeholder="Buscar por número, descripción, categoría..."
-              onChange={handleSearch}
-              value={searchText}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} sm={5}>
-            <Select
-              allowClear
-              placeholder="Filtrar por Traslado"
-              style={{ width: "100%" }}
-              onChange={(value) => setFilterTraslado(value)}
-              options={Array.from(
-                new Set(dataSource.map((i) => i.codigo_traslado))
-              )
-                .filter(Boolean)
-                .map((v) => ({ label: v, value: v }))}
-            />
-          </Col>
-          <Col xs={24} sm={5}>
-            <Select
-              allowClear
-              placeholder="Filtrar por Activo"
-              style={{ width: "100%" }}
-              onChange={(value) => setFilterActivo(value)}
-              options={Array.from(
-                new Set(dataSource.map((i) => i.numero_activo))
-              )
-                .filter(Boolean)
-                .map((v) => ({ label: v, value: v }))}
-            />
-          </Col>
-          <Col xs={24} sm={6}>
-            <Select
-              allowClear
-              placeholder="Filtrar por Bodega Destino"
-              style={{ width: "100%" }}
-              onChange={(value) => setFilterBodegaDestino(value)}
-              options={Array.from(
-                new Set(dataSource.map((i) => i.bodega_destino))
-              )
-                .filter(Boolean)
-                .map((v) => ({ label: v, value: v }))}
-            />
-          </Col>
-        </Row>
-      </SearchBar>
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar en histórico de traslados..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
 
-      <Table
+      <DataTable
         className="custom-table"
         rowKey="key"
         size="small"
-        dataSource={filteredData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
-        scroll={{ x: 1500 }}
+        scroll={{ x: 1600 }}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,
           total: pagination.total,
           showSizeChanger: true,
           pageSizeOptions: ["30", "50", "100"],
-          showTotal: (total, range) =>
-            `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
+          showTotal: (total, range) => (
+            <Text strong>
+              Mostrando {range[0]}-{range[1]} de {total} registros
+            </Text>
+          ),
         }}
         onChange={handleTableChange}
         bordered

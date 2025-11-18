@@ -1,1 +1,0 @@
-export { ListTiposDocumentos } from "./ListTiposDocumentos";

@@ -1,1 +1,0 @@
-export { TicketsRoutes } from "./TicketsRoutes";

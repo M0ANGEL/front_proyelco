@@ -1,1 +1,0 @@
-export { ModalProductosLotes } from "./ModalProductosLotes";

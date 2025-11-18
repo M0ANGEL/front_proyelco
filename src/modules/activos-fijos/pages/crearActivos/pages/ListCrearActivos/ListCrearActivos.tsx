@@ -1,399 +1,18 @@
-// import { useEffect, useState } from "react";
-// import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-// import {
-//   Button,
-//   Input,
-//   Popconfirm,
-//   Space,
-//   Tag,
-//   Tooltip,
-//   Typography,
-// } from "antd";
-// import { Link, useLocation } from "react-router-dom";
-// // import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
-// import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-// import Table, { ColumnsType } from "antd/es/table";
-// import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
-// import { EditOutlined, SyncOutlined } from "@ant-design/icons";
-// import dayjs from "dayjs";
-// import {
-//   DeleteActiActivos,
-//   getActiActivos,
-// } from "@/services/activosFijos/CrearActivosAPI";
-// import { VerFoto } from "./VerFoto";
-// import { GenerarQR } from "./GenerarQR";
-
-// interface DataType {
-//   key: number;
-//   id: number;
-//   numero_activo: string;
-//   categoria_id: string;
-//   subcategoria_id: string;
-//   descripcion: string;
-//   ubicacion_id: string;
-//   valor: string;
-//   condicion: string;
-//   updated_at: string;
-//   created_at: string;
-//   marca: string;
-//   serial: string;
-//   observacion: string;
-//   estado: string;
-//   usuario: string;
-//   categoria: string;
-//   subcategoria: string;
-//   tipo_activo: string;
-//   origen_activo: string;
-//   bodega_actual: string;
-//   usuariosAsignados: string;
-//   usuarios_confirmaron: string;
-//   tipo_ubicacion: string;
-//   ubicacion_actual_id: string;
-//   usuarios_asignados: string;
-//   aceptacion: string;
-// }
-
-// const { Text } = Typography;
-
-// export const ListCrearActivos = () => {
-//   const location = useLocation();
-//   const [initialData, setInitialData] = useState<DataType[]>([]);
-//   const [dataSource, setDataSource] = useState<DataType[]>([]);
-//   const [loadingRow, setLoadingRow] = useState<any>([]);
-//   const [loading, setLoading] = useState<boolean>(true);
-
-//   useEffect(() => {
-//     fetchCategorias();
-//   }, []);
-
-//   const fetchCategorias = () => {
-//     getActiActivos().then(({ data: { data } }) => {
-//       const categorias = data.map((categoria) => {
-//         return {
-//           key: categoria.id,
-//           estado: categoria.estado.toString(),
-//           numero_activo: categoria.numero_activo,
-//           valor: Number(categoria.valor).toLocaleString("es-CO"),
-//           condicion: categoria.condicion.toString(),
-//           usuario: categoria.usuario,
-//           categoria: categoria.categoria,
-//           subcategoria: categoria.subcategoria,
-//           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
-//           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
-//           fecha_fin_garantia: dayjs(categoria?.fecha_fin_garantia).format(
-//             "DD-MM-YYYY HH:mm"
-//           ),
-//           tipo_activo: categoria.tipo_activo.toString(),
-//           origen_activo: categoria.origen_activo,
-//           bodega_actual: categoria.bodega_actual,
-//           usuariosAsignados: categoria.usuariosAsignados,
-//           usuarios_confirmaron: categoria.usuarios_confirmaron,
-//           tipo_ubicacion: categoria.tipo_ubicacion,
-//           ubicacion_actual_id: categoria.ubicacion_actual_id,
-//           usuarios_asignados: categoria.usuarios_asignados,
-//           aceptacion: categoria.aceptacion.toString(),
-//           descripcion: categoria.descripcion,
-//         };
-//       });
-
-//       setInitialData(categorias);
-//       setDataSource(categorias);
-//       setLoadingRow([]);
-//       setLoading(false);
-//     });
-//   };
-
-//   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const { value } = e.target;
-//     const filterTable = initialData?.filter((o: any) =>
-//       Object.keys(o).some((k) =>
-//         String(o[k]).toLowerCase().includes(value.toLowerCase())
-//       )
-//     );
-//     setDataSource(filterTable);
-//   };
-
-//   //cambio de estado
-//   const handleStatus = (id: React.Key) => {
-//     setLoadingRow([...loadingRow, id]);
-//     DeleteActiActivos(id)
-//       .then(() => {
-//         fetchCategorias();
-//       })
-//       .catch(() => {
-//         setLoadingRow([]);
-//       });
-//   };
-
-//   const columns: ColumnsType<DataType> = [
-//     {
-//       title: "Numero Activo",
-//       dataIndex: "numero_activo",
-//       key: "numero_activo",
-//       sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
-//       align: "center",
-//       fixed: "left",
-//     },
-//     {
-//       title: "Estado Activo",
-//       dataIndex: "estado",
-//       key: "estado",
-//       align: "center",
-//       render: (_, record: { key: React.Key; estado: string }) => {
-//         let estadoString = "";
-//         let color;
-
-//         if (record.estado === "1") {
-//           estadoString = "ACTIVO";
-//           color = "green";
-//         } else {
-//           estadoString = "INACTIVO";
-//           color = "red";
-//         }
-
-//         // condición clara para habilitar
-//         const isDisabled = !["0", "3"].includes(record.aceptacion);
-
-//         return (
-//           <Popconfirm
-//             title="¿Desea cambiar el estado (Dar de baja)?"
-//             onConfirm={() => handleStatus(record.key)}
-//             placement="left"
-//             disabled={isDisabled} // 👈 también bloquea el Popconfirm
-//           >
-//             <ButtonTag color={color} disabled={isDisabled}>
-//               <Tooltip
-//                 title={
-//                   isDisabled ? "No disponible para este activo" : "Dar de baja"
-//                 }
-//               >
-//                 <Tag
-//                   color={color}
-//                   key={estadoString}
-//                   icon={
-//                     loadingRow.includes(record.key) ? (
-//                       <SyncOutlined spin />
-//                     ) : null
-//                   }
-//                 >
-//                   {estadoString.toUpperCase()}
-//                 </Tag>
-//               </Tooltip>
-//             </ButtonTag>
-//           </Popconfirm>
-//         );
-//       },
-      
-//     },
-//     {
-//       title: "Tipo Activo",
-//       dataIndex: "tipo_activo",
-//       key: "tipo_activo",
-//       align: "center",
-//       render: (_, record: { key: React.Key; tipo_activo: string }) => {
-//         let estadoString = "";
-//         let color = "";
-
-//         if (record.tipo_activo === "1") {
-//           estadoString = "MAYORES";
-//           color = "green";
-//         } else {
-//           estadoString = "MENORES";
-//           color = "blue";
-//         }
-
-//         return (
-//           <Tag color={color} key={estadoString}>
-//             {estadoString.toUpperCase()}
-//           </Tag>
-//         );
-//       },
-//       sorter: (a, b) => a.tipo_activo.localeCompare(b.tipo_activo),
-//     },
-//     {
-//       title: "Categoria",
-//       dataIndex: "categoria",
-//       key: "categoria",
-//       sorter: (a, b) => a.categoria.localeCompare(b.categoria),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Subcategoria",
-//       dataIndex: "subcategoria",
-//       key: "subcategoria",
-//       sorter: (a, b) => a.subcategoria.localeCompare(b.subcategoria),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Descripcion",
-//       dataIndex: "descripcion",
-//       key: "descripcion",
-//       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
-//       render: (text) => text?.toUpperCase(),
-//     },
-//     {
-//       title: "Ubicacion Actual",
-//       dataIndex: "bodega_actual",
-//       key: "bodega_actual",
-//       sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
-//       align: "center",
-//     },
-//     {
-//       title: "Responsable",
-//       dataIndex: "usuariosAsignados",
-//       key: "usuariosAsignados",
-//       align: "center",
-//       render: (usuarios) =>
-//         usuarios && usuarios.length > 0
-//           ? usuarios.join(", ")
-//           : "Sin Responsable",
-//     },
-//     {
-//       title: "Condición",
-//       dataIndex: "condicion",
-//       key: "condicion",
-//       align: "center",
-//       render: (_, record: { key: React.Key; condicion: string }) => {
-//         let estadoString = "";
-//         let color = "";
-
-//         if (record.condicion === "1") {
-//           estadoString = "BUENO";
-//           color = "green";
-//         } else if (record.condicion === "2") {
-//           estadoString = "REGULAR";
-//           color = "yellow";
-//         } else {
-//           estadoString = "MALO";
-//           color = "red";
-//         }
-
-//         return (
-//           <Tag color={color} key={estadoString}>
-//             {estadoString.toUpperCase()}
-//           </Tag>
-//         );
-//       },
-//       sorter: (a, b) => a.condicion.localeCompare(b.condicion),
-//     },
-//     {
-//       title: "Estado Traslado",
-//       dataIndex: "aceptacion",
-//       key: "aceptacion",
-//       align: "center",
-//       render: (_, record: { key: React.Key; aceptacion: string }) => {
-//         let estadoString;
-//         let color;
-
-//         if (record.aceptacion == "0") {
-//           estadoString = "Sin Trasladar";
-//           color = "yellow";
-//         } else if (record.aceptacion == "1") {
-//           estadoString = "Pendiente";
-//           color = "red";
-//         } else if (record.aceptacion == "2") {
-//           estadoString = "Aceptado";
-//           color = "green";
-//         } else if (record.aceptacion == "3") {
-//           estadoString = "Rechazado";
-//           color = "red";
-//         } else if (record.aceptacion == "4") {
-//           estadoString = "Mantenimiento";
-//           color = "blue";
-//         } else {
-//           estadoString = "Mantenimiento";
-//           color = "blue";
-//         }
-
-//         return (
-//           <Tag color={color} key={estadoString}>
-//             {estadoString.toUpperCase()}
-//           </Tag>
-//         );
-//       },
-//       sorter: (a, b) => a.aceptacion.localeCompare(b.aceptacion),
-
-//     },
-//     {
-//       title: "Valor",
-//       dataIndex: "valor",
-//       key: "valor",
-//       sorter: (a, b) => a.valor.localeCompare(b.valor),
-//       align: "center",
-//     },
-//     {
-//       title: "Acciones",
-//       dataIndex: "acciones",
-//       key: "acciones",
-//       align: "center",
-//       render: (_, record) => (
-//         <Space>
-//           <Tooltip title="Editar">
-//             <Link to={`${location.pathname}/edit/${record.key}`}>
-//               <Button icon={<EditOutlined />} type="primary" size="small" />
-//             </Link>
-//           </Tooltip>
-
-//           <VerFoto id={record.key} />
-//           <GenerarQR id={record.key} numero_activo={record.numero_activo} />
-//         </Space>
-//       ),
-//       fixed: "right",
-//       width: 120, //  aumenta el ancho para que quepan los botones
-//     },
-//   ];
-
-//   return (
-//     <StyledCard
-//       title={"Lista de Activos Fijos"}
-//       extra={
-//         <Link to={`${location.pathname}/create`}>
-//           <Button type="primary">Crear</Button>
-//         </Link>
-//       }
-//     >
-//       <SearchBar>
-//         <Input placeholder="Buscar" onChange={handleSearch} />
-//       </SearchBar>
-//       <Table
-//         className="custom-table"
-//         rowKey={(record) => record.key}
-//         size="small"
-//         dataSource={dataSource ?? initialData}
-//         columns={columns}
-//         loading={loading}
-//         scroll={{ x: 800 }}
-//         pagination={{
-//           total: initialData?.length,
-//           showSizeChanger: true,
-//           defaultPageSize: 100,
-//           pageSizeOptions: ["30", "50", "100"],
-//           showTotal: (total: number) => {
-//             return <Text>Total Registros: {total}</Text>;
-//           },
-//         }}
-//         style={{ textAlign: "center" }}
-//         bordered
-//       />
-//     </StyledCard>
-//   );
-// };
 import { useEffect, useState, useCallback } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Button,
-  Input,
   Popconfirm,
   Space,
   Tag,
   Tooltip,
+  message,
   Typography,
-  Table,
-  message
+  Input,
+  Row,
+  Col
 } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
+import { EditOutlined, SyncOutlined, SearchOutlined, ClearOutlined } from "@ant-design/icons";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import dayjs from "dayjs";
 import {
@@ -402,8 +21,9 @@ import {
 } from "@/services/activosFijos/CrearActivosAPI";
 import { VerFoto } from "./VerFoto";
 import { GenerarQR } from "./GenerarQR";
-
-const { Text } = Typography;
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -433,6 +53,7 @@ interface DataType {
   ubicacion_actual_id: string;
   usuarios_asignados: string;
   aceptacion: string;
+  fecha_fin_garantia?: string;
 }
 
 interface Pagination {
@@ -466,38 +87,56 @@ function debounce<T extends (...args: any[]) => any>(
   };
 }
 
+const { Text } = Typography;
+
 export const ListCrearActivos = () => {
   const location = useLocation();
   const [dataSource, setDataSource] = useState<DataType[]>([]);
+  const [initialData, setInitialData] = useState<DataType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingRow, setLoadingRow] = useState<number[]>([]);
   const [searchText, setSearchText] = useState<string>("");
+  const [responsableSearch, setResponsableSearch] = useState<string>("");
   const [pagination, setPagination] = useState<Pagination>({
     current: 1,
     pageSize: 50,
     total: 0,
   });
 
-  // ✅ Debounce para búsqueda
+  // Estados para filtros
+  const [estadoFilter, setEstadoFilter] = useState<string>();
+  const [condicionFilter, setCondicionFilter] = useState<string>();
+  const [tipoActivoFilter, setTipoActivoFilter] = useState<string>();
+  const [categoriaFilter, setCategoriaFilter] = useState<string>();
+  const [estadoTrasladoFilter, setEstadoTrasladoFilter] = useState<string>();
+
+  // ✅ Debounce para búsquedas
   const debouncedSearch = useCallback(
-    debounce((search: string) => {
+    debounce((search: string, responsable: string) => {
       setPagination(prev => ({ ...prev, current: 1 }));
-      fetchActivos(1, pagination.pageSize, search);
+      fetchActivos(1, pagination.pageSize, search, responsable);
     }, 500),
     [pagination.pageSize]
   );
 
   useEffect(() => {
-    fetchActivos(pagination.current, pagination.pageSize, searchText);
+    fetchActivos(pagination.current, pagination.pageSize, searchText, responsableSearch);
   }, []);
 
-  const fetchActivos = async (page: number, pageSize: number, search: string = "") => {
+  // ✅ Función principal para obtener activos
+  const fetchActivos = async (
+    page: number, 
+    pageSize: number, 
+    search: string = "", 
+    responsable: string = ""
+  ) => {
     setLoading(true);
     try {
       const { data: response } = await getActiActivos({ 
         page, 
         per_page: pageSize,
-        search 
+        search,
+        responsable
       }) as { data: ApiResponse };
 
       const formattedData = response.data.map((item) => ({
@@ -529,6 +168,7 @@ export const ListCrearActivos = () => {
       }));
 
       setDataSource(formattedData);
+      setInitialData(formattedData);
       setPagination(prev => ({
         ...prev,
         current: response.pagination.current_page,
@@ -543,16 +183,80 @@ export const ListCrearActivos = () => {
     }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  // ✅ Búsqueda global
+  const handleSearch = (value: string) => {
     setSearchText(value);
-    debouncedSearch(value);
+    debouncedSearch(value, responsableSearch);
   };
+
+  // ✅ Búsqueda por responsable
+  const handleResponsableSearch = (value: string) => {
+    setResponsableSearch(value);
+    debouncedSearch(searchText, value);
+  };
+
+  // ✅ Limpiar búsqueda de responsable
+  const handleClearResponsableSearch = () => {
+    setResponsableSearch("");
+    debouncedSearch(searchText, "");
+  };
+
+  // ✅ Aplicar filtros combinados
+  const applyFilters = () => {
+    let filteredData = [...initialData];
+
+    // Filtro por estado
+    if (estadoFilter) {
+      filteredData = filteredData.filter(item => item.estado === estadoFilter);
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por tipo de activo
+    if (tipoActivoFilter) {
+      filteredData = filteredData.filter(item => item.tipo_activo === tipoActivoFilter);
+    }
+
+    // Filtro por categoría
+    if (categoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por estado de traslado
+    if (estadoTrasladoFilter) {
+      filteredData = filteredData.filter(item => item.aceptacion === estadoTrasladoFilter);
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // ✅ Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setEstadoFilter(undefined);
+    setCondicionFilter(undefined);
+    setTipoActivoFilter(undefined);
+    setCategoriaFilter(undefined);
+    setEstadoTrasladoFilter(undefined);
+    setSearchText("");
+    setResponsableSearch("");
+    setPagination(prev => ({ ...prev, current: 1 }));
+    fetchActivos(1, pagination.pageSize, "", "");
+  };
+
+  // ✅ Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [estadoFilter, condicionFilter, tipoActivoFilter, categoriaFilter, estadoTrasladoFilter, initialData]);
 
   const handleTableChange = (newPagination: TablePaginationConfig) => {
     const { current = 1, pageSize = 50 } = newPagination;
     setPagination(prev => ({ ...prev, current, pageSize }));
-    fetchActivos(current, pageSize, searchText);
+    fetchActivos(current, pageSize, searchText, responsableSearch);
   };
 
   const handleStatus = async (id: number) => {
@@ -560,7 +264,7 @@ export const ListCrearActivos = () => {
     try {
       await DeleteActiActivos(id);
       message.success("Estado actualizado correctamente");
-      fetchActivos(pagination.current, pagination.pageSize, searchText);
+      fetchActivos(pagination.current, pagination.pageSize, searchText, responsableSearch);
     } catch (error) {
       message.error("Error al actualizar el estado");
     } finally {
@@ -684,6 +388,7 @@ export const ListCrearActivos = () => {
       sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
       align: "center",
       width: 150,
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Responsable",
@@ -693,8 +398,8 @@ export const ListCrearActivos = () => {
       width: 150,
       render: (usuarios: string[]) =>
         usuarios && usuarios.length > 0
-          ? usuarios.join(", ")
-          : "Sin Responsable",
+          ? usuarios.join(", ").toUpperCase()
+          : "SIN RESPONSABLE",
     },
     {
       title: "Condición",
@@ -736,28 +441,28 @@ export const ListCrearActivos = () => {
         let color;
 
         if (record.aceptacion == "0") {
-          estadoString = "Sin Trasladar";
+          estadoString = "SIN TRASLADAR";
           color = "yellow";
         } else if (record.aceptacion == "1") {
-          estadoString = "Pendiente";
+          estadoString = "PENDIENTE";
           color = "red";
         } else if (record.aceptacion == "2") {
-          estadoString = "Aceptado";
+          estadoString = "ACEPTADO";
           color = "green";
         } else if (record.aceptacion == "3") {
-          estadoString = "Sin Trasladar";
+          estadoString = "SIN TRASLADAR";
           color = "yellow";
         } else if (record.aceptacion == "4") {
-          estadoString = "Mantenimiento";
+          estadoString = "MANTENIMIENTO";
           color = "blue";
         } else {
-          estadoString = "Mantenimiento";
+          estadoString = "MANTENIMIENTO";
           color = "blue";
         }
 
         return (
           <Tag color={color} key={estadoString}>
-            {estadoString.toUpperCase()}
+            {estadoString}
           </Tag>
         );
       },
@@ -793,6 +498,53 @@ export const ListCrearActivos = () => {
     },
   ];
 
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "estado",
+      label: "Estado Activo",
+      options: [
+        { label: "Activo", value: "1" },
+        { label: "Inactivo", value: "2" }
+      ],
+      value: estadoFilter,
+      onChange: setEstadoFilter
+    },
+    {
+      key: "condicion",
+      label: "Condición",
+      options: [
+        { label: "Bueno", value: "1" },
+        { label: "Regular", value: "2" },
+        { label: "Malo", value: "3" }
+      ],
+      value: condicionFilter,
+      onChange: setCondicionFilter
+    },
+    {
+      key: "tipo_activo",
+      label: "Tipo Activo",
+      options: [
+        { label: "Mayores", value: "1" },
+        { label: "Menores", value: "2" }
+      ],
+      value: tipoActivoFilter,
+      onChange: setTipoActivoFilter
+    },
+    {
+      key: "estado_traslado",
+      label: "Estado Traslado",
+      options: [
+        { label: "Sin Trasladar", value: "0" },
+        { label: "Pendiente", value: "1" },
+        { label: "Aceptado", value: "2" },
+        { label: "Mantenimiento", value: "4" }
+      ],
+      value: estadoTrasladoFilter,
+      onChange: setEstadoTrasladoFilter
+    }
+  ];
+
   return (
     <StyledCard
       title={"Lista de Activos Fijos"}
@@ -802,32 +554,59 @@ export const ListCrearActivos = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input 
-          placeholder="Buscar por número, descripción o categoría..." 
-          onChange={handleSearch}
-          value={searchText}
-          allowClear
-          style={{ marginBottom: 16 }}
-        />
-      </SearchBar>
+      {/* ✅ Barra de búsquedas mejorada */}
+      <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
+        <Col xs={24} md={12}>
+          <Input.Search
+            placeholder="Buscar en todos los campos..."
+            value={searchText}
+            onChange={(e) => handleSearch(e.target.value)}
+            allowClear
+            disabled
+            enterButton={<SearchOutlined />}
+          />
+        </Col>
+        <Col xs={24} md={12}>
+          <Input.Search
+            placeholder="Buscar por responsable..."
+            value={responsableSearch}
+            onChange={(e) => handleResponsableSearch(e.target.value)}
+            allowClear={{
+              clearIcon: <ClearOutlined onClick={handleClearResponsableSearch} />
+            }}
+            enterButton={<SearchOutlined />}
+          />
+        </Col>
+      </Row>
 
-      <Table
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar en todos los campos..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
+
+      <DataTable
         className="custom-table"
         rowKey="key"
         size="small"
         dataSource={dataSource}
         columns={columns}
         loading={loading}
-        scroll={{ x: 1500 }}
+        scroll={{ x: 1600 }}
         pagination={{
           current: pagination.current,
           pageSize: pagination.pageSize,
           total: pagination.total,
           showSizeChanger: true,
           pageSizeOptions: ["30", "50", "100"],
-          showTotal: (total, range) => 
-            `Mostrando ${range[0]}-${range[1]} de ${total} registros`,
+          showTotal: (total, range) => (
+            <Text strong>
+              Mostrando {range[0]}-{range[1]} de {total} registros
+              {responsableSearch && ` - Filtrado por responsable: "${responsableSearch}"`}
+            </Text>
+          ),
         }}
         onChange={handleTableChange}
         bordered

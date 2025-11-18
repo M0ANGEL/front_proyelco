@@ -1,1 +1,0 @@
-export { ListAliados } from "./ListAliados";

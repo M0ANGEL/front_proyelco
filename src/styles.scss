@@ -1,40 +1,74 @@
+/* ==============================
+   Estilos Generales para Tablas
+   ============================== */
 .custom-table {
   .ant-table-body {
-    min-height: 150px;
+    min-height: 150px; // Altura mínima de la tabla
+  }
+
+  // Encabezados gris más pequeños
+  .ant-table-thead > tr > th {
+    background-color: #7a7d83 !important; // Gris oscuro
+    color: white !important;
+    font-weight: 600;
+    font-size: 13px; // Más pequeño que antes
+    padding: 6px 8px !important; // Reduce padding vertical y horizontal
+  }
+
+  // Filas de datos
+  .ant-table-tbody > tr > td {
+    background-color: #f9fafb; // Gris muy suave
+    border-bottom: 1px solid #e5e7eb;
+    color: #374151;
+    font-size: 14px;
+  }
+
+  // Hover sobre filas
+  .ant-table-tbody > tr:hover > td {
+    background-color: #f3f4f6 !important;
+  }
+
+  // Filas alternadas
+  .ant-table-tbody > tr:nth-child(even) > td {
+    background-color: #ffffff;
+  }
+
+  .ant-table-tbody > tr:nth-child(odd) > td {
+    background-color: #f9fafb;
+  }
+
+  // Paginación
+  .ant-pagination-item {
+    border-radius: 6px;
+    
+    &.ant-pagination-item-active {
+      border-color: #6b7280;
+      background-color: #6b7280;
+      a {
+        color: white;
+      }
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    border-radius: 6px;
   }
 }
 
-.styled-card-documents {
-  .ant-card-head {
-    background-color: #ffda8f;
-    h4 {
-      margin-block: 0px;
-      text-transform: uppercase;
-    }
-  }
-}
-td.ant-table-column-sort,
-td.ant-table-cell-row-hover {
-  background-color: rgb(212, 212, 212) !important;
-}
-
-.expanded-table {
-  .ant-table-expanded-row {
-    .ant-table-wrapper tr.ant-table-expanded-row > td {
-      background-color: #ffffff !important;
-    }
-  }
-  table {
-    th {
-      border-radius: 0px !important;
-    }
-  }
-}
-
+/* =========================
+   Estilos de Colores de Filas
+   ========================= */
 .red-row {
-  background-color: #f69987;
-  .ant-table-cell-row-hover {
-    background-color: #fe7458 !important;
+  background-color: #ff7979;
+  .ant-table-cell-row-hover,
+  .ant-table-column-sort {
+    background-color: #ff5050 !important;
+    color: white;
+  }
+  .ant-table-cell-fix-left,
+  .ant-table-cell-fix-right {
+    background-color: #ff7979;
   }
 }
 
@@ -59,20 +93,6 @@ td.ant-table-cell-row-hover {
   .ant-table-cell-fix-left,
   .ant-table-cell-fix-right {
     background-color: #aecdff;
-  }
-}
-
-.red-row {
-  
-  background-color: #ff7979;
-  .ant-table-cell-row-hover,
-  .ant-table-column-sort {
-    background-color: #ff5050 !important;
-    color: white;
-  }
-  .ant-table-cell-fix-left,
-  .ant-table-cell-fix-right {
-    background-color: #ff7979;
   }
 }
 
@@ -101,12 +121,6 @@ td.ant-table-cell-row-hover {
   }
 }
 
-.upperCaseText {
-  textarea {
-    text-transform: uppercase;
-  }
-}
-
 .red-row-st {
   background-color: #e04425;
   color: #ffffff;
@@ -119,17 +133,70 @@ td.ant-table-cell-row-hover {
   background-color: #fffae6 !important; /* Amarillo claro */
 }
 
-.table-glosas .fila-par, 
-.table-glosas .fila-par .ant-table-cell {
-  background-color: #c4c4c4;
+/* =========================
+   Estilos de Tarjetas
+   ========================= */
+.styled-card-documents {
+  .ant-card-head {
+    background-color: #ffda8f;
+    h4 {
+      margin-block: 0px;
+      text-transform: uppercase;
+    }
+  }
 }
 
-.table-glosas .fila-impar, 
-.table-glosas .fila-impar .ant-table-cell {
-  background-color: #f0f0f0;
+/* =========================
+   Botones Primarios Amarillos
+   ========================= */
+.ant-btn-primary {
+  background-color: #ffb300 !important;  // Amarillo
+  border-color: #ffb300 !important;
+  color: #fffdfd !important; // Texto blanco
 }
 
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: #ffca28 !important; // Amarillo más claro al hover/focus
+  border-color: #ffca28 !important;
+  color: #000 !important; // Texto negro al hover
+}
 
+/* =========================
+   Etiquetas de Estado (StatusTags)
+   ========================= */
+.status-tag {
+  &.green-row {
+    background-color: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+  }
+
+  &.red-row {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+  }
+
+  &.yellow-row {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+  }
+}
+
+/* =========================
+   Textarea Uppercase
+   ========================= */
+.upperCaseText {
+  textarea {
+    text-transform: uppercase;
+  }
+}
+
+/* =========================
+   Animaciones
+   ========================= */
 @keyframes pulseRed {
   0% { box-shadow: 0 0 5px #ff4d4f; }
   50% { box-shadow: 0 0 15px #ff4d4f; }

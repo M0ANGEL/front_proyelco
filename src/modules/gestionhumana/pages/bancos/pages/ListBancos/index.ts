@@ -1,1 +1,0 @@
-export { ListBancos } from './ListBancos';

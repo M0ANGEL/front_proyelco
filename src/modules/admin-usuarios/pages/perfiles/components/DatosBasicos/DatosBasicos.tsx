@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
-import { getEmpresas } from "@/services/maestras/empresasAPI";
 import { Col, Input, Row, Select, SelectProps, Spin, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Perfil } from "@/services/types";
+import { Perfil } from "@/types/auth.types";
+import { getEmpresas } from "@/services/administrarUsuarios/empresaAPI";
+import { StyledFormItem } from "@/components/layout/styled";
+import { Notification } from "@/components/global/NotificationHandler";
 
 const { Text } = Typography;
 
@@ -159,3 +159,4 @@ export const DatosBasicos = ({ onPushNotification, perfil }: Props) => {
     </>
   );
 };
+

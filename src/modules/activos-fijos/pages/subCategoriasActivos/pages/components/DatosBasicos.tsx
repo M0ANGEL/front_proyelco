@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Col, Input, Row, SelectProps, Select, Typography } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
 import { getActiCategorias } from "@/services/activosFijos/CategoriasAPI";
+import { StyledFormItem } from "@/components/layout/styled";
 
 const { Text } = Typography;
 

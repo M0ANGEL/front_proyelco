@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { Button, Input, Popconfirm, Tag, Tooltip } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
-import { EditOutlined, SyncOutlined } from "@ant-design/icons";
+import { SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
 import {
   DeleteFicha,
   getFichasObra,
 } from "@/services/talento-humano/fichaObraAPI";
+import { DataTable } from "@/components/global/DataTable";
+import { BotonesOpciones } from "@/components/global/BotonesOpciones";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
 
 interface DataType {
   key: number;
@@ -24,9 +26,13 @@ interface DataType {
   updated_at: string;
   fecha_ingreso: string;
   fecha_nacimiento: string;
+  tipo_documento: string;
+  tipo_empleado: string;
+  estado_civil: string;
+  salario: string;
+  valor_hora: string;
 }
 
-const { Text } = Typography;
 
 export const ListFichasObra = () => {
   const location = useLocation();
@@ -72,8 +78,7 @@ export const ListFichasObra = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  const handleSearch = (value: string) => {
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
@@ -87,68 +92,107 @@ export const ListFichasObra = () => {
     setLoadingRow([...loadingRow, id]);
     DeleteFicha(id)
       .then(() => {
+        notify.success("Estado de la ficha actualizado con éxito");
         fetchCategorias();
       })
-      .catch(() => {
+      .catch((error) => {
+        const msg = error.response?.data?.message || "Error al cambiar el estado";
+        notify.error("Error", msg);
         setLoadingRow([]);
       });
   };
 
+  const handleEdit = (record: DataType) => {
+    // Navegar a la página de edición
+    window.location.href = `${location.pathname}/edit/${record.key}`;
+  };
+
   const columns: ColumnsType<DataType> = [
+    {
+      title: "Nombre Completo",
+      dataIndex: "nombres",
+      key: "nombres",
+      sorter: (a, b) => a.nombres.localeCompare(b.nombres),
+      fixed: "left" as const,
+      width: 200,
+    },
     {
       title: "Tipo empleado",
       dataIndex: "tipo_empleado",
       key: "tipo_empleado",
       sorter: (a, b) => a.tipo_empleado.localeCompare(b.tipo_empleado),
+      width: 150,
+    },
+    {
+      title: "Cédula",
+      dataIndex: "identificacion",
+      key: "identificacion",
+      width: 120,
+    },
+    {
+      title: "Cargo",
+      dataIndex: "cargo",
+      key: "cargo",
+      width: 150,
+    },
+    {
+      title: "Teléfono",
+      dataIndex: "telefono_celular",
+      key: "telefono_celular",
+      width: 120,
+    },
+    {
+      title: "Género",
+      dataIndex: "genero",
+      key: "genero",
+      width: 100,
+    },
+    {
+      title: "Estado Civil",
+      dataIndex: "estado_civil",
+      key: "estado_civil",
+      width: 120,
+    },
+    {
+      title: "Tipo Documento",
+      dataIndex: "tipo_documento",
+      key: "tipo_documento",
+      width: 130,
     },
     {
       title: "Fecha Nacimiento",
       dataIndex: "fecha_nacimiento",
       key: "fecha_nacimiento",
       sorter: (a, b) => a.fecha_nacimiento.localeCompare(b.fecha_nacimiento),
+      width: 140,
     },
     {
-      title: "Nombre Completo",
-      dataIndex: "nombres",
-      key: "nombres",
-      sorter: (a, b) => a.nombres.localeCompare(b.nombres),
+      title: "Fecha Ingreso",
+      dataIndex: "fecha_ingreso",
+      key: "fecha_ingreso",
+      width: 130,
     },
     {
-      title: "Genero",
-      dataIndex: "genero",
-      key: "genero",
+      title: "Salario",
+      dataIndex: "salario",
+      key: "salario",
+      width: 120,
+      render: (text) => `$${text}`,
     },
     {
-      title: "Estado Civil",
-      dataIndex: "estado_civil",
-      key: "estado_civil",
-    },
-    {
-      title: "Tipo Documento",
-      dataIndex: "tipo_documento",
-      key: "tipo_documento",
-    },
-    {
-      title: "Cedula",
-      dataIndex: "identificacion",
-      key: "identificacion",
-    },
-    {
-      title: "Telefono",
-      dataIndex: "telefono_celular",
-      key: "telefono_celular",
-    },
-    {
-      title: "Cargo",
-      dataIndex: "cargo",
-      key: "cargo",
+      title: "Valor Hora",
+      dataIndex: "valor_hora",
+      key: "valor_hora",
+      width: 120,
+      render: (text) => `$${text}`,
     },
     {
       title: "Estado",
       dataIndex: "estado",
       key: "estado",
       align: "center",
-      render: (_, record: { key: React.Key; estado: string }) => {
+      width: 120,
+      render: (_, record: DataType) => {
         let estadoString = "";
         let color;
         if (record.estado === "1") {
@@ -163,14 +207,15 @@ export const ListFichasObra = () => {
             title="¿Desea cambiar el estado?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
+            disabled={record.estado === "2"}
           >
             <ButtonTag
-              disabled={record.estado == "2" ? true : ""}
+              disabled={record.estado === "2"}
               color={color}
             >
               <Tooltip
                 title={
-                  record.estado == "2"
+                  record.estado === "2"
                     ? "Usuario retirado de la empresa"
                     : "Cambiar estado"
                 }
@@ -198,13 +243,22 @@ export const ListFichasObra = () => {
       dataIndex: "acciones",
       key: "acciones",
       align: "center",
-      render: (_, record: { key: React.Key }) => {
+      fixed: "right" as const,
+      width: 100,
+      render: (_, record: DataType) => {
         return (
-          <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
-            </Link>
-          </Tooltip>
+          <BotonesOpciones
+            botones={[
+              {
+                tipo: "editar",
+                label: "Editar ficha",
+                onClick: () => handleEdit(record),
+                disabled: record.estado === "2"
+              }
+            ]}
+            soloIconos={true}
+            size="small"
+          />
         );
       },
     },
@@ -212,33 +266,39 @@ export const ListFichasObra = () => {
 
   return (
     <StyledCard
-      title={"Fichas"}
+      title={"Fichas de Obra"}
       extra={
         <Link to={`${location.pathname}/create`}>
-          <Button type="primary">Crear</Button>
+          <Button type="primary">Crear Ficha</Button>
         </Link>
       }
     >
-      <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
-      </SearchBar>
-      <Table
-        className="custom-table"
-        rowKey={(record) => record.key}
-        size="small"
-        dataSource={dataSource ?? initialData}
+      <div style={{ marginBottom: 16 }}>
+        <Input 
+          placeholder="Buscar ficha..." 
+          onChange={(e) => handleSearch(e.target.value)}
+          style={{ width: 300, borderRadius: 8 }}
+          allowClear
+        />
+      </div>
+      
+      <DataTable
         columns={columns}
+        dataSource={dataSource}
         loading={loading}
+        withPagination={true}
+        hasFixedColumn={true}
+        stickyHeader={true}
+        scroll={{ x: 1800, y: 500 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
-          defaultPageSize: 15,
-          pageSizeOptions: ["5", "15", "30"],
-          showTotal: (total: number) => {
-            return <Text>Total Registros: {total}</Text>;
-          },
+          showQuickJumper: true,
+          showTotal: (total, range) => 
+            `${range[0]}-${range[1]} de ${total} registros`,
+          pageSizeOptions: ["10", "20", "50"],
+          defaultPageSize: 10,
         }}
-        bordered
       />
     </StyledCard>
   );

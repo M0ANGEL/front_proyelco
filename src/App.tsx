@@ -1,18 +1,20 @@
-import { HashRouter } from "react-router-dom";
-import { AppRouter } from "./router";
-import { Suspense } from "react";
+import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { ConfigProvider } from 'antd';
+import { AuthProvider } from './hooks/useAuth';
+import AppRouter from './router/AppRouter';
+import './styles.scss';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <>
-      <HashRouter>
-        <Suspense fallback={<div>Loading...</div>}>
-          <AppRouter></AppRouter>
-        </Suspense>
-      </HashRouter>
-    </>
+    <ConfigProvider>
+        <AuthProvider>
+          <Router>
+            <AppRouter />
+          </Router>
+        </AuthProvider>
+    </ConfigProvider>
   );
-  // }
-}
+};
 
 export default App;

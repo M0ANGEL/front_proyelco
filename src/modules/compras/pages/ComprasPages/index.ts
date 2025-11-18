@@ -1,1 +1,0 @@
-export {ComprasPages} from './ComprasPages'

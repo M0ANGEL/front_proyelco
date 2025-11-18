@@ -1,7 +1,6 @@
-import { RoutesWithNotFound } from "@/modules/common/components";
-import { AuthGuard } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
 import { FormCargos, ListCargos } from "../pages";
+import { AuthGuard, RoutesWithNotFound } from "@/modules/common/guards";
 
 export const CargosRoutes = () => {
   return (

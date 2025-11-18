@@ -9,10 +9,10 @@ import {
   DatePicker,
 } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
 import TextArea from "antd/es/input/TextArea";
 import { getActivosMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
+import { StyledFormItem } from "@/components/layout/styled";
 
 const { Text } = Typography;
 

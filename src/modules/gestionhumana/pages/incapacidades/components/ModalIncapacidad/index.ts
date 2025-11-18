@@ -1,1 +1,0 @@
-export { ModalIncapacidad } from './ModalIncapacidad';

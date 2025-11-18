@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Col, Input, Row, Select, Typography } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { Props } from "./types";
+import { StyledFormItem } from "@/components/layout/styled";
 
 const { Text } = Typography;
 

@@ -1,1 +1,0 @@
-export {ListHistorialTickets} from './ListHistorialTickets'

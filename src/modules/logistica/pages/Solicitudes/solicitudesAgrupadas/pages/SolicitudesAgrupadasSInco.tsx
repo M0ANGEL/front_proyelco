@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Col, Input, Select, Table, Typography, Row } from "antd";
-import {
-  getProyectosSinco,
-  getSolicitudesPorProyecto,
-  getSolicitudesPorProyectoPDF,
-} from "@/services/logistica/logisticaAPI";
-import dayjs from "dayjs";
-import { client_sinco } from "@/services/client";
+import { Button, Col, Input, Select, Row } from "antd";
 
-const { Text } = Typography;
+import { client_sinco } from "@/services/client";
+import { getProyectosSinco, getSolicitudesPorProyecto } from "@/services/logistica/logisticaAPI";
+import { StyledCard } from "@/components/layout/styled";
+import { DataTable } from "@/components/global/DataTable";
+
 
 interface DataType {
   key: number;
@@ -84,7 +80,7 @@ export const SolicitudesAgrupadasSInco = () => {
         "solicitudes-proyectos-pdf",
         dataPost,
         {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
           responseType: "blob", // importante: recibir como blob
         }
       );
@@ -160,7 +156,7 @@ export const SolicitudesAgrupadasSInco = () => {
         </Col>
       </Row>
 
-      <Table
+      <DataTable
         columns={columns}
         dataSource={dataSource}
         loading={loading}

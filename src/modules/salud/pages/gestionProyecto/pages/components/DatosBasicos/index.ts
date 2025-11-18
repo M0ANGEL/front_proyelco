@@ -1,1 +1,0 @@
-export { DatosBasicos } from './DatosBasicos';

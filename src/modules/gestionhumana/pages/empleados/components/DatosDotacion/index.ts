@@ -1,1 +1,0 @@
-export { DatosDotacion } from './DatosDotacion';

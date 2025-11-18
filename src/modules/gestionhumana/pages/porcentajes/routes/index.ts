@@ -1,1 +1,0 @@
-export { PorcentajesRoutes } from './PorcentajesRoutes';

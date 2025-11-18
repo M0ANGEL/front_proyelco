@@ -1,1 +1,0 @@
-export {ProveedoresRoutes} from './ProveedoresRoutes'

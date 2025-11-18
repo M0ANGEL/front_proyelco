@@ -1,4 +1,4 @@
-import { AmClientes } from "@/services/types";
+import { AmClientes } from "@/types/typesGlobal";
 
 export interface Props {
   TkCategoria?: AmClientes;
