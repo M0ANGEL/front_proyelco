@@ -1,4 +1,13 @@
-import { Button, Col, Input, Modal, notification, Row, Tooltip } from "antd";
+import {
+  Button,
+  Col,
+  Input,
+  Modal,
+  notification,
+  Row,
+  Select,
+  Tooltip,
+} from "antd";
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 
@@ -15,12 +24,31 @@ interface GenerarQRProps {
 export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
   const [visible, setVisible] = useState(false);
   const [observacionActivo, setObservacionActivo] = useState<string>("");
+  const [requiereMensajero, setRequiereMensajero] = useState<boolean | null>(
+    null
+  );
+
+  // Función para validar si el formulario es válido
+  const isFormValid = () => {
+    return observacionActivo.trim().length > 0 && requiereMensajero !== null;
+  };
 
   //trasladar
   const trasladarActivo = () => {
+    // Validación adicional antes de enviar
+    if (!isFormValid()) {
+      notification.warning({
+        message: "Datos incompletos",
+        description: "Por favor complete todos los campos obligatorios.",
+        placement: "topRight",
+      });
+      return;
+    }
+
     const rechazoTicket = {
       id: data.key,
       observacion: observacionActivo,
+      requiere_mensajero: requiereMensajero,
     };
 
     LiberarActiActivo(rechazoTicket)
@@ -41,6 +69,9 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
       .finally(() => {
         fetchList();
         setVisible(false);
+        // Resetear formulario
+        setObservacionActivo("");
+        setRequiereMensajero(null);
       });
   };
 
@@ -49,22 +80,31 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Liberar Activo">
         <Button
           icon={<AiOutlineRedo />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{ marginLeft: "5px", background: "red" }}
+          style={{ marginLeft: "5px", background: "red", color: "white" }}
         />
       </Tooltip>
 
       <Modal
         title={`Liberar el activo ${data.numero_activo}`}
         open={visible}
-        onCancel={() => setVisible(false)}
+        onCancel={() => {
+          setVisible(false);
+          // Resetear formulario al cancelar
+          setObservacionActivo("");
+          setRequiereMensajero(null);
+        }}
         footer={[
           <>
             <Button
               key="close"
-              onClick={() => setVisible(false)}
+              onClick={() => {
+                setVisible(false);
+                setObservacionActivo("");
+                setRequiereMensajero(null);
+              }}
               style={{
                 marginLeft: "5px",
                 color: "white",
@@ -74,15 +114,14 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
               Cerrar
             </Button>
             <Button
-              key="close"
+              key="submit"
               onClick={() => trasladarActivo()}
               style={{
                 marginLeft: "5px",
                 color: "white",
-                background:
-                  observacionActivo.length !== 0 ? "#003daeff" : "#adc0e4ff",
+                background: isFormValid() ? "#003daeff" : "#adc0e4ff",
               }}
-              disabled={observacionActivo.length === 0}
+              disabled={!isFormValid()}
             >
               Liberar Activo
             </Button>
@@ -112,16 +151,46 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
             </StyledFormItem>
           </Col>
 
-          {/* observacion */}
+          {/* requiere mensajero - OBLIGATORIO */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <StyledFormItem
+              label="Requiere mensajero?"
+              labelCol={{ span: 24 }}
+              required
+              validateStatus={requiereMensajero !== null ? "success" : "error"}
+              help={
+                requiereMensajero !== null ? "" : "Este campo es obligatorio"
+              }
+            >
+              <Select
+                placeholder="Seleccione una opción"
+                options={[
+                  { label: "Sí", value: 1 },
+                  { label: "No", value: 0 },
+                ]}
+                onChange={(value) => setRequiereMensajero(value)}
+                status={requiereMensajero !== null ? "" : "error"}
+                value={requiereMensajero}
+              />
+            </StyledFormItem>
+          </Col>
+
+          {/* observacion - OBLIGATORIO */}
           <Col xs={24} sm={24} style={{ width: "100%" }}>
-            <StyledFormItem label="Observacion" labelCol={{ span: 24 }}>
+            <StyledFormItem 
+              label="Observación" 
+              labelCol={{ span: 24 }}
+              required
+              validateStatus={observacionActivo.trim().length > 0 ? "success" : "error"}
+              help={observacionActivo.trim().length > 0 ? "" : "Este campo es obligatorio"}
+            >
               <TextArea
                 allowClear
-                required
-                placeholder="Escribe una observacion del activo"
+                placeholder="Escribe una observación del activo"
                 rows={5}
                 value={observacionActivo}
                 onChange={(e) => setObservacionActivo(e.target.value)}
+                status={observacionActivo.trim().length > 0 ? "" : "error"}
               />
             </StyledFormItem>
           </Col>

@@ -27,7 +27,7 @@ export const ModalAceptarActivo = ({ data, fetchList }: GenerarQRProps) => {
       .then(() => {
         notification.success({
           message: "El activo fue rechazado",
-          description: "El activo fue rechazado correctamente.",
+          description: "El activo fue aceptado correctamente.",
           placement: "topRight",
         });
       })
@@ -49,13 +49,10 @@ export const ModalAceptarActivo = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Aceptar Activo">
         <Button
           icon={<AiOutlineCheck />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{
-            backgroundColor: "#52c41a",
-            borderColor: "#52c41a",
-          }}
+          style={{ marginLeft: "5px", background: "#52c41a", color: "white" }}
         />
       </Tooltip>
 

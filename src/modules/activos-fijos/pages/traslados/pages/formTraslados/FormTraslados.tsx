@@ -43,12 +43,6 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
     if (visible == true) {
       fetchUsuarios();
       fechBodegas();
-      // // Resetear form cuando se abre el modal
-      // form.resetFields();
-      // setUsuarioSeleccionado([]);
-      // setRequiereMensajero(null);
-      // setBodegaSelecionadaDestino(null);
-      // setObservacionActivo("");
     }
   }, [visible]);
 
@@ -139,10 +133,10 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Trasladar Activo">
         <Button
           icon={<FaUserCheck />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{ marginLeft: "5px", background: "#17ae00ff" }}
+          style={{ marginLeft: "5px", background: "#17ae00ff", color: "white" }}
         />
       </Tooltip>
 

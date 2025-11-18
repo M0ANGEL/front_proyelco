@@ -49,10 +49,10 @@ export const ModalRechazarActivo = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Rechazar Activo">
         <Button
           icon={<AiOutlineClose />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{ marginLeft: "5px", background: "red" }}
+          style={{ marginLeft: "5px", background: "red", color: "white" }}
         />
       </Tooltip>
 

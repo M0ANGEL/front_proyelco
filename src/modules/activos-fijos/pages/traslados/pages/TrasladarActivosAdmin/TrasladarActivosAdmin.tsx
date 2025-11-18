@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Tag, Typography } from "antd";
+import { Button, Space, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
@@ -68,6 +68,7 @@ export const TrasladarActivosAdmin = () => {
           usuario: categoria.usuario,
           bodega_actual: categoria.bodega_actual,
           categoria: categoria.categoria,
+          tiene_mensajero: categoria.tiene_mensajero,
           subcategoria: categoria.subcategoria,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -114,26 +115,30 @@ export const TrasladarActivosAdmin = () => {
 
     // Filtro por condición
     if (condicionFilter) {
-      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+      filteredData = filteredData.filter(
+        (item) => item.condicion === condicionFilter
+      );
     }
 
     // Filtro por categoría
     if (categoriaFilter) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter((item) =>
         item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
       );
     }
 
     // Filtro por subcategoría
     if (subcategoriaFilter) {
-      filteredData = filteredData.filter(item => 
-        item.subcategoria?.toLowerCase().includes(subcategoriaFilter.toLowerCase())
+      filteredData = filteredData.filter((item) =>
+        item.subcategoria
+          ?.toLowerCase()
+          .includes(subcategoriaFilter.toLowerCase())
       );
     }
 
     // Filtro por bodega
     if (bodegaFilter) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter((item) =>
         item.bodega_actual?.toLowerCase().includes(bodegaFilter.toLowerCase())
       );
     }
@@ -153,14 +158,22 @@ export const TrasladarActivosAdmin = () => {
   // Aplicar filtros cuando cambien los valores
   useEffect(() => {
     applyFilters();
-  }, [condicionFilter, categoriaFilter, subcategoriaFilter, bodegaFilter, initialData]);
+  }, [
+    condicionFilter,
+    categoriaFilter,
+    subcategoriaFilter,
+    bodegaFilter,
+    initialData,
+  ]);
 
   // Obtener opciones únicas para filtros
   const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
-    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
-    return uniqueValues.map(value => ({
+    const uniqueValues = [...new Set(data.map((item) => item[key]))].filter(
+      Boolean
+    );
+    return uniqueValues.map((value) => ({
       label: String(value).toUpperCase(),
-      value: String(value)
+      value: String(value),
     }));
   };
 
@@ -246,10 +259,22 @@ export const TrasladarActivosAdmin = () => {
       key: "acciones",
       align: "center",
       render: (_, record) => (
-        <FormTraslados data={record} fetchList={() => fetchCategorias()} />
+        <Space>
+          {record.tiene_mensajero == "1" ? (
+            <Tag color="orange" icon={<SyncOutlined spin />}>
+              Esperando mensajero
+            </Tag>
+          ) : (
+            <>
+              <FormTraslados
+                data={record}
+                fetchList={() => fetchCategorias()}
+              />
+            </>
+          )}
+        </Space>
       ),
       fixed: "right",
-      width: 100,
     },
   ];
 
@@ -261,25 +286,25 @@ export const TrasladarActivosAdmin = () => {
       options: [
         { label: "Bueno", value: "1" },
         { label: "Regular", value: "2" },
-        { label: "Malo", value: "3" }
+        { label: "Malo", value: "3" },
       ],
       value: condicionFilter,
-      onChange: setCondicionFilter
+      onChange: setCondicionFilter,
     },
     {
       key: "categoria",
       label: "Categoría",
-      options: getUniqueOptions(initialData, 'categoria'),
+      options: getUniqueOptions(initialData, "categoria"),
       value: categoriaFilter,
-      onChange: setCategoriaFilter
+      onChange: setCategoriaFilter,
     },
     {
       key: "bodega",
       label: "Bodega Actual",
-      options: getUniqueOptions(initialData, 'bodega_actual'),
+      options: getUniqueOptions(initialData, "bodega_actual"),
       value: bodegaFilter,
-      onChange: setBodegaFilter
-    }
+      onChange: setBodegaFilter,
+    },
   ];
 
   return (
@@ -300,7 +325,7 @@ export const TrasladarActivosAdmin = () => {
         filters={filterOptions}
         showFilterButton={false}
       />
-      
+
       <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
