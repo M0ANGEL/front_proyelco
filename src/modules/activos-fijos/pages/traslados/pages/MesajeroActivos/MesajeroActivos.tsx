@@ -113,7 +113,7 @@ const ModalConfirmacion = ({ data, onConfirm, loading }) => {
             loading={loading}
             icon={<CheckCircleOutlined />}
           >
-            Confirmar Entrega
+            Confirmar Despacho
           </Button>,
         ]}
         centered

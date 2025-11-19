@@ -13,7 +13,7 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
   className = ''
 }) => {
   const { animationContainer } = useLottie({
-    path: '/cargas.json', // Ruta en la carpeta public
+    path: '/lotties/arbol_navidad.json', // Ruta en la carpeta public
     loop: true,
     autoplay: true
   });
@@ -24,6 +24,7 @@ const LoadingAnimation: React.FC<LoadingAnimationProps> = ({
       style={{ 
         width, 
         height,
+        marginTop: "5%",
         margin: '0 auto',
         display: 'flex',
         alignItems: 'center',

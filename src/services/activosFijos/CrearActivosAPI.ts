@@ -225,3 +225,18 @@ export const DeleteActiActivos = async (id: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };
+
+//poner bodega responsable al activo
+export const UpdateBodegaResponsable = async (data: any): Promise<any> => {
+  return await client.post<any>("bodega-responsable-activo", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
+
+export const DeleteBodegaResponsable = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`bodega-responsable-activo-delete/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
+
+

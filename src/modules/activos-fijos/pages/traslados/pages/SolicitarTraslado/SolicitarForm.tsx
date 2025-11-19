@@ -10,9 +10,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import TextArea from "antd/es/input/TextArea";
-import {
-  getActiBodegas,
-} from "@/services/activosFijos/BodegasAPI";
+import { getActiBodegas } from "@/services/activosFijos/BodegasAPI";
 import { envioSolicitudActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineIssuesClose } from "react-icons/ai";
 import { ActivosData } from "@/types/typesGlobal";
@@ -35,19 +33,20 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
     number | null
   >(null);
   const [observacionActivo, setObservacionActivo] = useState<string>("");
+  const [helpVisible, setHelpVisible] = useState(false);
 
   // 👇 nuevo state para condición del activo
 
   useEffect(() => {
-     if(visible == true){
+    if (visible == true) {
       getActiBodegas().then(({ data: { data } }) => {
-          const opciones = data.map((item) => ({
-            label: item.nombre.toUpperCase(),
-            value: item.id,
-          }));
-          setBodegas(opciones);
-        });
-     }
+        const opciones = data.map((item) => ({
+          label: item.nombre.toUpperCase(),
+          value: item.id,
+        }));
+        setBodegas(opciones);
+      });
+    }
   }, [visible]);
 
   //trasladar
@@ -83,7 +82,13 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
 
   return (
     <>
-      <Tooltip title={data.solicitud == "1" ? "Activo solicitado (estado pendiente)" : "Solicitar Activo"}>
+      <Tooltip
+        title={
+          data.solicitud == "1"
+            ? "Activo solicitado (estado pendiente)"
+            : "Solicitar Activo"
+        }
+      >
         <Button
           icon={<AiOutlineIssuesClose />}
           type="primary"
@@ -99,32 +104,42 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
         open={visible}
         onCancel={() => setVisible(false)}
         footer={[
-          <>
-            <Button
-              key="close"
-              onClick={() => setVisible(false)}
-              style={{
-                marginLeft: "5px",
-                color: "white",
-                background: "#ce2222ff",
-              }}
-            >
-              Cerrar
-            </Button>
-            <Button
-              key="close"
-              onClick={() => trasladarActivo()}
-              style={{
-                marginLeft: "5px",
-                color: "white",
-                background:
-                  observacionActivo.length !== 0 ? "#003daeff" : "#adc0e4ff",
-              }}
-              disabled={observacionActivo.length === 0}
-            >
-              Solicitar Activo
-            </Button>
-          </>,
+          <div
+            key="leftButtons"
+            style={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Button style={{background: "#f3cb73ff", color: "white"}} onClick={() => setHelpVisible(true)}>Ayuda</Button>
+          </div>,
+
+          <Button
+            key="close"
+            onClick={() => setVisible(false)}
+            style={{
+              marginLeft: "5px",
+              color: "white",
+              background: "#ce2222ff",
+            }}
+          >
+            Cerrar
+          </Button>,
+
+          <Button
+            key="submit"
+            onClick={() => trasladarActivo()}
+            style={{
+              marginLeft: "5px",
+              color: "white",
+              background:
+                observacionActivo.length !== 0 ? "#003daeff" : "#adc0e4ff",
+            }}
+            disabled={observacionActivo.length === 0}
+          >
+            Solicitar Activo
+          </Button>,
         ]}
         centered
       >
@@ -199,6 +214,35 @@ export const SolicitarForm = ({ data, fetchList }: GenerarQRProps) => {
             </StyledFormItem>
           </Col>
         </Row>
+      </Modal>
+
+      <Modal
+        title="¿Cómo funciona solicitar un activo?"
+        open={helpVisible}
+        onCancel={() => setHelpVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setHelpVisible(false)}>
+            Cerrar
+          </Button>,
+        ]}
+        centered
+      >
+        <p>
+          <strong>1. Ubicación destino:</strong> Selecciona la bodega a la que
+          deseas que se traslade el activo.
+        </p>
+        <p>
+          <strong>2. Observación:</strong> Describe por qué estás solicitando el
+          activo o para qué lo necesitas.
+        </p>
+        <p>
+          <strong>3. Importante:</strong> La solicitud quedará pendiente hasta
+          ser aprobada por la persona que lo tiene asignado.
+        </p>
+        <p>
+          Una vez completes la información, haz clic en{" "}
+          <strong>“Solicitar Activo”</strong>.
+        </p>
       </Modal>
     </>
   );

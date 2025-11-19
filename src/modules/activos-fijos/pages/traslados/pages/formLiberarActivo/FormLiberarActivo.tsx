@@ -1,4 +1,5 @@
 import {
+  Alert,
   Button,
   Col,
   Input,
@@ -27,6 +28,7 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
   const [requiereMensajero, setRequiereMensajero] = useState<boolean | null>(
     null
   );
+  const [helpVisible, setHelpVisible] = useState(false);
 
   // Función para validar si el formulario es válido
   const isFormValid = () => {
@@ -97,35 +99,45 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
           setRequiereMensajero(null);
         }}
         footer={[
-          <>
-            <Button
-              key="close"
-              onClick={() => {
-                setVisible(false);
-                setObservacionActivo("");
-                setRequiereMensajero(null);
-              }}
-              style={{
-                marginLeft: "5px",
-                color: "white",
-                background: "#ce2222ff",
-              }}
-            >
-              Cerrar
-            </Button>
-            <Button
-              key="submit"
-              onClick={() => trasladarActivo()}
-              style={{
-                marginLeft: "5px",
-                color: "white",
-                background: isFormValid() ? "#003daeff" : "#adc0e4ff",
-              }}
-              disabled={!isFormValid()}
-            >
-              Liberar Activo
-            </Button>
-          </>,
+          <div
+            key="leftButtons"
+            style={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Button style={{background: "#f3cb73ff", color: "white"}} onClick={() => setHelpVisible(true)}>Ayuda</Button>
+          </div>,
+
+          <Button
+            key="close"
+            onClick={() => {
+              setVisible(false);
+              setObservacionActivo("");
+              setRequiereMensajero(null);
+            }}
+            style={{
+              marginLeft: "5px",
+              color: "white",
+              background: "#ce2222ff",
+            }}
+          >
+            Cerrar
+          </Button>,
+
+          <Button
+            key="submit"
+            onClick={() => trasladarActivo()}
+            style={{
+              marginLeft: "5px",
+              color: "white",
+              background: isFormValid() ? "#003daeff" : "#adc0e4ff",
+            }}
+            disabled={!isFormValid()}
+          >
+            Liberar Activo
+          </Button>,
         ]}
         centered
       >
@@ -177,12 +189,18 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
 
           {/* observacion - OBLIGATORIO */}
           <Col xs={24} sm={24} style={{ width: "100%" }}>
-            <StyledFormItem 
-              label="Observación" 
+            <StyledFormItem
+              label="Observación"
               labelCol={{ span: 24 }}
               required
-              validateStatus={observacionActivo.trim().length > 0 ? "success" : "error"}
-              help={observacionActivo.trim().length > 0 ? "" : "Este campo es obligatorio"}
+              validateStatus={
+                observacionActivo.trim().length > 0 ? "success" : "error"
+              }
+              help={
+                observacionActivo.trim().length > 0
+                  ? ""
+                  : "Este campo es obligatorio"
+              }
             >
               <TextArea
                 allowClear
@@ -193,8 +211,41 @@ export const FormLiberarActivo = ({ data, fetchList }: GenerarQRProps) => {
                 status={observacionActivo.trim().length > 0 ? "" : "error"}
               />
             </StyledFormItem>
+            <Alert
+              message="Nota: Al liberar el activo, este regresará automáticamente a la bodega general. Debes confirmar si necesitas que un mensajero vaya por el activo."
+              type="success"
+            />
           </Col>
         </Row>
+      </Modal>
+
+      <Modal
+        title="¿Cómo funciona liberar un activo?"
+        open={helpVisible}
+        onCancel={() => setHelpVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setHelpVisible(false)}>
+            Cerrar
+          </Button>,
+        ]}
+        centered
+      >
+        <p>
+          <strong>1. Observación:</strong> Explica la razón por la cual estás
+          liberando el activo.
+        </p>
+        <p>
+          <strong>2. Requiere mensajero:</strong> Indica si necesitas que un
+          mensajero recoja el activo.
+        </p>
+        <p>
+          <strong>3. Importante:</strong> Al liberar un activo, este regresará
+          automáticamente a la bodega general.
+        </p>
+        <p>
+          Una vez completes la información, haz clic en{" "}
+          <strong>“Liberar Activo”</strong>.
+        </p>
       </Modal>
     </>
   );

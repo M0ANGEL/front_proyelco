@@ -1,4 +1,4 @@
-import { Button, Col, Modal, notification, Row, Tooltip } from "antd";
+import { Button, Col, Input, Modal, notification, Row, Tooltip } from "antd";
 import { useState } from "react";
 import TextArea from "antd/es/input/TextArea";
 
@@ -91,6 +91,28 @@ export const ModalRechazarActivo = ({ data, fetchList }: GenerarQRProps) => {
         centered
       >
         <Row gutter={24}>
+          {/* mas data para personas que usan celular */}
+          {/* categoria */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <StyledFormItem label="Categoría Padre" labelCol={{ span: 24 }}>
+              <Input value={data.categoria} disabled />
+            </StyledFormItem>
+          </Col>
+
+          {/* subacategoria  */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <StyledFormItem label="Subategoría" labelCol={{ span: 24 }}>
+              <Input value={data.subcategoria} disabled />
+            </StyledFormItem>
+          </Col>
+
+          {/* descripcion */}
+          <Col xs={24} sm={24} style={{ width: "100%" }}>
+            <StyledFormItem label="Descripción" labelCol={{ span: 24 }}>
+              <TextArea value={data?.descripcion || "..."} disabled />
+            </StyledFormItem>
+          </Col>
+
           {/* observacion */}
           <Col xs={24} sm={24} style={{ width: "100%" }}>
             <StyledFormItem label="Observacion" labelCol={{ span: 24 }}>
