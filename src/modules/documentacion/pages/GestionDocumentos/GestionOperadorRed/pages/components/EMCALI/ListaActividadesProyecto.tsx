@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
-import { Table, Tag, Button, Typography, Spin, notification } from "antd";
+import { Tag, Button, Typography, Spin, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
+import { StyledCard } from "@/components/layout/styled";
+import { DataTable } from "@/components/global/DataTable";
 
 const { Title } = Typography;
 
@@ -221,7 +222,7 @@ export const ListaActividadesProyecto = () => {
           <p>No se encontraron actividades para este proyecto</p>
         </div>
       ) : (
-        <Table
+        <DataTable
           size="small"
           dataSource={data}
           columns={columns}

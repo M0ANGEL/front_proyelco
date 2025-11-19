@@ -14,13 +14,12 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosCategoria } from "@/services/types";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
-import { DatosBasicos } from "../components";
 import { crearActiCategoria, getActiCategoria, updateActiCategoria } from "@/services/activosFijos/CategoriasAPI";
+import { ActivosCategoria } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
+import { DatosBasicos } from "../components";
 
 const { Text } = Typography;
 
@@ -29,7 +28,6 @@ export const FormCategoriasActivos = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<ActivosCategoria>();
-  const { transformToUpperCase } = useSerialize();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -45,18 +43,7 @@ export const FormCategoriasActivos = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
+
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -65,7 +52,7 @@ export const FormCategoriasActivos = () => {
     if (categoria) {
       updateActiCategoria(data, id)
         .then(() => {
-          pushNotification({ title: "Categoria actualizado con éxito!" });
+          notify.success("Categoria actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
@@ -73,29 +60,19 @@ export const FormCategoriasActivos = () => {
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
           
-            pushNotification({
-              type: "error",
-              title: "Error al actualizar",
-              description: error.message || "Ocurrió un error inesperado",
-            });
+            notify.error("Error al actualizar");
           setLoaderSave(false);
         });
     } else {
       crearActiCategoria(data)
         .then(() => {
-          pushNotification({ title: "Categoria creado con éxito!" });
+          notify.success("Categoria creado con éxito!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.error,
-            description: error.response?.data?.errors?.prefijo
-              ? "PREFIJO EN USO"
-              : error.message,
-          });
+          notify.error(error);
           setLoaderSave(false);
         });
     }

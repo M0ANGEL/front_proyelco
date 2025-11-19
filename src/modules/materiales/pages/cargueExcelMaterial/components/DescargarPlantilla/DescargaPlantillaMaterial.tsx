@@ -1,5 +1,5 @@
-import { GreenButton } from "@/modules/common/components/ExportExcel/styled";
-import { DocPlantilla } from "@/services/compras/papeleraAPI";
+import { GreenButton } from "@/components/layout/styled";
+import { DocPlantilla } from "@/services/material/general.API";
 import { Tooltip } from "antd";
 import { notification } from "antd";
 

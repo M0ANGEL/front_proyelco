@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ResponseProcesosProyectos } from "@/types/typesGlobal";
 import { client } from "../client";
-import { ResponseProcesosProyectos } from "../types";
 
 //lamar los proyectosd con documentacion
 export const getProyectosDocumentacionEmcali =
   async (): Promise<ResponseProcesosProyectos> => {
     return await client.get("gestion-documentos-emcali", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
     });
   };
 
 export const getProyectosDocumentacionCelsia =
   async (): Promise<ResponseProcesosProyectos> => {
     return await client.get("gestion-documentos-celsia", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
     });
   };
 
@@ -21,14 +21,14 @@ export const getProyectosDocumentacionCelsia =
   export const getProyectosDocumentacionOrganismos =
   async (): Promise<ResponseProcesosProyectos> => {
     return await client.get("gestion-documentos-organismo", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
     });
   };
 
 //detalle de la documentacion
 export const getDocumentaCIonProyecto = async (id: React.Key): Promise<any> => {
   return await client.get<any>(`gestion-documentosDetalle/${id}`, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };
 
@@ -36,7 +36,7 @@ export const getDocumentaCIonProyecto = async (id: React.Key): Promise<any> => {
 export const getProyectosCodigo =
   async (): Promise<ResponseProcesosProyectos> => {
     return await client.get("gestion-documentos-proyectos", {
-      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
     });
   };
 
@@ -45,6 +45,6 @@ export const getProyectosCodigo =
 
 export const getDocumentaCIonOrganismos = async (data: any): Promise<any> => {
   return await client.post<any>("detalleDocumentosOrganismos", data, {
-    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };

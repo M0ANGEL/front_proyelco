@@ -1,1 +1,0 @@
-export { ListHorariosTemporales } from "./ListHorariosTemporales";

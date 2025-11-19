@@ -128,7 +128,7 @@ export const ModalConfirmacion = ({
         const response = await fetch(BASE_URL + "gestion-documentos-confirmar", {
           method: "POST",
           headers: { 
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
           body: formData,
         });

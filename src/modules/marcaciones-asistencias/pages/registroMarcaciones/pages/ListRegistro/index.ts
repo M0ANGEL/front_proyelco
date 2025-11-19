@@ -1,1 +1,0 @@
-export {ListRegistroMarcaciones} from './ListRegistroMarcaciones';

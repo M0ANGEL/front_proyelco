@@ -1,1 +1,0 @@
-export {UsuariosRegistrados} from './UsuariosRegistrados'

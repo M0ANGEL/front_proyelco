@@ -1,1 +1,0 @@
-export { PensionesRoutes } from "./PensionesRoutes";

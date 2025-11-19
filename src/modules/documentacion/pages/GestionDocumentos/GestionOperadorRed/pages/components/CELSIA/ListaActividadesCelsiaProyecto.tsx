@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Table, Tag, Button, Typography, Spin, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
@@ -8,6 +7,7 @@ import dayjs from "dayjs";
 import { getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
+import { StyledCard } from "@/components/layout/styled";
 
 const { Title } = Typography;
 
@@ -52,8 +52,6 @@ export const ListaActividadesCelsiaProyecto = () => {
     useState<DocumentacionDetalle | null>(null);
 
   const proyecto = location.state?.codigo_documento;
-  console.log(proyecto);
-
   useEffect(() => {
     if (proyecto?.codigo_documento) {
       cargarActividades();

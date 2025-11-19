@@ -1,1 +1,0 @@
-export { ModalSoportes } from "./ModalSoportes";

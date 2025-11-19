@@ -1,11 +1,10 @@
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Col, Collapse, Row, Space, Typography, Button } from "antd";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { StyledCardGrid } from "./styled";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
-
+import { StyledCard } from "@/components/layout/styled";
+import useSessionStorage from "@/hooks/useSessionStorage";
 
 const { Panel } = Collapse;
 const { Text } = Typography;
@@ -77,5 +76,4 @@ export const TrasladosActivosPage = () => {
       </Collapse>
     </StyledCard>
   );
-  
 };

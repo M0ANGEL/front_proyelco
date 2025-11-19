@@ -1,11 +1,11 @@
-import { Button, Col, Modal, notification, Row, Tooltip } from "antd";
+import { Button, Col, Input, Modal, notification, Row, Tooltip } from "antd";
 import { useState } from "react";
-import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 
 import { rechazarActivo } from "@/services/activosFijos/TrasladosActivosAPI";
 import { AiOutlineClose } from "react-icons/ai";
+import { StyledFormItem } from "@/components/layout/styled";
+import { ActivosData } from "@/types/typesGlobal";
 
 interface GenerarQRProps {
   data: ActivosData;
@@ -49,10 +49,10 @@ export const ModalRechazarActivo = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Rechazar Activo">
         <Button
           icon={<AiOutlineClose />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{ marginLeft: "5px", background: "red" }}
+          style={{ marginLeft: "5px", background: "red", color: "white" }}
         />
       </Tooltip>
 
@@ -91,6 +91,28 @@ export const ModalRechazarActivo = ({ data, fetchList }: GenerarQRProps) => {
         centered
       >
         <Row gutter={24}>
+          {/* mas data para personas que usan celular */}
+          {/* categoria */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <StyledFormItem label="Categoría Padre" labelCol={{ span: 24 }}>
+              <Input value={data.categoria} disabled />
+            </StyledFormItem>
+          </Col>
+
+          {/* subacategoria  */}
+          <Col xs={24} sm={12} style={{ width: "100%" }}>
+            <StyledFormItem label="Subategoría" labelCol={{ span: 24 }}>
+              <Input value={data.subcategoria} disabled />
+            </StyledFormItem>
+          </Col>
+
+          {/* descripcion */}
+          <Col xs={24} sm={24} style={{ width: "100%" }}>
+            <StyledFormItem label="Descripción" labelCol={{ span: 24 }}>
+              <TextArea value={data?.descripcion || "..."} disabled />
+            </StyledFormItem>
+          </Col>
+
           {/* observacion */}
           <Col xs={24} sm={24} style={{ width: "100%" }}>
             <StyledFormItem label="Observacion" labelCol={{ span: 24 }}>

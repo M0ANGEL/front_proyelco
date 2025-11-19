@@ -1,1 +1,0 @@
-export { SalarioMinimoRoutes } from './SalarioMinimoRoutes';

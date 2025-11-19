@@ -215,12 +215,8 @@ export const CargueExcelMaterial = () => {
         const worksheet = workbook.Sheets[sheetName];
         let jsonData: any[] = XLSX.utils.sheet_to_json(worksheet);
 
-        console.log("Datos originales:", jsonData);
-
         // ✅ APLICAR AUTO-RELLENO DE CÓDIGOS
         jsonData = autoRellenarCodigos(jsonData);
-
-        console.log("Datos después del auto-relleno:", jsonData);
 
         // ✅ Incluir TODOS los items del módulo 4, tanto padres como hijos
         const filteredData = jsonData.filter((item) => {
@@ -254,8 +250,6 @@ export const CargueExcelMaterial = () => {
         setPreviewMode(true);
         setUploadSuccess(false);
         setLoader(false);
-
-        console.log("Datos finales formateados:", formattedData);
 
         notificationApi.success({
           message: "Archivo procesado correctamente",
@@ -342,14 +336,6 @@ export const CargueExcelMaterial = () => {
       formData.append("tipo_obra", tipoObra);
       formData.append("proyecto_id", proyectoInfo.id.toString());
       formData.append("codigo_proyecto", proyectoInfo.codigo || "");
-
-      console.log("Enviando datos:", {
-        tipo_obra: tipoObra,
-        proyecto_id: proyectoInfo.id,
-        codigo_proyecto: proyectoInfo.codigo,
-        archivo: fileToUpload.name,
-        registros: dataSource.length,
-      });
 
       const response = await fetch(`${BASE_URL}cargueProyecion`, {
         method: "POST",

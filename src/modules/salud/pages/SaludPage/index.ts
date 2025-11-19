@@ -1,1 +1,0 @@
-export { SaludPage } from "./SaludPage";

@@ -14,16 +14,16 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosData } from "@/services/types";
 import { DatosBasicos } from "../components";
 import {
   crearActiActivo,
   getActiActivo,
   updateActiActivo,
 } from "@/services/activosFijos/CrearActivosAPI";
+import { ActivosData } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
 
 const { Text } = Typography;
 
@@ -47,19 +47,6 @@ export const FormCrearActivos = () => {
     }
   }, [id]);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
-
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
 
@@ -68,34 +55,26 @@ export const FormCrearActivos = () => {
     if (categoria) {
       updateActiActivo(data, id)
         .then(() => {
-          pushNotification({ title: "Activo actualizado con éxito!" });
+          notify.success("Activo actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          pushNotification({
-            type: "error",
-            title: "Error al actualizar activo",
-            description: error.message || "Ocurrió un error inesperado",
-          });
+          notify.error(error);
           setLoaderSave(false);
         });
     } else {
       crearActiActivo(data)
         .then(() => {
-          pushNotification({ title: "Activo creado con éxito!" });
+          notify.success("Activo creado con éxito!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.message,
-            description: "NUMERO DE ACTIVO EN USO || " + error.message ,
-          });
+          notify.error("NUMERO DE ACTIVO EN USO || " + error.message);
           setLoaderSave(false);
         });
     }

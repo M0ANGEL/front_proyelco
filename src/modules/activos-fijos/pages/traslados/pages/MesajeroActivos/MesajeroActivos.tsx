@@ -1,12 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  StyledCard,
-  StyledFormItem,
-} from "@/modules/common/layout/DashboardLayout/styled";
-import { Button, Col, Input, Modal, Row, Tag, Typography, message } from "antd";
+import { Button, Col, Input, Modal, Row, Tag, Typography, message, Select, Space } from "antd";
 import { Link } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import {
   ArrowLeftOutlined,
   SyncOutlined,
@@ -16,6 +11,9 @@ import {
 import dayjs from "dayjs";
 import { entregaMensajero, getActiActivosMensajeros } from "@/services/activosFijos/TrasladosActivosAPI";
 import TextArea from "antd/es/input/TextArea";
+import { StyledCard, StyledFormItem } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -47,6 +45,7 @@ interface DataType {
 }
 
 const { Text } = Typography;
+const { Option } = Select;
 
 // Componente Modal de Confirmación
 const ModalConfirmacion = ({ data, onConfirm, loading }) => {
@@ -74,11 +73,11 @@ const ModalConfirmacion = ({ data, onConfirm, loading }) => {
         }}
         icon={<CheckCircleOutlined />}
       >
-        Confirmar Entrega
+        Despachar
       </Button>
 
       <Modal
-        title={`Confirmar Entrega - ${data.numero_activo}`}
+        title={`Confirmar Despacho - ${data.numero_activo}`}
         open={visible}
         onCancel={() => {
           setVisible(false);
@@ -114,7 +113,7 @@ const ModalConfirmacion = ({ data, onConfirm, loading }) => {
             loading={loading}
             icon={<CheckCircleOutlined />}
           >
-            Confirmar Entrega
+            Confirmar Despacho
           </Button>,
         ]}
         centered
@@ -213,6 +212,12 @@ export const MesajeroActivos = () => {
   const [loadingRow, setLoadingRow] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  // Estados para filtros
+  const [condicionFilter, setCondicionFilter] = useState<number>();
+  const [categoriaFilter, setCategoriaFilter] = useState<string>();
+  const [bodegaOrigenFilter, setBodegaOrigenFilter] = useState<string>();
+  const [bodegaDestinoFilter, setBodegaDestinoFilter] = useState<string>();
+
   useEffect(() => {
     fetchTraslados();
   }, []);
@@ -262,8 +267,13 @@ export const MesajeroActivos = () => {
       });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
     const filterTable = initialData?.filter((o: DataType) =>
       Object.keys(o).some((k) =>
         String(o[k as keyof DataType])
@@ -274,19 +284,74 @@ export const MesajeroActivos = () => {
     setDataSource(filterTable);
   };
 
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: DataType) =>
+        Object.keys(o).some((k) =>
+          String(o[k as keyof DataType])
+            .toLowerCase()
+            .includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por categoría
+    if (categoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega origen
+    if (bodegaOrigenFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_origen?.toLowerCase().includes(bodegaOrigenFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega destino
+    if (bodegaDestinoFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_destino?.toLowerCase().includes(bodegaDestinoFilter.toLowerCase())
+      );
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setCondicionFilter(undefined);
+    setCategoriaFilter(undefined);
+    setBodegaOrigenFilter(undefined);
+    setBodegaDestinoFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [condicionFilter, categoriaFilter, bodegaOrigenFilter, bodegaDestinoFilter, initialData]);
+
   // Función para confirmar entrega
   const ConfirmarEntrega = (id: number, observacion: string) => {
     setLoadingRow([...loadingRow, id]);
 
-    // Aquí deberías enviar la observación a tu API
-    console.log("Confirmando entrega:", { id, observacion });
     const data = {
       'observacion': observacion,
       'id': id
     }
 
-    // Ejemplo de llamada a la API con observación
-    entregaMensajero(data) // Ajusta esta llamada según tu API
+    entregaMensajero(data)
       .then(() => {
         message.success("Entrega confirmada exitosamente");
         fetchTraslados();
@@ -300,24 +365,19 @@ export const MesajeroActivos = () => {
 
   const getCondicionTag = (condicion: number) => {
     let estadoString = "";
-    let color = "";
 
     switch (condicion) {
       case 1:
         estadoString = "BUENO";
-        color = "green";
         break;
       case 2:
         estadoString = "REGULAR";
-        color = "orange";
         break;
       case 3:
         estadoString = "MALO";
-        color = "red";
         break;
       default:
         estadoString = "DESCONOCIDO";
-        color = "default";
     }
 
     return estadoString;
@@ -336,6 +396,15 @@ export const MesajeroActivos = () => {
     }
   };
 
+  // Obtener opciones únicas para filtros
+  const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
+    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
+    return uniqueValues.map(value => ({
+      label: String(value).toUpperCase(),
+      value: String(value)
+    }));
+  };
+
   const columns: ColumnsType<DataType> = [
     {
       title: "Código Traslado",
@@ -343,6 +412,7 @@ export const MesajeroActivos = () => {
       key: "codigo_traslado",
       sorter: (a, b) => a.codigo_traslado.localeCompare(b.codigo_traslado),
       render: (text) => text?.toUpperCase(),
+      fixed: "left",
     },
     {
       title: "Número Activo",
@@ -365,21 +435,24 @@ export const MesajeroActivos = () => {
       render: (text) => text?.toUpperCase(),
     },
     {
-      title: "Descripcion",
+      title: "Descripción",
       dataIndex: "descripcion",
       key: "descripcion",
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Bodega Origen",
       dataIndex: "bodega_origen",
       key: "bodega_origen",
       sorter: (a, b) => a.bodega_origen.localeCompare(b.bodega_origen),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Bodega Destino",
       dataIndex: "bodega_destino",
       key: "bodega_destino",
       sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Condición",
@@ -401,6 +474,7 @@ export const MesajeroActivos = () => {
       dataIndex: "usuario",
       key: "usuario",
       sorter: (a, b) => a.usuario.localeCompare(b.usuario),
+      render: (text) => text?.toUpperCase(),
     },
     {
       title: "Fecha Traslado",
@@ -421,7 +495,38 @@ export const MesajeroActivos = () => {
           loading={loadingRow.includes(record.id)}
         />
       ),
+      fixed: "right",
+      width: 150,
     },
+  ];
+
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "condicion",
+      label: "Condición",
+      options: [
+        { label: "Bueno", value: "1" },
+        { label: "Regular", value: "2" },
+        { label: "Malo", value: "3" }
+      ],
+      value: condicionFilter?.toString(),
+      onChange: (value: string) => setCondicionFilter(value ? parseInt(value) : undefined)
+    },
+    {
+      key: "bodega_origen",
+      label: "Bodega Origen",
+      options: getUniqueOptions(initialData, 'bodega_origen'),
+      value: bodegaOrigenFilter,
+      onChange: setBodegaOrigenFilter
+    },
+    {
+      key: "bodega_destino",
+      label: "Bodega Destino",
+      options: getUniqueOptions(initialData, 'bodega_destino'),
+      value: bodegaDestinoFilter,
+      onChange: setBodegaDestinoFilter
+    }
   ];
 
   return (
@@ -435,15 +540,15 @@ export const MesajeroActivos = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input
-          placeholder="Buscar por código de traslado, número de activo, categoría, bodega..."
-          onChange={handleSearch}
-          style={{ marginBottom: 16 }}
-        />
-      </SearchBar>
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar en todos los campos..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
 
-      <Table
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.id}
         size="small"
@@ -460,7 +565,7 @@ export const MesajeroActivos = () => {
           },
         }}
         bordered
-        scroll={{ x: 1200 }}
+        scroll={{ x: 1500 }}
       />
     </StyledCard>
   );

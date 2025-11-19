@@ -1,216 +1,132 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
+import { GlobalCard } from "@/components/global/GlobalCard";
 import { DatosBasicos } from "../../components";
-import { useNavigate, useParams } from "react-router";
-import { useState, useEffect } from "react";
-import { Menu, Modulo } from "@/services/types";
-import { Link } from "react-router-dom";
-import {
-  ArrowLeftOutlined,
-  LoadingOutlined,
-  SaveOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Space,
-  Spin,
-  Tabs,
-  Typography,
-  notification,
-} from "antd";
-import { crearMenu, getMenu, updateMenu } from "@/services/maestras/menuAPI";
-import { getModulos } from "@/services/maestras/modulosAPI";
-
-const { Text } = Typography;
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { Space, Form } from "antd";
+import { SaveButton } from "@/components/global/SaveButton";
+import { BackButton } from "@/components/global/BackButton";
+import { FormTabs } from "@/components/global/FormTabs";
+import { LoadingSpinner } from "@/components/global/LoadingSpinner";
+import { notify } from "@/components/global/NotificationHandler";
+import { getModulos } from "@/services/administrarUsuarios/modulosAPI";
+import { crearMenu, getMenu, updateMenu } from "@/services/config/menuAPI";
+import useSerialize from "@/hooks/useUpperCase";
+import { Menu, Modulo } from "@/types/auth.types";
 
 export const FormMenu = () => {
+  const [menu, setMenu] = useState<Menu | null>(null);
+  const [modulos, setModulos] = useState<Modulo[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loadingModulos, setLoadingModulos] = useState(false);
   const { id } = useParams<{ id: string }>();
-  const [menu, setMenu] = useState<Menu>();
-  const [modulos, setModulos] = useState<Modulo[]>();
-  const [loaderSave, setLoaderSave] = useState<boolean>(true);
-  const [api, contextHolder] = notification.useNotification();
   const navigate = useNavigate();
-  const control = useForm();
+  const { transformToUpperCase } = useSerialize();
+  const isDataLoaded = useRef(false);
+
+  // Formulario
+  const control = useForm({
+    defaultValues: {
+      nom_menu: "",
+      desc_menu: "",
+      link_menu: "",
+      id_modulo: "",
+    },
+  });
+
+  // Cargar datos iniciales
+  const loadInitialData = useCallback(async () => {
+    if (isDataLoaded.current) return;
+    
+    setLoading(true);
+    setLoadingModulos(true);
+
+    try {
+      // Cargar módulos
+      const modulosResponse = await getModulos();
+      setModulos(modulosResponse?.data || []);
+
+      // Cargar menú si es edición
+      if (id) {
+        const response = await getMenu(id);
+        const menuData = response?.data;
+        setMenu(menuData);
+
+        if (menuData) {
+          control.reset({
+            nom_menu: menuData.nom_menu || "",
+            desc_menu: menuData.desc_menu || "",
+            link_menu: menuData.link_menu || "",
+            id_modulo: menuData.id_modulo?.toString() || "",
+          });
+        }
+      }
+
+      isDataLoaded.current = true;
+    } catch (error: any) {
+      notify.error("Error al cargar datos", error.message || "Revise la conexión");
+    } finally {
+      setLoading(false);
+      setLoadingModulos(false);
+    }
+  }, [id, control]);
 
   useEffect(() => {
-    if (id) {
-      getMenu(id ?? "")
-        .then(({ data }) => {
-          setMenu(data);
-          getModulos()
-            .then(({ data }) => {
-              setModulos(data);
-              setLoaderSave(false);
-            })
-            .catch((error) => {
-              pushNotification({
-                type: "error",
-                title: error.code,
-                description: error.message,
-              });
-              setLoaderSave(false);
-            });
-        })
-        .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.code,
-            description: error.message,
-          });
-          setLoaderSave(false);
-        });
-    } else {
-      getModulos()
-        .then(({ data }) => {
-          setModulos(data);
-          setLoaderSave(false);
-        })
-        .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.code,
-            description: error.message,
-          });
-          setLoaderSave(false);
-        });
-    }
-  }, []);
+    loadInitialData();
+  }, [loadInitialData]);
 
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
-
+  // Enviar formulario
   const onFinish: SubmitHandler<any> = async (data) => {
-    setLoaderSave(true);
-    if (menu) {
-      updateMenu(data, id).then(() => {
-        pushNotification({ title: "Menu actualizado con exito!" });
-        setTimeout(() => {
-          navigate("..");
-        }, 800);
-      });
-    } else {
-      crearMenu(data)
-        .then(() => {
-          pushNotification({ title: "Menu creado con exito!" });
-          setTimeout(() => {
-            navigate(-1);
-          }, 800);
-        })
-        .catch(
-          ({
-            response: {
-              data: { errors },
-            },
-          }) => {
-            const errores: string[] = Object.values(errors);
+    data = transformToUpperCase(data, ["nom_menu", "desc_menu"]);
+    setLoading(true);
 
-            for (const error of errores) {
-              pushNotification({
-                type: "error",
-                title: error,
-              });
-            }
-
-            setLoaderSave(false);
-          }
-        );
+    try {
+      if (menu) {
+        // Editar
+        await updateMenu(data, id);
+        notify.success("Menú actualizado", "Se ha actualizado correctamente");
+        navigate("..");
+      } else {
+        // Crear
+        await crearMenu(data);
+        notify.success("Menú creado", "Se ha creado correctamente");
+        navigate(-1);
+      }
+    } catch (error: any) {
+      notify.error("Error en la operación", error.message || "Intente nuevamente");
+    } finally {
+      setLoading(false);
     }
   };
-  return (
-    <>
-      {contextHolder}
-      <Spin
-        spinning={loaderSave}
-        indicator={
-          <LoadingOutlined spin style={{ fontSize: 40, color: "#f4882a" }} />
-        }
-        style={{ backgroundColor: "rgb(251 251 251 / 70%)" }}
-      >
-        <FormProvider {...control}>
-          <Form
-            layout="vertical"
-            onFinish={control.handleSubmit(onFinish)}
-            autoComplete="off"
-          >
-            <StyledCard
-              title={(menu ? "Editar" : "Crear") + " menu"}
-              extra={
-                <Space>
-                  <Button
-                    htmlType="submit"
-                    type="primary"
-                    icon={<SaveOutlined />}
-                  >
-                    Guardar
-                  </Button>
 
-                  {menu ? (
-                    <Link to="../.." relative="path">
-                      <Button
-                        danger
-                        type="primary"
-                        icon={<ArrowLeftOutlined />}
-                      >
-                        Volver
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Link to=".." relative="path">
-                      <Button
-                        danger
-                        type="primary"
-                        icon={<ArrowLeftOutlined />}
-                      >
-                        Volver
-                      </Button>
-                    </Link>
-                  )}
-                </Space>
-              }
-            >
-              {Object.keys(control.formState.errors).length > 0 ? (
-                <Text type="danger">
-                  Faltan campos por diligenciar o existen algunos errores
-                </Text>
-              ) : null}
-              <Tabs
-                defaultActiveKey="1"
-                items={[
-                  {
-                    key: "1",
-                    label: (
-                      <Text
-                        type={
-                          Object.keys(control.formState.errors).length > 0
-                            ? "danger"
-                            : undefined
-                        }
-                      >
-                        Datos Basicos
-                      </Text>
-                    ),
-                    children: <DatosBasicos menu={menu} modulos={modulos} />,
-                  },
-                ]}
-                animated
-              />
-            </StyledCard>
-          </Form>
-        </FormProvider>
-      </Spin>
-    </>
+  return (
+    <LoadingSpinner spinning={loading}>
+      <FormProvider {...control}>
+        <Form layout="vertical" onFinish={control.handleSubmit(onFinish)} autoComplete="off">
+          <GlobalCard
+            title={`${menu ? "Editar" : "Crear"} menú`}
+            extra={
+              <Space>
+                <SaveButton loading={loading} />
+                <Link to={menu ? "../.." : ".."} relative="path">
+                  <BackButton />
+                </Link>
+              </Space>
+            }
+          >
+            <FormTabs
+              tabItems={[
+                { 
+                  key: "1", 
+                  label: "Datos Básicos", 
+                  children: <DatosBasicos menu={menu} modulos={modulos} /> 
+                },
+              ]}
+            />
+          </GlobalCard>
+        </Form>
+      </FormProvider>
+    </LoadingSpinner>
   );
 };

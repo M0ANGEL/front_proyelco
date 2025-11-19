@@ -1,1 +1,0 @@
-export { ModalIngresoDotacion } from './ModalIngresoDotacion';

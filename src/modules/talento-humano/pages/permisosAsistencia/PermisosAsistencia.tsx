@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Button,
   Input,
@@ -11,11 +10,13 @@ import {
   notification,
 } from "antd";
 import { Link, useLocation } from "react-router-dom";
-import { getActiUsers } from "@/services/activosFijos/CrearActivosAPI";
 import {
   darPermisosObrasAsistencia,
   getObrasPermisos,
 } from "@/services/talento-humano/permisosObrasAPI";
+import { StyledCard } from "@/components/layout/styled";
+import { getActiUsers } from "@/services/activosFijos/CrearActivosAPI";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -167,7 +168,7 @@ export const PermisosAsistencia = () => {
           onChange={handleSearch}
           style={{ marginBottom: 12 }}
         />
-        <Table
+        <DataTable
           rowKey={(record) => record.key}
           size="small"
           dataSource={dataSource}

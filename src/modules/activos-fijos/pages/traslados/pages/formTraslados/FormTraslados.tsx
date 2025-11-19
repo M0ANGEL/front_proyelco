@@ -8,15 +8,16 @@ import {
   Select,
   Tooltip,
   Form,
+  Alert,
 } from "antd";
 import { useEffect, useState } from "react";
 import { FaUserCheck } from "react-icons/fa6";
-import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { getActiUsers } from "@/services/activosFijos/CrearActivosAPI";
 import { getActiBodegas } from "@/services/activosFijos/BodegasAPI";
 import { trasladarActiActivo } from "@/services/activosFijos/TrasladosActivosAPI";
+import { ActivosData } from "@/types/typesGlobal";
+import { StyledFormItem } from "@/components/layout/styled";
 
 interface GenerarQRProps {
   data: ActivosData;
@@ -33,22 +34,22 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
   const [usuarios, setUsuarios] = useState<DataSelect[]>([]);
   const [bodegas, setBodegas] = useState<DataSelect[]>([]);
   const [usuarioSeleccionado, setUsuarioSeleccionado] = useState<string[]>([]);
-  const [requiereMensajero, setRequiereMensajero] = useState<boolean | null>(null);
-  const [bodegaSelecionadaDestino, setBodegaSelecionadaDestino] = useState<number | null>(null);
+  const [requiereMensajero, setRequiereMensajero] = useState<boolean | null>(
+    null
+  );
+  const [bodegaSelecionadaDestino, setBodegaSelecionadaDestino] = useState<
+    number | null
+  >(null);
   const [observacionActivo, setObservacionActivo] = useState<string>("");
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [helpVisible, setHelpVisible] = useState(false);
+
 
   useEffect(() => {
     if (visible == true) {
       fetchUsuarios();
       fechBodegas();
-      // // Resetear form cuando se abre el modal
-      // form.resetFields();
-      // setUsuarioSeleccionado([]);
-      // setRequiereMensajero(null);
-      // setBodegaSelecionadaDestino(null);
-      // setObservacionActivo("");
     }
   }, [visible]);
 
@@ -139,10 +140,10 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
       <Tooltip title="Trasladar Activo">
         <Button
           icon={<FaUserCheck />}
-          type="primary"
+          type="default"
           size="small"
           onClick={() => setVisible(true)}
-          style={{ marginLeft: "5px", background: "#17ae00ff" }}
+          style={{ marginLeft: "5px", background: "#17ae00ff", color: "white" }}
         />
       </Tooltip>
 
@@ -151,6 +152,17 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
         open={visible}
         onCancel={() => setVisible(false)}
         footer={[
+          <div
+            key="leftButtons"
+            style={{
+              flex: 1,
+              display: "flex",
+              justifyContent: "flex-start",
+            }}
+          >
+            <Button style={{background: "#f3cb73ff", color: "white"}} onClick={() => setHelpVisible(true)}>Ayuda</Button>
+          </div>,
+
           <Button
             key="close"
             onClick={() => setVisible(false)}
@@ -161,6 +173,7 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
           >
             Cerrar
           </Button>,
+
           <Button
             key="submit"
             onClick={trasladarActivo}
@@ -247,11 +260,17 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
                 {/* ubicacion destino activo - OBLIGATORIO */}
                 <Col xs={24} sm={24}>
                   <StyledFormItem
-                    label="Ubicación destino del activo"
+                    label="Ubicación a la que será enviado el activo. Nota: esta no es la ubicación donde se encuentra actualmente"
                     labelCol={{ span: 24 }}
                     required
-                    validateStatus={bodegaSelecionadaDestino ? "success" : "error"}
-                    help={bodegaSelecionadaDestino ? "" : "Este campo es obligatorio"}
+                    validateStatus={
+                      bodegaSelecionadaDestino ? "success" : "error"
+                    }
+                    help={
+                      bodegaSelecionadaDestino
+                        ? ""
+                        : "Este campo es obligatorio"
+                    }
                   >
                     <Select
                       showSearch
@@ -282,8 +301,14 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
                     label="Usuarios para asignación"
                     labelCol={{ span: 24 }}
                     required
-                    validateStatus={usuarioSeleccionado.length > 0 ? "success" : "error"}
-                    help={usuarioSeleccionado.length > 0 ? "" : "Seleccione al menos un usuario"}
+                    validateStatus={
+                      usuarioSeleccionado.length > 0 ? "success" : "error"
+                    }
+                    help={
+                      usuarioSeleccionado.length > 0
+                        ? ""
+                        : "Seleccione al menos un usuario"
+                    }
                   >
                     <Select
                       mode="multiple"
@@ -317,12 +342,16 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
 
             {/* requiere mensajero - OBLIGATORIO */}
             <Col xs={24} sm={12} style={{ width: "100%" }}>
-              <StyledFormItem 
-                label="Requiere mensajero?" 
+              <StyledFormItem
+                label="Requiere mensajero?"
                 labelCol={{ span: 24 }}
                 required
-                validateStatus={requiereMensajero !== null ? "success" : "error"}
-                help={requiereMensajero !== null ? "" : "Este campo es obligatorio"}
+                validateStatus={
+                  requiereMensajero !== null ? "success" : "error"
+                }
+                help={
+                  requiereMensajero !== null ? "" : "Este campo es obligatorio"
+                }
               >
                 <Select
                   placeholder="Seleccione una opción"
@@ -338,17 +367,23 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
 
             {/* observacion - OBLIGATORIO */}
             <Col xs={24} sm={24} style={{ width: "100%" }}>
-              <StyledFormItem 
-                label="Observación" 
+              <StyledFormItem
+                label="Observación"
                 labelCol={{ span: 24 }}
                 required
-                validateStatus={observacionActivo.trim().length > 0 ? "success" : "error"}
-                help={observacionActivo.trim().length > 0 ? "" : "Este campo es obligatorio"}
+                validateStatus={
+                  observacionActivo.trim().length > 0 ? "success" : "error"
+                }
+                help={
+                  observacionActivo.trim().length > 0
+                    ? ""
+                    : "Este campo es obligatorio"
+                }
               >
                 <TextArea
                   allowClear
                   placeholder="Escribe una observación del activo"
-                  rows={5}
+                  rows={2}
                   value={observacionActivo}
                   onChange={(e) => setObservacionActivo(e.target.value)}
                   status={observacionActivo.trim().length > 0 ? "" : "error"}
@@ -357,6 +392,39 @@ export const FormTraslados = ({ data, fetchList }: GenerarQRProps) => {
             </Col>
           </Row>
         </Form>
+      </Modal>
+
+      <Modal
+        title="¿Cómo usar este módulo?"
+        open={helpVisible}
+        onCancel={() => setHelpVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setHelpVisible(false)}>
+            Cerrar
+          </Button>,
+        ]}
+        centered
+      >
+        <p>
+          <strong>1. Selecciona la ubicación destino:</strong> Es la bodega a la
+          que será enviado el activo.
+        </p>
+        <p>
+          <strong>2. Selecciona los usuarios:</strong> Son los responsables que
+          recibirán ese activo.
+        </p>
+        <p>
+          <strong>3. Indica si requiere mensajero:</strong> Si necesitas que un
+          mensajero recoja o entregue el activo.
+        </p>
+        <p>
+          <strong>4. Agrega una observación:</strong> Debes escribir la razón o
+          detalle del traslado.
+        </p>
+        <p>
+          Una vez completos los campos, haz clic en{" "}
+          <strong>“Trasladar Activo”</strong>.
+        </p>
       </Modal>
     </>
   );

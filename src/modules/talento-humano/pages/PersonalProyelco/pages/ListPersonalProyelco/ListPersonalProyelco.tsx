@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
+import { useEffect, useState, useMemo } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Button, 
-  Input, 
   Tag, 
   Tooltip, 
   Typography, 
@@ -12,17 +11,26 @@ import {
   Alert,
   Spin,
   List,
-  notification
+  notification,
+  Popconfirm
 } from "antd";
-import { Link, useLocation } from "react-router-dom";
-import Table, { ColumnsType } from "antd/es/table";
-import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
-import { EditOutlined, SyncOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import useSessionStorage from "@/modules/common/hooks/useSessionStorage";
+import { 
+  SyncOutlined, 
+  ExclamationCircleOutlined,
+  PlusOutlined 
+} from "@ant-design/icons";
+
+// Componentes globales
+import { DataTable } from "@/components/global/DataTable";
+import { BackButton } from "@/components/global/BackButton";
+import { GlobalCard } from "@/components/global/GlobalCard";
+import { SearchBar } from "@/components/global/SearchBar";
+import { BotonesOpciones } from "@/components/global/BotonesOpciones";
+
 import { KEY_ROL } from "@/config/api";
 import dayjs from "dayjs";
-import { SearchBar } from "@/modules/gestion-empresas/pages/empresas/pages/ListEmpresas/styled";
 import { DeletePersonal, getPersonales, checkActivosPendientes } from "@/services/talento-humano/personalAPI";
+import useSessionStorage from "@/hooks/useSessionStorage";
 
 const { Text, Title } = Typography;
 const { TextArea } = AntInput;
@@ -64,10 +72,12 @@ interface InactivarForm {
 
 export const ListPersonalProyelco = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [initialData, setInitialData] = useState<DataType[]>([]);
   const [dataSource, setDataSource] = useState<DataType[]>([]);
-  const [loadingRow, setLoadingRow] = useState<any>([]);
+  const [loadingRow, setLoadingRow] = useState<number[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [selectedEmployee, setSelectedEmployee] = useState<DataType | null>(null);
   const [activosPendientes, setActivosPendientes] = useState<boolean>(false);
@@ -78,47 +88,70 @@ export const ListPersonalProyelco = () => {
   const user_rol = getSessionVariable(KEY_ROL);
 
   useEffect(() => {
-    fetchCategorias();
+    fetchPersonal();
   }, []);
 
-  const fetchCategorias = () => {
-    getPersonales().then(({ data: { data } }) => {
-      const categorias = data.map((categoria) => {
-        return {
-          key: categoria.id,
-          nombres: categoria.nombre_completo,
-          estado: categoria.estado.toString(),
-          tipo_documento: categoria.tipo_documento,
-          identificacion: categoria.identificacion,
-          telefono_celular: categoria.telefono_celular,
-          genero: categoria.genero,
-          cargo: categoria.cargo,
-          estado_civil: categoria.estado_civil,
-          salario: Number(categoria.salario).toLocaleString("es-CO"),
-          valor_hora: Number(categoria.valor_hora).toLocaleString("es-CO"),
-          created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
-          updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
-          fecha_ingreso: dayjs(categoria?.fecha_ingreso).format("DD-MM-YYYY"),
-          fecha_nacimiento: dayjs(categoria?.fecha_nacimiento).format("DD-MM-YYYY"),
-        };
-      });
+  const fetchPersonal = async () => {
+    try {
+      setLoading(true);
+      const response = await getPersonales();
+      const personalData = response?.data?.data || [];
 
-      setInitialData(categorias);
-      setDataSource(categorias);
-      setLoadingRow([]);
+      const personal: DataType[] = personalData.map((persona: any) => ({
+        key: persona.id,
+        nombres: persona.nombre_completo?.toUpperCase() || "",
+        estado: persona.estado?.toString() || "0",
+        tipo_documento: persona.tipo_documento?.toUpperCase() || "",
+        identificacion: persona.identificacion,
+        telefono_celular: persona.telefono_celular || "",
+        genero: persona.genero?.toUpperCase() || "",
+        cargo: persona.cargo?.toUpperCase() || "",
+        estado_civil: persona.estado_civil?.toUpperCase() || "",
+        salario: Number(persona.salario || 0).toLocaleString("es-CO"),
+        valor_hora: Number(persona.valor_hora || 0).toLocaleString("es-CO"),
+        created_at: dayjs(persona?.created_at).format("DD-MM-YYYY HH:mm"),
+        updated_at: dayjs(persona?.updated_at).format("DD-MM-YYYY HH:mm"),
+        fecha_ingreso: dayjs(persona?.fecha_ingreso).format("DD-MM-YYYY"),
+        fecha_nacimiento: dayjs(persona?.fecha_nacimiento).format("DD-MM-YYYY"),
+      }));
+
+      setInitialData(personal);
+      setDataSource(personal);
+    } catch (error) {
+      notification.error({
+        message: "Error al cargar el personal",
+        description: "No se pudieron cargar los datos del personal"
+      });
+    } finally {
       setLoading(false);
-    });
+    }
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const filterTable = initialData?.filter((o: any) =>
-      Object.keys(o).some((k) =>
-        String(o[k]).toLowerCase().includes(value.toLowerCase())
+  // 🔹 Función de búsqueda global
+  const handleSearch = (value: string) => {
+    setSearchText(value);
+    if (!value.trim()) {
+      setDataSource(initialData);
+      return;
+    }
+    const filteredData = initialData.filter((persona) =>
+      Object.values(persona).some(
+        (val) => val && String(val).includes(value.toUpperCase())
       )
     );
-    setDataSource(filterTable);
+    setDataSource(filteredData);
   };
+
+  const handleResetSearch = () => {
+    setSearchText("");
+    setDataSource(initialData);
+  };
+
+  // 🔹 Navegación
+  const handleEdit = (record: DataType) => {
+    navigate(`${location.pathname}/edit/${record.key}`);
+  };
+
 
   // Verificar activos pendientes antes de inactivar
   const handleInactivarClick = async (empleado: DataType) => {
@@ -126,7 +159,6 @@ export const ListPersonalProyelco = () => {
     setCheckingActivos(true);
     
     try {
-      // Verificar si tiene activos pendientes
       const response = await checkActivosPendientes(empleado.key);
       const responseData: ActivosResponse = response.data.data;
       const tieneActivos = responseData.tieneActivosPendientes;
@@ -135,15 +167,12 @@ export const ListPersonalProyelco = () => {
       setActivosLista(responseData.activos || []);
       
       if (tieneActivos) {
-        // Mostrar alerta de activos pendientes y BLOQUEAR inactivación
         showActivosPendientesAlert(empleado, responseData.activos);
       } else {
-        // Abrir modal para inactivar (sin activos pendientes)
         setModalVisible(true);
       }
     } catch (error) {
       console.error("Error al verificar activos:", error);
-      // En caso de error, permitir inactivar con advertencia
       setModalVisible(true);
     } finally {
       setCheckingActivos(false);
@@ -223,10 +252,9 @@ export const ListPersonalProyelco = () => {
 
     try {
       await DeletePersonal(selectedEmployee.key, values.motivo);
-      fetchCategorias();
+      await fetchPersonal();
       form.resetFields();
       
-      // Mostrar mensaje de éxito
       notification.success({
         message: 'Empleado inactivado exitosamente',
         description: `${selectedEmployee.nombres} ha sido inactivado correctamente.`,
@@ -249,156 +277,229 @@ export const ListPersonalProyelco = () => {
     form.resetFields();
   };
 
-  const columns: ColumnsType<DataType> = [
-    {
-      title: "Fecha Ingreso",
-      dataIndex: "fecha_ingreso",
-      key: "fecha_ingreso",
-      sorter: (a, b) => a.fecha_ingreso.localeCompare(b.fecha_ingreso),
-    },
-    {
-      title: "Fecha Nacimiento",
-      dataIndex: "fecha_nacimiento",
-      key: "fecha_nacimiento",
-      sorter: (a, b) => a.fecha_nacimiento.localeCompare(b.fecha_nacimiento),
-    },
-    {
-      title: "Nombre Completo",
-      dataIndex: "nombres",
-      key: "nombres",
-      sorter: (a, b) => a.nombres.localeCompare(b.nombres),
-    },
-    {
-      title: "Genero",
-      dataIndex: "genero",
-      key: "genero",
-    },
-    {
-      title: "Estado Civil",
-      dataIndex: "estado_civil",
-      key: "estado_civil",
-    },
-    {
-      title: "Tipo Documento",
-      dataIndex: "tipo_documento",
-      key: "tipo_documento",
-    },
-    {
-      title: "Cedula",
-      dataIndex: "identificacion",
-      key: "identificacion",
-    },
-    {
-      title: "Telefono",
-      dataIndex: "telefono_celular",
-      key: "telefono_celular",
-    },
-    {
-      title: "Cargo",
-      dataIndex: "cargo",
-      key: "cargo",
-    },
-    {
-      title: "Salario",
-      dataIndex: "salario",
-      key: "salario",
-    },
-    {
-      title: "Valor Hora",
-      dataIndex: "valor_hora",
-      key: "valor_hora",
-    },
-    {
-      title: "Estado",
-      dataIndex: "estado",
-      key: "estado",
-      align: "center",
-      render: (_, record: { key: React.Key; estado: string; nombres: string }) => {
-        let estadoString = "";
-        let color;
-        if (record.estado === "1") {
-          estadoString = "ACTIVO";
-          color = "green";
-        } else {
-          estadoString = "INACTIVO";
-          color = "red";
-        }
-        return (
-          <ButtonTag
-            color={color}
-            disabled={!["Talento Humano", "Administrador"].includes(user_rol) || record.estado !== "1"}
-            onClick={() => record.estado === "1" && handleInactivarClick(record)}
-          >
-            <Tooltip title={record.estado === "1" ? "Inactivar empleado" : "Empleado inactivo"}>
-              <Tag
-                color={color}
-                key={estadoString}
-                icon={
-                  loadingRow.includes(record.key) ? (
-                    <SyncOutlined spin />
-                  ) : null
-                }
-                style={{ cursor: record.estado === "1" ? "pointer" : "default" }}
-              >
-                {estadoString.toUpperCase()}
-              </Tag>
-            </Tooltip>
-          </ButtonTag>
-        );
+  // 🔹 Generar filtros dinámicos por columna
+  const getColumnFilters = (dataIndex: keyof DataType) => {
+    const uniqueValues = Array.from(
+      new Set(initialData.map((d) => d[dataIndex]))
+    );
+    return uniqueValues.map((val) => ({
+      text: String(val),
+      value: String(val),
+    }));
+  };
+
+  // 🔹 Columnas
+  const columns = useMemo(
+    () => [
+      {
+        title: "FECHA INGRESO",
+        dataIndex: "fecha_ingreso",
+        key: "fecha_ingreso",
+        width: 120,
+        sorter: (a: DataType, b: DataType) => 
+          a.fecha_ingreso.localeCompare(b.fecha_ingreso),
+        filters: getColumnFilters("fecha_ingreso"),
+        onFilter: (value, record) => record.fecha_ingreso.includes(value as string),
       },
-      sorter: (a, b) => a.estado.localeCompare(b.estado),
-    },
-    {
-      title: "Acciones",
-      dataIndex: "acciones",
-      key: "acciones",
-      align: "center",
-      render: (_, record: { key: React.Key }) => {
-        return (
-          <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`}>
-              <Button icon={<EditOutlined />} type="primary" />
-            </Link>
-          </Tooltip>
-        );
+      {
+        title: "FECHA NACIMIENTO",
+        dataIndex: "fecha_nacimiento",
+        key: "fecha_nacimiento",
+        width: 140,
+        sorter: (a: DataType, b: DataType) => 
+          a.fecha_nacimiento.localeCompare(b.fecha_nacimiento),
+        filters: getColumnFilters("fecha_nacimiento"),
+        onFilter: (value, record) => record.fecha_nacimiento.includes(value as string),
       },
-    },
-  ];
+      {
+        title: "NOMBRE COMPLETO",
+        dataIndex: "nombres",
+        key: "nombres",
+        width: 200,
+        sorter: (a: DataType, b: DataType) => a.nombres.localeCompare(b.nombres),
+        filters: getColumnFilters("nombres"),
+        onFilter: (value, record) => record.nombres.includes(value as string),
+      },
+      {
+        title: "GÉNERO",
+        dataIndex: "genero",
+        key: "genero",
+        width: 100,
+        filters: getColumnFilters("genero"),
+        onFilter: (value, record) => record.genero.includes(value as string),
+      },
+      {
+        title: "ESTADO CIVIL",
+        dataIndex: "estado_civil",
+        key: "estado_civil",
+        width: 120,
+        filters: getColumnFilters("estado_civil"),
+        onFilter: (value, record) => record.estado_civil.includes(value as string),
+      },
+      {
+        title: "TIPO DOCUMENTO",
+        dataIndex: "tipo_documento",
+        key: "tipo_documento",
+        width: 130,
+        filters: getColumnFilters("tipo_documento"),
+        onFilter: (value, record) => record.tipo_documento.includes(value as string),
+      },
+      {
+        title: "CÉDULA",
+        dataIndex: "identificacion",
+        key: "identificacion",
+        width: 120,
+        filters: getColumnFilters("identificacion"),
+        onFilter: (value, record) => record.identificacion.toString().includes(value as string),
+      },
+      {
+        title: "TELÉFONO",
+        dataIndex: "telefono_celular",
+        key: "telefono_celular",
+        width: 120,
+        filters: getColumnFilters("telefono_celular"),
+        onFilter: (value, record) => record.telefono_celular.includes(value as string),
+      },
+      {
+        title: "CARGO",
+        dataIndex: "cargo",
+        key: "cargo",
+        width: 150,
+        filters: getColumnFilters("cargo"),
+        onFilter: (value, record) => record.cargo.includes(value as string),
+      },
+      {
+        title: "SALARIO",
+        dataIndex: "salario",
+        key: "salario",
+        width: 120,
+        align: "right" as const,
+        filters: getColumnFilters("salario"),
+        onFilter: (value, record) => record.salario.includes(value as string),
+      },
+      {
+        title: "VALOR HORA",
+        dataIndex: "valor_hora",
+        key: "valor_hora",
+        width: 120,
+        align: "right" as const,
+        filters: getColumnFilters("valor_hora"),
+        onFilter: (value, record) => record.valor_hora.includes(value as string),
+      },
+      {
+        title: "ESTADO",
+        dataIndex: "estado",
+        key: "estado",
+        align: "center",
+        width: 120,
+        filters: [
+          { text: "ACTIVO", value: "1" },
+          { text: "INACTIVO", value: "0" },
+        ],
+        onFilter: (value, record) => record.estado === value,
+        render: (_, record: DataType) => {
+          const isActive = record.estado === "1";
+          const color = isActive ? "green" : "red";
+          const estadoString = isActive ? "ACTIVO" : "INACTIVO";
+          const canEdit = ["Talento Humano", "Administrador"].includes(user_rol);
+
+          return (
+            <Popconfirm
+              title="¿Desea cambiar el estado?"
+              onConfirm={() => handleInactivarClick(record)}
+              disabled={!isActive || !canEdit}
+              placement="left"
+            >
+              <Tooltip title={isActive && canEdit ? "Inactivar empleado" : "Empleado inactivo"}>
+                <Tag
+                  color={color}
+                  key={estadoString}
+                  icon={
+                    loadingRow.includes(record.key) ? (
+                      <SyncOutlined spin />
+                    ) : null
+                  }
+                  style={{ 
+                    cursor: isActive && canEdit ? "pointer" : "default",
+                    margin: 0 
+                  }}
+                >
+                  {estadoString.toUpperCase()}
+                </Tag>
+              </Tooltip>
+            </Popconfirm>
+          );
+        },
+      },
+      {
+        title: "ACCIONES",
+        key: "acciones",
+        align: "center",
+        width: 100,
+        fixed: 'right' as const,
+        render: (_: any, record: DataType) => (
+          <BotonesOpciones
+            botones={[
+              {
+                tipo: "editar",
+                label: "Editar",
+                onClick: () => handleEdit(record),
+              },
+            ]}
+          />
+        ),
+      },
+    ],
+    [initialData, loadingRow, user_rol]
+  );
 
   return (
-    <>
-      <StyledCard
-        title={"Lista de Personal"}
+    <div>
+      <BackButton text="Volver al Dashboard" to="/dashboard" />
+
+      <GlobalCard
+        title="Gestión de Personal"
         extra={
           <Link to={`${location.pathname}/create`}>
-            <Button type="primary">Crear</Button>
+            <Button type="primary" icon={<PlusOutlined />}>
+              Crear
+            </Button>
           </Link>
         }
       >
-        <SearchBar>
-          <Input placeholder="Buscar" onChange={handleSearch} />
-        </SearchBar>
-        <Table
-          className="custom-table"
-          rowKey={(record) => record.key}
-          size="small"
-          dataSource={dataSource ?? initialData}
-          columns={columns}
-          loading={loading}
-          pagination={{
-            total: initialData?.length,
-            showSizeChanger: true,
-            defaultPageSize: 15,
-            pageSizeOptions: ["5", "15", "30"],
-            showTotal: (total: number) => {
-              return <Text>Total Registros: {total}</Text>;
-            },
-          }}
-          bordered
+        <SearchBar
+          onSearch={handleSearch}
+          onReset={handleResetSearch}
+          placeholder="Buscar por nombre, cédula, cargo, teléfono..."
+          showFilterButton={false}
         />
-      </StyledCard>
 
-      {/* Modal de Inactivación - SOLO se muestra cuando NO hay activos pendientes */}
+        <DataTable
+          columns={columns}
+          dataSource={dataSource}
+          loading={loading}
+          rowKey="key"
+          scrollX={1500}
+          customClassName="custom-table"
+          hasFixedColumn={true}
+        />
+
+        <div
+          style={{
+            marginTop: 16,
+            padding: "12px 16px",
+            background: "#f8f9fa",
+            borderRadius: "6px",
+            border: "1px solid #e9ecef",
+          }}
+        >
+          <Text type="secondary">
+            💡 <strong>TIP:</strong> Solo usuarios con rol de Talento Humano o Administrador pueden inactivar empleados.
+          </Text>
+        </div>
+      </GlobalCard>
+
+      {/* Modal de Inactivación */}
       <Modal
         title="Inactivar Empleado"
         open={modalVisible}
@@ -479,6 +580,6 @@ export const ListPersonalProyelco = () => {
           </Form>
         )}
       </Modal>
-    </>
+    </div>
   );
 };

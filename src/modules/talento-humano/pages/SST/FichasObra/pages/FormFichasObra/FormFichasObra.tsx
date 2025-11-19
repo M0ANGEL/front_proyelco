@@ -2,22 +2,18 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Form,
-  notification,
   Space,
   Spin,
   Tabs,
   Typography,
-} from "antd";
+} from "antd"; // ❌ ELIMINA 'notification' de aquí
 import {
   LoadingOutlined,
   ArrowLeftOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { AmClientes } from "@/services/types";
 import { DatosBasicos } from "../components/DatosBasicos";
 
 import {
@@ -26,11 +22,16 @@ import {
   updateFicha,
 } from "@/services/talento-humano/fichaObraAPI";
 import dayjs from "dayjs";
+import { AmClientes } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler"; // ✅ Usa este
+import { StyledCard } from "@/components/layout/styled";
 
 const { Text } = Typography;
 
 export const FormFichasObra = () => {
-  const [api, contextHolder] = notification.useNotification();
+  // ❌ ELIMINA esta línea completamente
+  // const [contextHolder] = notification.useNotification();
+  
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const methods = useForm();
   const [categoria, setCategoria] = useState<AmClientes>();
@@ -39,7 +40,6 @@ export const FormFichasObra = () => {
   const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    // Si hay un id ejecutamos una consulta para traer datos de esa categoría
     if (id) {
       getFicha(id).then(({ data }) => {
         setCategoria(data.empleado);
@@ -51,34 +51,14 @@ export const FormFichasObra = () => {
     }
   }, [id]);
 
-  // Notificación de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
-
-  // Guardado de los datos modificado para manejar archivos
   const onFinish: SubmitHandler<any> = async (data) => {
     setLoaderSave(true);
 
     try {
-      // Crear FormData para enviar archivos
       const formData = new FormData();
 
-      console.log("📝 Datos del formulario:", data);
 
       if (categoria) {
-        // 🔹 MODO ACTUALIZACIÓN: Enviar SOLO los campos editables
-        console.log("🔄 Modo ACTUALIZACIÓN - Enviando solo campos editables");
-
-        // Campos editables en actualización
         const camposEditables = [
           "contratista_id",
           "eps",
@@ -88,26 +68,19 @@ export const FormFichasObra = () => {
           "foto",
         ];
 
-        // Agregar solo campos editables al FormData
         camposEditables.forEach((key) => {
           const value = data[key];
-          console.log(`🔍 Procesando campo ${key}:`, value);
 
           if (key === "foto" && value instanceof File) {
             formData.append("foto", value);
-            console.log("📸 Foto agregada:", value.name);
           } else if (value !== null && value !== undefined && value !== "") {
             formData.append(key, value.toString());
-            console.log(`✅ ${key} agregado:`, value);
           } else {
             console.log(`❌ ${key} está vacío o undefined`);
           }
         });
       } else {
-        // 🔹 MODO CREACIÓN: Enviar TODOS los campos
-        console.log("🆕 Modo CREACIÓN - Enviando todos los campos");
 
-        // Agregar todos los campos del formulario al FormData
         Object.keys(data).forEach((key) => {
           if (key === "foto" && data[key] instanceof File) {
             formData.append("foto", data[key]);
@@ -125,38 +98,27 @@ export const FormFichasObra = () => {
         });
       }
 
-      // DEBUG: Verificar FormData
-      console.log("📤 FormData preparado - contenido:");
       for (let pair of formData.entries()) {
         console.log(pair[0] + ": ", pair[1]);
       }
 
       if (categoria) {
-        // Actualizar empleado existente
-        console.log("🔄 Actualizando empleado ID:", categoria.id);
         await updateFicha(formData, categoria.id.toString());
-        pushNotification({ title: "Empleado actualizado con éxito!" });
+        notify.success("Empleado actualizado con éxito!"); // ✅ Corregí "Empelado"
         setTimeout(() => {
           navigate("..");
         }, 800);
       } else {
-        // Crear nuevo empleado
-        console.log("🆕 Creando nuevo empleado");
         await crearFicha(formData);
-        pushNotification({ title: "Empleado creado con éxito!" });
+        notify.success("Empleado creado con éxito!"); // ✅ Corregí "error" por "success"
         setTimeout(() => {
           navigate(-1);
         }, 800);
       }
     } catch (error: any) {
-      console.error("❌ Error al guardar:", error);
       const msg =
         error.response?.data?.message || "Ocurrió un error inesperado";
-      pushNotification({
-        type: "error",
-        title: "Error",
-        description: msg,
-      });
+      notify.error(msg);
       setLoaderSave(false);
     }
   };
@@ -164,7 +126,7 @@ export const FormFichasObra = () => {
   // Retorno de la vista
   return (
     <>
-      {contextHolder}
+      {/* ❌ ELIMINA {contextHolder} - no es necesario con tu sistema notify */}
       <Spin
         spinning={loaderSave}
         indicator={

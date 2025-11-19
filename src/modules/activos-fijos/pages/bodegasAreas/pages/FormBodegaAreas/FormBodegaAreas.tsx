@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Form,
-  notification,
   Space,
   Spin,
   Tabs,
@@ -14,22 +13,21 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosCategoria } from "@/services/types";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
 import {
   crearActiBodega,
   getActiBodega,
   updateActiBodega,
 } from "@/services/activosFijos/BodegasAPI";
+import { ActivosCategoria } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
+import useSerialize from "@/hooks/useUpperCase";
+import { StyledCard } from "@/components/layout/styled";
 
 const { Text } = Typography;
 
 export const FormBodegaAreas = () => {
-  const [api, contextHolder] = notification.useNotification();
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<ActivosCategoria>();
@@ -49,18 +47,6 @@ export const FormBodegaAreas = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
 
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -71,7 +57,7 @@ export const FormBodegaAreas = () => {
     if (categoria) {
       updateActiBodega(data, id)
         .then(() => {
-          pushNotification({ title: "Bodega / Area actualizado con éxito!" });
+         notify.success("Bodega / Area actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
@@ -79,29 +65,21 @@ export const FormBodegaAreas = () => {
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
 
-          pushNotification({
-            type: "error",
-            title: "Error al actualizar",
-            description: error.message || "Ocurrió un error inesperado",
-          });
+          notify.error(error);
           setLoaderSave(false);
         });
     } else {
       crearActiBodega(data)
         .then(() => {
-          pushNotification({ title: "Bodega / Area creado con éxito!" });
+          notify.success("Bodega / Area creado con éxito!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.error,
-            description: error.response?.data?.errors?.prefijo
+          notify.error(error.response?.data?.errors?.prefijo
               ? "PREFIJO EN USO"
-              : error.message,
-          });
+              : error.message);
           setLoaderSave(false);
         });
     }
@@ -110,7 +88,6 @@ export const FormBodegaAreas = () => {
   //retorno ed la vista
   return (
     <>
-      {contextHolder}
       <Spin
         spinning={loaderSave}
         indicator={

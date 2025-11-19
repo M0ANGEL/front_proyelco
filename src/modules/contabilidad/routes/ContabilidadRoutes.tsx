@@ -1,5 +1,4 @@
-import { RoutesWithNotFound } from "@/modules/common/components";
-import { AuthGuard } from "@/modules/common/guards";
+import { AuthGuard, RoutesWithNotFound } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
 import { ContabilidadPages } from "../pages";
 import { ControlGasolinaRoutes } from "../pages/controlGasolina/routes";

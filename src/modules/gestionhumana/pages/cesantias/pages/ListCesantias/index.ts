@@ -1,1 +1,0 @@
-export { ListCesantias } from './ListCesantias'

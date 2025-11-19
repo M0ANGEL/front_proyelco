@@ -1,1 +1,0 @@
-export { ListEmpresas } from "./ListEmpresas";

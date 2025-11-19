@@ -1,1 +1,0 @@
-export { LogSistemaPage } from "./LogSistemaPage";

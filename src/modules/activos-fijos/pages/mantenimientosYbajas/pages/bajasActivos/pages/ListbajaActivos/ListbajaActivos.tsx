@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   Input,
   Space,
   Tag,
   Typography,
 } from "antd";
-// import { SearchBar } from "@/modules/common/components/FormDocuments/styled"
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
   getActiActivosDeBaja,
 } from "@/services/activosFijos/CrearActivosAPI";
 import { VerFoto } from "@/modules/activos-fijos/pages/crearActivos/pages/ListCrearActivos/VerFoto";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -227,7 +227,7 @@ export const ListbajaActivos = () => {
       <SearchBar>
         <Input placeholder="Buscar" onChange={handleSearch} />
       </SearchBar>
-      <Table
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"

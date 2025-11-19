@@ -1,2 +1,2 @@
-export * from './administrarClientes'
-export * from './ClientesPages'
+export * from './administrarClientes';
+export * from './ClientesPages';

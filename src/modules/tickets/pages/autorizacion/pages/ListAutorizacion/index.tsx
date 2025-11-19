@@ -1,1 +1,0 @@
-export {ListAutorizacion} from "./ListAutorizacion";

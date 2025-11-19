@@ -1,1 +1,0 @@
-export { FormSalarioMinimo } from './FormSalarioMinimo';

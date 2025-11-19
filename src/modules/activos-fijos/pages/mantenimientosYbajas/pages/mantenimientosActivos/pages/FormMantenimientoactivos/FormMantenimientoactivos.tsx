@@ -14,18 +14,15 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { Notification } from "@/modules/auth/pages/LoginPage/types";
-import { ActivosCategoria } from "@/services/types";
-import useSerialize from "@/modules/common/hooks/useUpperCase";
 import { DatosBasicos } from "../components";
 import {
-  crearActiBodega,
   getActiBodega,
-  updateActiBodega,
 } from "@/services/activosFijos/BodegasAPI";
 import { crearActiMantenimiento, updateActiMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
+import { ActivosCategoria } from "@/types/typesGlobal";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledCard } from "@/components/layout/styled";
 
 const { Text } = Typography;
 
@@ -34,7 +31,6 @@ export const FormMantenimientoactivos = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<ActivosCategoria>();
-  const { transformToUpperCase } = useSerialize();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -50,19 +46,6 @@ export const FormMantenimientoactivos = () => {
     }
   }, []);
 
-  //notificacion de los estados
-  const pushNotification = ({
-    type = "success",
-    title,
-    description,
-  }: Notification) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
-
   //guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
     setLoaderSave(true);
@@ -70,34 +53,26 @@ export const FormMantenimientoactivos = () => {
     if (categoria) {
       updateActiMantenimiento(data, id)
         .then(() => {
-          pushNotification({ title: "Mnatenimiento Actualizado con éxito!" });
+          notify.success("Mnatenimiento Actualizado con éxito!");
           setTimeout(() => {
             navigate("..");
           }, 800);
         })
         .catch((error) => {
           // Manejo de error si ya existen tickets con el prefijo
-          pushNotification({
-            type: "error",
-            title: "Error al actualizar Mantenimiento",
-            description: error.message || "Ocurrió un error inesperado",
-          });
+         notify.error("Error al actualizar Mantenimiento");
           setLoaderSave(false);
         });
     } else {
       crearActiMantenimiento(data)
         .then(() => {
-          pushNotification({ title: "Mantenimiento Creado!" });
+          notify.success("Mantenimiento Creado!");
           setTimeout(() => {
             navigate(-1);
           }, 800);
         })
         .catch((error) => {
-          pushNotification({
-            type: "error",
-            title: error.error,
-            description: error.message,
-          });
+         notify.error(error);
           setLoaderSave(false);
         });
     }

@@ -1,10 +1,10 @@
 import { Button, Col, Input, Modal, Row, Tooltip, Tag } from "antd";
 import { useEffect, useState } from "react";
-import { ActivosData } from "@/services/types";
 import TextArea from "antd/es/input/TextArea";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import { FaInfoCircle } from "react-icons/fa";
 import { getActiInfo } from "@/services/activosFijos/TrasladosActivosAPI";
+import { ActivosData } from "@/types/typesGlobal";
+import { StyledFormItem } from "@/components/layout/styled";
 
 interface GenerarQRProps {
   data: ActivosData;

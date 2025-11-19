@@ -1,1 +1,0 @@
-export {CarguePapeleria} from './CarguePapeleria'

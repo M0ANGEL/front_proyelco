@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
-import { StyledCard } from "@/modules/common/layout/DashboardLayout/styled";
 import { Button, Input, Space, Tag, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { SearchBar } from "@/modules/gestionhumana/pages/empleados/pages/ListEmpleados/styled";
-import Table, { ColumnsType } from "antd/es/table";
+import { ColumnsType } from "antd/es/table";
 import { ArrowLeftOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { getActiActivosAceptar } from "@/services/activosFijos/TrasladosActivosAPI";
 import { VerFoto } from "../../../crearActivos/pages/ListCrearActivos/VerFoto";
 import { ModalRechazarActivo } from "./ModalRechazarActivo";
 import { ModalAceptarActivo } from "./ModalAceptarActivo";
+import { StyledCard } from "@/components/layout/styled";
+import { SearchBar } from "@/components/global/SearchBar";
+import { DataTable } from "@/components/global/DataTable";
 
 interface DataType {
   key: number;
@@ -45,6 +46,12 @@ export const AceptarTraslados = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  // Estados para filtros
+  const [condicionFilter, setCondicionFilter] = useState<string>();
+  const [categoriaFilter, setCategoriaFilter] = useState<string>();
+  const [bodegaOrigenFilter, setBodegaOrigenFilter] = useState<string>();
+  const [mensajeroFilter, setMensajeroFilter] = useState<string>();
 
   useEffect(() => {
     fetchCategorias();
@@ -82,8 +89,13 @@ export const AceptarTraslados = () => {
     });
   };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
+  // Búsqueda global mejorada
+  const handleSearch = (value: string) => {
+    if (!value.trim()) {
+      applyFilters(); // Aplica los filtros actuales sin búsqueda
+      return;
+    }
+
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
         String(o[k]).toLowerCase().includes(value.toLowerCase())
@@ -91,6 +103,60 @@ export const AceptarTraslados = () => {
     );
     setDataSource(filterTable);
   };
+
+  // Aplicar filtros combinados
+  const applyFilters = (searchValue?: string) => {
+    let filteredData = [...initialData];
+
+    // Aplicar búsqueda global si existe
+    if (searchValue && searchValue.trim()) {
+      filteredData = filteredData.filter((o: any) =>
+        Object.keys(o).some((k) =>
+          String(o[k]).toLowerCase().includes(searchValue.toLowerCase())
+        )
+      );
+    }
+
+    // Filtro por condición
+    if (condicionFilter) {
+      filteredData = filteredData.filter(item => item.condicion === condicionFilter);
+    }
+
+    // Filtro por categoría
+    if (categoriaFilter) {
+      filteredData = filteredData.filter(item => 
+        item.categoria?.toLowerCase().includes(categoriaFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por bodega origen
+    if (bodegaOrigenFilter) {
+      filteredData = filteredData.filter(item => 
+        item.bodega_origen?.toLowerCase().includes(bodegaOrigenFilter.toLowerCase())
+      );
+    }
+
+    // Filtro por estado de mensajero
+    if (mensajeroFilter) {
+      filteredData = filteredData.filter(item => item.mensajero === mensajeroFilter);
+    }
+
+    setDataSource(filteredData);
+  };
+
+  // Limpiar todos los filtros
+  const handleResetFilters = () => {
+    setCondicionFilter(undefined);
+    setCategoriaFilter(undefined);
+    setBodegaOrigenFilter(undefined);
+    setMensajeroFilter(undefined);
+    setDataSource(initialData);
+  };
+
+  // Aplicar filtros cuando cambien los valores
+  useEffect(() => {
+    applyFilters();
+  }, [condicionFilter, categoriaFilter, bodegaOrigenFilter, mensajeroFilter, initialData]);
 
   const columns: ColumnsType<DataType> = [
     {
@@ -106,12 +172,20 @@ export const AceptarTraslados = () => {
       dataIndex: "categoria",
       key: "categoria",
       render: (text) => text?.toUpperCase(),
+      sorter: (a, b) => a.categoria.localeCompare(b.categoria),
     },
     {
       title: "Area Origen",
       dataIndex: "bodega_origen",
       key: "bodega_origen",
       sorter: (a, b) => a.bodega_origen.localeCompare(b.bodega_origen),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Area Destino",
+      dataIndex: "bodega_destino",
+      key: "bodega_destino",
+      sorter: (a, b) => a.bodega_destino.localeCompare(b.bodega_destino),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -159,9 +233,17 @@ export const AceptarTraslados = () => {
       dataIndex: "aceptacion",
       key: "aceptacion",
       align: "center",
-      render: (_, record: { key: React.Key; aceptacion: number }) => {
-        const estadoString = "PENDIENTE";
-        const color = "red";
+      render: (_, record: { key: React.Key; aceptacion: number; mensajero: string }) => {
+        let estadoString = "";
+        let color = "";
+
+        if (record.mensajero === "1") {
+          estadoString = "ESPERANDO MENSAJERO";
+          color = "orange";
+        } else {
+          estadoString = "PENDIENTE ACEPTACIÓN";
+          color = "red";
+        }
 
         return (
           <Tag
@@ -171,11 +253,11 @@ export const AceptarTraslados = () => {
               loadingRow.includes(record.key) ? <SyncOutlined spin /> : null
             }
           >
-            {estadoString.toUpperCase()}
+            {estadoString}
           </Tag>
         );
       },
-      sorter: (a, b) => a.aceptacion - b.aceptacion, // numeric sorter
+      sorter: (a, b) => a.aceptacion - b.aceptacion,
     },
     {
       title: "Acciones",
@@ -198,7 +280,6 @@ export const AceptarTraslados = () => {
                 data={record}
                 fetchList={() => fetchCategorias()}
               />
-
               <VerFoto id={record.key} />
             </>
           )}
@@ -206,6 +287,21 @@ export const AceptarTraslados = () => {
       ),
       fixed: "right",
       width: 180,
+    },
+  ];
+
+  // Opciones para los filtros
+  const filterOptions = [
+    {
+      key: "condicion",
+      label: "Condición",
+      options: [
+        { label: "Bueno", value: "1" },
+        { label: "Regular", value: "2" },
+        { label: "Malo", value: "3" }
+      ],
+      value: condicionFilter,
+      onChange: setCondicionFilter
     },
   ];
 
@@ -220,19 +316,24 @@ export const AceptarTraslados = () => {
         </Link>
       }
     >
-      <SearchBar>
-        <Input placeholder="Buscar" onChange={handleSearch} />
-      </SearchBar>
-      <Table
+      <SearchBar
+        onSearch={handleSearch}
+        onReset={handleResetFilters}
+        placeholder="Buscar activos por aceptar..."
+        filters={filterOptions}
+        showFilterButton={false}
+      />
+      
+      <DataTable
         className="custom-table"
         rowKey={(record) => record.key}
         size="small"
-        dataSource={dataSource ?? initialData}
+        dataSource={dataSource}
         columns={columns}
         loading={loading}
-        scroll={{ x: 800 }}
+        scroll={{ x: 1000 }}
         pagination={{
-          total: initialData?.length,
+          total: dataSource?.length,
           showSizeChanger: true,
           defaultPageSize: 15,
           pageSizeOptions: ["5", "15", "30"],

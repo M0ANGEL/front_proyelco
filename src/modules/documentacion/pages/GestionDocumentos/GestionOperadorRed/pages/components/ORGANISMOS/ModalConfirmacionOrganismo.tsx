@@ -110,7 +110,7 @@ export const ModalConfirmacionOrganismo = ({
         const response = await fetch(BASE_URL + "gestion-documentos-confirmar-organismos", {
           method: "POST",
           headers: { 
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
           },
           body: formData,
         });

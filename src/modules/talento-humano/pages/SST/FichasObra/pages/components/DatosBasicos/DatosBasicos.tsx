@@ -14,7 +14,6 @@ import {
   Divider,
   Modal,
   Button,
-  notification,
   Spin,
 } from "antd";
 import {
@@ -26,7 +25,6 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { StyledFormItem } from "@/modules/common/layout/DashboardLayout/styled";
 import {
   cargosTH,
   ciudadesTH,
@@ -36,6 +34,8 @@ import {
 import dayjs from "dayjs";
 import { getContratistas } from "@/services/talento-humano/contratistasAPI";
 import { useNavigate } from "react-router-dom";
+import { notify } from "@/components/global/NotificationHandler";
+import { StyledFormItem } from "@/components/layout/styled";
 
 const { Text } = Typography;
 const { Meta } = Card;
@@ -56,20 +56,11 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
   const minimo = useWatch({ control: methods.control, name: "salarioMinimo" });
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
-  const [api, contextHolder] = notification.useNotification();
   const [loading, setLoading] = useState(false);
   const [cargandoDatos, setCargandoDatos] = useState(false);
 
   // 🔹 Determinar qué foto mostrar (prioridad: nueva foto > foto existente del prop)
   const fotoAMostrar = fotoPreview || foto;
-
-  const pushNotification = ({ type = "success", title, description }: any) => {
-    api[type]({
-      message: title,
-      description: description,
-      placement: "bottomRight",
-    });
-  };
 
   const cargarDatosPorId = async (id: string) => {
     if (!id) return;
@@ -133,11 +124,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
         fetchCiudades(Number(data.pais_residencia_id));
 
         if (!esEdicion) {
-          pushNotification({
-            type: "success",
-            title: "Datos cargados",
-            description: "Información del empleado cargada correctamente",
-          });
+          notify.success("Información del empleado cargada correctamente");
         }
       } else {
         // Si no hay datos, abrir modal
@@ -174,7 +161,6 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
 
   useEffect(() => {
     if (TkCategoria && TkCategoria.id) {
-      console.log("Cargando datos para ID:", TkCategoria.id);
       cargarDatosPorId(TkCategoria.id.toString());
     }
   }, [TkCategoria]);
@@ -224,22 +210,14 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
     // Validar tipo de archivo
     const isImage = fileList[0]?.type?.startsWith("image/");
     if (!isImage) {
-      pushNotification({
-        type: "error",
-        title: "Error",
-        description: "Solo se permiten archivos de imagen",
-      });
+      notify.error("Solo se permiten archivos de imagen");
       return;
     }
 
     // Validar tamaño (máximo 5MB)
     const isLt5M = fileList[0]?.size / 1024 / 1024 < 5;
     if (!isLt5M) {
-      pushNotification({
-        type: "error",
-        title: "Error",
-        description: "La imagen debe ser menor a 5MB",
-      });
+      notify.error("La imagen debe ser menor a 5MB");
       return;
     }
 
@@ -331,8 +309,6 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
 
   return (
     <>
-      {contextHolder}
-
       <Spin
         spinning={cargandoDatos}
         indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}

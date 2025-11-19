@@ -1,1 +1,0 @@
-export { ModalDetalle } from "./ModalDetalle";
