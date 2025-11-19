@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, Popconfirm, Tag, Tooltip, Typography } from "antd";
+import { Button, Popconfirm, Tag, Tooltip, Typography } from "antd";
 import { Link } from "react-router-dom";
 import { ColumnsType } from "antd/es/table";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
