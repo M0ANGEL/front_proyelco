@@ -1346,7 +1346,7 @@ export const ListCrearActivos = () => {
         </>
       }
     >
-      <ModalExportacionActivos />
+      {/* <ModalExportacionActivos /> */}
       {/* ✅ Barra de búsquedas mejorada */}
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} md={12}>
