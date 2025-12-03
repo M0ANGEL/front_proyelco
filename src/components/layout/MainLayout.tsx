@@ -13,6 +13,7 @@ import { MenuItem } from "../../types/auth.types";
 import { getRouteComponent } from "../../config/route-components.config";
 import { getModuleIcon } from "../../config/module-icons.config";
 import { ParticlesBackground } from "../animations/ParticlesBackground";
+import ScrollToTopButton from "../global/ScrollToTopButton";
 
 const { Header, Content } = Layout;
 
@@ -485,6 +486,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           </>
         )}
       </Content>
+
+      <ScrollToTopButton/>
     </Layout>
   );
 };

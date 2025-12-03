@@ -57,8 +57,9 @@ export const ListGestionEncargadoObra = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState("");
   
-  const { getSessionVariable } = useSessionStorage();
+ const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
+
 
   const fetchCategorias = useCallback(() => {
     setLoading(true);
@@ -258,7 +259,7 @@ export const ListGestionEncargadoObra = () => {
                 color={color}
                 icon={loadingRow.includes(record.key) ? <SyncOutlined spin /> : null}
                 style={{ 
-                  cursor: record.fecha_ini_proyecto === null && ["Encargado Obras", "Administrador"].includes(user_rol) 
+                  cursor: record.fecha_ini_proyecto === null && ["Encargado Obras", "Administrador"].includes(KEY_ROL) 
                     ? "pointer" 
                     : "default",
                   margin: 0
