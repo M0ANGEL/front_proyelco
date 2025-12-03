@@ -1,103 +1,213 @@
-import { useState } from "react";
-import { Button, Modal, Tooltip } from "antd";
-import { BASE_URL_IMAGENES } from "@/config/api";
+// import { useState } from "react";
+// import { Button, Modal, Tooltip } from "antd";
+// import { BASE_URL_IMAGENES } from "@/config/api";
+// import { FaFileAlt } from "react-icons/fa";
+
+// interface VerDocumentoProps {
+//   codigo_proyecto: string;
+//   codigo_documento: string;
+//   nombreProyecto: string;
+//   etapa: number;
+//   actividad_id: number;
+// }
+
+// export const VerDocumentoRed = ({
+//   codigo_proyecto,
+//   codigo_documento,
+//   etapa,
+//   actividad_id,
+//   nombreProyecto,
+// }: VerDocumentoProps) => {
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [currentExtensionIndex, setCurrentExtensionIndex] = useState(0);
+//   const [currentFileType, setCurrentFileType] = useState<
+//     "image" | "pdf" | "none"
+//   >("image");
+
+//   // Extensiones a probar
+//   const imageExtensions = ["jpg", "jpeg", "png"];
+//   const pdfExtension = "pdf";
+//   const allExtensions = [...imageExtensions, pdfExtension];
+
+//   const fileUrl = `${BASE_URL_IMAGENES}/storage/documentacion/red/${codigo_proyecto}-${codigo_documento}-${etapa}-${actividad_id}.${allExtensions[currentExtensionIndex]}`;
+
+//   const handleError = () => {
+//     if (currentExtensionIndex < allExtensions.length - 1) {
+//       setCurrentExtensionIndex((prev) => prev + 1);
+//     } else {
+//       setCurrentFileType("none");
+//     }
+//   };
+
+//   const handleOpenModal = () => {
+//     setIsModalOpen(true);
+//     setCurrentExtensionIndex(0);
+//     setCurrentFileType("image");
+//   };
+
+//   // Determinar el tipo de archivo actual
+//   const getCurrentFileType = () => {
+//     const currentExt = allExtensions[currentExtensionIndex];
+//     if (imageExtensions.includes(currentExt)) return "image";
+//     if (currentExt === pdfExtension) return "pdf";
+//     return "none";
+//   };
+
+//   const renderFileContent = () => {
+//     const fileType = getCurrentFileType();
+
+//     switch (fileType) {
+//       case "image":
+//         return (
+//           <img
+//             src={fileUrl}
+//             alt={`Proyecto: ${nombreProyecto}`}
+//             style={{ width: "100%", height: "800px", borderRadius: 8 }}
+//             onError={handleError}
+//           />
+//         );
+
+//       case "pdf":
+//         return (
+//           <iframe
+//             src={fileUrl}
+//             width="100%"
+//             height="800px"
+//             title={`Documento: ${nombreProyecto}`}
+//             style={{ border: "none", borderRadius: 8 }}
+//             onError={handleError}
+//           />
+//         );
+
+//       case "none":
+//         return (
+//           <p style={{ textAlign: "center", fontSize: "16px", color: "red" }}>
+//             🚫 No hay documento para esta actividad
+//           </p>
+//         );
+
+//       default:
+//         return null;
+//     }
+//   };
+
+//   return (
+//     <>
+//       <Tooltip title="Ver Documento">
+//         <Button
+//           onClick={handleOpenModal}
+//           type="primary"
+//           size="small"
+//           style={{ marginRight: "12px", background: "#4523ee" }}
+//         >
+//           <FaFileAlt />
+//         </Button>
+//       </Tooltip>
+
+//       <Modal
+//         open={isModalOpen}
+//         onCancel={() => setIsModalOpen(false)}
+//         footer={null}
+//         width={800}
+//         title={`Documento: ${nombreProyecto}`}
+//       >
+//         {renderFileContent()}
+//       </Modal>
+//     </>
+//   );
+// };
+
+import { useState, useEffect } from "react";
+import { Button, Modal, Tooltip, List } from "antd";
+import { BASE_URL_IMAGENES, BASE_URL } from "@/config/api";
 import { FaFileAlt } from "react-icons/fa";
 
 interface VerDocumentoProps {
-  codigo_proyecto: string;
-  codigo_documento: string;
+  documento_id: number;
   nombreProyecto: string;
-  etapa: number;
-  actividad_id: number;
 }
 
 export const VerDocumentoRed = ({
-  codigo_proyecto,
-  codigo_documento,
-  etapa,
-  actividad_id,
+  documento_id,
   nombreProyecto,
 }: VerDocumentoProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentExtensionIndex, setCurrentExtensionIndex] = useState(0);
-  const [currentFileType, setCurrentFileType] = useState<
-    "image" | "pdf" | "none"
-  >("image");
+  const [archivos, setArchivos] = useState<any[]>([]);
+  const [archivoSeleccionado, setArchivoSeleccionado] = useState<any>(null);
 
-  // Extensiones a probar
-  const imageExtensions = ["jpg", "jpeg", "png"];
-  const pdfExtension = "pdf";
-  const allExtensions = [...imageExtensions, pdfExtension];
-
-  const fileUrl = `${BASE_URL_IMAGENES}/storage/documentacion/red/${codigo_proyecto}-${codigo_documento}-${etapa}-${actividad_id}.${allExtensions[currentExtensionIndex]}`;
-
-  const handleError = () => {
-    if (currentExtensionIndex < allExtensions.length - 1) {
-      setCurrentExtensionIndex((prev) => prev + 1);
-    } else {
-      setCurrentFileType("none");
+  const abrirModal = async () => {
+    if (!documento_id) {
+      console.error("documento_id no definido");
+      return;
     }
-  };
 
-  const handleOpenModal = () => {
     setIsModalOpen(true);
-    setCurrentExtensionIndex(0);
-    setCurrentFileType("image");
-  };
 
-  // Determinar el tipo de archivo actual
-  const getCurrentFileType = () => {
-    const currentExt = allExtensions[currentExtensionIndex];
-    if (imageExtensions.includes(currentExt)) return "image";
-    if (currentExt === pdfExtension) return "pdf";
-    return "none";
-  };
+    try {
+      const res = await fetch(
+        `${BASE_URL}documentos-adjuntos/${documento_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  const renderFileContent = () => {
-    const fileType = getCurrentFileType();
+      if (!res.ok) {
+        throw new Error(`Error ${res.status}: ${res.statusText}`);
+      }
 
-    switch (fileType) {
-      case "image":
-        return (
-          <img
-            src={fileUrl}
-            alt={`Proyecto: ${nombreProyecto}`}
-            style={{ width: "100%", height: "800px", borderRadius: 8 }}
-            onError={handleError}
-          />
-        );
-
-      case "pdf":
-        return (
-          <iframe
-            src={fileUrl}
-            width="100%"
-            height="800px"
-            title={`Documento: ${nombreProyecto}`}
-            style={{ border: "none", borderRadius: 8 }}
-            onError={handleError}
-          />
-        );
-
-      case "none":
-        return (
-          <p style={{ textAlign: "center", fontSize: "16px", color: "red" }}>
-            🚫 No hay documento para esta actividad
-          </p>
-        );
-
-      default:
-        return null;
+      const data = await res.json();
+      setArchivos(data);
+    } catch (error) {
+      console.error("Error cargando adjuntos:", error);
     }
   };
+
+ const renderContenido = () => {
+  if (!archivoSeleccionado) {
+    return <p style={{ textAlign: "center" }}>Seleccione un archivo</p>;
+  }
+
+  const url = `${BASE_URL_IMAGENES}${archivoSeleccionado.ruta_archivo.replace(/^\/+/, "")}`;
+
+  if (["jpg", "jpeg", "png"].includes(archivoSeleccionado.extension.toLowerCase())) {
+    return (
+      <img
+        src={url}
+        style={{ width: "100%", height: "800px", borderRadius: 8 }}
+        alt="Vista previa"
+      />
+    );
+  }
+
+  if (archivoSeleccionado.extension.toLowerCase() === "pdf") {
+    return (
+      <iframe
+        src={url}
+        width="100%"
+        height="800px"
+        style={{ border: "none", borderRadius: 8 }}
+      />
+    );
+  }
+
+  return (
+    <p style={{ color: "red", textAlign: "center" }}>
+      Archivo no soportado para vista previa
+    </p>
+  );
+};
+
 
   return (
     <>
-      <Tooltip title="Ver Documento">
+      <Tooltip title="Ver Documentos">
         <Button
-          onClick={handleOpenModal}
           type="primary"
           size="small"
+          onClick={abrirModal}
           style={{ marginRight: "12px", background: "#4523ee" }}
         >
           <FaFileAlt />
@@ -108,10 +218,24 @@ export const VerDocumentoRed = ({
         open={isModalOpen}
         onCancel={() => setIsModalOpen(false)}
         footer={null}
-        width={800}
-        title={`Documento: ${nombreProyecto}`}
+        width={900}
+        title={`Documentos: ${nombreProyecto}`}
       >
-        {renderFileContent()}
+        <List
+          bordered
+          dataSource={archivos}
+          style={{ marginBottom: 20 }}
+          renderItem={(item) => (
+            <List.Item
+              style={{ cursor: "pointer" }}
+              onClick={() => setArchivoSeleccionado(item)}
+            >
+              📄 {item.nombre_original}
+            </List.Item>
+          )}
+        />
+
+        {renderContenido()}
       </Modal>
     </>
   );

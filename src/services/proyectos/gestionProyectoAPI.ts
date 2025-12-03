@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ResponseProyectos } from "@/types/typesGlobal";
 import { client } from "../client";
-import { ResponseProyectos } from "../types";
 
 
 //llamar todas los proyectos

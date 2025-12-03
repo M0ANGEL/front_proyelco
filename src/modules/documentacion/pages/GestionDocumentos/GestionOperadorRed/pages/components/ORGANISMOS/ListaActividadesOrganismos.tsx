@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Table, Tag, Button, Typography, Spin, notification, Space } from "antd";
+import {
+  Table,
+  Tag,
+  Button,
+  Typography,
+  Spin,
+  notification,
+  Space,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined, DownOutlined, RightOutlined } from "@ant-design/icons";
-import { getDocumentaCIonOrganismos } from "@/services/documentacion/documentacionAPI";
+import {
+  getDocumentaCIonOrganismos,
+  getNombreProyectosXCodigo,
+} from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacionOrganismo } from "./ModalConfirmacionOrganismo";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
+import { VerDocumentoOrganismos } from "../../../../components/VerDocumentosOrganismos";
 
 const { Title } = Typography;
 
@@ -46,14 +58,18 @@ export const ListaActividadesOrganismos = () => {
   const [data, setData] = useState<DocumentacionDetalle[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [actividadSeleccionada, setActividadSeleccionada] = useState<DocumentacionDetalle | null>(null);
+  const [actividadSeleccionada, setActividadSeleccionada] =
+    useState<DocumentacionDetalle | null>(null);
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
+  const [nombrePro, setNombrePro] = useState<string>("");
+  const [nombreProyecto, setNombreProyecto] = useState<any>([]);
 
   const proyecto = location.state?.proyecto || location.state;
 
   useEffect(() => {
     if (proyecto) {
       cargarActividades();
+      buscarProyectoName();
     } else {
       console.error("No se encontró código de documento en location.state");
       setLoading(false);
@@ -66,10 +82,11 @@ export const ListaActividadesOrganismos = () => {
 
   const cargarActividades = () => {
     setLoading(true);
-    
+
     getDocumentaCIonOrganismos(proyecto)
       .then(({ data }) => {
         setData(data.data || []);
+        setNombrePro(data.data[0].nombre_etapa);
         setLoading(false);
       })
       .catch((error) => {
@@ -77,6 +94,21 @@ export const ListaActividadesOrganismos = () => {
         notification.error({
           message: "Error",
           description: "No se pudieron cargar las actividades",
+        });
+        setLoading(false);
+      });
+  };
+
+  const buscarProyectoName = () => {
+    setLoading(true);
+    getNombreProyectosXCodigo(proyecto.codigo_proyecto)
+      .then(({ data }) => {
+        setNombreProyecto(data || []);
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: "No se pudieron cargar el proyecto",
         });
         setLoading(false);
       });
@@ -123,7 +155,7 @@ export const ListaActividadesOrganismos = () => {
   const toggleExpand = (record: DocumentacionDetalle) => {
     const key = record.id;
     if (expandedRowKeys.includes(key)) {
-      setExpandedRowKeys(expandedRowKeys.filter(k => k !== key));
+      setExpandedRowKeys(expandedRowKeys.filter((k) => k !== key));
     } else {
       setExpandedRowKeys([...expandedRowKeys, key]);
     }
@@ -153,9 +185,9 @@ export const ListaActividadesOrganismos = () => {
       dataIndex: "estado",
       key: "estado",
       width: 120,
-      render: (estado: number) => ( // CORREGIDO: ahora recibe number
-        <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>
-      ),
+      render: (
+        estado: number // CORREGIDO: ahora recibe number
+      ) => <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>,
     },
     {
       title: "Acciones",
@@ -168,23 +200,29 @@ export const ListaActividadesOrganismos = () => {
             <Button
               type="text"
               size="small"
-              icon={expandedRowKeys.includes(record.id) ? <DownOutlined /> : <RightOutlined />}
+              icon={
+                expandedRowKeys.includes(record.id) ? (
+                  <DownOutlined />
+                ) : (
+                  <RightOutlined />
+                )
+              }
               onClick={() => toggleExpand(record)}
-              title={expandedRowKeys.includes(record.id) ? "Contraer" : "Expandir"}
+              title={
+                expandedRowKeys.includes(record.id) ? "Contraer" : "Expandir"
+              }
             />
           )}
-          
+
           {/* Botón Ver Documento cuando está completado - SOLO para items sin hijos */}
-          {record.estado === 2 && !record.hijos && ( // CORREGIDO: ahora usa número 2
-            <VerDocumentoRed
-              codigo_proyecto={record.codigo_proyecto}
-              codigo_documento={record.codigo_documento}
-              etapa={record.etapa}
-              actividad_id={record.actividad_id}
-              nombreProyecto={record.nombre_etapa}
-            />
-          )}
-          
+          {record.estado === 2 &&
+            !record.hijos && ( // CORREGIDO: ahora usa número 2
+               <VerDocumentoOrganismos
+                documento_id={record.id} // <-- aquí
+                nombreProyecto={record.nombre_etapa}
+              />
+            )}
+
           {/* Botón Confirmar cuando está disponible - SOLO para items sin hijos */}
           {!record.hijos && (
             <Button
@@ -208,61 +246,62 @@ export const ListaActividadesOrganismos = () => {
     onExpandedRowsChange: setExpandedRowKeys,
     expandedRowRender: (record: DocumentacionDetalle) => (
       <div style={{ margin: 0, padding: 0 }}>
-        {record.hijos && record.hijos.map((hijo) => (
-          <div 
-            key={hijo.id} 
-            style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              padding: '12px 16px',
-              borderBottom: '1px solid #f0f0f0',
-              backgroundColor: '#fafafa',
-              marginLeft: '20px'
-            }}
-          >
-            {/* Actividad */}
-            <div style={{ flex: 1 }}>
-              <strong>{hijo.actividad?.actividad || "Sin nombre"}</strong>
+        {record.hijos &&
+          record.hijos.map((hijo) => (
+            <div
+              key={hijo.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 16px",
+                borderBottom: "1px solid #f0f0f0",
+                backgroundColor: "#fafafa",
+                marginLeft: "20px",
+              }}
+            >
+              {/* Actividad */}
+              <div style={{ flex: 1 }}>
+                <strong>{hijo.actividad?.actividad || "Sin nombre"}</strong>
+              </div>
+
+              {/* Estado */}
+              <div style={{ width: 120 }}>
+                <Tag color={getEstadoColor(hijo.estado)}>
+                  {getEstadoTexto(hijo.estado)}
+                </Tag>
+              </div>
+
+              {/* Acciones para hijos */}
+              <div style={{ width: 150 }}>
+                <Space size="small">
+                  {/* Botón Ver Documento cuando está completado */}
+                  {hijo.estado === 2 && ( // CORREGIDO: ahora usa número 2
+                    <VerDocumentoRed
+                      codigo_proyecto={hijo.codigo_proyecto}
+                      codigo_documento={hijo.codigo_documento}
+                      etapa={hijo.etapa}
+                      actividad_id={hijo.actividad_id}
+                      nombreProyecto={hijo.nombre_etapa}
+                    />
+                  )}
+
+                  {/* Botón Confirmar cuando está disponible */}
+                  <Button
+                    type="primary"
+                    size="small"
+                    icon={<CheckOutlined />}
+                    onClick={() => abrirModalConfirmacion(hijo)}
+                    disabled={hijo.estado !== 1} // CORREGIDO: ahora usa número 1
+                  >
+                    Confirmar
+                  </Button>
+                </Space>
+              </div>
             </div>
-            
-            {/* Estado */}
-            <div style={{ width: 120 }}>
-              <Tag color={getEstadoColor(hijo.estado)}>
-                {getEstadoTexto(hijo.estado)}
-              </Tag>
-            </div>
-            
-            {/* Acciones para hijos */}
-            <div style={{ width: 150 }}>
-              <Space size="small">
-                {/* Botón Ver Documento cuando está completado */}
-                {hijo.estado === 2 && ( // CORREGIDO: ahora usa número 2
-                  <VerDocumentoRed
-                    codigo_proyecto={hijo.codigo_proyecto}
-                    codigo_documento={hijo.codigo_documento}
-                    etapa={hijo.etapa}
-                    actividad_id={hijo.actividad_id}
-                    nombreProyecto={hijo.nombre_etapa}
-                  />
-                )}
-                
-                {/* Botón Confirmar cuando está disponible */}
-                <Button
-                  type="primary"
-                  size="small"
-                  icon={<CheckOutlined />}
-                  onClick={() => abrirModalConfirmacion(hijo)}
-                  disabled={hijo.estado !== 1} // CORREGIDO: ahora usa número 1
-                >
-                  Confirmar
-                </Button>
-              </Space>
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     ),
-    rowExpandable: (record: DocumentacionDetalle) => 
+    rowExpandable: (record: DocumentacionDetalle) =>
       record.hijos !== undefined && record.hijos.length > 0,
   };
 
@@ -279,11 +318,13 @@ export const ListaActividadesOrganismos = () => {
     <StyledCard
       title={
         <div>
-          <Title level={3}>
-            Actividades del Proyecto:{" "}
-            {proyecto?.nombre_etapa || "Proyecto no encontrado"}
+          <Title level={4}>
+            PROYECTO: {nombreProyecto.descripcion_proyecto}
           </Title>
+
+          <Title level={5}>INFO: {nombrePro || "Proyecto no encontrado"}</Title>
           <p>Código: {proyecto?.codigo_documento}</p>
+          <p>Etapa: {proyecto?.etapa}</p>
         </div>
       }
       extra={
