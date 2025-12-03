@@ -259,7 +259,7 @@ export const ListGestionEncargadoObra = () => {
                 color={color}
                 icon={loadingRow.includes(record.key) ? <SyncOutlined spin /> : null}
                 style={{ 
-                  cursor: record.fecha_ini_proyecto === null && ["Encargado Obras", "Administrador"].includes(KEY_ROL) 
+                  cursor: record.fecha_ini_proyecto === null && ["Encargado Obras", "Administrador"].includes(user_rol) 
                     ? "pointer" 
                     : "default",
                   margin: 0
