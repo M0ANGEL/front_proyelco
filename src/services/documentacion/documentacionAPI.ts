@@ -30,7 +30,7 @@ export const getDocumentaCIonProyecto = async (id: React.Key): Promise<any> => {
   return await client.get<any>(`gestion-documentosDetalle/${id}`, {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
-};
+}; 
 
 //llamar proyectos y sus codigos para crear documentos
 export const getProyectosCodigo =
@@ -48,3 +48,12 @@ export const getDocumentaCIonOrganismos = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };
+
+
+//nopmbre de proyectos
+//detalle de la documentacion
+export const getNombreProyectosXCodigo = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`proyectoName/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+}; 

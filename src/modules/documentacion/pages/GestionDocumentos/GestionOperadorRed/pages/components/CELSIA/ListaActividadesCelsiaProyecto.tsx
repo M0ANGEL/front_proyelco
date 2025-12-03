@@ -4,7 +4,10 @@ import { Table, Tag, Button, Typography, Spin, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
+import {
+  getDocumentaCIonProyecto,
+  getNombreProyectosXCodigo,
+} from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
@@ -51,10 +54,14 @@ export const ListaActividadesCelsiaProyecto = () => {
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<DocumentacionDetalle | null>(null);
 
+  const [nombreProyecto, setNombreProyecto] = useState<any>([]);
+  const [nombrePro, setNombrePro] = useState<string>("");
+
   const proyecto = location.state?.codigo_documento;
   useEffect(() => {
     if (proyecto?.codigo_documento) {
       cargarActividades();
+      buscarProyectoName();
     }
   }, [proyecto?.codigo_documento]);
 
@@ -63,6 +70,7 @@ export const ListaActividadesCelsiaProyecto = () => {
     getDocumentaCIonProyecto(proyecto.codigo_documento)
       .then(({ data }) => {
         setData(data.data || []);
+        setNombrePro(data.data[0].nombre_etapa);
         setLoading(false);
       })
       .catch((error) => {
@@ -70,6 +78,21 @@ export const ListaActividadesCelsiaProyecto = () => {
         notification.error({
           message: "Error",
           description: "No se pudieron cargar las actividades",
+        });
+        setLoading(false);
+      });
+  };
+
+  const buscarProyectoName = () => {
+    setLoading(true);
+    getNombreProyectosXCodigo(proyecto.codigo_proyecto)
+      .then(({ data }) => {
+        setNombreProyecto(data || []);
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: "No se pudieron cargar el proyecto",
         });
         setLoading(false);
       });
@@ -162,11 +185,8 @@ export const ListaActividadesCelsiaProyecto = () => {
         <>
           {record.estado == "2" ? (
             <>
-              <VerDocumentoRed
-                codigo_proyecto={record?.codigo_proyecto}
-                codigo_documento={record?.codigo_documento}
-                etapa={record?.etapa}
-                actividad_id={record?.actividad_id}
+               <VerDocumentoRed
+                documento_id={record.id} // <-- aquí
                 nombreProyecto={record.nombre_etapa}
               />
             </>
@@ -200,11 +220,13 @@ export const ListaActividadesCelsiaProyecto = () => {
     <StyledCard
       title={
         <div>
-          <Title level={3}>
-            Actividades del Proyecto:{" "}
-            {proyecto?.nombre_etapa || "Proyecto no encontrado"}
+          <Title level={4}>
+            PROYECTO: {nombreProyecto.descripcion_proyecto}
           </Title>
-          <p>Código: {proyecto?.codigo_proyecto}</p>
+
+          <Title level={5}>INFO: {nombrePro || "Proyecto no encontrado"}</Title>
+          <p>Código: {proyecto?.codigo_documento}</p>
+          <p>Etapa: {proyecto?.etapa}</p>
         </div>
       }
       extra={
