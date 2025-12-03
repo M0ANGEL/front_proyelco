@@ -1,0 +1,1 @@
+export {SolicitudMaterialRoutes} from './SolicitudMaterialRoutes'

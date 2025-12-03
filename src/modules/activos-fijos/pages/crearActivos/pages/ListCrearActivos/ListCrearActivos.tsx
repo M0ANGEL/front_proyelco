@@ -653,6 +653,7 @@ import { StyledCard } from "@/components/layout/styled";
 import { SearchBar } from "@/components/global/SearchBar";
 import { DataTable } from "@/components/global/DataTable";
 import { getActiBodegas } from "@/services/activosFijos/BodegasAPI";
+import { ModalExportacionActivos } from "../components/modalExportacion";
 
 interface DataType {
   key: number;
@@ -854,7 +855,10 @@ export const ListCrearActivos = () => {
   };
 
   // ✅ Manejar cambio de bodega responsable
-  const handleBodegaChange = async (activoId: number, bodegaId: number | null) => {
+  const handleBodegaChange = async (
+    activoId: number,
+    bodegaId: number | null
+  ) => {
     try {
       if (bodegaId === null) {
         // Si se limpia el select, liberar la bodega
@@ -870,7 +874,9 @@ export const ListCrearActivos = () => {
       // Actualizar el estado local
       setDataSource((prev) =>
         prev.map((item) =>
-          item.id === activoId ? { ...item, bodega_responsable: bodegaId } : item
+          item.id === activoId
+            ? { ...item, bodega_responsable: bodegaId }
+            : item
         )
       );
 
@@ -1149,7 +1155,7 @@ export const ListCrearActivos = () => {
       width: 200,
       render: (bodegaId: number | null, record: DataType) => {
         const isDisabled = isBodegaSelectDisabled(record.aceptacion);
-        
+
         return (
           <Space size="small">
             <Select
@@ -1331,11 +1337,16 @@ export const ListCrearActivos = () => {
     <StyledCard
       title={"Lista de Activos Fijos"}
       extra={
-        <Link to={`${location.pathname}/create`}>
-          <Button type="primary">Crear</Button>
-        </Link>
+        <>
+          <Link to={`${location.pathname}/create`}>
+            <Button type="primary">Crear</Button>
+          </Link>
+
+          
+        </>
       }
     >
+      <ModalExportacionActivos />
       {/* ✅ Barra de búsquedas mejorada */}
       <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
         <Col xs={24} md={12}>
