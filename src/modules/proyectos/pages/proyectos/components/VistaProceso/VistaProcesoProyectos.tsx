@@ -221,7 +221,7 @@ export const VistaProcesoProyectos = () => {
             </div>
 
             {/* En la sección donde quieres mostrar el análisis de IA */}
-            {torreSeleccionada && dataForAI && (
+            {/* {torreSeleccionada && dataForAI && (
               <div style={{ marginBottom: "24px" }}>
                 <AnalicisIAProyectos
                   data={dataForAI}
@@ -231,7 +231,7 @@ export const VistaProcesoProyectos = () => {
                   }`}
                 />
               </div>
-            )}
+            )} */}
 
             {/* Card Principal con Botones Anclados */}
             <Card
