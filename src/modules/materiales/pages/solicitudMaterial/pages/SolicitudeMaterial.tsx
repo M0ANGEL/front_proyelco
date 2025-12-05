@@ -8,6 +8,7 @@ import { getProyectosProyeciones } from "@/services/material/ProyeccionesAPI";
 import { StyledCard } from "@/components/layout/styled";
 import { SearchBar } from "@/components/global/SearchBar";
 import { DataTable } from "@/components/global/DataTable";
+import { ModalSolicitudesMaterial } from "../components/ModalSolicitudesMaterial";
 
 interface DataType {
   key: number;
@@ -218,6 +219,7 @@ export const SolicitudeMaterial = () => {
       align: "center",
       render: (_, record: DataType) => {
         return (
+          <>
           <Tooltip title="Solicitar Material">
             <Button
               icon={<EditOutlined />}
@@ -226,6 +228,9 @@ export const SolicitudeMaterial = () => {
               onClick={() => handleEditarProyeccion(record.codigo_proyecto)}
             />
           </Tooltip>
+
+          <ModalSolicitudesMaterial documento_id={record.codigo_proyecto} nombreProyecto={record.descripcion_proyecto}/>
+          </>
         );
       },
       fixed: "right",

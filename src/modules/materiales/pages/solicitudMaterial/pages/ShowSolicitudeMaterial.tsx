@@ -562,6 +562,7 @@ export const ShowSolicitudeMaterial = () => {
           content: `${actividades.length} actividad(es) procesada(s) exitosamente`,
           duration: 4,
         });
+        
       }
     } catch (error: any) {
       console.error("Error al guardar cantidades:", error);
@@ -576,6 +577,7 @@ export const ShowSolicitudeMaterial = () => {
       }
     } finally {
       setGuardando(false);
+     
     }
   };
 

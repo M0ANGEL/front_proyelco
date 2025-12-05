@@ -1,0 +1,1 @@
+export {ModalHistorialUpdate} from './ModalHistorialUpdate'
