@@ -72,7 +72,6 @@ export const ModalInforme = ({ proyecto }: DataId) => {
 
   return (
     <>
-      <Tooltip title="Informe detallado">
         <Button
           type="primary"
           style={{ background: "#1638a2" }}
@@ -81,7 +80,6 @@ export const ModalInforme = ({ proyecto }: DataId) => {
         >
           <AiOutlineFileAdd />
         </Button>
-      </Tooltip>
 
       <Modal
         title={
