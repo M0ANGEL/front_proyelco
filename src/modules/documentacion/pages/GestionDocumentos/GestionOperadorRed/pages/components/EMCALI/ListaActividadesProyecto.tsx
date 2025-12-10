@@ -12,6 +12,8 @@ import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
 import { DataTable } from "@/components/global/DataTable";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const { Title } = Typography;
 
@@ -56,6 +58,8 @@ export const ListaActividadesProyecto = () => {
     useState<DocumentacionDetalle | null>(null);
   const [nombrePro, setNombrePro] = useState<string>("");
   const [nombreProyecto, setNombreProyecto] = useState<any>([]);
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   const proyecto = location.state?.codigo_documento;
 
@@ -97,6 +101,8 @@ export const ListaActividadesProyecto = () => {
         setLoading(false);
       });
   };
+
+  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
 
   const abrirModalConfirmacion = (actividad: DocumentacionDetalle) => {
     setActividadSeleccionada(actividad);
@@ -171,41 +177,69 @@ export const ListaActividadesProyecto = () => {
       render: (fecha: string) =>
         fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
     },
-    {
-      title: "Fecha Real",
-      dataIndex: "fecha_actual",
-      key: "fecha_actual",
-      render: (fecha: string) =>
-        fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-    },
-    {
-      title: "Acciones",
-      key: "acciones",
-      align: "center",
-      render: (_, record: DocumentacionDetalle) => (
-        <>
-          {record.estado == "2" ? (
-            <>
-              <VerDocumentoRed
-                documento_id={record.id} // <-- aquí
-                nombreProyecto={record.nombre_etapa}
-              />
-            </>
-          ) : (
-            ""
-          )}
-          <Button
-            type="primary"
-            size="small"
-            icon={<CheckOutlined />}
-            onClick={() => abrirModalConfirmacion(record)}
-            disabled={record.estado == "1" ? false : true}
-          >
-            Confirmar
-          </Button>
-        </>
-      ),
-    },
+
+    // {
+    //   title: "Acciones",
+    //   key: "acciones",
+    //   align: "center",
+    //   render: (_, record: DocumentacionDetalle) => (
+    //     <>
+    //       {record.estado == "2" ? (
+    //         <>
+    //           <VerDocumentoRed
+    //             documento_id={record.id} // <-- aquí
+    //             nombreProyecto={record.nombre_etapa}
+    //           />
+    //         </>
+    //       ) : (
+    //         ""
+    //       )}
+    //       <Button
+    //         type="primary"
+    //         size="small"
+    //         icon={<CheckOutlined />}
+    //         onClick={() => abrirModalConfirmacion(record)}
+    //         disabled={record.estado == "1" ? false : true}
+    //       >
+    //         Confirmar
+    //       </Button>
+    //     </>
+    //   ),
+    // },
+    ...(rolesPermitidos.includes(user_rol)
+      ? [
+          {
+            title: "Fecha Real",
+            dataIndex: "fecha_actual",
+            key: "fecha_actual",
+            render: (fecha: string) =>
+              fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+          },
+          {
+            title: "Acciones",
+            key: "acciones",
+            render: (_: any, record: DocumentacionDetalle) => (
+              <>
+                {record.estado === "2" && (
+                  <VerDocumentoRed
+                    documento_id={record.id}
+                    nombreProyecto={record.nombre_etapa}
+                  />
+                )}
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<CheckOutlined />}
+                  onClick={() => abrirModalConfirmacion(record)}
+                  disabled={record.estado != "1"}
+                >
+                  Confirmar
+                </Button>
+              </>
+            ),
+          },
+        ]
+      : []),
   ];
 
   if (loading) {

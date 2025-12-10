@@ -48,13 +48,12 @@ interface ProyeccionItem {
   um: string;
   cantidad: string;
   subcapitulo: string;
-  cant_apu: string;
   rend: string;
   iva: number;
   valor_sin_iva: string;
   tipo_insumo: string;
   agrupacion: string;
-  cant_total: string;
+  cant_apu: string;
   cant_restante: string;
   cant_solicitada: string;
   estado: number;
@@ -548,10 +547,10 @@ export const ShowProyeccion = () => {
 
   // Obtener la cantidad total según el nivel
   const getCantidadTotal = (item: ProyeccionItem) => {
-    // NIVEL 1 usa 'cantidad' como total, NIVELES 2 y 3 usan 'cant_total'
+    // NIVEL 1 usa 'cantidad' como total, NIVELES 2 y 3 usan 'cant_apu'
     return item.nivel === 1
       ? parseFloat(item.cantidad || "0")
-      : parseFloat(item.cant_total || "0");
+      : parseFloat(item.cant_apu || "0");
   };
 
   // Componente para mostrar el input de cantidad
