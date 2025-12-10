@@ -19,6 +19,8 @@ import { ModalConfirmacionOrganismo } from "./ModalConfirmacionOrganismo";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
 import { VerDocumentoOrganismos } from "../../../../components/VerDocumentosOrganismos";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const { Title } = Typography;
 
@@ -63,6 +65,9 @@ export const ListaActividadesOrganismos = () => {
   const [expandedRowKeys, setExpandedRowKeys] = useState<React.Key[]>([]);
   const [nombrePro, setNombrePro] = useState<string>("");
   const [nombreProyecto, setNombreProyecto] = useState<any>([]);
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
+
 
   const proyecto = location.state?.proyecto || location.state;
 
@@ -123,6 +128,8 @@ export const ListaActividadesOrganismos = () => {
     setModalVisible(false);
     setActividadSeleccionada(null);
   };
+
+   const rolesPermitidos = ["Tramites", "Directora Proyectos"];
 
   // CORREGIDO: Ahora maneja números en lugar de strings
   const getEstadoTexto = (estado: number) => {
@@ -189,6 +196,8 @@ export const ListaActividadesOrganismos = () => {
         estado: number // CORREGIDO: ahora recibe number
       ) => <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>,
     },
+    ...(rolesPermitidos.includes(user_rol)
+      ? [
     {
       title: "Acciones",
       key: "acciones",
@@ -238,6 +247,7 @@ export const ListaActividadesOrganismos = () => {
         </Space>
       ),
     },
+      ]: []),
   ];
 
   // Configuración expandible
