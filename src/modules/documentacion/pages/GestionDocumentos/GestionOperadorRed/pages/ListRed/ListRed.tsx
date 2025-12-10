@@ -6,12 +6,16 @@ import { CelsiaRoute } from "../components/CELSIA/CelsiaRoute/CelsiaRoute";
 import { CrearDocumentacionRed } from "../../../CrearDocumentacionRed";
 import { OrganismosRoute } from "../components/ORGANISMOS/OrganismosRoute/OrganismosRoute";
 import { StyledCard } from "@/components/layout/styled";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const { Text } = Typography;
 
 export const ListRed = () => {
   const [showCreate, setShowCreate] = useState(false);
   const location = useLocation();
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   // Determinar si estamos en la ruta base o en una ruta interna
   const isBaseRoute = location.pathname === "/tramites/documentacion-all";
@@ -20,6 +24,8 @@ export const ListRed = () => {
   const handleShowCreate = () => {
     setShowCreate(true);
   };
+
+  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
 
   const handleBack = () => {
     setShowCreate(false);
@@ -30,11 +36,19 @@ export const ListRed = () => {
     if (showCreate) {
       return (
         <>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: 16,
+            }}
+          >
             <Text strong style={{ fontSize: "16px" }}>
               Crear nueva documentación
             </Text>
-            <Button type="primary" onClick={handleBack}>Volver</Button>
+            <Button type="primary" onClick={handleBack}>
+              Volver
+            </Button>
           </div>
           <CrearDocumentacionRed />
         </>
@@ -55,7 +69,13 @@ export const ListRed = () => {
     // Para la ruta base, mostrar los tabs
     return (
       <>
-        <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 16,
+          }}
+        >
           <Text strong style={{ fontSize: "16px" }}>
             Listado de Documentación
           </Text>
@@ -78,20 +98,20 @@ export const ListRed = () => {
               label: <Text>CELSIA</Text>,
               children: <CelsiaRoute />,
             },
-            {
-              key: "3",
-              label: <Text>ORGANISMOS DE INSPECCIÓN</Text>,
-              children: <OrganismosRoute />,
-            },
+            ...(rolesPermitidos.includes(user_rol)
+              ? [
+                  {
+                    key: "3",
+                    label: <Text>ORGANISMOS DE INSPECCIÓN</Text>,
+                    children: <OrganismosRoute />,
+                  },
+                ]
+              : []),
           ]}
         />
       </>
     );
   };
 
-  return (
-    <StyledCard>
-      {renderContent()}
-    </StyledCard>
-  );
+  return <StyledCard>{renderContent()}</StyledCard>;
 };
