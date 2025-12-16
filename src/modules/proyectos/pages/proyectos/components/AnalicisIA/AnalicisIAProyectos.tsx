@@ -236,7 +236,7 @@ const AnalicisIAProyectos = ({ data }) => {
                     Torre A
                     Avance total: 68.61 por ciento
                     Porcentaje de retraso: 4.17 por ciento
-                    Apartamentos realizados: 414 de 720 
+                    Apartamentos realizados (procesos): 414 de 720 
                     Estado: En buen progreso, con bajo retraso y alta completación.
 
                     [Y así sucesivamente...]

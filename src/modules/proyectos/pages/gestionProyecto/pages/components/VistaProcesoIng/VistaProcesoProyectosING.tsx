@@ -19,6 +19,7 @@ import {
   cambioestadoAptAnulacion,
   getProyectoDetalleGestion,
 } from "@/services/proyectos/gestionProyectoAPI";
+import AnalicisIAProyectos from "@/modules/proyectos/pages/proyectos/components/AnalicisIA/AnalicisIAProyectos";
 
 const { Title, Text } = Typography;
 
@@ -51,33 +52,25 @@ export const VistaProcesoProyectosING = () => {
     LlamadoData();
   }, [id]);
 
-  // const LlamadoData = () => {
-  //   getProyectoDetalleGestion(Number(id)).then(({ data}) => {
-  //     setData(data.data);
-  //     setPorcetanjeTorre(data.torreResumen);
-  //   });
-  //   setLoading(false);
-  // };
   const LlamadoData = () => {
-  setLoading(true); // activar el loading antes de la llamada
+    setLoading(true); // activar el loading antes de la llamada
 
-  getProyectoDetalleGestion(Number(id))
-    .then(({ data }) => {
-      setData(data.data);
-      setPorcetanjeTorre(data.torreResumen);
-    })
-    .catch((err) => {
-      notification.error({
-        message: "Error cargando la información",
-        description: err.message || "Intenta de nuevo",
-        placement: "topRight",
+    getProyectoDetalleGestion(Number(id))
+      .then(({ data }) => {
+        setData(data.data);
+        setPorcetanjeTorre(data.torreResumen);
+      })
+      .catch((err) => {
+        notification.error({
+          message: "Error cargando la información",
+          description: err.message || "Intenta de nuevo",
+          placement: "topRight",
+        });
+      })
+      .finally(() => {
+        setLoading(false); // apagar loading solo cuando termina la llamada
       });
-    })
-    .finally(() => {
-      setLoading(false); // apagar loading solo cuando termina la llamada
-    });
-};
-
+  };
 
   const AnularPiso = (
     aptId: string,
@@ -130,6 +123,113 @@ export const VistaProcesoProyectosING = () => {
   };
 
   const torresUnicas = Object.keys(data || {});
+
+  // Función para preparar datos de la torre seleccionada
+  const prepareTorreDataForAI = () => {
+    if (!data || !torreSeleccionada || !porcetanjeTorre) return null;
+
+    const torreData = data[torreSeleccionada];
+    const torreInfo = porcetanjeTorre[torreSeleccionada];
+
+    if (!torreData) return null;
+
+    const dataForAI = {
+      proyecto: {
+        id: id,
+        nombre: infoProyecto?.descripcion_proyecto || "Sin nombre",
+        torre_analizada: torreSeleccionada,
+      },
+      torre: {
+        nombre: torreInfo?.nombre_torre || `Torre ${torreSeleccionada}`,
+        porcentaje_retraso: torreInfo?.porcentaje_atraso || 0,
+        estado_general: "",
+        procesos: {},
+      },
+      estadisticas: {
+        total_procesos: 0,
+        procesos_con_retraso: 0,
+        procesos_sin_avance: 0,
+        procesos_completados: 0,
+        porcentaje_promedio_avance: 0,
+      },
+    };
+
+    // Procesar cada proceso de la torre
+    const procesos = Object.entries(torreData);
+    dataForAI.torre.estado_general =
+      procesos.length > 0 ? "Activa" : "Sin datos";
+
+    let totalAvance = 0;
+    let procesosAnalizados = 0;
+
+    procesos.forEach(([procesoKey, procesoData]: [string, any]) => {
+      if (!procesoData) return;
+
+      // Calcular avance del proceso
+      const totalApt = procesoData.total_apartamentos || 0;
+      const aptRealizados = procesoData.apartamentos_realizados || 0;
+      const porcentajeAvance =
+        totalApt > 0 ? (aptRealizados / totalApt) * 100 : 0;
+
+      // Determinar estado del proceso
+      let estadoProceso = "Sin avance";
+      if (porcentajeAvance === 100) estadoProceso = "Completado";
+      else if (porcentajeAvance >= 70) estadoProceso = "Avanzado";
+      else if (porcentajeAvance >= 30) estadoProceso = "En progreso";
+      else if (porcentajeAvance > 0) estadoProceso = "Iniciado";
+
+      // Actualizar estadísticas
+      dataForAI.estadisticas.total_procesos++;
+      if (procesoData.porcentaje_atraso > 15) {
+        dataForAI.estadisticas.procesos_con_retraso++;
+      }
+      if (porcentajeAvance === 0) {
+        dataForAI.estadisticas.procesos_sin_avance++;
+      }
+      if (porcentajeAvance === 100) {
+        dataForAI.estadisticas.procesos_completados++;
+      }
+
+      totalAvance += porcentajeAvance;
+      procesosAnalizados++;
+
+      // Agregar datos del proceso
+      dataForAI.torre.procesos[procesoKey] = {
+        nombre: procesoData.nombre_proceso || `Proceso ${procesoKey}`,
+        porcentaje_avance: porcentajeAvance.toFixed(2),
+        porcentaje_retraso: procesoData.porcentaje_atraso || 0,
+        apartamentos_realizados: aptRealizados,
+        total_apartamentos: totalApt,
+        serial_avance: `${aptRealizados}/${totalApt}`,
+        estado: estadoProceso,
+        necesita_validacion: procesoData.validacion === 1,
+        estado_validacion:
+          procesoData.estado_validacion === 1 ? "Validado" : "Pendiente",
+      };
+    });
+
+    // Calcular promedio de avance
+    if (procesosAnalizados > 0) {
+      dataForAI.estadisticas.porcentaje_promedio_avance = (
+        totalAvance / procesosAnalizados
+      ).toFixed(2);
+    }
+
+    // Determinar estado general basado en retraso
+    const retrasoTorre = dataForAI.torre.porcentaje_retraso;
+    if (retrasoTorre < 10) {
+      dataForAI.torre.estado_general = "En buen progreso";
+    } else if (retrasoTorre < 30) {
+      dataForAI.torre.estado_general = "Retraso moderado";
+    } else if (retrasoTorre >= 30) {
+      dataForAI.torre.estado_general = "Crítico";
+    }
+
+    return dataForAI;
+  };
+
+  // Luego en tu componente:
+  const dataForAI = prepareTorreDataForAI();
 
   return (
     <>
@@ -194,6 +294,19 @@ export const VistaProcesoProyectosING = () => {
                 ID: {id} | Seleccione una torre para gestionar
               </Text>
             </div>
+
+
+            {torreSeleccionada && dataForAI && (
+              <div style={{ marginBottom: "24px" }}>
+                <AnalicisIAProyectos
+                  data={dataForAI}
+                  tituloPersonalizado={`Análisis de ${
+                    porcetanjeTorre[torreSeleccionada]?.nombre_torre ||
+                    `Torre ${torreSeleccionada}`
+                  }`}
+                />
+              </div>
+            )}
 
             <Card
               style={{
@@ -383,14 +496,14 @@ export const VistaProcesoProyectosING = () => {
                                       };
 
                                       const getBackgroundColor = () => {
-                                        if(apt.eb == true){
+                                        if (apt.eb == true) {
                                           return "linear-gradient(135deg, #209aff83, #a8a8a8ff)";
-                                        }else{
-                                           if (apt.estado === "1")
-                                          return "linear-gradient(135deg, #1890ff, #36cfc9)";
-                                        if (apt.estado === "2")
-                                          return "linear-gradient(135deg, #4caf50, #66bb6a)";
-                                        return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
+                                        } else {
+                                          if (apt.estado === "1")
+                                            return "linear-gradient(135deg, #1890ff, #36cfc9)";
+                                          if (apt.estado === "2")
+                                            return "linear-gradient(135deg, #4caf50, #66bb6a)";
+                                          return "linear-gradient(135deg,rgb(0, 0, 0),rgb(54, 54, 54))";
                                         }
                                       };
 
