@@ -666,3 +666,21 @@ export interface Condcutores {
   id: number;
   nombre_completo: string;
 }
+
+
+//rutas power bi
+export interface ResponseRutasPowerBI {
+  data: {
+    status: string;
+    data: RutasPowerBI[];
+  };
+}
+export interface RutasPowerBI {
+  id: number;
+  nombre: string;
+  estado: string;
+  ruta: number;
+  link_power_bi: string;
+  created_at: string;
+  updated_at: string;
+}
