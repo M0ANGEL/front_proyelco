@@ -1,10 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import {
-  DatosBasicos,
-  DatosConfigProyecto,
-  DatosFacturacion,
-} from "../../components";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FormProvider, useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
@@ -26,14 +21,15 @@ import {
   notification,
 } from "antd";
 import {
-  crearProyecto,
-  getProyectoID,
-  updateProyecto,
-} from "@/services/proyectos/proyectosAPI";
-import { Nomenclaturas } from "../../components/Nomenclaturas";
-import { getIngenieros, getProcesosProyectos, getTipoProyectos, getUsersProyecto, getUsuariosCorreo } from "@/services/proyectos/masAPI";
+  getIngenieros,
+  getUsersProyecto,
+  getUsuariosCorreo,
+} from "@/services/proyectos/masAPI";
 import { Proyectos } from "@/types/typesGlobal";
 import { StyledCard } from "@/components/layout/styled";
+import { DatosBasicosCasa } from "./components/DatosBasicosCasa";
+import { DatosGestionCasa } from "./components/DatosGestionCasa";
+import { getProyectoIDCasas, updateProyectoCasa } from "@/services/proyectos/casasProyectosAPI";
 
 const { Text } = Typography;
 
@@ -44,15 +40,7 @@ type Proceso = {
   nombre_proceso: string;
 };
 
-export const FormProyectos = () => {
-  const [selectTipoProyecto, setselectTipoProyecto] = useState<
-    SelectProps["options"]
-  >([]);
-
-  const [selectTipoProcesos, setselectTipoProcesos] = useState<
-    SelectProps["options"]
-  >([]);
-
+export const FormProyectosCasas = () => {
   const [usuariosCorreo, setUsuariosCorreo] = useState<SelectProps["options"]>(
     []
   );
@@ -66,46 +54,6 @@ export const FormProyectos = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const control = useForm();
-
-  //llamado a tipo de proyectps
-  useEffect(() => {
-    setLoader(true);
-    const fetchSelects = async () => {
-      await getTipoProyectos().then(({ data: { data } }) => {
-        setselectTipoProyecto(
-          data.map((item) => ({
-            value: item.id,
-            label: `(${item.id}) ${item.nombre_tipo}`,
-          }))
-        );
-      });
-    };
-    fetchSelects()
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => setLoader(false));
-  }, []);
-
-  //llamado a procesos proyectps
-  useEffect(() => {
-    setLoader(true);
-    const fetchSelects = async () => {
-      await getProcesosProyectos().then(({ data: { data } }) => {
-        setselectTipoProcesos(
-          data.map((item) => ({
-            value: item.id,
-            label: item.nombre_proceso,
-          }))
-        );
-      });
-    };
-    fetchSelects()
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => setLoader(false));
-  }, []);
 
   //llamado de usuarios rol encargado de obra para asignar poryecto
   useEffect(() => {
@@ -169,7 +117,7 @@ export const FormProyectos = () => {
 
   useEffect(() => {
     if (id) {
-      getProyectoID(id).then(({ data }) => {
+      getProyectoIDCasas(id).then(({ data }) => {
         setConvenio(data);
         control.reset({
           tipoProyecto_id: data?.proyecto.tipoProyecto_id?.toString(),
@@ -216,8 +164,7 @@ export const FormProyectos = () => {
 
   const onFinish = (data: any) => {
     setLoader(true);
-    if (convenio) {
-      updateProyecto(data, id)
+      updateProyectoCasa(data, id)
         .then(() => {
           notification.success({
             message: "Proyecto actualizado con éxito!",
@@ -250,41 +197,6 @@ export const FormProyectos = () => {
             setLoader(false);
           }
         );
-    } else {
-      crearProyecto(data)
-        .then(() => {
-          notification.success({
-            message: "Proyecto creado con éxito!",
-          });
-          setTimeout(() => {
-            navigate(-1);
-          }, 800);
-        })
-        .catch(
-          ({
-            response,
-            response: {
-              data: { errors },
-            },
-          }) => {
-            if (errors) {
-              const errores: string[] = Object.values(errors);
-              for (const error of errores) {
-                notification.open({
-                  type: "error",
-                  message: error,
-                });
-              }
-            } else {
-              notification.open({
-                type: "error",
-                message: response.data.message,
-              });
-            }
-            setLoader(false);
-          }
-        );
-    }
   };
 
   //html visual
@@ -305,7 +217,7 @@ export const FormProyectos = () => {
             autoComplete="off"
           >
             <StyledCard
-              title={(convenio ? "Editar" : "Crear") + " proyecto Apartamentos"}
+              title={(convenio ? "Editar" : "Crear") + " proyecto Casas"}
               extra={
                 <Space>
                   <Button
@@ -361,7 +273,9 @@ export const FormProyectos = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: <DatosBasicos usuariosCorreo={usuariosCorreo} />,
+                    children: (
+                      <DatosBasicosCasa usuariosCorreo={usuariosCorreo} />
+                    ),
                   },
                   {
                     key: "2",
@@ -379,8 +293,7 @@ export const FormProyectos = () => {
                       </Space>
                     ),
                     children: (
-                      <DatosFacturacion
-                        selectTipoProyecto={selectTipoProyecto}
+                      <DatosGestionCasa
                         selectUSuarios={USuarios}
                         selectIngeniero={Ingeniero}
                         procesos={dataProcesos}
@@ -388,56 +301,56 @@ export const FormProyectos = () => {
                     ),
                     forceRender: true,
                   },
-                  ...(!id
-                    ? [
-                        {
-                          key: "3",
-                          label: (
-                            <Space>
-                              <Text
-                                type={
-                                  Object.keys(control.formState.errors).length >
-                                  0
-                                    ? "danger"
-                                    : undefined
-                                }
-                              >
-                                Configurar Proyecto
-                              </Text>
-                            </Space>
-                          ),
-                          children: (
-                            <DatosConfigProyecto
-                              selectTipoProcesos={selectTipoProcesos}
-                              selectTipoProyecto={selectTipoProyecto}
-                            />
-                          ),
-                          forceRender: true,
-                        },
-                      ]
-                    : []),
-                  ...(id
-                    ? [
-                        {
-                          key: "4",
-                          label: (
-                            <Space>
-                              <Text
-                                type={
-                                  Object.keys(control.formState.errors).length >
-                                  0
-                                    ? "danger"
-                                    : undefined
-                                }
-                              >
-                                Editar Nomenclaturas
-                              </Text>
-                            </Space>
-                          ),
-                          children: <Nomenclaturas />,
-                        },
-                      ]
-                    : []),
+                  // ...(!id
+                  //   ? [
+                  //       {
+                  //         key: "3",
+                  //         label: (
+                  //           <Space>
+                  //             <Text
+                  //               type={
+                  //                 Object.keys(control.formState.errors).length >
+                  //                 0
+                  //                   ? "danger"
+                  //                   : undefined
+                  //               }
+                  //             >
+                  //               Configurar Proyecto
+                  //             </Text>
+                  //           </Space>
+                  //         ),
+                  //         children: (
+                  //           <DatosConfigProyecto
+                  //             selectTipoProcesos={selectTipoProcesos}
+                  //             selectTipoProyecto={selectTipoProyecto}
+                  //           />
+                  //         ),
+                  //         forceRender: true,
+                  //       },
+                  //     ]
+                  //   : []),
+                  // ...(id
+                  //   ? [
+                  //       {
+                  //         key: "4",
+                  //         label: (
+                  //           <Space>
+                  //             <Text
+                  //               type={
+                  //                 Object.keys(control.formState.errors).length >
+                  //                 0
+                  //                   ? "danger"
+                  //                   : undefined
+                  //               }
+                  //             >
+                  //               Editar Nomenclaturas
+                  //             </Text>
+                  //           </Space>
+                  //         ),
+                  //         children: <Nomenclaturas />,
+                  //       },
+                  //     ]
+                  // : []),
                 ]}
                 animated
               />

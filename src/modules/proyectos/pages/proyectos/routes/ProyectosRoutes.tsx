@@ -5,6 +5,7 @@ import { ResumenTorres } from "../components/VistaProceso";
 import { VistaProcesoCasa } from "../components/Casas";
 import { ListProyectos } from "../pages/ListProyectos/ListProyectos";
 import { FormProyectos } from "../pages/FormProyectos";
+import { FormProyectosCasas } from "../pages/FormProyectosCasas";
 
 export const ProyectosRoutes = () => {
   return (
@@ -13,10 +14,10 @@ export const ProyectosRoutes = () => {
         <Route path="/" element={<ListProyectos />} />
         <Route path="/create" element={<FormProyectos />} />
         <Route path="/edit/:id" element={<FormProyectos />} />
-        {/* <Route path="/edit-casa/:id" element={<ModuloNoDisponilble />} /> */}
+        <Route path="/edit-casa/:id" element={<FormProyectosCasas />} />
         <Route path="/proceso/:id" element={<ResumenTorres />} />
         <Route path="/proceso/:id/detalle" element={<VistaProcesoProyectos />} />
-        <Route path="/proceso-casa/:id" element={<ResumenManzanas />} />
+        <Route path="/proceso-casa/:id" element={<ResumenManzanas />} /> 
         <Route path="/proceso-casa/:id/detalle" element={<VistaProcesoCasa />} />
       </Route>
     </RoutesWithNotFound>
