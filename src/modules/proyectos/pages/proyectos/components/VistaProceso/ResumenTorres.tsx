@@ -134,7 +134,7 @@ export const ResumenTorres = () => {
           </div>
         ) : (
           <>
-            {/* <AnalicisIAProyectos data={dataIa} /> */}
+            <AnalicisIAProyectos data={dataIa} />
             <List
               itemLayout="horizontal"
               dataSource={torresUnicas}
