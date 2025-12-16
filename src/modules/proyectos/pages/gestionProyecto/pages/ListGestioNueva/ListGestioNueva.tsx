@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useLocation, Link, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
-import { Typography, Switch, Tag, notification, Tooltip } from "antd";
+import { Typography, Tag, notification, Tooltip } from "antd";
 
 // Componentes globales
 import { GlobalCard } from "@/components/global/GlobalCard";
@@ -9,7 +9,6 @@ import { SearchBar } from "@/components/global/SearchBar";
 import { BotonesOpciones } from "@/components/global/BotonesOpciones";
 import { LoadingSpinner } from "@/components/global/LoadingSpinner";
 import { BackButton } from "@/components/global/BackButton";
-import { SaveButton } from "@/components/global/SaveButton";
 
 // Servicios y componentes específicos getGestionProyecto
 import {
@@ -639,9 +638,6 @@ export const ListGestioNueva = () => {
       extra={
         <div className="header-actions">
           <BackButton />
-          <Link to={`${location.pathname}/create`}>
-            <SaveButton text="Crear Proyecto" />
-          </Link>
         </div>
       }
     >
