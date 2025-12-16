@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CheckCircleFilled, SyncOutlined } from "@ant-design/icons";
 import { Typography, Tag, notification, Tooltip } from "antd";
 
 // Componentes globales
@@ -156,33 +155,6 @@ export const ListGestioNueva = () => {
     [tramitesData]
   );
 
-  const handleStatus = useCallback(
-    async (id: React.Key, tipo: string) => {
-      setLoadingRow((prev) => [...prev, id]);
-      try {
-        if (tipo === "Casa") {
-          await DeleteProyectoCasa(id);
-        } else {
-          await DeleteProyecto(id);
-        }
-        await fetchConvenios();
-        notification.success({
-          message: "Estado actualizado",
-          description: "El estado del proyecto se ha actualizado correctamente",
-        });
-      } catch (error) {
-        console.error("Error updating status:", error);
-        notification.error({
-          message: "Error",
-          description: "No se pudo actualizar el estado del proyecto",
-        });
-      } finally {
-        setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
-      }
-    },
-    [fetchConvenios]
-  );
-
   const handleSearch = useCallback((value: string) => {
     setSearchValue(value);
   }, []);
@@ -191,9 +163,6 @@ export const ListGestioNueva = () => {
     setSearchValue("");
   }, []);
 
-  const toggleConvenioList = useCallback((checked: boolean) => {
-    setShowActiveConvenios(checked);
-  }, []);
 
   const filteredConvenios = useMemo(() => {
     return initialData.filter((convenio) => {
@@ -332,9 +301,6 @@ export const ListGestioNueva = () => {
         "#F59E0B",
       ];
 
-      // Determinar cuántos círculos mostrar (máximo 3)
-      const circlesToShow = Math.min(totalOperadores, 3);
-
       // Calcular porcentajes para los círculos
       let percentages = [];
       if (totalOperadores === 1) {
@@ -471,21 +437,6 @@ export const ListGestioNueva = () => {
     (item: DataType) => [
       {
         tipo: "custom" as const,
-        label: item.estado === "1" ? "Desactivar" : "Activar",
-        onClick: () => handleStatus(item.key, item.tipo),
-        iconoPersonalizado: loadingRow.includes(item.key) ? (
-          <SyncOutlined spin />
-        ) : (
-          <CheckCircleFilled
-            style={{
-              color: item.estado === "1" ? "#10B981" : "#EF4444",
-            }}
-          />
-        ),
-        color: item.estado === "1" ? "success" : ("danger" as const),
-      },
-      {
-        tipo: "custom" as const,
         label: "Tramites",
         onClick: () => {
           navigate("/tramites/documentacion-all");
@@ -531,7 +482,7 @@ export const ListGestioNueva = () => {
         color: "default" as const,
       },
     ],
-    [handleStatus, loadingRow, location.pathname]
+    [loadingRow, location.pathname]
   );
 
   const renderCardContent = useCallback(

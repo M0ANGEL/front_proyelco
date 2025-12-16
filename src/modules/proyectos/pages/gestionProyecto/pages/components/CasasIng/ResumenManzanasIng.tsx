@@ -23,6 +23,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import AnalicisIAProyectos from "@/modules/proyectos/pages/proyectos/components/AnalicisIA/AnalicisIAProyectos";
 
 const { Title, Text } = Typography;
 
@@ -42,6 +43,7 @@ export const ResumenManzanasIng = () => {
   const [manzanaSeleccionada, setManzanaSeleccionada] = useState<string | null>(
     null
   );
+  const [dataIa, setDataIa] = useState<any>({});
 
   useEffect(() => {
     LlamadoData();
@@ -56,11 +58,20 @@ export const ResumenManzanasIng = () => {
       setData(data.data);
       setPorcetanjeManzana(data.manzanaResumen);
       setCasaResumen(data.casaResumen);
+      setDataIa({
+        detallesManzana: data.data, // Array con detalles
+        resumenManzana: data.manzanaResumen, // Objeto con porcentajes
+        metadata: {
+          totalManzana: data.data?.length || 0,
+          fechaConsulta: new Date().toISOString(),
+          idProyecto: id,
+        },
+      });
       setLoading(false);
     });
   };
 
-   // Función para obtener el color del estado
+  // Función para obtener el color del estado
   const getColorEstado = (estado: string) => {
     switch (estado) {
       case "2":
@@ -117,12 +128,12 @@ export const ResumenManzanasIng = () => {
   return (
     <>
       <div
-         style={{
-              padding: "20px",
-              margin: "0 auto",
-              background: "linear-gradient(to bottom right, #f8f9fa, #ffffff)",
-              width: "90%",
-            }}
+        style={{
+          padding: "20px",
+          margin: "0 auto",
+          background: "linear-gradient(to bottom right, #f8f9fa, #ffffff)",
+          width: "90%",
+        }}
       >
         <div style={{ marginBottom: 15, textAlign: "right" }}>
           <Link to="../.." relative="path">
@@ -190,6 +201,7 @@ export const ResumenManzanasIng = () => {
           </div>
         ) : (
           <>
+            <AnalicisIAProyectos data={dataIa} />
             <List
               itemLayout="horizontal"
               dataSource={manzanasUnicas}
@@ -300,189 +312,246 @@ export const ResumenManzanasIng = () => {
 
       {/* Modal Jerárquico */}
       <Modal
-              open={modalProcesosOpen}
-              onCancel={() => {
-                setModalProcesosOpen(false);
-                setManzanaSeleccionada(null);
-              }}
-              footer={null}
-              title={
-                <div>
-                  <Title level={4} style={{ margin: 0 }}>
-                    📊 Detalle de Manzana:{" "}
-                    {manzanaSeleccionada
-                      ? porcetanjeManzana[manzanaSeleccionada]?.nombre_manzana ||
-                        `Manzana ${manzanaSeleccionada}`
-                      : "Manzana"}
-                  </Title>
-                  <Text type="secondary">
-                    Proyecto: {infoProyecto?.descripcion_proyecto}
-                  </Text>
-                </div>
-              }
-              centered
-              width={800}
-              style={{ maxHeight: "80vh" }}
+        open={modalProcesosOpen}
+        onCancel={() => {
+          setModalProcesosOpen(false);
+          setManzanaSeleccionada(null);
+        }}
+        footer={null}
+        title={
+          <div>
+            <Title level={4} style={{ margin: 0 }}>
+              📊 Detalle de Manzana:{" "}
+              {manzanaSeleccionada
+                ? porcetanjeManzana[manzanaSeleccionada]?.nombre_manzana ||
+                  `Manzana ${manzanaSeleccionada}`
+                : "Manzana"}
+            </Title>
+            <Text type="secondary">
+              Proyecto: {infoProyecto?.descripcion_proyecto}
+            </Text>
+          </div>
+        }
+        centered
+        width={800}
+        style={{ maxHeight: "80vh" }}
+      >
+        {manzanaSeleccionada && (
+          <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
+            {/* Resumen de la Manzana */}
+            <Card
+              size="small"
+              style={{ marginBottom: 16, background: "#f8f9fa" }}
             >
-              {manzanaSeleccionada && (
-                <div style={{ maxHeight: "60vh", overflowY: "auto" }}>
-                  {/* Resumen de la Manzana */}
-                  <Card
-                    size="small"
-                    style={{ marginBottom: 16, background: "#f8f9fa" }}
-                  >
-                    <Row gutter={16}>
-                      <Col span={6}>
-                        <Statistic
-                          title="Total Procesos"
-                          value={porcetanjeManzana[manzanaSeleccionada]?.total_general || 0}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <Statistic
-                          title="Completados"
-                          value={porcetanjeManzana[manzanaSeleccionada]?.total_realizados || 0}
-                          valueStyle={{ color: '#3f8600' }}
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <Statistic
-                          title="% Avance"
-                          value={porcetanjeManzana[manzanaSeleccionada]?.porcentaje_avance || 0}
-                          suffix="%"
-                        />
-                      </Col>
-                      <Col span={6}>
-                        <Statistic
-                          title="% Atraso"
-                          value={porcetanjeManzana[manzanaSeleccionada]?.porcentaje_atraso || 0}
-                          suffix="%"
-                          valueStyle={{ color: '#cf1322' }}
-                        />
-                      </Col>
-                    </Row>
-                  </Card>
-      
-                  <Collapse accordion>
-                    {Object.entries(data[manzanaSeleccionada] || {}).map(
-                      ([casaKey, casaContenido]: any) => {
-                        const casaId = `${manzanaSeleccionada}-${casaKey}`;
-                        const resumenCasa = casaResumen[casaId];
-                        
-                        return (
-                          <Panel
-                            key={casaKey}
-                            header={
-                              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                                <div>
-                                  <Text strong style={{ fontSize: "16px" }}>
-                                    🏠 Casa {casaContenido.consecutivo}
-                                  </Text>
-                                </div>
-                                <div>
-                                  <Tag color="blue">
-                                    Avance: {resumenCasa?.porcentaje_avance || 0}%
-                                  </Tag>
-                                  <Tag color={resumenCasa?.porcentaje_atraso > 0 ? "red" : "green"}>
-                                    Atraso: {resumenCasa?.porcentaje_atraso || 0}%
-                                  </Tag>
-                                </div>
-                              </div>
-                            }
-                          >
-                            {/* Iterar sobre todos los pisos de la casa */}
-                            {Object.entries(casaContenido.pisos || {}).map(
-                              ([pisoKey, etapas]: any) => (
-                                <div key={pisoKey} style={{ marginBottom: "20px" }}>
-                                  <Divider orientation="left">
-                                    <Tag color="purple" style={{ fontSize: "14px" }}>
-                                      🏗️ Piso {pisoKey}
+              <Row gutter={16}>
+                <Col span={6}>
+                  <Statistic
+                    title="Total Procesos"
+                    value={
+                      porcetanjeManzana[manzanaSeleccionada]?.total_general || 0
+                    }
+                  />
+                </Col>
+                <Col span={6}>
+                  <Statistic
+                    title="Completados"
+                    value={
+                      porcetanjeManzana[manzanaSeleccionada]
+                        ?.total_realizados || 0
+                    }
+                    valueStyle={{ color: "#3f8600" }}
+                  />
+                </Col>
+                <Col span={6}>
+                  <Statistic
+                    title="% Avance"
+                    value={
+                      porcetanjeManzana[manzanaSeleccionada]
+                        ?.porcentaje_avance || 0
+                    }
+                    suffix="%"
+                  />
+                </Col>
+                <Col span={6}>
+                  <Statistic
+                    title="% Atraso"
+                    value={
+                      porcetanjeManzana[manzanaSeleccionada]
+                        ?.porcentaje_atraso || 0
+                    }
+                    suffix="%"
+                    valueStyle={{ color: "#cf1322" }}
+                  />
+                </Col>
+              </Row>
+            </Card>
+
+            <Collapse accordion>
+              {Object.entries(data[manzanaSeleccionada] || {}).map(
+                ([casaKey, casaContenido]: any) => {
+                  const casaId = `${manzanaSeleccionada}-${casaKey}`;
+                  const resumenCasa = casaResumen[casaId];
+
+                  return (
+                    <Panel
+                      key={casaKey}
+                      header={
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <div>
+                            <Text strong style={{ fontSize: "16px" }}>
+                              🏠 Casa {casaContenido.consecutivo}
+                            </Text>
+                          </div>
+                          <div>
+                            <Tag color="blue">
+                              Avance: {resumenCasa?.porcentaje_avance || 0}%
+                            </Tag>
+                            <Tag
+                              color={
+                                resumenCasa?.porcentaje_atraso > 0
+                                  ? "red"
+                                  : "green"
+                              }
+                            >
+                              Atraso: {resumenCasa?.porcentaje_atraso || 0}%
+                            </Tag>
+                          </div>
+                        </div>
+                      }
+                    >
+                      {/* Iterar sobre todos los pisos de la casa */}
+                      {Object.entries(casaContenido.pisos || {}).map(
+                        ([pisoKey, etapas]: any) => (
+                          <div key={pisoKey} style={{ marginBottom: "20px" }}>
+                            <Divider orientation="left">
+                              <Tag color="purple" style={{ fontSize: "14px" }}>
+                                🏗️ Piso {pisoKey}
+                              </Tag>
+                            </Divider>
+
+                            {/* Etapas del piso */}
+                            {Object.entries(etapas).map(
+                              ([etapaKey, procesos]: any) => (
+                                <div
+                                  key={etapaKey}
+                                  style={{ marginBottom: "16px" }}
+                                >
+                                  <div style={{ marginBottom: "8px" }}>
+                                    <Tag
+                                      color={getColorEtapa(etapaKey)}
+                                      style={{ fontSize: "12px" }}
+                                    >
+                                      {getNombreEtapa(etapaKey)}
                                     </Tag>
-                                  </Divider>
-                                  
-                                  {/* Etapas del piso */}
-                                  {Object.entries(etapas).map(
-                                    ([etapaKey, procesos]: any) => (
-                                      <div key={etapaKey} style={{ marginBottom: "16px" }}>
-                                        <div style={{ marginBottom: "8px" }}>
-                                          <Tag color={getColorEtapa(etapaKey)} style={{ fontSize: "12px" }}>
-                                            {getNombreEtapa(etapaKey)}
-                                          </Tag>
-                                        </div>
-                                        
-                                        {/* Procesos de la etapa */}
-                                        <div style={{ marginLeft: "16px" }}>
-                                          {Object.entries(procesos).map(
-                                            ([procesoKey, proceso]: any) => (
-                                              <Card
-                                                key={procesoKey}
-                                                size="small"
-                                                style={{ 
-                                                  marginBottom: "8px",
-                                                  borderLeft: `4px solid ${
-                                                    proceso.estado === "2" ? "#52c41a" :
-                                                    proceso.estado === "1" ? "#1890ff" : "#d9d9d9"
-                                                  }`
-                                                }}
-                                                bodyStyle={{ padding: "12px" }}
+                                  </div>
+
+                                  {/* Procesos de la etapa */}
+                                  <div style={{ marginLeft: "16px" }}>
+                                    {Object.entries(procesos).map(
+                                      ([procesoKey, proceso]: any) => (
+                                        <Card
+                                          key={procesoKey}
+                                          size="small"
+                                          style={{
+                                            marginBottom: "8px",
+                                            borderLeft: `4px solid ${
+                                              proceso.estado === "2"
+                                                ? "#52c41a"
+                                                : proceso.estado === "1"
+                                                ? "#1890ff"
+                                                : "#d9d9d9"
+                                            }`,
+                                          }}
+                                          bodyStyle={{ padding: "12px" }}
+                                        >
+                                          <Row gutter={8} align="middle">
+                                            <Col span={16}>
+                                              <Text
+                                                strong
+                                                style={{ fontSize: "14px" }}
                                               >
-                                                <Row gutter={8} align="middle">
-                                                  <Col span={16}>
-                                                    <Text strong style={{ fontSize: "14px" }}>
-                                                      {proceso.nombre_proceso}
-                                                    </Text>
-                                                    {proceso.text_validacion && (
-                                                      <div>
-                                                        <Text type="secondary" style={{ fontSize: "12px" }}>
-                                                          📝 {proceso.text_validacion}
-                                                        </Text>
-                                                      </div>
-                                                    )}
-                                                    {proceso.usuario && (
-                                                      <div>
-                                                        <Text type="secondary" style={{ fontSize: "12px" }}>
-                                                          👤 {proceso.usuario}
-                                                        </Text>
-                                                      </div>
-                                                    )}
-                                                  </Col>
-                                                  <Col span={8} style={{ textAlign: "right" }}>
-                                                    <Tag 
-                                                      color={getColorEstado(proceso.estado)}
-                                                      style={{ margin: 0 }}
-                                                    >
-                                                      {getTextoEstado(proceso.estado)}
-                                                    </Tag>
-                                                    {proceso.validacion === 1 && (
-                                                      <div style={{ marginTop: "4px" }}>
-                                                        <Tag 
-                                                          color={proceso.estado_validacion === 1 ? "green" : "orange"} 
-                                                          size="small"
-                                                        >
-                                                          {proceso.estado_validacion === 1 ? "✅ Validado" : "⏳ Pendiente"}
-                                                        </Tag>
-                                                      </div>
-                                                    )}
-                                                  </Col>
-                                                </Row>
-                                              </Card>
-                                            )
-                                          )}
-                                        </div>
-                                      </div>
-                                    )
-                                  )}
+                                                {proceso.nombre_proceso}
+                                              </Text>
+                                              {proceso.text_validacion && (
+                                                <div>
+                                                  <Text
+                                                    type="secondary"
+                                                    style={{ fontSize: "12px" }}
+                                                  >
+                                                    📝 {proceso.text_validacion}
+                                                  </Text>
+                                                </div>
+                                              )}
+                                              {proceso.usuario && (
+                                                <div>
+                                                  <Text
+                                                    type="secondary"
+                                                    style={{ fontSize: "12px" }}
+                                                  >
+                                                    👤 {proceso.usuario}
+                                                  </Text>
+                                                </div>
+                                              )}
+                                            </Col>
+                                            <Col
+                                              span={8}
+                                              style={{ textAlign: "right" }}
+                                            >
+                                              <Tag
+                                                color={getColorEstado(
+                                                  proceso.estado
+                                                )}
+                                                style={{ margin: 0 }}
+                                              >
+                                                {getTextoEstado(proceso.estado)}
+                                              </Tag>
+                                              {proceso.validacion === 1 && (
+                                                <div
+                                                  style={{ marginTop: "4px" }}
+                                                >
+                                                  <Tag
+                                                    color={
+                                                      proceso.estado_validacion ===
+                                                      1
+                                                        ? "green"
+                                                        : "orange"
+                                                    }
+                                                    size="small"
+                                                  >
+                                                    {proceso.estado_validacion ===
+                                                    1
+                                                      ? "✅ Validado"
+                                                      : "⏳ Pendiente"}
+                                                  </Tag>
+                                                </div>
+                                              )}
+                                            </Col>
+                                          </Row>
+                                        </Card>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
                               )
                             )}
-                          </Panel>
-                        );
-                      }
-                    )}
-                  </Collapse>
-                </div>
+                          </div>
+                        )
+                      )}
+                    </Panel>
+                  );
+                }
               )}
-            </Modal>
+            </Collapse>
+          </div>
+        )}
+      </Modal>
     </>
   );
 };
