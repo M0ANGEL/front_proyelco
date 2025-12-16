@@ -11,7 +11,7 @@ import { LoadingSpinner } from "@/components/global/LoadingSpinner";
 import { BackButton } from "@/components/global/BackButton";
 import { SaveButton } from "@/components/global/SaveButton";
 
-// Servicios y componentes específicos 
+// Servicios y componentes específicos
 import {
   DeleteProyecto,
   DeleteProyectoCasa,
@@ -26,6 +26,8 @@ import "./CustomList.css";
 import { AiFillCopy, AiOutlineExpandAlt } from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
 import { ModalHisotircoPorcentajes } from "../../components/ModalHisotircoPorcentajes/ModalHisotircoPorcentajes";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 // Tipos para los datos de trámites
 interface DocumentoData {
@@ -70,6 +72,10 @@ export const ListProyectos = () => {
     documentos: [],
     organismos: [],
   });
+
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
+
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -469,70 +475,81 @@ export const ListProyectos = () => {
   );
 
   const getBotonesAccion = useCallback(
-    (item: DataType) => [
-      {
-        tipo: "custom" as const,
-        label: item.estado === "1" ? "Desactivar" : "Activar",
-        onClick: () => handleStatus(item.key, item.tipo),
-        iconoPersonalizado: loadingRow.includes(item.key) ? (
-          <SyncOutlined spin />
-        ) : (
-          <CheckCircleFilled
-            style={{
-              color: item.estado === "1" ? "#10B981" : "#EF4444",
-            }}
-          />
-        ),
-        color: item.estado === "1" ? "success" : ("danger" as const),
-      },
-      {
-        tipo: "custom" as const,
-        label: "Tramites",
-        onClick: () => {
-          navigate("/tramites/documentacion-all");
+    (item: DataType) => {
+      const botones = [];
+
+      // Solo mostrar el botón de Activar/Desactivar si el usuario es Administrador
+      if (user_rol === "Administrador" || user_rol === "Directora Proyectos") {
+        botones.push({
+          tipo: "custom" as const,
+          label: item.estado === "1" ? "Desactivar" : "Activar",
+          onClick: () => handleStatus(item.key, item.tipo),
+          iconoPersonalizado: loadingRow.includes(item.key) ? (
+            <SyncOutlined spin />
+          ) : (
+            <CheckCircleFilled
+              style={{
+                color: item.estado === "1" ? "#10B981" : "#EF4444",
+              }}
+            />
+          ),
+          color: item.estado === "1" ? "success" : ("danger" as const),
+        });
+      }
+
+      // Agregar los demás botones que todos pueden ver
+      botones.push(
+        {
+          tipo: "custom" as const,
+          label: "Tramites",
+          onClick: () => {
+            navigate("/tramites/documentacion-all");
+          },
+          iconoPersonalizado: <AiFillCopy />,
+          color: "primary" as const,
         },
-        iconoPersonalizado: <AiFillCopy />,
-        color: "primary" as const,
-      },
-      {
-        tipo: "custom" as const,
-        label: "Ver Proceso",
-        onClick: () =>
-          window.open(
-            `${location.pathname}/${
-              item.tipo === "Casa" ? "proceso-casa" : "proceso"
-            }/${item.key}`,
-            "_self"
-          ),
-        iconoPersonalizado: <AiOutlineExpandAlt />,
-        color: "primary" as const,
-      },
-      {
-        tipo: "custom" as const,
-        label: "Informe",
-        onClick: () => {},
-        iconoPersonalizado:
-          item.tipo === "Casa" ? (
-            <ModalInformeCasa proyecto={item} />
-          ) : (
-            <ModalInforme proyecto={item} />
-          ),
-        color: "default" as const,
-      },
-      {
-        tipo: "custom" as const,
-        label: "Historico Porcentajes (no disponible)",
-        onClick: () => {},
-        iconoPersonalizado:
-          item.tipo === "Casa" ? (
-            <ModalHisotircoPorcentajes proyecto={item} />
-          ) : (
-            <ModalHisotircoPorcentajes proyecto={item} />
-          ),
-        color: "default" as const,
-      },
-    ],
-    [handleStatus, loadingRow, location.pathname]
+        {
+          tipo: "custom" as const,
+          label: "Ver Proceso",
+          onClick: () =>
+            window.open(
+              `${location.pathname}/${
+                item.tipo === "Casa" ? "proceso-casa" : "proceso"
+              }/${item.key}`,
+              "_self"
+            ),
+          iconoPersonalizado: <AiOutlineExpandAlt />,
+          color: "primary" as const,
+        },
+        {
+          tipo: "custom" as const,
+          label: "Informe",
+          onClick: () => {},
+          iconoPersonalizado:
+            item.tipo === "Casa" ? (
+              <ModalInformeCasa proyecto={item} />
+            ) : (
+              <ModalInforme proyecto={item} />
+            ),
+          color: "default" as const,
+        },
+        {
+          tipo: "custom" as const,
+          label: "Historico Porcentajes (no disponible)",
+          onClick: () => {},
+          iconoPersonalizado:
+            item.tipo === "Casa" ? (
+              <ModalHisotircoPorcentajes proyecto={item} />
+            ) : (
+              <ModalHisotircoPorcentajes proyecto={item} />
+            ),
+          color: "default" as const,
+        }
+      );
+
+      return botones;
+    },
+    [handleStatus, loadingRow, location.pathname, user_rol, navigate]
   );
 
   const renderCardContent = useCallback(
@@ -564,7 +581,8 @@ export const ListProyectos = () => {
           {/* --------- INFO DEL PROYECTO --------- */}
           <div className="project-info-block">
             <div className="title-row">
-              {item.estado === "1" ? (
+              {["Administrador", "Directora Proyectos"].includes(user_rol) &&
+              item.estado === "1" ? (
                 <Link
                   to={`${location.pathname}/${
                     item.tipo === "Casa" ? "edit-casa" : "edit"

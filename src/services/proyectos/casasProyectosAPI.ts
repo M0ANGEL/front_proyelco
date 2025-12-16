@@ -17,6 +17,18 @@ export const getProyectoDetalleGestionCasa = async (id: React.Key): Promise<any>
   });
 };
 
+export const getProyectoIDCasas = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`gestion-proyectos-casas/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
+
+//actualizar proyecto casas
+export const updateProyectoCasa = async (data: any, id: any): Promise<any> => {
+  return await client.put<any>(`gestion-proyectos-casas/${id}`, data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
 
 
 
