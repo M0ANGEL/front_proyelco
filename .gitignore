@@ -11,6 +11,11 @@ dist
 dist-ssr
 *.local
 
+# Environment variables - AÑADE ESTAS LÍNEAS ARRIBA
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -23,6 +28,4 @@ dist-ssr
 *.sw?
 
 src/test*
-.env.*
-
 .codegpt/*
