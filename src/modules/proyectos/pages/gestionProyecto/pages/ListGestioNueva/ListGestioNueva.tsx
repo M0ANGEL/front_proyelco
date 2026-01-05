@@ -11,8 +11,8 @@ import { BackButton } from "@/components/global/BackButton";
 
 // Servicios y componentes específicos getGestionProyecto
 import {
-  DeleteProyecto,
-  DeleteProyectoCasa,
+  // DeleteProyecto,
+  // DeleteProyectoCasa,
   getEstadoTramitesAdmin,
 } from "@/services/proyectos/proyectosAPI";
 import { DataType } from "./types";
@@ -173,7 +173,7 @@ export const ListGestioNueva = () => {
         );
 
       if (showActiveConvenios) {
-        return matchesSearch && convenio.estado === "1";
+        return matchesSearch && convenio.estado === "1"  || convenio.estado == "2";
       } else {
         return matchesSearch && convenio.estado === "0";
       }
