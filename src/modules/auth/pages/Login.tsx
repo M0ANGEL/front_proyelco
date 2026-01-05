@@ -7,7 +7,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { LoginRequest } from "../../../types/auth.types";
 import { cleanSessions } from "@/services/auth/loguinAPI";
-import { ParticlesBackground } from "@/components/animations/ParticlesBackground";
 
 // ================= ESTILOS =================
 const Background = styled.div`
@@ -155,7 +154,7 @@ const LoginUnified: React.FC = () => {
   // ================= RENDER =================
   return (
     <Background>
-      <ParticlesBackground /> {/* ANIMACION DE PARTICULAS */}
+     {/*  <ParticlesBackground /> ANIMACION DE PARTICULAS */}
 
       <LoginWrapper>
         <Logo src="./logo_dash3.png" alt="logo" />

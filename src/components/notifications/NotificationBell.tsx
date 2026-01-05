@@ -1,4 +1,4 @@
-import { Badge, Space, Divider, List, Drawer, Tag, Card, Typography } from "antd";
+import { Badge, Space, Drawer, Tag, Card, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { GoAlert } from "react-icons/go";
 import { FaBell } from "react-icons/fa";

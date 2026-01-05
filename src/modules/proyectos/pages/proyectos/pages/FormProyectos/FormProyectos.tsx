@@ -305,7 +305,7 @@ export const FormProyectos = () => {
             autoComplete="off"
           >
             <StyledCard
-              title={(convenio ? "Editar" : "Crear") + " proyecto"}
+              title={(convenio ? "Editar" : "Crear") + " proyecto Apartamentos"}
               extra={
                 <Space>
                   <Button

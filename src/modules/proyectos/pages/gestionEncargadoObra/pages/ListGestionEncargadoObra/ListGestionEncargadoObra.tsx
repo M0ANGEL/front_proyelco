@@ -56,7 +56,7 @@ export const ListGestionEncargadoObra = () => {
   const [loadingRow, setLoadingRow] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchValue, setSearchValue] = useState("");
-  
+
   const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
 
@@ -109,20 +109,25 @@ export const ListGestionEncargadoObra = () => {
     fetchCategorias();
   }, [fetchCategorias]);
 
-  const handleSearch = useCallback((value: string) => {
-    setSearchValue(value);
-    if (!value.trim()) {
-      setFilteredData(initialData);
-      return;
-    }
+  const handleSearch = useCallback(
+    (value: string) => {
+      setSearchValue(value);
+      if (!value.trim()) {
+        setFilteredData(initialData);
+        return;
+      }
 
-    const filterTable = initialData.filter((o) =>
-      Object.keys(o).some((k) =>
-        String(o[k as keyof DataType]).toLowerCase().includes(value.toLowerCase())
-      )
-    );
-    setFilteredData(filterTable);
-  }, [initialData]);
+      const filterTable = initialData.filter((o) =>
+        Object.keys(o).some((k) =>
+          String(o[k as keyof DataType])
+            .toLowerCase()
+            .includes(value.toLowerCase())
+        )
+      );
+      setFilteredData(filterTable);
+    },
+    [initialData]
+  );
 
   const handleReset = useCallback(() => {
     setSearchValue("");
@@ -130,190 +135,235 @@ export const ListGestionEncargadoObra = () => {
   }, [initialData]);
 
   // Iniciar proyecto apartamentos
-  const iniciarProyectoAparamentos = useCallback((id: React.Key) => {
-    setLoadingRow(prev => [...prev, id]);
-    IniciarProyecto(id)
-      .then(() => {
-        fetchCategorias();
-      })
-      .catch(() => {
-        setLoadingRow(prev => prev.filter(rowId => rowId !== id));
-      });
-  }, [fetchCategorias]);
+  const iniciarProyectoAparamentos = useCallback(
+    (id: React.Key) => {
+      setLoadingRow((prev) => [...prev, id]);
+      IniciarProyecto(id)
+        .then(() => {
+          fetchCategorias();
+        })
+        .catch(() => {
+          setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
+        });
+    },
+    [fetchCategorias]
+  );
 
   // Iniciar proyecto casas
-  const iniciarProyectoCasas = useCallback((id: React.Key) => {
-    setLoadingRow(prev => [...prev, id]);
-    IniciarProyectoCasas(id)
-      .then(() => {
-        fetchCategorias();
-      })
-      .catch(() => {
-        setLoadingRow(prev => prev.filter(rowId => rowId !== id));
-      });
-  }, [fetchCategorias]);
+  const iniciarProyectoCasas = useCallback(
+    (id: React.Key) => {
+      setLoadingRow((prev) => [...prev, id]);
+      IniciarProyectoCasas(id)
+        .then(() => {
+          fetchCategorias();
+        })
+        .catch(() => {
+          setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
+        });
+    },
+    [fetchCategorias]
+  );
 
-  const columns = useMemo(() => [
-    {
-      title: "Fecha Creación",
-      dataIndex: "created_at",
-      key: "created_at",
-      align: "center" as const,
-      sorter: (a: DataType, b: DataType) => a.created_at.localeCompare(b.created_at),
-      width: 120,
-    },
-    {
-      title: "Tipo Proyecto",
-      dataIndex: "nombre_tipo",
-      align: "center" as const,
-      key: "nombre_tipo",
-      sorter: (a: DataType, b: DataType) => a.nombre_tipo.localeCompare(b.nombre_tipo),
-      width: 120,
-    },
-    {
-      title: "Atraso Proyecto",
-      dataIndex: "porcentaje",
-      key: "porcentaje",
-      align: "center" as const,
-      sorter: (a: DataType, b: DataType) => Number(a.porcentaje) - Number(b.porcentaje),
-      render: (porcentaje: string) => (
-        <Tag color={
-          Number(porcentaje) <= 15 ? "green" : 
-          Number(porcentaje) <= 30 ? "orange" : "red"
-        }>
-          {porcentaje}%
-        </Tag>
-      ),
-      width: 120,
-    },
-    {
-      title: "Avance del Proyecto",
-      dataIndex: "avance",
-      key: "avance",
-      align: "center" as const,
-      sorter: (a: DataType, b: DataType) => Number(a.avance) - Number(b.avance),
-      render: (avance: string) => (
-        <Tag color={
-          Number(avance) >= 80 ? "green" : 
-          Number(avance) >= 50 ? "blue" : "cyan"
-        }>
-          {avance}%
-        </Tag>
-      ),
-      width: 120,
-    },
-    {
-      title: "Descripción",
-      dataIndex: "descripcion_proyecto",
-      key: "descripcion_proyecto",
-      align: "center" as const,
-      ellipsis: true,
-      width: 200,
-    },
-    {
-      title: "Código Proyecto",
-      dataIndex: "codigo_proyecto",
-      key: "codigo_proyecto",
-      align: "center" as const,
-      width: 120,
-    },
-    {
-      title: "Cliente",
-      dataIndex: "emp_nombre",
-      key: "emp_nombre",
-      align: "center" as const,
-      sorter: (a: DataType, b: DataType) => a.emp_nombre.localeCompare(b.emp_nombre),
-      ellipsis: true,
-      width: 150,
-    },
-    {
-      title: "Estado Proyecto",
-      dataIndex: "fecha_ini_proyecto",
-      key: "fecha_ini_proyecto",
-      align: "center" as const,
-      render: (
-        _: any,
-        record: DataType
-      ) => {
-        const estadoString = record.fecha_ini_proyecto !== null ? "PROCESO" : "INICIAR";
-        const color = record.fecha_ini_proyecto !== null ? "green" : "blue";
-
-        const iniciarProyecto = (id: React.Key, tipo: string) => {
-          if (tipo === "Apartamentos") {
-            iniciarProyectoAparamentos(id);
-          } else if (tipo === "Casa") {
-            iniciarProyectoCasas(id);
-          }
-        };
-
-        return (
-          <Popconfirm
-            // disabled={!["Encargado Obras"].includes(user_rol) || record.fecha_ini_proyecto !== null}
-            title="¿Desea iniciar el proyecto?"
-            onConfirm={() => iniciarProyecto(record.key, record.nombre_tipo)}
-            placement="left"
+  const columns = useMemo(
+    () => [
+      {
+        title: "Fecha Creación",
+        dataIndex: "created_at",
+        key: "created_at",
+        align: "center" as const,
+        sorter: (a: DataType, b: DataType) =>
+          a.created_at.localeCompare(b.created_at),
+        width: 120,
+      },
+      {
+        title: "Tipo Proyecto",
+        dataIndex: "nombre_tipo",
+        align: "center" as const,
+        key: "nombre_tipo",
+        sorter: (a: DataType, b: DataType) =>
+          a.nombre_tipo.localeCompare(b.nombre_tipo),
+        width: 120,
+      },
+      {
+        title: "Atraso Proyecto",
+        dataIndex: "porcentaje",
+        key: "porcentaje",
+        align: "center" as const,
+        sorter: (a: DataType, b: DataType) =>
+          Number(a.porcentaje) - Number(b.porcentaje),
+        render: (porcentaje: string) => (
+          <Tag
+            color={
+              Number(porcentaje) <= 15
+                ? "green"
+                : Number(porcentaje) <= 30
+                ? "orange"
+                : "red"
+            }
           >
-            <Tooltip title={record.fecha_ini_proyecto !== null ? "Proyecto en proceso" : "Iniciar Proyecto"}>
-              <Tag
-                color={color}
-                icon={loadingRow.includes(record.key) ? <SyncOutlined spin /> : null}
-                style={{ 
-                  cursor: record.fecha_ini_proyecto === null && ["Encargado Obras", "Administrador"].includes(user_rol) 
-                    ? "pointer" 
-                    : "default",
-                  margin: 0
-                }}
-              >
-                {estadoString.toUpperCase()}
-              </Tag>
-            </Tooltip>
-          </Popconfirm>
-        );
+            {porcentaje}%
+          </Tag>
+        ),
+        width: 120,
       },
-      sorter: (a: DataType, b: DataType) => (a.fecha_ini_proyecto || "").localeCompare(b.fecha_ini_proyecto || ""),
-      width: 120,
-    },
-    {
-      title: "Acciones",
-      key: "acciones",
-      align: "center" as const,
-      render: (_: any, record: DataType) => {
-        const ruta =
-          record.nombre_tipo === "Casa"
-            ? `${location.pathname}/casas/${record.key}`
-            : `${location.pathname}/${record.key}`;
+      {
+        title: "Avance del Proyecto",
+        dataIndex: "avance",
+        key: "avance",
+        align: "center" as const,
+        sorter: (a: DataType, b: DataType) =>
+          Number(a.avance) - Number(b.avance),
+        render: (avance: string) => (
+          <Tag
+            color={
+              Number(avance) >= 80
+                ? "green"
+                : Number(avance) >= 50
+                ? "blue"
+                : "cyan"
+            }
+          >
+            {avance}%
+          </Tag>
+        ),
+        width: 120,
+      },
+      {
+        title: "Descripción",
+        dataIndex: "descripcion_proyecto",
+        key: "descripcion_proyecto",
+        align: "center" as const,
+        ellipsis: true,
+        width: 200,
+      },
+      {
+        title: "Código Proyecto",
+        dataIndex: "codigo_proyecto",
+        key: "codigo_proyecto",
+        align: "center" as const,
+        width: 120,
+      },
+      {
+        title: "Cliente",
+        dataIndex: "emp_nombre",
+        key: "emp_nombre",
+        align: "center" as const,
+        sorter: (a: DataType, b: DataType) =>
+          a.emp_nombre.localeCompare(b.emp_nombre),
+        ellipsis: true,
+        width: 150,
+      },
+      {
+        title: "Estado Proyecto",
+        dataIndex: "fecha_ini_proyecto",
+        key: "fecha_ini_proyecto",
+        align: "center" as const,
+        render: (_: any, record: DataType) => {
+          const estadoString =
+            record.fecha_ini_proyecto !== null ? "PROCESO" : "INICIAR";
+          const color = record.fecha_ini_proyecto !== null ? "green" : "blue";
 
-        return (
-          <div style={{ display: "flex", gap: "8px", justifyContent: "center" }}>
-            <Tooltip
-              title={
-                record.fecha_ini_proyecto === null
-                  ? "Inicia el proyecto para Gestionar"
-                  : "Gestionar Proyecto"
-              }
+          const iniciarProyecto = (id: React.Key, tipo: string) => {
+            if (tipo === "Apartamentos") {
+              iniciarProyectoAparamentos(id);
+            } else if (tipo === "Casa") {
+              iniciarProyectoCasas(id);
+            }
+          };
+
+          return (
+            <Popconfirm
+              // disabled={!["Encargado Obras"].includes(user_rol) || record.fecha_ini_proyecto !== null}
+              title="¿Desea iniciar el proyecto?"
+              onConfirm={() => iniciarProyecto(record.key, record.nombre_tipo)}
+              placement="left"
             >
-              <Link to={ruta}>
-                <Button
-                  disabled={record.fecha_ini_proyecto === null}
-                  icon={<EditOutlined />}
-                  type="primary"
-                  size="small"
-                />
-              </Link>
-            </Tooltip>
-            
-            {record.nombre_tipo === "Casa" ? (
-              <ModalInformeCasa proyecto={record} />
-            ) : (
-              <ModalInforme proyecto={record} />
-            )}
-          </div>
-        );
+              <Tooltip
+                title={
+                  record.fecha_ini_proyecto !== null
+                    ? "Proyecto en proceso"
+                    : "Iniciar Proyecto"
+                }
+              >
+                <Tag
+                  color={color}
+                  icon={
+                    loadingRow.includes(record.key) ? (
+                      <SyncOutlined spin />
+                    ) : null
+                  }
+                  style={{
+                    cursor:
+                      record.fecha_ini_proyecto === null &&
+                      ["Encargado Obras", "Administrador"].includes(user_rol)
+                        ? "pointer"
+                        : "default",
+                    margin: 0,
+                  }}
+                >
+                  {estadoString.toUpperCase()}
+                </Tag>
+              </Tooltip>
+            </Popconfirm>
+          );
+        },
+        sorter: (a: DataType, b: DataType) =>
+          (a.fecha_ini_proyecto || "").localeCompare(
+            b.fecha_ini_proyecto || ""
+          ),
+        width: 120,
       },
-      fixed: "right" as const,
-      width: 100,
-    },
-  ], [location.pathname, user_rol, loadingRow, iniciarProyectoAparamentos, iniciarProyectoCasas]);
+      {
+        title: "Acciones",
+        key: "acciones",
+        align: "center" as const,
+        render: (_: any, record: DataType) => {
+          const ruta =
+            record.nombre_tipo === "Casa"
+              ? `${location.pathname}/casas/${record.key}`
+              : `${location.pathname}/${record.key}`;
+
+          return (
+            <div
+              style={{ display: "flex", gap: "8px", justifyContent: "center" }}
+            >
+              <Tooltip
+                title={
+                  record.fecha_ini_proyecto === null
+                    ? "Inicia el proyecto para Gestionar"
+                    : "Gestionar Proyecto"
+                }
+              >
+                <Link to={ruta}>
+                  <Button
+                    disabled={record.fecha_ini_proyecto === null}
+                    icon={<EditOutlined />}
+                    type="primary"
+                    size="small"
+                  />
+                </Link>
+              </Tooltip>
+
+              {record.nombre_tipo === "Casa" ? (
+                <ModalInformeCasa proyecto={record} />
+              ) : (
+                <ModalInforme proyecto={record} />
+              )}
+            </div>
+          );
+        },
+        fixed: "right" as const,
+        width: 100,
+      },
+    ],
+    [
+      location.pathname,
+      user_rol,
+      loadingRow,
+      iniciarProyectoAparamentos,
+      iniciarProyectoCasas,
+    ]
+  );
 
   return (
     <GlobalCard
@@ -339,25 +389,26 @@ export const ListGestionEncargadoObra = () => {
         hasFixedColumn={false}
         stickyHeader={true}
         scroll={{ x: 1000 }}
-        rowClassName={(record) => 
+        rowClassName={(record) =>
           record.fecha_ini_proyecto === null ? "row-pending" : "row-active"
         }
       />
 
       {/* Información adicional */}
       {filteredData.length === 0 && !loading && (
-        <div style={{ 
-          textAlign: 'center', 
-          padding: '40px',
-          background: '#fafafa',
-          borderRadius: '8px',
-          marginTop: '16px'
-        }}>
+        <div
+          style={{
+            textAlign: "center",
+            padding: "40px",
+            background: "#fafafa",
+            borderRadius: "8px",
+            marginTop: "16px",
+          }}
+        >
           <Text type="secondary">
-            {searchValue ? 
-              "No se encontraron proyectos que coincidan con la búsqueda" : 
-              "No hay proyectos asignados"
-            }
+            {searchValue
+              ? "No se encontraron proyectos que coincidan con la búsqueda"
+              : "No hay proyectos asignados"}
           </Text>
         </div>
       )}

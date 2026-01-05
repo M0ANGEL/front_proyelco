@@ -219,13 +219,23 @@ export const CargueExcelMaterial = () => {
         jsonData = autoRellenarCodigos(jsonData);
 
         // ✅ Incluir TODOS los items del módulo 4, tanto padres como hijos
-        const filteredData = jsonData.filter((item) => {
-          const CODIGO = item.CODIGO?.toString();
-          const PADRE = item.PADRE?.toString();
+        // const filteredData = jsonData.filter((item) => {
+        //   const CODIGO = item.CODIGO?.toString();
+        //   const PADRE = item.PADRE?.toString();
 
-          return (
-            (CODIGO && (CODIGO === "4" || CODIGO.startsWith("4."))) ||
-            (PADRE && (PADRE === "4" || PADRE.startsWith("4.")))
+        //   return (
+        //     (CODIGO && (CODIGO === "4" || CODIGO.startsWith("4."))) ||
+        //     (PADRE && (PADRE === "4" || PADRE.startsWith("4.")))
+        //   );
+        // });
+
+        const filteredData = jsonData.filter((item) => {
+          // Verificar si la fila tiene al menos un campo con datos
+          return Object.values(item).some(
+            (value) =>
+              value !== undefined &&
+              value !== null &&
+              value.toString().trim() !== ""
           );
         });
 
@@ -337,10 +347,10 @@ export const CargueExcelMaterial = () => {
       formData.append("proyecto_id", proyectoInfo.id.toString());
       formData.append("codigo_proyecto", proyectoInfo.codigo || "");
 
-      const response = await fetch(`${BASE_URL}cargueProyecion`, {
+      const response = await fetch(`${BASE_URL}cargueProyeccion`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
         body: formData,
       });

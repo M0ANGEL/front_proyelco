@@ -8,6 +8,7 @@ import { getProyectosProyeciones } from "@/services/material/ProyeccionesAPI";
 import { StyledCard } from "@/components/layout/styled";
 import { SearchBar } from "@/components/global/SearchBar";
 import { DataTable } from "@/components/global/DataTable";
+import { ModalHistorialUpdate } from "../components/ModalHistorialUpdate";
 
 interface DataType {
   key: number;
@@ -55,7 +56,9 @@ export const Proyeccion = () => {
           fecha_ultimo_registro: categoria.fecha_ultimo_registro,
           fecha_primer_registro: categoria.fecha_primer_registro,
           cantidad_total: categoria.cantidad_total,
-          valor_total_sin_iva: Number(categoria.valor_total_sin_iva).toLocaleString("es-CO"),
+          valor_total_sin_iva: Number(
+            categoria.valor_total_sin_iva
+          ).toLocaleString("es-CO"),
           usuario_carga: categoria.usuario_carga,
           created_at: dayjs(categoria?.created_at).format("DD-MM-YYYY HH:mm"),
           updated_at: dayjs(categoria?.updated_at).format("DD-MM-YYYY HH:mm"),
@@ -103,14 +106,16 @@ export const Proyeccion = () => {
 
     // Filtro por tipo de proyecto
     if (tipoProyectoFilter) {
-      filteredData = filteredData.filter(item => 
-        item.tipo_proyecto?.toLowerCase().includes(tipoProyectoFilter.toLowerCase())
+      filteredData = filteredData.filter((item) =>
+        item.tipo_proyecto
+          ?.toLowerCase()
+          .includes(tipoProyectoFilter.toLowerCase())
       );
     }
 
     // Filtro por usuario
     if (usuarioFilter) {
-      filteredData = filteredData.filter(item => 
+      filteredData = filteredData.filter((item) =>
         item.usuario_carga?.toLowerCase().includes(usuarioFilter.toLowerCase())
       );
     }
@@ -119,13 +124,19 @@ export const Proyeccion = () => {
     if (rangoRegistrosFilter) {
       switch (rangoRegistrosFilter) {
         case "bajo":
-          filteredData = filteredData.filter(item => item.total_registros < 100);
+          filteredData = filteredData.filter(
+            (item) => item.total_registros < 100
+          );
           break;
         case "medio":
-          filteredData = filteredData.filter(item => item.total_registros >= 100 && item.total_registros < 500);
+          filteredData = filteredData.filter(
+            (item) => item.total_registros >= 100 && item.total_registros < 500
+          );
           break;
         case "alto":
-          filteredData = filteredData.filter(item => item.total_registros >= 500);
+          filteredData = filteredData.filter(
+            (item) => item.total_registros >= 500
+          );
           break;
         default:
           break;
@@ -160,10 +171,12 @@ export const Proyeccion = () => {
 
   // Obtener opciones únicas para filtros
   const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
-    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
-    return uniqueValues.map(value => ({
+    const uniqueValues = [...new Set(data.map((item) => item[key]))].filter(
+      Boolean
+    );
+    return uniqueValues.map((value) => ({
       label: String(value).toUpperCase(),
-      value: String(value)
+      value: String(value),
     }));
   };
 
@@ -172,7 +185,8 @@ export const Proyeccion = () => {
       title: "Proyecto",
       dataIndex: "descripcion_proyecto",
       key: "descripcion_proyecto",
-      sorter: (a, b) => a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
+      sorter: (a, b) =>
+        a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
       render: (text) => text?.toUpperCase(),
       fixed: "left",
       width: 200,
@@ -205,7 +219,8 @@ export const Proyeccion = () => {
       title: "Fecha Cargue Excel",
       dataIndex: "fecha_ultimo_registro",
       key: "fecha_ultimo_registro",
-      sorter: (a, b) => a.fecha_ultimo_registro.localeCompare(b.fecha_ultimo_registro),
+      sorter: (a, b) =>
+        a.fecha_ultimo_registro.localeCompare(b.fecha_ultimo_registro),
       render: (fecha) => dayjs(fecha).format("DD-MM-YYYY HH:mm"),
       width: 150,
     },
@@ -214,8 +229,12 @@ export const Proyeccion = () => {
       dataIndex: "valor_total_sin_iva",
       key: "valor_total_sin_iva",
       sorter: (a, b) => {
-        const valA = parseFloat(a.valor_total_sin_iva.replace(/\./g, '').replace(',', '.'));
-        const valB = parseFloat(b.valor_total_sin_iva.replace(/\./g, '').replace(',', '.'));
+        const valA = parseFloat(
+          a.valor_total_sin_iva.replace(/\./g, "").replace(",", ".")
+        );
+        const valB = parseFloat(
+          b.valor_total_sin_iva.replace(/\./g, "").replace(",", ".")
+        );
         return valA - valB;
       },
       render: (valor) => `$${valor}`,
@@ -245,14 +264,17 @@ export const Proyeccion = () => {
       align: "center",
       render: (_, record: DataType) => {
         return (
-          <Tooltip title="Editar Proyección">
-            <Button 
-              icon={<EditOutlined />} 
-              type="primary" 
-              size="small"
-              onClick={() => handleEditarProyeccion(record.codigo_proyecto)}
-            />
-          </Tooltip>
+          <>
+            <Tooltip title="Editar Proyección">
+              <Button
+                icon={<EditOutlined />}
+                type="primary"
+                size="small"
+                onClick={() => handleEditarProyeccion(record.codigo_proyecto)}
+              />
+            </Tooltip>
+            <ModalHistorialUpdate documento_id={record.codigo_proyecto} nombreProyecto={record.descripcion_proyecto} />
+          </>
         );
       },
       fixed: "right",
@@ -265,16 +287,16 @@ export const Proyeccion = () => {
     {
       key: "tipo_proyecto",
       label: "Tipo Proyecto",
-      options: getUniqueOptions(initialData, 'tipo_proyecto'),
+      options: getUniqueOptions(initialData, "tipo_proyecto"),
       value: tipoProyectoFilter,
-      onChange: setTipoProyectoFilter
+      onChange: setTipoProyectoFilter,
     },
     {
       key: "usuario",
       label: "Usuario",
-      options: getUniqueOptions(initialData, 'usuario_carga'),
+      options: getUniqueOptions(initialData, "usuario_carga"),
       value: usuarioFilter,
-      onChange: setUsuarioFilter
+      onChange: setUsuarioFilter,
     },
     {
       key: "rango_registros",
@@ -282,19 +304,19 @@ export const Proyeccion = () => {
       options: [
         { label: "Bajo (< 100)", value: "bajo" },
         { label: "Medio (100-500)", value: "medio" },
-        { label: "Alto (≥ 500)", value: "alto" }
+        { label: "Alto (≥ 500)", value: "alto" },
       ],
       value: rangoRegistrosFilter,
-      onChange: setRangoRegistrosFilter
-    }
+      onChange: setRangoRegistrosFilter,
+    },
   ];
 
   return (
     <StyledCard
       title={"Lista de Proyecciones"}
       extra={
-        <Button 
-          type="primary" 
+        <Button
+          type="primary"
           icon={<UploadOutlined />}
           onClick={handleCargarExcel}
         >
@@ -309,7 +331,7 @@ export const Proyeccion = () => {
         filters={filterOptions}
         showFilterButton={false}
       />
-      
+
       <DataTable
         className="custom-table"
         rowKey={(record) => record.key}

@@ -4,11 +4,16 @@ import { Tag, Button, Typography, Spin, notification } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { getDocumentaCIonProyecto } from "@/services/documentacion/documentacionAPI";
+import {
+  getDocumentaCIonProyecto,
+  getNombreProyectosXCodigo,
+} from "@/services/documentacion/documentacionAPI";
 import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
 import { DataTable } from "@/components/global/DataTable";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 const { Title } = Typography;
 
@@ -51,13 +56,17 @@ export const ListaActividadesProyecto = () => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [actividadSeleccionada, setActividadSeleccionada] =
     useState<DocumentacionDetalle | null>(null);
+  const [nombrePro, setNombrePro] = useState<string>("");
+  const [nombreProyecto, setNombreProyecto] = useState<any>([]);
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   const proyecto = location.state?.codigo_documento;
-  console.log(proyecto);
 
   useEffect(() => {
     if (proyecto?.codigo_documento) {
       cargarActividades();
+      buscarProyectoName();
     }
   }, [proyecto?.codigo_documento]);
 
@@ -67,9 +76,9 @@ export const ListaActividadesProyecto = () => {
       .then(({ data }) => {
         setData(data.data || []);
         setLoading(false);
+        setNombrePro(data.data[0].nombre_etapa);
       })
       .catch((error) => {
-        console.error("Error cargando actividades:", error);
         notification.error({
           message: "Error",
           description: "No se pudieron cargar las actividades",
@@ -77,6 +86,23 @@ export const ListaActividadesProyecto = () => {
         setLoading(false);
       });
   };
+
+  const buscarProyectoName = () => {
+    setLoading(true);
+    getNombreProyectosXCodigo(proyecto.codigo_proyecto)
+      .then(({ data }) => {
+        setNombreProyecto(data || []);
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: "No se pudieron cargar el proyecto",
+        });
+        setLoading(false);
+      });
+  };
+
+  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
 
   const abrirModalConfirmacion = (actividad: DocumentacionDetalle) => {
     setActividadSeleccionada(actividad);
@@ -151,44 +177,69 @@ export const ListaActividadesProyecto = () => {
       render: (fecha: string) =>
         fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
     },
-    {
-      title: "Fecha Real",
-      dataIndex: "fecha_actual",
-      key: "fecha_actual",
-      render: (fecha: string) =>
-        fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-    },
-    {
-      title: "Acciones",
-      key: "acciones",
-      align: "center",
-      render: (_, record: DocumentacionDetalle) => (
-        <>
-          {record.estado == "2" ? (
-            <>
-              <VerDocumentoRed
-                codigo_proyecto={record?.codigo_proyecto}
-                codigo_documento={record?.codigo_documento}
-                etapa={record?.etapa}
-                actividad_id={record?.actividad_id}
-                nombreProyecto={record.nombre_etapa}
-              />
-            </>
-          ) : (
-            ""
-          )}
-          <Button
-            type="primary"
-            size="small"
-            icon={<CheckOutlined />}
-            onClick={() => abrirModalConfirmacion(record)}
-            disabled={record.estado == "1" ? false : true}
-          >
-            Confirmar
-          </Button>
-        </>
-      ),
-    },
+
+    // {
+    //   title: "Acciones",
+    //   key: "acciones",
+    //   align: "center",
+    //   render: (_, record: DocumentacionDetalle) => (
+    //     <>
+    //       {record.estado == "2" ? (
+    //         <>
+    //           <VerDocumentoRed
+    //             documento_id={record.id} // <-- aquí
+    //             nombreProyecto={record.nombre_etapa}
+    //           />
+    //         </>
+    //       ) : (
+    //         ""
+    //       )}
+    //       <Button
+    //         type="primary"
+    //         size="small"
+    //         icon={<CheckOutlined />}
+    //         onClick={() => abrirModalConfirmacion(record)}
+    //         disabled={record.estado == "1" ? false : true}
+    //       >
+    //         Confirmar
+    //       </Button>
+    //     </>
+    //   ),
+    // },
+    ...(rolesPermitidos.includes(user_rol)
+      ? [
+          {
+            title: "Fecha Real",
+            dataIndex: "fecha_actual",
+            key: "fecha_actual",
+            render: (fecha: string) =>
+              fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+          },
+          {
+            title: "Acciones",
+            key: "acciones",
+            render: (_: any, record: DocumentacionDetalle) => (
+              <>
+                {record.estado === "2" && (
+                  <VerDocumentoRed
+                    documento_id={record.id}
+                    nombreProyecto={record.nombre_etapa}
+                  />
+                )}
+                <Button
+                  type="primary"
+                  size="small"
+                  icon={<CheckOutlined />}
+                  onClick={() => abrirModalConfirmacion(record)}
+                  disabled={record.estado != "1"}
+                >
+                  Confirmar
+                </Button>
+              </>
+            ),
+          },
+        ]
+      : []),
   ];
 
   if (loading) {
@@ -204,11 +255,13 @@ export const ListaActividadesProyecto = () => {
     <StyledCard
       title={
         <div>
-          <Title level={3}>
-            Actividades del Proyecto:{" "}
-            {proyecto?.nombre_etapa || "Proyecto no encontrado"}
+          <Title level={4}>
+            PROYECTO: {nombreProyecto.descripcion_proyecto}
           </Title>
+
+          <Title level={5}>INFO: {nombrePro || "Proyecto no encontrado"}</Title>
           <p>Código: {proyecto?.codigo_documento}</p>
+          <p>Etapa: {proyecto?.etapa}</p>
         </div>
       }
       extra={

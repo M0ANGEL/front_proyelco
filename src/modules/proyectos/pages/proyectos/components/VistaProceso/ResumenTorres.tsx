@@ -1,12 +1,4 @@
-import {
-  Spin,
-  Typography,
-  Button,
-  Progress,
-  List,
-  Tooltip,
-  Modal,
-} from "antd";
+import { Spin, Typography, Button, Progress, List, Tooltip, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import {
@@ -16,6 +8,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import AnalicisIAProyectos from "../AnalicisIA/AnalicisIAProyectos";
 
 const { Title, Text } = Typography;
 
@@ -33,6 +26,9 @@ export const ResumenTorres = () => {
     null
   );
 
+  //data para api de ia
+  const [dataIa, setDataIa] = useState<any>({});
+
   useEffect(() => {
     LlamadoData();
     InfoProyecto(Number(id)).then(({ data: { data } }) => {
@@ -45,6 +41,16 @@ export const ResumenTorres = () => {
     getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
+      setDataIa({
+        detallesTorres: data.data, // Array con detalles
+        resumenTorres: data.torreResumen, // Objeto con porcentajes
+        metadata: {
+          totalTorres: data.data?.length || 0,
+          fechaConsulta: new Date().toISOString(),
+          idProyecto: id,
+        },
+      });
+
       setLoading(false);
     });
   };
@@ -58,7 +64,7 @@ export const ResumenTorres = () => {
           padding: "20px",
           margin: "0 auto",
           background: "linear-gradient(to bottom right, #f8f9fa, #ffffff)",
-          width: "90%"
+          width: "90%",
         }}
       >
         <div style={{ marginBottom: 15, textAlign: "right" }}>
@@ -128,6 +134,7 @@ export const ResumenTorres = () => {
           </div>
         ) : (
           <>
+            <AnalicisIAProyectos data={dataIa} />
             <List
               itemLayout="horizontal"
               dataSource={torresUnicas}
@@ -230,6 +237,7 @@ export const ResumenTorres = () => {
           </>
         )}
       </div>
+      
 
       {/* modal del procesos*/}
       <Modal

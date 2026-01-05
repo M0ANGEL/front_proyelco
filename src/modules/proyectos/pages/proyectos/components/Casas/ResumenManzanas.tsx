@@ -23,6 +23,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import AnalicisIAProyectos from "../AnalicisIA/AnalicisIAProyectos";
 
 const { Title, Text } = Typography;
 
@@ -31,6 +32,7 @@ export const ResumenManzanas = () => {
   const [porcetanjeManzana, setPorcetanjeManzana] = useState<any>({});
   const [casaResumen, setCasaResumen] = useState<any>({});
   const [loading, setLoading] = useState(false);
+  const [dataIa, setDataIa] = useState<any>({});
 
   const [infoProyecto, setInfoProyecto] = useState<any>({});
   const { id } = useParams<{ id: string }>();
@@ -54,6 +56,15 @@ export const ResumenManzanas = () => {
     setLoading(true);
     getProyectoDetalleGestionCasa(Number(id)).then(({ data }) => {
       setData(data.data);
+      setDataIa({
+        detallesManzana: data.data, // Array con detalles
+        resumenManzana: data.manzanaResumen, // Objeto con porcentajes
+        metadata: {
+          totalManzana: data.data?.length || 0,
+          fechaConsulta: new Date().toISOString(),
+          idProyecto: id,
+        },
+      });
       setPorcetanjeManzana(data.manzanaResumen);
       setCasaResumen(data.casaResumen);
       setLoading(false);
@@ -190,6 +201,7 @@ export const ResumenManzanas = () => {
           </div>
         ) : (
           <>
+            <AnalicisIAProyectos data={dataIa} />
             <List
               itemLayout="horizontal"
               dataSource={manzanasUnicas}

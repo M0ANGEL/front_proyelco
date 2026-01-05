@@ -143,3 +143,11 @@ export const detalleApt = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };
+
+
+
+export const getEstadoTramitesAdmin = async () => {
+  return await client.get<any>('/estado-tramites-adminitrador', {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};

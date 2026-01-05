@@ -2,14 +2,17 @@ import { AuthGuard, RoutesWithNotFound } from "@/modules/common/guards";
 import { Route } from "react-router-dom";
 
 
-import { InformePoryectos, InformeUnidadMedidas } from "@/modules/powerBI";
+import { InformePoryectosPowerbi } from "./InformePoryectosPowerbi";
+import { InformesPowerBIRoutes } from "./administrarRutasPowerBi";
 
 export const InformePowerBiRouter = () => {
   return (
     <RoutesWithNotFound>
       <Route element={<AuthGuard />}>
-        <Route path="/informes-poryectos" element={<InformePoryectos />} />
-        <Route path="/informe-unidad-vivienda" element={<InformeUnidadMedidas/>} />
+        <Route path="/informes-poryectos-power-bi" element={<InformePoryectosPowerbi />} />
+        <Route path="/informe-contratos-power-bi" element={<InformePoryectosPowerbi/>} />
+        <Route path="/informe-material-power-bi" element={<InformePoryectosPowerbi/>} />
+        <Route path="/administrar-rutas-powerBi/*" element={<InformesPowerBIRoutes/>} />
       </Route>
     </RoutesWithNotFound>
   );

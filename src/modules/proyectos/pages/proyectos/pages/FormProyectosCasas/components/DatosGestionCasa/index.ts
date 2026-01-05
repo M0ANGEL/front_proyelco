@@ -1,0 +1,1 @@
+export { DatosGestionCasa } from "./DatosGestionCasa";

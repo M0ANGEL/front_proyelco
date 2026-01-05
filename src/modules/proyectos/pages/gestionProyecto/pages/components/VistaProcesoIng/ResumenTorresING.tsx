@@ -16,6 +16,7 @@ import {
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsuarios/styled";
 import { AiOutlineExpandAlt } from "react-icons/ai";
+import AnalicisIAProyectos from "@/modules/proyectos/pages/proyectos/components/AnalicisIA/AnalicisIAProyectos";
 
 const { Title, Text } = Typography;
 
@@ -32,6 +33,8 @@ export const ResumenTorresING = () => {
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
     null
   );
+    //data para api de ia
+  const [dataIa, setDataIa] = useState<any>({});
 
   useEffect(() => {
     LlamadoData();
@@ -45,6 +48,15 @@ export const ResumenTorresING = () => {
     getProyectoDetalleGestion(Number(id)).then(({ data /* : { data }  */ }) => {
       setData(data.data);
       setPorcetanjeTorre(data.torreResumen);
+      setDataIa({
+        detallesTorres: data.data, // Array con detalles
+        resumenTorres: data.torreResumen, // Objeto con porcentajes
+        metadata: {
+          totalTorres: data.data?.length || 0,
+          fechaConsulta: new Date().toISOString(),
+          idProyecto: id,
+        },
+      });
       setLoading(false);
     });
   };
@@ -131,6 +143,7 @@ export const ResumenTorresING = () => {
           </div>
         ) : (
           <>
+          <AnalicisIAProyectos data={dataIa} />
             <List
               itemLayout="horizontal"
               dataSource={torresUnicas}
