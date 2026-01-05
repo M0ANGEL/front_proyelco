@@ -202,6 +202,8 @@ export const ListProyectos = () => {
     setShowActiveConvenios(checked);
   }, []);
 
+  //renderizar y filtrar proyectos por sus estados para poder verlos, ya que del backend se envian todos, aqui se discriminar por estados,
+  //esto solo para ese componente ya que es del modulo administrador
   const filteredConvenios = useMemo(() => {
     return initialData.filter((convenio) => {
       const matchesSearch =
@@ -211,13 +213,13 @@ export const ListProyectos = () => {
         );
 
       if (showActiveConvenios) {
-        return matchesSearch && convenio.estado === "1";
+        return matchesSearch && convenio.estado == "1" || convenio.estado == "2";
       } else {
         return matchesSearch && convenio.estado === "0";
       }
     });
   }, [initialData, searchValue, showActiveConvenios]);
-
+ 
   // Función para renderizar círculos de progreso
   const renderProgressCircle = useCallback(
     (
