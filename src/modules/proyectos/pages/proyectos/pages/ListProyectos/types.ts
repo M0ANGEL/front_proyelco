@@ -6,6 +6,7 @@ export interface DataType {
   nombreEncargado: string;
   descripcion_proyecto: string;
   emp_nombre: string;
+  tipo: string;
   fec_ini: Date;
   fec_fin: Date;
   estado: string;

@@ -23,11 +23,16 @@ import { DataType } from "./types";
 
 // Estilos
 import "./CustomList.css";
-import { AiFillCopy, AiOutlineExpandAlt } from "react-icons/ai";
+import {
+  AiFillCopy,
+  AiFillSafetyCertificate,
+  AiOutlineExpandAlt,
+} from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
 import { ModalHisotircoPorcentajes } from "../../components/ModalHisotircoPorcentajes/ModalHisotircoPorcentajes";
 import useSessionStorage from "@/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
+import { GreenButton } from "@/components/layout/styled";
 
 // Tipos para los datos de trámites
 interface DocumentoData {
@@ -213,13 +218,15 @@ export const ListProyectos = () => {
         );
 
       if (showActiveConvenios) {
-        return matchesSearch && convenio.estado == "1" || convenio.estado == "2";
+        return (
+          (matchesSearch && convenio.estado == "1") || convenio.estado == "2"
+        );
       } else {
         return matchesSearch && convenio.estado === "0";
       }
     });
   }, [initialData, searchValue, showActiveConvenios]);
- 
+
   // Función para renderizar círculos de progreso
   const renderProgressCircle = useCallback(
     (
@@ -482,21 +489,23 @@ export const ListProyectos = () => {
 
       // Solo mostrar el botón de Activar/Desactivar si el usuario es Administrador
       if (user_rol === "Administrador" || user_rol === "Directora Proyectos") {
-        botones.push({
-          tipo: "custom" as const,
-          label: item.estado === "1" ? "Desactivar" : "Activar",
-          onClick: () => handleStatus(item.key, item.tipo),
-          iconoPersonalizado: loadingRow.includes(item.key) ? (
-            <SyncOutlined spin />
-          ) : (
-            <CheckCircleFilled
-              style={{
-                color: item.estado === "1" ? "#10B981" : "#EF4444",
-              }}
-            />
-          ),
-          color: item.estado === "1" ? "success" : ("danger" as const),
-        });
+        if (item.estado !== "2") {
+          botones.push({
+            tipo: "custom" as const,
+            label: item.estado === "1" ? "Desactivar" : "Activar",
+            onClick: () => handleStatus(item.key, item.tipo),
+            iconoPersonalizado: loadingRow.includes(item.key) ? (
+              <SyncOutlined spin />
+            ) : (
+              <CheckCircleFilled
+                style={{
+                  color: item.estado === "1" ? "#10B981" : "#EF4444",
+                }}
+              />
+            ),
+            color: item.estado === "1" ? "success" : ("danger" as const),
+          });
+        }
       }
 
       // Agregar los demás botones que todos pueden ver
@@ -633,12 +642,12 @@ export const ListProyectos = () => {
                 alineacion="center"
               />
             </div>
-
+ 
             <Tag
               color={item.tipo === "Casa" ? "blue" : "green"}
               className="type-tag"
             >
-              {item.tipo}
+              {item.tipo}|{item.estado == "2" ? "Finalizado" : item.estado == "1" ?  "Emproceso":""}
             </Tag>
           </div>
         </div>
