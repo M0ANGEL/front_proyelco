@@ -431,6 +431,7 @@ export interface EmpleadosTH {
   pais_residencia_id: string;
   ciudad_resudencia_id: string;
   genero: string;
+  rfid: string;
   telefono_fijo: string;
   telefono_celular: string;
   direccion: string;
@@ -683,4 +684,17 @@ export interface RutasPowerBI {
   link_power_bi: string;
   created_at: string;
   updated_at: string;
+}
+
+//RFID
+export interface ResponseRfid {
+  data: {
+    status: string;
+    data: Rfid[];
+  };
+}
+export interface Rfid {
+  id: number;
+  estado: string;
+  codigo: string;
 }

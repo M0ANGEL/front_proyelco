@@ -24,7 +24,7 @@ const cardsBgColors: string[] = [
   "#4148c6ff",
   "#ffcd32",
   "#7ead1c",
-  "#ad971cff",
+  "#10a7c5ff",
   "rgba(165, 9, 142, 1)",
 ];
 

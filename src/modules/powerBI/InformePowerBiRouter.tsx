@@ -13,6 +13,7 @@ export const InformePowerBiRouter = () => {
         <Route path="/informe-contratos-power-bi" element={<InformePoryectosPowerbi/>} />
         <Route path="/informe-material-power-bi" element={<InformePoryectosPowerbi/>} />
         <Route path="/administrar-rutas-powerBi/*" element={<InformesPowerBIRoutes/>} />
+        <Route path="/informe-logistica-power-bi/*" element={<InformePoryectosPowerbi/>} />
       </Route>
     </RoutesWithNotFound>
   );
