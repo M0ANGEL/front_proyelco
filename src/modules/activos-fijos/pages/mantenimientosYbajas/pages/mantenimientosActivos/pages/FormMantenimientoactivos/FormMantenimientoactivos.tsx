@@ -16,10 +16,7 @@ import {
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { DatosBasicos } from "../components";
-import {
-  getActiBodega,
-} from "@/services/activosFijos/BodegasAPI";
-import { crearActiMantenimiento, updateActiMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
+import { crearActiMantenimiento, getActiMantenimeinto, updateActiMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
 import { ActivosCategoria } from "@/types/typesGlobal";
 import { notify } from "@/components/global/NotificationHandler";
 import { StyledCard } from "@/components/layout/styled";
@@ -37,8 +34,9 @@ export const FormMantenimientoactivos = () => {
   useEffect(() => {
     //si hay un id ejecutamos una consulta para traer datos de esa categoria
     if (id) {
-      getActiBodega(id).then(({ data }) => {
+      getActiMantenimeinto(id).then(({ data }) => {
         setCategoria(data);
+        
         setLoaderSave(false);
       });
     } else {

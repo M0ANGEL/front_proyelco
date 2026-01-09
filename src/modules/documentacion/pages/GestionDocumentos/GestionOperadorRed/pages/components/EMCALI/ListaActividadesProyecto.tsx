@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Tag, Button, Typography, Spin, notification } from "antd";
+import { Tag, Button, Typography, Spin, notification, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -14,6 +14,7 @@ import { StyledCard } from "@/components/layout/styled";
 import { DataTable } from "@/components/global/DataTable";
 import useSessionStorage from "@/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
+import { AiFillClockCircle } from "react-icons/ai";
 
 const { Title } = Typography;
 
@@ -44,7 +45,7 @@ interface DocumentacionDetalle {
     tipo: number;
     etapa: number;
     operador: number;
-    estado: number;
+    estado: string;
   };
 }
 
@@ -103,6 +104,7 @@ export const ListaActividadesProyecto = () => {
   };
 
   const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
+  const rolesPermitidosBasicos = ["Ingeniero Obra"];
 
   const abrirModalConfirmacion = (actividad: DocumentacionDetalle) => {
     setActividadSeleccionada(actividad);
@@ -142,6 +144,96 @@ export const ListaActividadesProyecto = () => {
     }
   };
 
+  // const columns: ColumnsType<DocumentacionDetalle> = [
+  //   {
+  //     title: "Orden",
+  //     dataIndex: "orden",
+  //     key: "orden",
+  //     width: 80,
+  //     sorter: (a, b) => a.orden - b.orden,
+  //   },
+  //   {
+  //     title: "Actividad",
+  //     dataIndex: ["actividad", "actividad"],
+  //     key: "actividad",
+  //     render: (text: string, record: DocumentacionDetalle) => (
+  //       <div>
+  //         <strong>{text || "Sin nombre"}</strong>
+  //         <br />
+  //         <small style={{ color: "#666" }}>Tipo: {record.tipo}</small>
+  //       </div>
+  //     ),
+  //   },
+  //   {
+  //     title: "Estado",
+  //     dataIndex: "estado",
+  //     key: "estado",
+  //     render: (estado: number) => (
+  //       <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>
+  //     ),
+  //   },
+  //   {
+  //     title: "Fecha Proyección",
+  //     dataIndex: "fecha_proyeccion",
+  //     key: "fecha_proyeccion",
+  //     render: (fecha: string) =>
+  //       fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+  //   },
+  //   ...(rolesPermitidos.includes(user_rol)
+  //   ? [
+  //      {
+  //     title: "Acciones",
+  //     key: "acciones",
+  //     align: "center",
+  //     render: (_, record: DocumentacionDetalle) => (
+  //         {record.estado == "2" ? (
+  //             <VerDocumentoRed
+  //               documento_id={record.id} // <-- aquí
+  //               nombreProyecto={record.nombre_etapa}
+  //             />
+  //         ) : (
+  //           ""
+  //         )}
+  //     ),
+  //   },
+  //   ] : []),
+
+  //   ...(rolesPermitidos.includes(user_rol)
+  //     ? [
+  //         {
+  //           title: "Fecha Real",
+  //           dataIndex: "fecha_actual",
+  //           key: "fecha_actual",
+  //           render: (fecha: string) =>
+  //             fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
+  //         },
+  //         {
+  //           title: "Acciones",
+  //           key: "acciones",
+  //           render: (_: any, record: DocumentacionDetalle) => (
+  //             <>
+  //               {record.estado == "2" && (
+  //                 <VerDocumentoRed
+  //                   documento_id={record.id}
+  //                   nombreProyecto={record.nombre_etapa}
+  //                 />
+  //               )}
+  //               <Button
+  //                 type="primary"
+  //                 size="small"
+  //                 icon={<CheckOutlined />}
+  //                 onClick={() => abrirModalConfirmacion(record)}
+  //                 disabled={record.estado != "1"}
+  //               >
+  //                 Confirmar
+  //               </Button>
+  //             </>
+  //           ),
+  //         },
+  //       ]
+  //     : []),
+  // ];
+
   const columns: ColumnsType<DocumentacionDetalle> = [
     {
       title: "Orden",
@@ -178,34 +270,38 @@ export const ListaActividadesProyecto = () => {
         fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
     },
 
-    // {
-    //   title: "Acciones",
-    //   key: "acciones",
-    //   align: "center",
-    //   render: (_, record: DocumentacionDetalle) => (
-    //     <>
-    //       {record.estado == "2" ? (
-    //         <>
-    //           <VerDocumentoRed
-    //             documento_id={record.id} // <-- aquí
-    //             nombreProyecto={record.nombre_etapa}
-    //           />
-    //         </>
-    //       ) : (
-    //         ""
-    //       )}
-    //       <Button
-    //         type="primary"
-    //         size="small"
-    //         icon={<CheckOutlined />}
-    //         onClick={() => abrirModalConfirmacion(record)}
-    //         disabled={record.estado == "1" ? false : true}
-    //       >
-    //         Confirmar
-    //       </Button>
-    //     </>
-    //   ),
-    // },
+    //  Columna solo para ciertos roles (ver documento)
+    ...(rolesPermitidosBasicos.includes(user_rol)
+      ? [
+          {
+            title: "Acciones",
+            key: "acciones_ver",
+            align: "center" as const,
+            render: (_: any, record: DocumentacionDetalle) =>
+              record.estado == "2" ? (
+                <VerDocumentoRed
+                  documento_id={record.id}
+                  nombreProyecto={record.nombre_etapa}
+                />
+              ) : (
+                <Tooltip title="Espera de confirmacion">
+                  <Button
+                    size="small"
+                    style={{
+                      marginRight: "12px",
+                      background: "#4523ee",
+                      color: "white",
+                    }}
+                    disabled
+                    icon={<AiFillClockCircle />}
+                  />
+                </Tooltip>
+              ),
+          },
+        ]
+      : []),
+
+    //  Columnas adicionales para ciertos roles
     ...(rolesPermitidos.includes(user_rol)
       ? [
           {
@@ -217,10 +313,10 @@ export const ListaActividadesProyecto = () => {
           },
           {
             title: "Acciones",
-            key: "acciones",
+            key: "acciones_confirmar",
             render: (_: any, record: DocumentacionDetalle) => (
               <>
-                {record.estado === "2" && (
+                {record.estado == "2" && (
                   <VerDocumentoRed
                     documento_id={record.id}
                     nombreProyecto={record.nombre_etapa}
@@ -232,6 +328,7 @@ export const ListaActividadesProyecto = () => {
                   icon={<CheckOutlined />}
                   onClick={() => abrirModalConfirmacion(record)}
                   disabled={record.estado != "1"}
+                  style={{ marginLeft: 8 }}
                 >
                   Confirmar
                 </Button>

@@ -25,7 +25,18 @@ export const ListRed = () => {
     setShowCreate(true);
   };
 
-  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
+  const rolesPermitidos = [
+    "Tramites",
+    "Directora Proyectos",
+    "Administrador",
+    "Ingeniero Obra",
+  ];
+
+  const rolesPermitidosCrear = [
+    "Tramites",
+    "Directora Proyectos",
+    "Administrador",
+  ];
 
   const handleBack = () => {
     setShowCreate(false);
@@ -79,9 +90,16 @@ export const ListRed = () => {
           <Text strong style={{ fontSize: "16px" }}>
             Listado de Documentación
           </Text>
-          <Button type="primary" onClick={handleShowCreate}>
-            Crear nuevo
-          </Button>
+          {rolesPermitidosCrear.includes(user_rol) ? (
+            <>
+              {" "}
+              <Button type="primary" onClick={handleShowCreate}>
+                Crear nuevo
+              </Button>
+            </>
+          ) : (
+            ""
+          )}
         </div>
 
         <Tabs

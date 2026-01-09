@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Table, Tag, Button, Typography, Spin, notification } from "antd";
+import { Table, Tag, Button, Typography, Spin, notification, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { CheckOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -8,11 +8,12 @@ import {
   getDocumentaCIonProyecto,
   getNombreProyectosXCodigo,
 } from "@/services/documentacion/documentacionAPI";
-import { ModalConfirmacion } from "./ModalConfirmacion";
 import { VerDocumentoRed } from "../../../../components/VerDocumentoRed";
 import { StyledCard } from "@/components/layout/styled";
 import useSessionStorage from "@/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
+import { AiFillClockCircle } from "react-icons/ai";
+import { ModalConfirmacionCelsia } from "./ModalConfirmacionCelsia";
 
 const { Title } = Typography;
 
@@ -112,7 +113,8 @@ export const ListaActividadesCelsiaProyecto = () => {
     setActividadSeleccionada(null);
   };
 
-  const rolesPermitidos = ["Tramites", "Directora Proyectos"];
+  const rolesPermitidos = ["Tramites", "Directora Proyectos","Administrador"];
+  const rolesPermitidosBasicos = ["Ingeniero Obra"];
 
   // Función para obtener el texto del estado
   const getEstadoTexto = (estado: number) => {
@@ -177,6 +179,36 @@ export const ListaActividadesCelsiaProyecto = () => {
       render: (fecha: string) =>
         fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
     },
+     //  Columna solo para ciertos roles (ver documento)
+    ...(rolesPermitidosBasicos.includes(user_rol)
+      ? [
+          {
+            title: "Acciones",
+            key: "acciones_ver",
+            align: "center" as const,
+            render: (_: any, record: DocumentacionDetalle) =>
+              record.estado == "2" ? (
+                <VerDocumentoRed
+                  documento_id={record.id}
+                  nombreProyecto={record.nombre_etapa}
+                />
+              ) : (
+                <Tooltip title="Espera de confirmacion">
+                  <Button
+                    size="small"
+                    style={{
+                      marginRight: "12px",
+                      background: "#4523ee",
+                      color: "white",
+                    }}
+                    disabled
+                    icon={<AiFillClockCircle />}
+                  />
+                </Tooltip>
+              ),
+          },
+        ]
+      : []),
     ...(rolesPermitidos.includes(user_rol)
       ? [
           {
@@ -191,7 +223,7 @@ export const ListaActividadesCelsiaProyecto = () => {
             key: "acciones",
             render: (_: any, record: DocumentacionDetalle) => (
               <>
-                {record.estado === "2" && (
+                {record.estado == "2" && (
                   <VerDocumentoRed
                     documento_id={record.id}
                     nombreProyecto={record.nombre_etapa}
@@ -261,7 +293,7 @@ export const ListaActividadesCelsiaProyecto = () => {
         />
       )}
 
-      <ModalConfirmacion
+      <ModalConfirmacionCelsia
         visible={modalVisible}
         actividad={actividadSeleccionada}
         onClose={cerrarModal}
