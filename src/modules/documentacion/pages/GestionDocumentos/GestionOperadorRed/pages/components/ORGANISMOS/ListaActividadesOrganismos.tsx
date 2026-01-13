@@ -68,7 +68,6 @@ export const ListaActividadesOrganismos = () => {
   const { getSessionVariable } = useSessionStorage();
   const user_rol = getSessionVariable(KEY_ROL);
 
-
   const proyecto = location.state?.proyecto || location.state;
 
   useEffect(() => {
@@ -129,7 +128,8 @@ export const ListaActividadesOrganismos = () => {
     setActividadSeleccionada(null);
   };
 
-   const rolesPermitidos = ["Tramites", "Directora Proyectos"];
+  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
+  const rolesPermitidosBasicos = ["Ingeniero Obra"];
 
   // CORREGIDO: Ahora maneja números en lugar de strings
   const getEstadoTexto = (estado: number) => {
@@ -196,58 +196,103 @@ export const ListaActividadesOrganismos = () => {
         estado: number // CORREGIDO: ahora recibe number
       ) => <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>,
     },
+    ...(rolesPermitidosBasicos.includes(user_rol)
+      ? [
+          {
+            title: "Acciones",
+            key: "acciones",
+            width: 150,
+            render: (_, record: DocumentacionDetalle) => (
+              <Space size="small">
+                {/* Botón para expandir/contraer si tiene hijos */}
+                {record.hijos && record.hijos.length > 0 && (
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={
+                      expandedRowKeys.includes(record.id) ? (
+                        <DownOutlined />
+                      ) : (
+                        <RightOutlined />
+                      )
+                    }
+                    onClick={() => toggleExpand(record)}
+                    title={
+                      expandedRowKeys.includes(record.id)
+                        ? "Contraer"
+                        : "Expandir"
+                    }
+                  />
+                )}
+
+                {/* Botón Ver Documento cuando está completado - SOLO para items sin hijos */}
+                {record.estado == 2 &&
+                  !record.hijos && ( // CORREGIDO: ahora usa número 2
+                    <VerDocumentoOrganismos
+                      documento_id={record.id} // <-- aquí
+                      nombreProyecto={record.nombre_etapa}
+                    />
+                  )}
+              </Space>
+            ),
+          },
+        ]
+      : []),
     ...(rolesPermitidos.includes(user_rol)
       ? [
-    {
-      title: "Acciones",
-      key: "acciones",
-      width: 150,
-      render: (_, record: DocumentacionDetalle) => (
-        <Space size="small">
-          {/* Botón para expandir/contraer si tiene hijos */}
-          {record.hijos && record.hijos.length > 0 && (
-            <Button
-              type="text"
-              size="small"
-              icon={
-                expandedRowKeys.includes(record.id) ? (
-                  <DownOutlined />
-                ) : (
-                  <RightOutlined />
-                )
-              }
-              onClick={() => toggleExpand(record)}
-              title={
-                expandedRowKeys.includes(record.id) ? "Contraer" : "Expandir"
-              }
-            />
-          )}
+          {
+            title: "Acciones",
+            key: "acciones",
+            width: 150,
+            render: (_, record: DocumentacionDetalle) => (
+              <Space size="small">
+                {/* Botón para expandir/contraer si tiene hijos */}
+                {record.hijos && record.hijos.length > 0 && (
+                  <Button
+                    type="text"
+                    size="small"
+                    icon={
+                      expandedRowKeys.includes(record.id) ? (
+                        <DownOutlined />
+                      ) : (
+                        <RightOutlined />
+                      )
+                    }
+                    onClick={() => toggleExpand(record)}
+                    title={
+                      expandedRowKeys.includes(record.id)
+                        ? "Contraer"
+                        : "Expandir"
+                    }
+                  />
+                )}
 
-          {/* Botón Ver Documento cuando está completado - SOLO para items sin hijos */}
-          {record.estado === 2 &&
-            !record.hijos && ( // CORREGIDO: ahora usa número 2
-               <VerDocumentoOrganismos
-                documento_id={record.id} // <-- aquí
-                nombreProyecto={record.nombre_etapa}
-              />
-            )}
+                {/* Botón Ver Documento cuando está completado - SOLO para items sin hijos */}
+                {record.estado == 2 &&
+                  !record.hijos && ( // CORREGIDO: ahora usa número 2
+                    <VerDocumentoOrganismos
+                      documento_id={record.id} // <-- aquí
+                      nombreProyecto={record.nombre_etapa}
+                    />
+                  )}
 
-          {/* Botón Confirmar cuando está disponible - SOLO para items sin hijos */}
-          {!record.hijos && (
-            <Button
-              type="primary"
-              size="small"
-              icon={<CheckOutlined />}
-              onClick={() => abrirModalConfirmacion(record)}
-              disabled={record.estado !== 1} // CORREGIDO: ahora usa número 1
-            >
-              Confirmar
-            </Button>
-          )}
-        </Space>
-      ),
-    },
-      ]: []),
+                {/* Botón Confirmar cuando está disponible - SOLO para items sin hijos */}
+                {!record.hijos && (
+                  <Button
+                    type="primary"
+                    size="small"
+                    icon={<CheckOutlined />}
+                    onClick={() => abrirModalConfirmacion(record)}
+                    disabled={record.estado !== 1} // CORREGIDO: ahora usa número 1
+                  >
+                    Confirmar
+                  </Button>
+                )}
+              </Space>
+            ),
+          },
+        ]
+      : []),
   ];
 
   // Configuración expandible
@@ -281,32 +326,46 @@ export const ListaActividadesOrganismos = () => {
                 </Tag>
               </div>
 
-              {/* Acciones para hijos */}
-              <div style={{ width: 150 }}>
-                <Space size="small">
-                  {/* Botón Ver Documento cuando está completado */}
-                  {hijo.estado === 2 && ( // CORREGIDO: ahora usa número 2
-                    <VerDocumentoRed
-                      codigo_proyecto={hijo.codigo_proyecto}
-                      codigo_documento={hijo.codigo_documento}
-                      etapa={hijo.etapa}
-                      actividad_id={hijo.actividad_id}
-                      nombreProyecto={hijo.nombre_etapa}
-                    />
-                  )}
+              {/* acciones para roles basicos */}
+              {rolesPermitidosBasicos.includes(user_rol) && (
+                <div style={{ width: 150 }}>
+                  <Space size="small">
+                    {/* Botón Ver Documento cuando está completado */}
+                    {hijo.estado == 2 && ( // CORREGIDO: ahora usa número 2
+                      <VerDocumentoOrganismos
+                        documento_id={hijo.id}
+                        nombreProyecto={hijo.nombre_etapa}
+                      />
+                    )}
+                  </Space>
+                </div>
+              )}
 
-                  {/* Botón Confirmar cuando está disponible */}
-                  <Button
-                    type="primary"
-                    size="small"
-                    icon={<CheckOutlined />}
-                    onClick={() => abrirModalConfirmacion(hijo)}
-                    disabled={hijo.estado !== 1} // CORREGIDO: ahora usa número 1
-                  >
-                    Confirmar
-                  </Button>
-                </Space>
-              </div>
+              {/* Acciones para hijos */}
+              {rolesPermitidos.includes(user_rol) && (
+                <div style={{ width: 150 }}>
+                  <Space size="small">
+                    {/* Botón Ver Documento cuando está completado */}
+                    {hijo.estado == 2 && ( // CORREGIDO: ahora usa número 2
+                      <VerDocumentoOrganismos
+                        documento_id={hijo.id}
+                        nombreProyecto={hijo.nombre_etapa}
+                      />
+                    )}
+
+                    {/* Botón Confirmar cuando está disponible */}
+                    <Button
+                      type="primary"
+                      size="small"
+                      icon={<CheckOutlined />}
+                      onClick={() => abrirModalConfirmacion(hijo)}
+                      disabled={hijo.estado != 1} // CORREGIDO: ahora usa número 1
+                    >
+                      Confirmar
+                    </Button>
+                  </Space>
+                </div>
+              )}
             </div>
           ))}
       </div>

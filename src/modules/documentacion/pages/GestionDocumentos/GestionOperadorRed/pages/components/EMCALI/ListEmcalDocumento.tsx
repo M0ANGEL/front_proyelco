@@ -1,13 +1,28 @@
 import { useEffect, useState } from "react";
-import { Typography, Button, Tag, Row, Col, Badge } from "antd";
+import {
+  Typography,
+  Button,
+  Tag,
+  Row,
+  Col,
+  Badge,
+  Tooltip,
+  Modal,
+  notification,
+  Spin,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
-import {  getProyectosDocumentacionEmcali } from "@/services/documentacion/documentacionAPI";
+import {
+  getDocumentosDisponibles,
+  getProyectosDocumentacionEmcali,
+} from "@/services/documentacion/documentacionAPI";
 import { useNavigate } from "react-router-dom";
 import { CaretRightOutlined, FileTextOutlined } from "@ant-design/icons";
 import { StyledCard } from "@/components/layout/styled";
 import { SearchBar } from "@/components/global/SearchBar";
 import { DataTable } from "@/components/global/DataTable";
+import { AiOutlineBell } from "react-icons/ai";
 
 // Interfaces
 interface DocumentacionType {
@@ -15,6 +30,7 @@ interface DocumentacionType {
   codigo_documento: string;
   etapa: number;
   operador: number;
+  nombre_etapa: string;
 }
 
 interface DataType {
@@ -33,7 +49,7 @@ const { Text } = Typography;
 const getTextoEtapa = (etapa: number) => {
   const etapas: { [key: number]: string } = {
     1: "ET1",
-    2: "ET2", 
+    2: "ET2",
     3: "ET3",
     4: "ET4",
     5: "ET5",
@@ -64,6 +80,11 @@ export const ListEmcalDocumento = () => {
   const [tipoProyectoFilter, setTipoProyectoFilter] = useState<string>();
   const [rangoDocumentosFilter, setRangoDocumentosFilter] = useState<string>();
 
+  //estados del modal de documentos disponibles
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [datoModal, setDatoModal] = useState<any[]>([]);
+  const [loadingModal, setLoadingModal] = useState<boolean>(false);
+
   // Ejecución
   useEffect(() => {
     fetchTicketsAbiertosGestion();
@@ -89,6 +110,33 @@ export const ListEmcalDocumento = () => {
       setLoading(false);
     });
   };
+
+  //modal de documentos disponibles
+  const showModal = (dato: string) => {
+    setLoadingModal(true);
+    setIsModalOpen(true);
+
+    //hacer consula de datos
+    getDocumentosDisponibles(dato)
+      .then(({ data }) => {
+        setDatoModal(data.data);
+      })
+      .catch((error) => {
+        notification.error({
+          message: "Error",
+          description: "No se pudieron cargar las actividades" + error,
+        });
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoadingModal(false);
+      });
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
 
   // Búsqueda global mejorada
   const handleSearch = (value: string) => {
@@ -124,34 +172,46 @@ export const ListEmcalDocumento = () => {
 
     // Filtro por etapa
     if (etapaFilter) {
-      filteredData = filteredData.filter(item => 
-        item.documentacion?.some(doc => doc.etapa.toString() === etapaFilter)
+      filteredData = filteredData.filter((item) =>
+        item.documentacion?.some((doc) => doc.etapa.toString() === etapaFilter)
       );
     }
 
     // Filtro por tipo de proyecto
     if (tipoProyectoFilter) {
-      filteredData = filteredData.filter(item => 
-        item.tipoProyecto_id?.toLowerCase().includes(tipoProyectoFilter.toLowerCase())
+      filteredData = filteredData.filter((item) =>
+        item.tipoProyecto_id
+          ?.toLowerCase()
+          .includes(tipoProyectoFilter.toLowerCase())
       );
     }
 
     // Filtro por rango de documentos
     if (rangoDocumentosFilter) {
-      const cantidadDocumentos = item => item.documentacion?.length || 0;
-      
+      const cantidadDocumentos = (item) => item.documentacion?.length || 0;
+
       switch (rangoDocumentosFilter) {
         case "sin_documentos":
-          filteredData = filteredData.filter(item => cantidadDocumentos(item) === 0);
+          filteredData = filteredData.filter(
+            (item) => cantidadDocumentos(item) === 0
+          );
           break;
         case "pocos":
-          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 0 && cantidadDocumentos(item) <= 3);
+          filteredData = filteredData.filter(
+            (item) =>
+              cantidadDocumentos(item) > 0 && cantidadDocumentos(item) <= 3
+          );
           break;
         case "moderados":
-          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 3 && cantidadDocumentos(item) <= 10);
+          filteredData = filteredData.filter(
+            (item) =>
+              cantidadDocumentos(item) > 3 && cantidadDocumentos(item) <= 10
+          );
           break;
         case "muchos":
-          filteredData = filteredData.filter(item => cantidadDocumentos(item) > 10);
+          filteredData = filteredData.filter(
+            (item) => cantidadDocumentos(item) > 10
+          );
           break;
         default:
           break;
@@ -177,8 +237,8 @@ export const ListEmcalDocumento = () => {
   // Navegar a la lista de actividades
   const verActividades = (proyecto: DataType, documento: DocumentacionType) => {
     navigate("actividades", {
-      state: { 
-        codigo_documento: documento
+      state: {
+        codigo_documento: documento,
       },
     });
   };
@@ -200,33 +260,61 @@ export const ListEmcalDocumento = () => {
             Documentos del Proyecto ({record.documentacion.length})
           </Text>
         </div>
-        
+
         <Row gutter={[16, 12]}>
           {record.documentacion.map((documento, index) => (
             <Col xs={24} sm={12} md={8} lg={6} key={index}>
-              <div 
+              <div
                 style={{
-                  border: '1px solid #d9d9d9',
-                  borderRadius: '6px',
-                  padding: '12px',
-                  background: 'white',
-                  height: '100%'
+                  border: "1px solid #d9d9d9",
+                  borderRadius: "6px",
+                  padding: "12px",
+                  background: "white",
+                  height: "100%",
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                  <FileTextOutlined style={{ color: '#1890ff', marginRight: '8px' }} />
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <FileTextOutlined
+                    style={{ color: "#1890ff", marginRight: "8px" }}
+                  />
                   <Text strong style={{ fontSize: "12px" }}>
-                    Código: {documento.codigo_documento}
+                    Informacion: {documento.nombre_etapa} - Codigo Documento: {documento.codigo_documento}
                   </Text>
                 </div>
-                
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Tag color={getColorEtapa(documento.etapa)} style={{ margin: 0 }}>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <Tag
+                    color={getColorEtapa(documento.etapa)}
+                    style={{ margin: 0 }}
+                  >
                     {getTextoEtapa(documento.etapa)}
                   </Tag>
-                  
-                  <Button 
-                    type="primary" 
+
+                  {/* modal de alerta para ver  */}
+                  <Tooltip title="Ver Documentos Disponibles">
+                    <Button
+                      type="primary"
+                      size="small"
+                      onClick={() => showModal(documento.codigo_documento)}
+                    >
+                      <AiOutlineBell />
+                    </Button>
+                  </Tooltip>
+
+                  <Button
+                    type="primary"
                     size="small"
                     onClick={() => verActividades(record, documento)}
                   >
@@ -243,23 +331,25 @@ export const ListEmcalDocumento = () => {
 
   // Obtener opciones únicas para filtros
   const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
-    const uniqueValues = [...new Set(data.map(item => item[key]))].filter(Boolean);
-    return uniqueValues.map(value => ({
+    const uniqueValues = [...new Set(data.map((item) => item[key]))].filter(
+      Boolean
+    );
+    return uniqueValues.map((value) => ({
       label: String(value).toUpperCase(),
-      value: String(value)
+      value: String(value),
     }));
   };
 
   // Obtener todas las etapas únicas de todos los documentos
   const getEtapasUnicas = (data: DataType[]) => {
-    const todasEtapas = data.flatMap(item => 
-      item.documentacion?.map(doc => doc.etapa) || []
+    const todasEtapas = data.flatMap(
+      (item) => item.documentacion?.map((doc) => doc.etapa) || []
     );
     const etapasUnicas = [...new Set(todasEtapas)].sort();
-    
-    return etapasUnicas.map(etapa => ({
+
+    return etapasUnicas.map((etapa) => ({
       label: getTextoEtapa(etapa),
-      value: etapa.toString()
+      value: etapa.toString(),
     }));
   };
 
@@ -284,9 +374,10 @@ export const ListEmcalDocumento = () => {
       title: "Proyecto",
       dataIndex: "descripcion_proyecto",
       key: "descripcion_proyecto",
-      sorter: (a, b) => a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
+      sorter: (a, b) =>
+        a.descripcion_proyecto.localeCompare(b.descripcion_proyecto),
       render: (text: string) => (
-        <Text strong style={{ fontSize: '12px' }}>
+        <Text strong style={{ fontSize: "12px" }}>
           {text?.toUpperCase()}
         </Text>
       ),
@@ -295,15 +386,19 @@ export const ListEmcalDocumento = () => {
       title: "Cant. Documentos",
       key: "cantidad_documentos",
       width: 120,
-      align: 'center' as const,
+      align: "center" as const,
       render: (_, record) => (
-        <Badge 
-          count={record.documentacion?.length || 0} 
-          showZero 
-          style={{ backgroundColor: record.documentacion?.length > 0 ? '#52c41a' : '#d9d9d9' }} 
+        <Badge
+          count={record.documentacion?.length || 0}
+          showZero
+          style={{
+            backgroundColor:
+              record.documentacion?.length > 0 ? "#52c41a" : "#d9d9d9",
+          }}
         />
       ),
-      sorter: (a, b) => (a.documentacion?.length || 0) - (b.documentacion?.length || 0),
+      sorter: (a, b) =>
+        (a.documentacion?.length || 0) - (b.documentacion?.length || 0),
     },
     {
       title: "Etapas",
@@ -313,20 +408,20 @@ export const ListEmcalDocumento = () => {
         if (!record.documentacion || record.documentacion.length === 0) {
           return <Tag color="default">SIN DOCS</Tag>;
         }
-        
+
         // Obtener etapas únicas
-        const etapasUnicas = [...new Set(record.documentacion.map(doc => doc.etapa))];
-        
+        const etapasUnicas = [
+          ...new Set(record.documentacion.map((doc) => doc.etapa)),
+        ];
+
         return (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-            {etapasUnicas.slice(0, 2).map(etapa => (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+            {etapasUnicas.slice(0, 2).map((etapa) => (
               <Tag key={etapa} color={getColorEtapa(etapa)}>
                 {getTextoEtapa(etapa)}
               </Tag>
             ))}
-            {etapasUnicas.length > 2 && (
-              <Tag>+{etapasUnicas.length - 2}</Tag>
-            )}
+            {etapasUnicas.length > 2 && <Tag>+{etapasUnicas.length - 2}</Tag>}
           </div>
         );
       },
@@ -341,8 +436,8 @@ export const ListEmcalDocumento = () => {
         <Button
           type="text"
           icon={<CaretRightOutlined rotate={expanded ? 90 : 0} />}
-          onClick={e => onExpand(record, e)}
-          style={{ marginRight: '8px' }}
+          onClick={(e) => onExpand(record, e)}
+          style={{ marginRight: "8px" }}
         />
       ) : null,
     rowExpandable: (record: DataType) => record.documentacion?.length > 0,
@@ -355,7 +450,7 @@ export const ListEmcalDocumento = () => {
       label: "Etapa",
       options: getEtapasUnicas(initialData),
       value: etapaFilter,
-      onChange: setEtapaFilter
+      onChange: setEtapaFilter,
     },
     {
       key: "rango_documentos",
@@ -364,47 +459,67 @@ export const ListEmcalDocumento = () => {
         { label: "Sin Documentos", value: "sin_documentos" },
         { label: "Pocos (1-3)", value: "pocos" },
         { label: "Moderados (4-10)", value: "moderados" },
-        { label: "Muchos (>10)", value: "muchos" }
+        { label: "Muchos (>10)", value: "muchos" },
       ],
       value: rangoDocumentosFilter,
-      onChange: setRangoDocumentosFilter
-    }
+      onChange: setRangoDocumentosFilter,
+    },
   ];
 
   return (
-    <StyledCard title={"Panel de administración de documentos Emcali"}>
-      <SearchBar
-        onSearch={handleSearch}
-        onReset={handleResetFilters}
-        placeholder="Buscar por proyecto, código, Proyecto..."
-        filters={filterOptions}
-        showFilterButton={false}
-      />
-      
-      <DataTable
-        className="custom-table"
-        size="small"
-        dataSource={dataSource}
-        columns={columns}
-        loading={loading}
-        scroll={{ x: 1000 }}
-        expandable={expandableConfig}
-        pagination={{
-          total: dataSource?.length,
-          showSizeChanger: true,
-          defaultPageSize: 10,
-          pageSizeOptions: ["5", "10", "20", "30"],
-          showTotal: (total: number) => {
-            return (
-              <Text strong>
-                Total Proyectos: {total}
-              </Text>
-            );
-          },
-        }}
-        style={{ textAlign: "center" }}
-        bordered
-      />
-    </StyledCard>
+    <>
+      <StyledCard title={"Panel de administración de documentos Emcali"}>
+        <SearchBar
+          onSearch={handleSearch}
+          onReset={handleResetFilters}
+          placeholder="Buscar por proyecto, código, Proyecto..."
+          filters={filterOptions}
+          showFilterButton={false}
+        />
+
+        <DataTable
+          className="custom-table"
+          size="small"
+          dataSource={dataSource}
+          columns={columns}
+          loading={loading}
+          scroll={{ x: 1000 }}
+          expandable={expandableConfig}
+          pagination={{
+            total: dataSource?.length,
+            showSizeChanger: true,
+            defaultPageSize: 10,
+            pageSizeOptions: ["5", "10", "20", "30"],
+            showTotal: (total: number) => {
+              return <Text strong>Total Proyectos: {total}</Text>;
+            },
+          }}
+          style={{ textAlign: "center" }}
+          bordered
+        />
+      </StyledCard>
+
+      <Modal
+        title="Documentos Disponibles"
+        footer={
+          <Button type="primary" onClick={handleOk}>
+            OK
+          </Button>
+        }
+        open={isModalOpen}
+      >
+        {loadingModal ? (
+          <Spin />
+        ) : datoModal.length === 0 ? (
+          <span style={{ color: "red" }}>No hay Documentos Disponibles</span>
+        ) : (
+          <ul>
+            {datoModal.map((item, index) => (
+              <li key={index}>{item.actividad}</li>
+            ))}
+          </ul>
+        )}
+      </Modal>
+    </>
   );
 };

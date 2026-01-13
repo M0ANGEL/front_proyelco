@@ -57,3 +57,10 @@ export const getNombreProyectosXCodigo = async (id: React.Key): Promise<any> => 
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 }; 
+
+//valdiar cuantos documentos hay disponibles
+export const getDocumentosDisponibles = async (codigo: React.Key): Promise<any> => {
+  return await client.get<any>(`dodumentos-disponibles/${codigo}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+}; 

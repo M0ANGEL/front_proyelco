@@ -13,6 +13,7 @@ import { Props } from "./types";
 import TextArea from "antd/es/input/TextArea";
 import { getActivosMantenimiento } from "@/services/activosFijos/MantenimientoActivosAPI";
 import { StyledFormItem } from "@/components/layout/styled";
+import dayjs from "dayjs";
 
 const { Text } = Typography;
 
@@ -26,9 +27,16 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
     //si tenemos datos en categoria agregamos a metho los datos
     if (TkCategoria) {
       methods.setValue("valor", TkCategoria?.valor);
-      methods.setValue("fecha_inicio", TkCategoria?.fecha_inicio);
-      methods.setValue("fecha_fin", TkCategoria?.fecha_fin);
-      methods.setValue("observacion", TkCategoria?.observacion);
+      methods.setValue(
+        "fecha_inicio",
+        TkCategoria?.fecha_inicio ? dayjs(TkCategoria.fecha_inicio) : null
+      );
+      methods.setValue(
+        "fecha_fin",
+        TkCategoria?.fecha_fin ? dayjs(TkCategoria.fecha_fin) : null
+      );
+
+      methods.setValue("observacion", TkCategoria?.observaciones);
       methods.setValue("activo_id", TkCategoria?.activo_id);
     } else {
       fetchCategorias();

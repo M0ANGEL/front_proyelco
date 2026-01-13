@@ -1,4 +1,4 @@
-import { ActivosMantenimiento } from "@/services/types";
+import { ActivosMantenimiento } from "@/types/typesGlobal";
 
 export interface Props {
   TkCategoria?: ActivosMantenimiento;
