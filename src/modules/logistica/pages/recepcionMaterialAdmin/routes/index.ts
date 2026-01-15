@@ -1,0 +1,1 @@
+export {RecepcionMaterialRoutes} from './RecepcionMaterialRoutes'

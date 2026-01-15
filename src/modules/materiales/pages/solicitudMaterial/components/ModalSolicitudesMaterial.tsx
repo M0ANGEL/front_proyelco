@@ -56,6 +56,7 @@ interface SolicitudGroup {
   codigo_proyecto: string;
   codigo_item: string;
   cantidad_items: number;
+  estado: number;
   total_solicitado: number;
   items: SolicitudMaterial[];
   tiene_sinco: boolean;
@@ -195,15 +196,18 @@ export const ModalSolicitudesMaterial = ({
           return (
             <div>
               {tieneSinco ? (
-                <Text
-                  strong
-                  style={{
-                    color: "#52c41a",
-                    fontSize: screens.md ? "inherit" : "12px",
-                  }}
-                >
-                  {valorSinco[record.numero_solicitud] || "SINCO"}
-                </Text>
+                <>
+                  <Tag
+                    color="green"
+                    style={{
+                      fontSize: "14px",
+                      padding: "4px 8px",
+                      marginBottom: 4,
+                    }}
+                  >
+                    {valorSinco[record.numero_solicitud] || "SINCO"}
+                  </Tag>
+                </>
               ) : (
                 <Button
                   type="dashed"
@@ -311,23 +315,27 @@ export const ModalSolicitudesMaterial = ({
             </Tooltip>
 
             {/* Botón Subir PDF */}
-            <Tooltip title="Subir PDF">
-              <Button
-                type="default"
-                size="small"
-                icon={<AiOutlineFileAdd />}
-                onClick={() => subirPDF(record)}
-                loading={subiendoPDF === record.numero_solicitud}
-                style={{
-                  background: "#ff7a45",
-                  color: "white",
-                  borderColor: "#ff7a45",
-                  minWidth: screens.sm ? "auto" : "100%",
-                }}
-              >
-                {screens.sm ? "Subir PDF" : ""}
-              </Button>
-            </Tooltip>
+            {record.tiene_pdf ? (
+              ""
+            ) : (
+              <Tooltip title="Subir PDF">
+                <Button
+                  type="default"
+                  size="small"
+                  icon={<AiOutlineFileAdd />}
+                  onClick={() => subirPDF(record)}
+                  loading={subiendoPDF === record.numero_solicitud}
+                  style={{
+                    background: "#ff7a45",
+                    color: "white",
+                    borderColor: "#ff7a45",
+                    minWidth: screens.sm ? "auto" : "100%",
+                  }}
+                >
+                  {screens.sm ? "Subir PDF" : ""}
+                </Button>
+              </Tooltip>
+            )}
 
             {/* Botón Descargar PDF (solo si tiene PDF) */}
             {tienePDF && (
@@ -808,29 +816,33 @@ export const ModalSolicitudesMaterial = ({
               },
               {
                 title: "Estado",
-                dataIndex: "cant_total",
-                key: "cant_total",
+                dataIndex: "estado",
+                key: "estado",
                 render: (text, record) => {
                   // Determinar el color según el valor
                   let color;
                   let texto;
                   switch (parseInt(text)) {
-                    case 1:
-                      color = "#ff4d4f"; // Rojo
+                    case 0:
+                      color = "red"; // Rojo
                       texto = "Pendiente";
                       break;
+                    case 1:
+                      color = "#fac916"; // amarillo
+                      texto = "Asignado";
+                      break;
                     case 2:
-                      color = "#fa8c16"; // Naranja
+                      color = "blue"; // azul
                       texto = "En Proceso";
                       break;
                     case 3:
-                      color = "#52c41a"; // Verde
+                      color = "green"; // Verde
                       texto = "Completado";
                       break;
                     default:
-                    //   color = "#1890ff"; // Color por defecto
-                    //   texto = "Sin Data";
-                    color = "#52c41a"; // Verde
+                      //   color = "#1890ff"; // Color por defecto
+                      //   texto = "Sin Data";
+                      color = "#52c41a"; // Verde
                       texto = "Completado";
                   }
 

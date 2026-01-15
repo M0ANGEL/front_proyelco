@@ -1,0 +1,1 @@
+export {RecepcionMaterialAsignadoList} from './RecepcionMaterialAsignadoList'
