@@ -14,7 +14,10 @@ import { ButtonTag } from "@/modules/admin-usuarios/pages/usuarios/pages/ListUsu
 import { EditOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { VerFoto } from "@/modules/activos-fijos/pages/crearActivos/pages/ListCrearActivos/VerFoto";
-import { DeleteActiMantenemimiento, getActivosMantenimientos } from "@/services/activosFijos/MantenimientoActivosAPI";
+import {
+  DeleteActiMantenemimiento,
+  getActivosMantenimientos,
+} from "@/services/activosFijos/MantenimientoActivosAPI";
 import { StyledCard } from "@/components/layout/styled";
 import { SearchBar } from "@/components/global/SearchBar";
 import { DataTable } from "@/components/global/DataTable";
@@ -30,6 +33,7 @@ interface DataType {
   user_id: string;
   estado: string;
   numero_activo: string;
+  descripcion: string;
   created_at: string;
   updated_at: string;
 }
@@ -59,6 +63,7 @@ export const ListMantenimientoactivos = () => {
           activo_id: categoria.activo_id,
           user_id: categoria.user_id,
           numero_activo: categoria.numero_activo,
+          descripcion: categoria.descripcion,
           fecha_inicio: dayjs(categoria?.fecha_inicio).format(
             "DD-MM-YYYY HH:mm"
           ),
@@ -99,11 +104,18 @@ export const ListMantenimientoactivos = () => {
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "Fecha Creacion",
-      dataIndex: "created_at",
-      key: "created_at",
+      title: "Numero Acitivo",
+      dataIndex: "numero_activo",
+      key: "numero_activo",
       fixed: "left",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
+      sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
+      render: (text) => text?.toUpperCase(),
+    },
+    {
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
+      fixed: "left",
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -122,19 +134,11 @@ export const ListMantenimientoactivos = () => {
       sorter: (a, b) => a.fecha_fin.localeCompare(b.fecha_fin),
       render: (text) => text?.toUpperCase(),
     },
-
     {
       title: "Valor",
       dataIndex: "valor",
       key: "valor",
       sorter: (a, b) => a.valor.localeCompare(b.valor),
-      render: (text) => text?.toUpperCase(),
-    },
-    {
-      title: "Numero Acitivo",
-      dataIndex: "numero_activo",
-      key: "numero_activo",
-      sorter: (a, b) => a.numero_activo.localeCompare(b.numero_activo),
       render: (text) => text?.toUpperCase(),
     },
     {
@@ -156,7 +160,7 @@ export const ListMantenimientoactivos = () => {
         if (record.estado === "1") {
           estadoString = "En Proceso";
           color = "blue";
-        }else{
+        } else {
           estadoString = "Finalizado";
           color = "green";
         }
@@ -195,8 +199,13 @@ export const ListMantenimientoactivos = () => {
       render: (_, record) => (
         <Space>
           <Tooltip title="Editar">
-            <Link to={`${location.pathname}/edit/${record.key}`} >
-              <Button disabled={record.estado == "0"}  icon={<EditOutlined />} type="primary" size="small" />
+            <Link to={`${location.pathname}/edit/${record.key}`}>
+              <Button
+                disabled={record.estado == "0"}
+                icon={<EditOutlined />}
+                type="primary"
+                size="small"
+              />
             </Link>
           </Tooltip>
 

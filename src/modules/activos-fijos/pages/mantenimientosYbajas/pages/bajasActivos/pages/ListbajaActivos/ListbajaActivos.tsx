@@ -83,6 +83,7 @@ export const ListbajaActivos = () => {
           tipo_ubicacion: categoria.tipo_ubicacion,
           ubicacion_actual_id: categoria.ubicacion_actual_id,
           usuarios_asignados: categoria.usuarios_asignados,
+          descripcion: categoria.descripcion,
           aceptacion: categoria.aceptacion.toString(),
         };
       });
@@ -165,10 +166,9 @@ export const ListbajaActivos = () => {
       align: "center",
     },
     {
-      title: "Ubicacion Actual",
-      dataIndex: "bodega_actual",
-      key: "bodega_actual",
-      sorter: (a, b) => a.bodega_actual.localeCompare(b.bodega_actual),
+      title: "Descripcion",
+      dataIndex: "descripcion",
+      key: "descripcion",
       align: "center",
     },
     {

@@ -18,7 +18,6 @@ import { MaterialesRoutes } from "@/modules/materiales";
 import { DocumentacionRoutes } from "@/modules/documentacion/routes";
 import { ContabilidadRoutes } from "@/modules/contabilidad";
 import NotFoundPage from "@/modules/common/guards/NotFound/NotFoundPage";
-import { TickestRoutes } from "@/modules/tickets";
 
 // Lazy load
 const Login = React.lazy(() => import("../modules/auth/pages/Login"));
