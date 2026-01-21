@@ -545,6 +545,7 @@ import {
   message,
   Spin,
   Card,
+  InputNumber,
 } from "antd";
 import {
   InfoCircleOutlined,
@@ -628,7 +629,7 @@ export const CrearDocumentacionRed = () => {
       const token = localStorage.getItem("auth_token");
       if (!token) {
         throw new Error(
-          "Sesión expirada. Por favor, inicie sesión nuevamente."
+          "Sesión expirada. Por favor, inicie sesión nuevamente.",
         );
       }
 
@@ -683,13 +684,13 @@ export const CrearDocumentacionRed = () => {
       // Mensajes de error específicos
       if (error.name === "AbortError") {
         throw new Error(
-          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente."
+          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.",
         );
       }
 
       if (error.message.includes("Failed to fetch")) {
         throw new Error(
-          "Error de conexión. Verifique su internet e intente nuevamente."
+          "Error de conexión. Verifique su internet e intente nuevamente.",
         );
       }
 
@@ -705,7 +706,8 @@ export const CrearDocumentacionRed = () => {
 
     if (!datos.codigo_proyecto) errores.push("Proyecto es requerido");
     if (!datos.operadorRed) errores.push("Operador de red es requerido");
-    if (!datos.requiereOrganismos) errores.push("Debe indicar si requiere organismo de inspección");
+    if (!datos.requiereOrganismos)
+      errores.push("Debe indicar si requiere organismo de inspección");
     if (!datos.etapaProyecto) errores.push("Etapa del proyecto es requerida");
     if (!datos.codigoDocumentos?.trim())
       errores.push("Código de documentos es requerido");
@@ -715,7 +717,9 @@ export const CrearDocumentacionRed = () => {
 
     // ✅ VALIDACIÓN CONDICIONAL: Solo requerir organismo si se seleccionó "SI"
     if (organismoSI && !datos.organismoInspeccion) {
-      errores.push("Organismo de inspección es requerido cuando se selecciona 'SI'");
+      errores.push(
+        "Organismo de inspección es requerido cuando se selecciona 'SI'",
+      );
     }
 
     if (datos.codigoDocumentos && datos.codigoDocumentos.length > 20) {
@@ -770,7 +774,7 @@ export const CrearDocumentacionRed = () => {
   // Manejar cambio en "Requiere Organismo"
   const handleOrganismoChange = (value: string) => {
     setSelectedOrganismo(value);
-    
+
     // Si se cambia a "NO", limpiar el campo organismoInspeccion
     if (value === "2") {
       form.setFieldValue("organismoInspeccion", undefined);
@@ -790,7 +794,6 @@ export const CrearDocumentacionRed = () => {
       // Resetear formulario
       form.resetFields();
       setSelectedOrganismo("0"); // Resetear el estado también
-
     } catch (error: any) {
       console.error("Error al crear documentación:", error);
 
@@ -805,7 +808,7 @@ export const CrearDocumentacionRed = () => {
       } else {
         message.error(
           error.message ||
-            "Error al crear la documentación. Por favor, intente nuevamente."
+            "Error al crear la documentación. Por favor, intente nuevamente.",
         );
       }
     }
@@ -942,26 +945,45 @@ export const CrearDocumentacionRed = () => {
 
           {/* Organismo de inspección - CONDICIONAL */}
           {organismoSI && (
-            <Col xs={24} sm={12} md={6}>
-              <StyledFormItem
-                name="organismoInspeccion"
-                label="Organismo de Inspección"
-                rules={[
-                  { 
-                    required: true, 
-                    message: "Seleccione el organismo de inspección" 
-                  },
-                ]}
-                required
-              >
-                <Select
-                  mode="multiple"
-                  options={opcionOrganismo}
-                  placeholder="Seleccione organismo(s)"
-                  allowClear
-                />
-              </StyledFormItem>
-            </Col>
+            <>
+              <Col xs={24} sm={12} md={6}>
+                <StyledFormItem
+                  name="organismoInspeccion"
+                  label="Organismo de Inspección"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Seleccione el organismo de inspección",
+                    },
+                  ]}
+                  required
+                >
+                  <Select
+                    mode="multiple"
+                    options={opcionOrganismo}
+                    placeholder="Seleccione organismo(s)"
+                    allowClear
+                  />
+                </StyledFormItem>
+              </Col>
+
+              {/* Etapa del proyecto */}
+              <Col xs={24} sm={12} md={4}>
+                <StyledFormItem
+                  name="cantidad_tm"
+                  label="Número de Torres o Manzanas"
+                  rules={[{ required: true, message: "Campo obligatorio" }]}
+                  required
+                >
+                  <InputNumber
+                    placeholder="Número de Torres o Manzanas"
+                    style={{ width: "100%" }}
+                    min={0}
+                    max={100}
+                  />
+                </StyledFormItem>
+              </Col>
+            </>
           )}
 
           {/* Etapa del proyecto */}

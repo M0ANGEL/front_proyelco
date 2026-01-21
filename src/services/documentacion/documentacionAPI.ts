@@ -64,3 +64,18 @@ export const getDocumentosDisponibles = async (codigo: React.Key): Promise<any> 
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 }; 
+
+
+//llamado de los TM torres y manzanas el proyecto
+export const TmDisponiblesOrganismos = async (data: any): Promise<any> => {
+  return await client.post<any>("TmDisponiblesOrganismos", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
+
+//confirmar Tm de organismos
+export const ConfirmarTM = async (data: any): Promise<any> => {
+  return await client.post<any>("ConfirmarTM", data, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+};
