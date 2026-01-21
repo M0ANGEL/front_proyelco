@@ -23,16 +23,11 @@ import { DataType } from "./types";
 
 // Estilos
 import "./CustomList.css";
-import {
-  AiFillCopy,
-  AiFillSafetyCertificate,
-  AiOutlineExpandAlt,
-} from "react-icons/ai";
+import { AiFillCopy, AiOutlineExpandAlt } from "react-icons/ai";
 import { ModalInforme } from "../../../gestionProyecto/pages/ListGestionProyecto/ModalInforme";
 import { ModalHisotircoPorcentajes } from "../../components/ModalHisotircoPorcentajes/ModalHisotircoPorcentajes";
 import useSessionStorage from "@/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
-import { GreenButton } from "@/components/layout/styled";
 
 // Tipos para los datos de trámites
 interface DocumentoData {
@@ -153,19 +148,19 @@ export const ListProyectos = () => {
   const getDocumentosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.documentos.find(
-        (doc) => doc.codigo_proyecto === codigoProyecto
+        (doc) => doc.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const getOrganismosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.organismos.find(
-        (org) => org.codigo_proyecto === codigoProyecto
+        (org) => org.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const handleStatus = useCallback(
@@ -192,7 +187,7 @@ export const ListProyectos = () => {
         setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
       }
     },
-    [fetchConvenios]
+    [fetchConvenios],
   );
 
   const handleSearch = useCallback((value: string) => {
@@ -214,7 +209,7 @@ export const ListProyectos = () => {
       const matchesSearch =
         searchValue === "" ||
         Object.values(convenio).some((value) =>
-          String(value).toLowerCase().includes(searchValue.toLowerCase())
+          String(value).toLowerCase().includes(searchValue.toLowerCase()),
         );
 
       if (showActiveConvenios) {
@@ -234,7 +229,7 @@ export const ListProyectos = () => {
       color: string,
       label: string,
       showNoData: boolean = false,
-      noDataMessage: string = "PND"
+      noDataMessage: string = "PND",
     ) => {
       // Para avance/atraso: SIEMPRE mostrar círculo aunque sea 0%
       if (!showNoData) {
@@ -270,7 +265,7 @@ export const ListProyectos = () => {
         </div>
       );
     },
-    []
+    [],
   );
 
   // Función para renderizar círculo de documentos
@@ -286,7 +281,7 @@ export const ListProyectos = () => {
       // Si EXISTE la relación, mostrar el círculo aunque el avance sea 0%
       return renderProgressCircle(documentoData.avance, "#60A5FA", "OR", false);
     },
-    [getDocumentosData, renderProgressCircle]
+    [getDocumentosData, renderProgressCircle],
   );
 
   // Función para renderizar círculo de organismos con círculos concéntricos
@@ -480,7 +475,7 @@ export const ListProyectos = () => {
         </div>
       );
     },
-    [getOrganismosData]
+    [getOrganismosData],
   );
 
   const getBotonesAccion = useCallback(
@@ -508,59 +503,65 @@ export const ListProyectos = () => {
         }
       }
 
-      // Agregar los demás botones que todos pueden ver
-      botones.push(
-        {
-          tipo: "custom" as const,
-          label: "Tramites",
-          onClick: () => {
-            navigate("/tramites/documentacion-all");
+      // Agregar los demás botones que todos pueden ver solo ing, admin y direcotara proyectos
+      if (
+        user_rol === "Administrador" ||
+        user_rol === "Directora Proyectos" ||
+        user_rol === "Ingeniero Obra"
+      ) {
+        botones.push(
+          {
+            tipo: "custom" as const,
+            label: "Tramites",
+            onClick: () => {
+              navigate("/tramites/documentacion-all");
+            },
+            iconoPersonalizado: <AiFillCopy />,
+            color: "primary" as const,
           },
-          iconoPersonalizado: <AiFillCopy />,
-          color: "primary" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Ver Proceso",
-          onClick: () =>
-            window.open(
-              `${location.pathname}/${
-                item.tipo === "Casa" ? "proceso-casa" : "proceso"
-              }/${item.key}`,
-              "_self"
-            ),
-          iconoPersonalizado: <AiOutlineExpandAlt />,
-          color: "primary" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Informe",
-          onClick: () => {},
-          iconoPersonalizado:
-            item.tipo === "Casa" ? (
-              <ModalInformeCasa proyecto={item} />
-            ) : (
-              <ModalInforme proyecto={item} />
-            ),
-          color: "default" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Historico Porcentajes (no disponible)",
-          onClick: () => {},
-          iconoPersonalizado:
-            item.tipo === "Casa" ? (
-              <ModalHisotircoPorcentajes proyecto={item} />
-            ) : (
-              <ModalHisotircoPorcentajes proyecto={item} />
-            ),
-          color: "default" as const,
-        }
-      );
+          {
+            tipo: "custom" as const,
+            label: "Ver Proceso",
+            onClick: () =>
+              window.open(
+                `${location.pathname}/${
+                  item.tipo === "Casa" ? "proceso-casa" : "proceso"
+                }/${item.key}`,
+                "_self",
+              ),
+            iconoPersonalizado: <AiOutlineExpandAlt />,
+            color: "primary" as const,
+          },
+          {
+            tipo: "custom" as const,
+            label: "Informe",
+            onClick: () => {},
+            iconoPersonalizado:
+              item.tipo === "Casa" ? (
+                <ModalInformeCasa proyecto={item} />
+              ) : (
+                <ModalInforme proyecto={item} />
+              ),
+            color: "default" as const,
+          },
+          {
+            tipo: "custom" as const,
+            label: "Historico Porcentajes (no disponible)",
+            onClick: () => {},
+            iconoPersonalizado:
+              item.tipo === "Casa" ? (
+                <ModalHisotircoPorcentajes proyecto={item} />
+              ) : (
+                <ModalHisotircoPorcentajes proyecto={item} />
+              ),
+            color: "default" as const,
+          },
+        );
+      }
 
       return botones;
     },
-    [handleStatus, loadingRow, location.pathname, user_rol, navigate]
+    [handleStatus, loadingRow, location.pathname, user_rol, navigate],
   );
 
   const renderCardContent = useCallback(
@@ -577,7 +578,7 @@ export const ListProyectos = () => {
               item.porcentaje || 0,
               "#F87171",
               "Atraso",
-              false
+              false,
             )}
 
             {/* Documentos - Usar la nueva función */}
@@ -642,12 +643,12 @@ export const ListProyectos = () => {
                 alineacion="center"
               />
             </div>
- 
+
             <Tag
               color={item.tipo === "Casa" ? "blue" : "green"}
               className="type-tag"
             >
-              {item.tipo}|{item.estado == "2" ? "Finalizado" : item.estado == "1" ?  "Emproceso":""}
+              {item.tipo}
             </Tag>
           </div>
         </div>
@@ -659,7 +660,7 @@ export const ListProyectos = () => {
       renderOrganismosCircle,
       getBotonesAccion,
       location.pathname,
-    ]
+    ],
   );
 
   if (loading) {
@@ -682,9 +683,13 @@ export const ListProyectos = () => {
       extra={
         <div className="header-actions">
           <BackButton />
-          <Link to={`${location.pathname}/create`}>
-            <SaveButton text="Crear Proyecto" />
-          </Link>
+
+          {(user_rol === "Administrador" ||
+            user_rol === "Directora Proyectos") && (
+            <Link to={`${location.pathname}/create`}>
+              <SaveButton text="Crear Proyecto" />
+            </Link>
+          )}
         </div>
       }
     >
@@ -701,12 +706,15 @@ export const ListProyectos = () => {
 
         <div className="filters-section">
           <div className="filter-switch">
-            <Switch
-              checkedChildren="Activos"
-              unCheckedChildren="Inactivos"
-              checked={showActiveConvenios}
-              onChange={toggleConvenioList}
-            />
+            {(user_rol === "Administrador" ||
+              user_rol === "Directora Proyectos") && (
+              <Switch
+                checkedChildren="Activos"
+                unCheckedChildren="Inactivos"
+                checked={showActiveConvenios}
+                onChange={toggleConvenioList}
+              />
+            )}
           </div>
 
           <Typography.Text className="total-text">
