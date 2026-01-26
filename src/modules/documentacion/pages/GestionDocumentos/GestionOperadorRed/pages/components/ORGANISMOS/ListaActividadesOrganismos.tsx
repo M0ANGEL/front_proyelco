@@ -169,7 +169,7 @@ export const ListaActividadesOrganismos = () => {
       });
       return;
     }
-    
+
     setActividadSeleccionada(actividad);
     setModalVisible(true);
   };
@@ -182,7 +182,7 @@ export const ListaActividadesOrganismos = () => {
   // Función para obtener el estado de un TM específico
   const getEstadoTM = (actividadId: number, tm: string): number => {
     const tmEncontrado = tmDictamen.find(
-      (t) => t.actividad_hijos_id === actividadId && t.tm === tm
+      (t) => t.actividad_hijos_id === actividadId && t.tm === tm,
     );
     return tmEncontrado?.estado ?? 0;
   };
@@ -241,7 +241,7 @@ export const ListaActividadesOrganismos = () => {
     }
 
     const estadoTM = getEstadoTM(actividad.actividad_id, tm);
-    
+
     // Si el estado es 2, no hacer nada (botón deshabilitado)
     if (estadoTM === 2) {
       notification.info({
@@ -376,7 +376,6 @@ export const ListaActividadesOrganismos = () => {
                     disabled={estadoTM === 2}
                     style={{
                       backgroundColor: getEstadoColor(estadoTM),
-                    
                     }}
                   >
                     T {tm}
@@ -479,8 +478,8 @@ export const ListaActividadesOrganismos = () => {
                     key={index}
                     color={getEstadoColor(estadoTM)}
                     style={{
-                      cursor: 'default',
-                      userSelect: 'none',
+                      cursor: "default",
+                      userSelect: "none",
                       opacity: 0.8,
                     }}
                   >
@@ -523,7 +522,7 @@ export const ListaActividadesOrganismos = () => {
 
             {/* Espaciador para mantener consistencia visual */}
             {!record.hijos && record.estado !== 2 && (
-              <div style={{ display: 'inline-block', width: '32px' }} />
+              <div style={{ display: "inline-block", width: "32px" }} />
             )}
           </Space>
         );
@@ -559,11 +558,11 @@ export const ListaActividadesOrganismos = () => {
                 {/* Actividad */}
                 <div style={{ flex: 1 }}>
                   <strong>{hijo.actividad?.actividad || "Sin nombre"}</strong>
-                </div>
+                {/* </div> */}
 
                 {/* TM si aplica - SOLO para roles permitidos */}
                 {mostrarTM ? (
-                  <div style={{ width: 200 }}>
+                  // <div style={{ width: 50 }}>
                     <Space size="small">
                       {tms.map((tm, index) => {
                         const estadoTM = getEstadoTM(hijo.actividad_id, tm);
@@ -574,25 +573,34 @@ export const ListaActividadesOrganismos = () => {
                             onClick={() => handleClickTM(hijo, tm)}
                             disabled={estadoTM === 2}
                             style={{
-                              backgroundColor: estadoTM == 1 ? 'rgb(46, 128, 179)' :  estadoTM == 2 ? 'rgb(48, 221, 65)' : '#4545', color: 'white',
+                              backgroundColor:
+                                estadoTM == 1
+                                  ? "rgb(46, 128, 179)"
+                                  : estadoTM == 2
+                                    ? "rgb(48, 221, 65)"
+                                    : "#4545",
+                              color: "white",
                             }}
                           >
-                            T {tm}
+                            T-{tm}
                           </Button>
                         );
                       })}
                     </Space>
-                  </div>
+                  
                 ) : (
                   ""
                 )}
 
+</div>
                 {/* Estado */}
-                <div style={{ width: 120 }}>
-                  <Tag color={getEstadoColor(hijo.estado)}>
-                    {getEstadoTexto(hijo.estado)}
-                  </Tag>
-                </div>
+                {!mostrarTM && (
+                  <div style={{ width: 120 }}>
+                    <Tag color={getEstadoColor(hijo.estado)}>
+                      {getEstadoTexto(hijo.estado)}
+                    </Tag>
+                  </div>
+                )}
 
                 {/* Acciones */}
                 <div style={{ width: 150 }}>
@@ -669,12 +677,12 @@ export const ListaActividadesOrganismos = () => {
                             key={index}
                             color={getEstadoColor(estadoTM)}
                             style={{
-                              cursor: 'default',
-                              userSelect: 'none',
+                              cursor: "default",
+                              userSelect: "none",
                               opacity: 0.8,
                             }}
                           >
-                            T {tm}
+                            T- {tm}
                           </Tag>
                         );
                       })}
@@ -749,9 +757,7 @@ export const ListaActividadesOrganismos = () => {
           size="small"
           dataSource={data}
           columns={
-            tienePermisos
-              ? columnsRolesPermitidos
-              : columnsRolesNoPermitidos
+            tienePermisos ? columnsRolesPermitidos : columnsRolesNoPermitidos
           }
           loading={loading}
           rowKey="id"

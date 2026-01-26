@@ -31,25 +31,25 @@ export const ModalConfirmacionCelsia = ({
 
   // Función para validar el tipo de archivo por extensión
   const validarArchivo = (file: File): boolean => {
-    const extensionesPermitidas = ['.jpg', '.jpeg', '.png', '.pdf'];
-    const extension = '.' + file.name.toLowerCase().split('.').pop();
-    
+    const extensionesPermitidas = [".jpg", ".jpeg", ".png", ".pdf"];
+    const extension = "." + file.name.toLowerCase().split(".").pop();
+
     if (!extensionesPermitidas.includes(extension)) {
       notification.error({
         message: "Tipo de archivo no válido",
-        description: `Solo se permiten: ${extensionesPermitidas.join(', ')}`,
+        description: `Solo se permiten: ${extensionesPermitidas.join(", ")}`,
       });
       return false;
     }
 
     // Validar por tipo MIME también
     const tiposMimePermitidos = [
-      'image/jpeg',
-      'image/jpg', 
-      'image/png',
-      'application/pdf'
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "application/pdf",
     ];
-    
+
     if (!tiposMimePermitidos.includes(file.type)) {
       notification.error({
         message: "Tipo de archivo no válido",
@@ -75,7 +75,7 @@ export const ModalConfirmacionCelsia = ({
     return true;
   };
 
- const uploadProps: UploadProps = {
+  const uploadProps: UploadProps = {
     multiple: true,
     accept: ".jpg,.jpeg,.png,.pdf",
     beforeUpload: (file) => {
@@ -93,8 +93,6 @@ export const ModalConfirmacionCelsia = ({
 
     fileList: files,
   };
-
-
 
   const handleConfirmar = async () => {
     try {
@@ -117,7 +115,7 @@ export const ModalConfirmacionCelsia = ({
       formData.append("actividad_id", actividad.actividad_id.toString());
       formData.append(
         "actividad_depende_id",
-        actividad.actividad_depende_id?.toString() || ""
+        actividad.actividad_depende_id?.toString() || "",
       );
       formData.append("tipo", actividad.tipo);
       formData.append("orden", actividad.orden.toString());
@@ -135,17 +133,20 @@ export const ModalConfirmacionCelsia = ({
       formData.append("estado", "2");
       formData.append(
         "fecha_confirmacion",
-        new Date().toISOString().split("T")[0]
+        new Date().toISOString().split("T")[0],
       );
       formData.append("usaurio_id", "1");
 
-      const response = await fetch(BASE_URL + "gestion-documentos-confirmar", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+      const response = await fetch(
+        BASE_URL + "gestion-documentos-confirmar-celsia",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+          },
+          body: formData,
         },
-        body: formData,
-      });
+      );
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -193,7 +194,12 @@ export const ModalConfirmacionCelsia = ({
         <Button key="cancel" onClick={handleCancel}>
           Cancelar
         </Button>,
-        <Button key="confirm" type="primary" loading={loading} onClick={handleConfirmar}>
+        <Button
+          key="confirm"
+          type="primary"
+          loading={loading}
+          onClick={handleConfirmar}
+        >
           Confirmar Actividad
         </Button>,
       ]}
@@ -204,7 +210,10 @@ export const ModalConfirmacionCelsia = ({
           label="Observación"
           rules={[
             { required: true, message: "Por favor ingrese una observación" },
-            { min: 5, message: "La observación debe tener al menos 5 caracteres" },
+            {
+              min: 5,
+              message: "La observación debe tener al menos 5 caracteres",
+            },
           ]}
         >
           <Input.TextArea
@@ -219,9 +228,15 @@ export const ModalConfirmacionCelsia = ({
           label="Subir Archivos (Opcional)"
           extra={
             <div>
-              <p><strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF</p>
-              <p><strong>Tamaño máximo por archivo:</strong> 1GB</p>
-              <p><strong>Puede seleccionar varios archivos.</strong></p>
+              <p>
+                <strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF
+              </p>
+              <p>
+                <strong>Tamaño máximo por archivo:</strong> 1GB
+              </p>
+              <p>
+                <strong>Puede seleccionar varios archivos.</strong>
+              </p>
             </div>
           }
         >
