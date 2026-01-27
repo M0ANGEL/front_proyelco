@@ -295,11 +295,11 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "Pais recidencia es requerido",
+              message: "Pais residencia es requerido",
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Pais recidencia:">
+            <StyledFormItem required label="Pais residencia:">
               <Select
                 {...field}
                 status={error && "error"}
@@ -323,11 +323,11 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
           rules={{
             required: {
               value: true,
-              message: "Ciudad recidencia es requerido",
+              message: "Ciudad residencia es requerido",
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Ciudad recidencia:">
+            <StyledFormItem required label="Ciudad residencia:">
               <Select
                 {...field}
                 status={error && "error"}
