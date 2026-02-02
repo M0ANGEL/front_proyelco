@@ -31,6 +31,7 @@ interface DocumentacionType {
   etapa: number;
   operador: number;
   nombre_etapa: string;
+  finish: boolean;
 }
 
 interface DataType {
@@ -148,8 +149,8 @@ export const ListCelsiaDocumento = () => {
       Object.keys(o).some((k) =>
         String(o[k as keyof DataType])
           .toLowerCase()
-          .includes(value.toLowerCase())
-      )
+          .includes(value.toLowerCase()),
+      ),
     );
     setDataSource(filterTable);
   };
@@ -164,15 +165,15 @@ export const ListCelsiaDocumento = () => {
         Object.keys(o).some((k) =>
           String(o[k as keyof DataType])
             .toLowerCase()
-            .includes(searchValue.toLowerCase())
-        )
+            .includes(searchValue.toLowerCase()),
+        ),
       );
     }
 
     // Filtro por etapa
     if (etapaFilter) {
       filteredData = filteredData.filter((item) =>
-        item.documentacion?.some((doc) => doc.etapa.toString() === etapaFilter)
+        item.documentacion?.some((doc) => doc.etapa.toString() === etapaFilter),
       );
     }
 
@@ -181,7 +182,7 @@ export const ListCelsiaDocumento = () => {
       filteredData = filteredData.filter((item) =>
         item.tipoProyecto_id
           ?.toLowerCase()
-          .includes(tipoProyectoFilter.toLowerCase())
+          .includes(tipoProyectoFilter.toLowerCase()),
       );
     }
 
@@ -192,24 +193,24 @@ export const ListCelsiaDocumento = () => {
       switch (rangoDocumentosFilter) {
         case "sin_documentos":
           filteredData = filteredData.filter(
-            (item) => cantidadDocumentos(item) === 0
+            (item) => cantidadDocumentos(item) === 0,
           );
           break;
         case "pocos":
           filteredData = filteredData.filter(
             (item) =>
-              cantidadDocumentos(item) > 0 && cantidadDocumentos(item) <= 3
+              cantidadDocumentos(item) > 0 && cantidadDocumentos(item) <= 3,
           );
           break;
         case "moderados":
           filteredData = filteredData.filter(
             (item) =>
-              cantidadDocumentos(item) > 3 && cantidadDocumentos(item) <= 10
+              cantidadDocumentos(item) > 3 && cantidadDocumentos(item) <= 10,
           );
           break;
         case "muchos":
           filteredData = filteredData.filter(
-            (item) => cantidadDocumentos(item) > 10
+            (item) => cantidadDocumentos(item) > 10,
           );
           break;
         default:
@@ -265,26 +266,62 @@ export const ListCelsiaDocumento = () => {
             <Col xs={24} sm={12} md={8} lg={6} key={index}>
               <div
                 style={{
-                  border: "1px solid #d9d9d9",
-                  borderRadius: "6px",
-                  padding: "12px",
-                  background: "white",
+                  border: "1px solid #e8e8e8",
+                  borderRadius: "10px",
+                  padding: "16px",
+                  background:
+                    documento.finish === false
+                      ? "linear-gradient(135deg, #1e88e5 0%, #64b5f6 100%)" // Azul degradado para pendiente
+                      : "linear-gradient(135deg, #4caf50 0%, #81c784 100%)", // Verde degradado para completado
                   height: "100%",
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.08)",
+                  transition: "all 0.3s ease",
+                  cursor: "pointer",
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: "0 6px 16px rgba(0, 0, 0, 0.12)",
+                  },
                 }}
               >
                 <div
                   style={{
                     display: "flex",
                     alignItems: "center",
-                    marginBottom: "8px",
+                    marginBottom: "12px",
                   }}
                 >
                   <FileTextOutlined
-                    style={{ color: "#1890ff", marginRight: "8px" }}
+                    style={{
+                      color: "#ffffff",
+                      marginRight: "10px",
+                      fontSize: "18px",
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      borderRadius: "50%",
+                      padding: "6px",
+                    }}
                   />
-                  <Text strong style={{ fontSize: "12px" }}>
-                    Informacion: {documento.nombre_etapa} - Codigo Documento: {documento.codigo_documento}
-                  </Text>
+                  <div>
+                    <Text
+                      strong
+                      style={{
+                        fontSize: "14px",
+                        color: "#ffffff",
+                        lineHeight: "1.2",
+                      }}
+                    >
+                      {documento.nombre_etapa}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: "11px",
+                        color: "rgba(255, 255, 255, 0.9)",
+                        display: "block",
+                        marginTop: "2px",
+                      }}
+                    >
+                      Código: {documento.codigo_documento}
+                    </Text>
+                  </div>
                 </div>
 
                 <div
@@ -292,33 +329,65 @@ export const ListCelsiaDocumento = () => {
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
+                    marginTop: "12px",
+                    paddingTop: "12px",
+                    borderTop: "1px solid rgba(255, 255, 255, 0.2)",
                   }}
                 >
                   <Tag
                     color={getColorEtapa(documento.etapa)}
-                    style={{ margin: 0 }}
+                    style={{
+                      margin: 0,
+                      fontWeight: "bold",
+                      border: "none",
+                      color: documento.finish === false ? "#1e88e5" : "#4caf50",
+                      background: "#ffffff",
+                      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    }}
                   >
                     {getTextoEtapa(documento.etapa)}
                   </Tag>
 
-                  {/* modal de alerta para ver  */}
-                  <Tooltip title="Ver Documentos Disponibles">
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    {/* modal de alerta para ver */}
+                    <Tooltip title="Ver Documentos Disponibles">
+                      <Button
+                        type="primary"
+                        size="small"
+                        onClick={() => showModal(documento.codigo_documento)}
+                        style={{
+                          background: "#ffffff",
+                          borderColor: "#ffffff",
+                          color:
+                            documento.finish === false ? "#1e88e5" : "#4caf50",
+                          minWidth: "32px",
+                          height: "32px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <AiOutlineBell />
+                      </Button>
+                    </Tooltip>
+
                     <Button
                       type="primary"
                       size="small"
-                      onClick={() => showModal(documento.codigo_documento)}
+                      onClick={() => verActividades(record, documento)}
+                      style={{
+                        background: "#ffffff",
+                        borderColor: "#ffffff",
+                        color:
+                          documento.finish === false ? "#1e88e5" : "#4caf50",
+                        fontWeight: "bold",
+                        fontSize: "12px",
+                        height: "32px",
+                      }}
                     >
-                      <AiOutlineBell />
+                      Ver Actividades
                     </Button>
-                  </Tooltip>
-
-                  <Button
-                    type="primary"
-                    size="small"
-                    onClick={() => verActividades(record, documento)}
-                  >
-                    Ver Actividades
-                  </Button>
+                  </div>
                 </div>
               </div>
             </Col>
@@ -331,7 +400,7 @@ export const ListCelsiaDocumento = () => {
   // Obtener opciones únicas para filtros
   const getUniqueOptions = (data: DataType[], key: keyof DataType) => {
     const uniqueValues = [...new Set(data.map((item) => item[key]))].filter(
-      Boolean
+      Boolean,
     );
     return uniqueValues.map((value) => ({
       label: String(value).toUpperCase(),
@@ -342,7 +411,7 @@ export const ListCelsiaDocumento = () => {
   // Obtener todas las etapas únicas de todos los documentos
   const getEtapasUnicas = (data: DataType[]) => {
     const todasEtapas = data.flatMap(
-      (item) => item.documentacion?.map((doc) => doc.etapa) || []
+      (item) => item.documentacion?.map((doc) => doc.etapa) || [],
     );
     const etapasUnicas = [...new Set(todasEtapas)].sort();
 
@@ -487,8 +556,8 @@ export const ListCelsiaDocumento = () => {
           pagination={{
             total: dataSource?.length,
             showSizeChanger: true,
-            defaultPageSize: 10,
-            pageSizeOptions: ["5", "10", "20", "30"],
+            defaultPageSize: 30,
+            pageSizeOptions: ["5", "10", "20", "30", "50", "100"],
             showTotal: (total: number) => {
               return <Text strong>Total Proyectos: {total}</Text>;
             },
