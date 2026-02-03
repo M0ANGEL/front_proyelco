@@ -120,7 +120,7 @@ export const ModalConfirmacion = ({
       formData.append("fecha_actual", actividad.fecha_actual);
       formData.append("operador", actividad.operador.toString());
       formData.append("actividad_nombre", actividad.actividad?.actividad || "");
-      formData.append("observacion", values.observacion);
+      formData.append("observacion", values.observacion == undefined ? "." : values.observacion);
 
       // agregar múltiples archivos
       files.forEach((file) => {
@@ -198,10 +198,6 @@ export const ModalConfirmacion = ({
         <Form.Item
           name="observacion"
           label="Observación"
-          rules={[
-            { required: true, message: "Por favor ingrese una observación" },
-            { min: 5, message: "La observación debe tener al menos 5 caracteres" },
-          ]}
         >
           <Input.TextArea
             rows={4}
