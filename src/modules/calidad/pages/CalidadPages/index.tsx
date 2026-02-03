@@ -1,0 +1,2 @@
+export {CalidadPages} from "./CalidadPages";
+
