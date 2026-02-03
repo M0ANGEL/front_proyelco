@@ -71,6 +71,7 @@ const AppRouter: React.FC = () => {
                   <Route path="solicitudmaterial/*" element={<MaterialesRoutes />} />
                   <Route path="tramites/*" element={<DocumentacionRoutes />} />
                   <Route path="contabilidad/*" element={<ContabilidadRoutes />} />
+                  <Route path="calidad/*" element={<ContabilidadRoutes />} />
 
                   {/* Ruta por defecto */}
                   <Route index element={<Navigate to="/dashboard" replace />} />
