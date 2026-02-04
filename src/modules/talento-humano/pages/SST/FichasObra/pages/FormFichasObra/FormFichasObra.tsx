@@ -1,12 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Button,
-  Form,
-  Space,
-  Spin,
-  Tabs,
-  Typography,
-} from "antd"; // ❌ ELIMINA 'notification' de aquí
+import { Button, Form, Space, Spin, Tabs, Typography } from "antd"; // ❌ ELIMINA 'notification' de aquí
 import {
   LoadingOutlined,
   ArrowLeftOutlined,
@@ -31,19 +24,21 @@ const { Text } = Typography;
 export const FormFichasObra = () => {
   // ❌ ELIMINA esta línea completamente
   // const [contextHolder] = notification.useNotification();
-  
+
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const methods = useForm();
   const [categoria, setCategoria] = useState<AmClientes>();
   const [foto, setFoto] = useState<string>();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [estadoContratista, setEstadoContratista] = useState<boolean>(false);
 
   useEffect(() => {
     if (id) {
       getFicha(id).then(({ data }) => {
         setCategoria(data.empleado);
         setFoto(data.foto_url);
+        setEstadoContratista(data.estado != "1" ? true : false);
         setLoaderSave(false);
       });
     } else {
@@ -56,7 +51,6 @@ export const FormFichasObra = () => {
 
     try {
       const formData = new FormData();
-
 
       if (categoria) {
         const camposEditables = [
@@ -80,7 +74,6 @@ export const FormFichasObra = () => {
           }
         });
       } else {
-
         Object.keys(data).forEach((key) => {
           if (key === "foto" && data[key] instanceof File) {
             formData.append("foto", data[key]);
@@ -126,7 +119,6 @@ export const FormFichasObra = () => {
   // Retorno de la vista
   return (
     <>
-      {/* ❌ ELIMINA {contextHolder} - no es necesario con tu sistema notify */}
       <Spin
         spinning={loaderSave}
         indicator={
@@ -144,13 +136,15 @@ export const FormFichasObra = () => {
               title={(categoria ? "Editar" : "Crear") + " Personal"}
               extra={
                 <Space>
-                  <Button
-                    htmlType="submit"
-                    type="primary"
-                    icon={<SaveOutlined />}
-                  >
-                    Guardar
-                  </Button>
+                  {!estadoContratista&& (
+                    <Button
+                      htmlType="submit"
+                      type="primary"
+                      icon={<SaveOutlined />}
+                    >
+                      Guardar
+                    </Button>
+                  )}
 
                   {categoria ? (
                     <Link to="../.." relative="path">
@@ -197,7 +191,9 @@ export const FormFichasObra = () => {
                         Datos Básicos
                       </Text>
                     ),
-                    children: <DatosBasicos TkCategoria={categoria} foto={foto} />,
+                    children: (
+                      <DatosBasicos TkCategoria={categoria} foto={foto} />
+                    ),
                   },
                 ]}
               />

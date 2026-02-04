@@ -37,6 +37,29 @@ export const updateFicha = async (data: any, id: any): Promise<any> => {
     },
   });
 };
+
+// export const updateActiActivo = async (data: any, id: any): Promise<any> => {
+//   const formData = new FormData();
+
+//   for (const key in data) {
+//     if (data[key] !== undefined && data[key] !== null) {
+//       formData.append(key, data[key]);
+//     }
+//   }
+
+//   return await client.post<any>(
+//     `administar-activos/${id}?_method=PUT`,
+//     formData,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
+//         "Content-Type": "multipart/form-data",
+//       },
+//     }
+//   );
+// };
+
+
 //cambiar el estado de la categoria 
 export const DeleteFicha = async ( id: any): Promise<any> => {
   return await client.delete<any>(`ficha-obra/${id}`, {

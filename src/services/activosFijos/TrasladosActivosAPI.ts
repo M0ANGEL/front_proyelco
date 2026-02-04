@@ -149,7 +149,7 @@ export const exportarActivosExcel = async (filtros: any) => {
 // Función para obtener categorías
 export const obtenerCategorias = async () => {
   try {
-    const response = await api.get('/api/categorias-activos');
+    const response = await api.get('/api/categorias-activos-export');
     return response.data;
   } catch (error) {
     console.error('Error obteniendo categorías:', error);
@@ -160,7 +160,7 @@ export const obtenerCategorias = async () => {
 // Función para obtener subcategorías
 export const obtenerSubcategorias = async () => {
   try {
-    const response = await api.get('/api/subcategorias-activos');
+    const response = await api.get('/api/subcategorias-activos-export');
     return response.data;
   } catch (error) {
     console.error('Error obteniendo subcategorías:', error);

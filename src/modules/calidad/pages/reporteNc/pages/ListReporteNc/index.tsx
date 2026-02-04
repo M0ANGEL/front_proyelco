@@ -1,3 +1,3 @@
 import ListReporteNc from "./ListReporteNc";
 
-export {ListReporteNc}
+export {ListReporteNc};

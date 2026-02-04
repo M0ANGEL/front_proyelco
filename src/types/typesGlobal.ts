@@ -698,3 +698,52 @@ export interface Rfid {
   estado: string;
   codigo: string;
 }
+
+
+/* caldiad */
+export interface ResponseCaldiad {
+  data: {
+    status: string;
+    data: Calidad[];
+  };
+}
+export interface Calidad {
+  id: number;
+  estado: string;
+  created_at: string;
+  proyecto: string;
+  codigo_proyecto: string;
+  tipo_reporte: string;
+  insumo: string;
+  descripcion_proyecto: string;
+  codigo_insumo: string;
+  factura: string;
+  proveedor: string;
+  descripcion_nc: string;
+  updated_at: string;
+}
+
+/* sinco globales */
+
+//materiales sinco
+export interface ResponseMaterialesSinco {
+  data: {
+    status: string;
+    data: MaterialSinco[];
+  };
+}
+export interface MaterialSinco {
+  id: number;
+  estado: string;
+  created_at: string;
+  proyecto: string;
+  codigo_proyecto: string;
+  tipo_reporte: string;
+  insumo: string;
+  descripcion_proyecto: string;
+  codigo_insumo: string;
+  factura: string;
+  proveedor: string;
+  descripcion_nc: string;
+  updated_at: string;
+}
