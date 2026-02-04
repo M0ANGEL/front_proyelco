@@ -136,15 +136,13 @@ export const FormFichasObra = () => {
               title={(categoria ? "Editar" : "Crear") + " Personal"}
               extra={
                 <Space>
-                  {!estadoContratista&& (
-                    <Button
-                      htmlType="submit"
-                      type="primary"
-                      icon={<SaveOutlined />}
-                    >
-                      Guardar
-                    </Button>
-                  )}
+                  <Button
+                    htmlType="submit"
+                    type="primary"
+                    icon={<SaveOutlined />}
+                  >
+                    Guardar
+                  </Button>
 
                   {categoria ? (
                     <Link to="../.." relative="path">
