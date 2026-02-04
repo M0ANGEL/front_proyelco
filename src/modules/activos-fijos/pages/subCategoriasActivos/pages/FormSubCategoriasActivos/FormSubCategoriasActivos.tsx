@@ -66,7 +66,7 @@ export const FormSubCategoriasActivos = () => {
     } else {
       crearActiSubCategoria(data)
         .then(() => {
-          notify.success( "Cliente creado con éxito!" );
+          notify.success( "Subcategoria creada con éxito!" );
           setTimeout(() => {
             navigate(-1);
           }, 800);

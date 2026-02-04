@@ -10,11 +10,7 @@ import { LoadingSpinner } from "@/components/global/LoadingSpinner";
 import { BackButton } from "@/components/global/BackButton";
 
 // Servicios y componentes específicos getGestionProyecto
-import {
-  // DeleteProyecto,
-  // DeleteProyectoCasa,
-  getEstadoTramitesAdmin,
-} from "@/services/proyectos/proyectosAPI";
+import { getEstadoTramitesAdmin } from "@/services/proyectos/proyectosAPI";
 import { DataType } from "./types";
 
 // Estilos
@@ -26,11 +22,25 @@ import { ModalInformeCasa } from "../../../proyectos/pages/ListProyectos/ModalIn
 import { ModalHisotircoPorcentajes } from "../../../proyectos/components/ModalHisotircoPorcentajes/ModalHisotircoPorcentajes";
 
 // Tipos para los datos de trámites
+interface EtapaData {
+  etapa: number;
+  avance: number;
+  atrazo: number;
+  total: number;
+  completados: number;
+  pendientes: number;
+  info: string;
+}
+
 interface DocumentoData {
   tipo: string;
   codigo_proyecto: number;
   avance: number;
   atrazo: number;
+  total: number;
+  completados: number;
+  pendientes: number;
+  etapas: EtapaData[];
 }
 
 interface OperadorData {
@@ -140,19 +150,19 @@ export const ListGestioNueva = () => {
   const getDocumentosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.documentos.find(
-        (doc) => doc.codigo_proyecto === codigoProyecto
+        (doc) => doc.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const getOrganismosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.organismos.find(
-        (org) => org.codigo_proyecto === codigoProyecto
+        (org) => org.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const handleSearch = useCallback((value: string) => {
@@ -163,17 +173,18 @@ export const ListGestioNueva = () => {
     setSearchValue("");
   }, []);
 
-
   const filteredConvenios = useMemo(() => {
     return initialData.filter((convenio) => {
       const matchesSearch =
         searchValue === "" ||
         Object.values(convenio).some((value) =>
-          String(value).toLowerCase().includes(searchValue.toLowerCase())
+          String(value).toLowerCase().includes(searchValue.toLowerCase()),
         );
 
       if (showActiveConvenios) {
-        return matchesSearch && convenio.estado === "1"  || convenio.estado == "2";
+        return (
+          (matchesSearch && convenio.estado === "1") || convenio.estado == "2"
+        );
       } else {
         return matchesSearch && convenio.estado === "0";
       }
@@ -187,7 +198,7 @@ export const ListGestioNueva = () => {
       color: string,
       label: string,
       showNoData: boolean = false,
-      noDataMessage: string = "PND"
+      noDataMessage: string = "PND",
     ) => {
       // Para avance/atraso: SIEMPRE mostrar círculo aunque sea 0%
       if (!showNoData) {
@@ -223,10 +234,10 @@ export const ListGestioNueva = () => {
         </div>
       );
     },
-    []
+    [],
   );
 
-  // Función para renderizar círculo de documentos
+  // Función para renderizar círculo de documentos CON NUEVO TOOLTIP DE ETAPAS
   const renderDocumentosCircle = useCallback(
     (codigoProyecto: number) => {
       const documentoData = getDocumentosData(codigoProyecto);
@@ -236,10 +247,91 @@ export const ListGestioNueva = () => {
         return renderProgressCircle(0, "#60A5FA", "OR", true, "PND");
       }
 
-      // Si EXISTE la relación, mostrar el círculo aunque el avance sea 0%
-      return renderProgressCircle(documentoData.avance, "#60A5FA", "OR", false);
+      // Si EXISTE la relación, mostrar el círculo con tooltip mejorado
+      return (
+        <Tooltip
+          title={
+            <div
+              style={{
+                textAlign: "center",
+                padding: "10px",
+                maxWidth: "240px",
+              }}
+            >
+              {documentoData.etapas && documentoData.etapas.length > 0 && (
+                <>
+                  <div
+                    style={{
+                      margin: "8px 0 6px 0",
+                      fontWeight: "bold",
+                      borderTop: "1px solid #e2e8f0",
+                      paddingTop: "8px",
+                      fontSize: "13px",
+                      color: "#1e293b",
+                    }}
+                  >
+                    📊 Avance por Etapas:
+                  </div>
+                  {documentoData.etapas.map((etapa, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        fontSize: "12px",
+                        color: "#475569",
+                        marginBottom: "4px",
+                        padding: "3px 0",
+                      }}
+                    >
+                      <span style={{ fontWeight: "500" }}>
+                         {etapa.info} __
+                      </span>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "8px",
+                          alignItems: "center",
+                        }}
+                      >
+                        <span style={{ fontWeight: "600", color: "#1e293b" }}>
+                          {etapa.avance.toFixed(1)}%
+                        </span>
+                        {/* <span style={{ fontSize: "11px", color: "#94a3b8" }}>
+                          ({etapa.completados}/{etapa.total})
+                        </span> */}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          }
+          placement="top"
+          color="white"
+          overlayStyle={{ maxWidth: "250px" }}
+        >
+          <div className="circle-progress-container">
+            <div className="circle-progress-wrapper">
+              <div className="circle-progress">
+                <div
+                  className="circle-progress-fill"
+                  style={{
+                    background: `conic-gradient(#60A5FA 0% ${documentoData.avance}%, #F5F5F5 ${documentoData.avance}% 100%)`,
+                  }}
+                ></div>
+                <div className="circle-progress-text">
+                  <span>{documentoData.avance.toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+            <span className="circle-progress-label">OR</span>
+          </div>
+        </Tooltip>
+      );
     },
-    [getDocumentosData, renderProgressCircle]
+    [getDocumentosData, renderProgressCircle],
   );
 
   // Función para renderizar círculo de organismos con círculos concéntricos
@@ -368,7 +460,12 @@ export const ListGestioNueva = () => {
                           color: "black",
                         }}
                       >
-                        Op. {op.operador}: {op.avance.toFixed(1)}%
+                        {op.operador === 1
+                          ? "Retie"
+                          : op.operador === 2
+                          ? "Ritel"
+                          : "Retilap"}
+                        : {op.avance.toFixed(1)}%
                       </span>
                     </div>
                   ))}
@@ -430,7 +527,7 @@ export const ListGestioNueva = () => {
         </div>
       );
     },
-    [getOrganismosData]
+    [getOrganismosData],
   );
 
   const getBotonesAccion = useCallback(
@@ -452,7 +549,7 @@ export const ListGestioNueva = () => {
             `${location.pathname}/${
               item.tipo === "Casa" ? "proceso-casa" : "proceso"
             }/${item.key}`,
-            "_self"
+            "_self",
           ),
         iconoPersonalizado: <AiOutlineExpandAlt />,
         color: "primary" as const,
@@ -482,7 +579,7 @@ export const ListGestioNueva = () => {
         color: "default" as const,
       },
     ],
-    [loadingRow, location.pathname]
+    [loadingRow, location.pathname],
   );
 
   const renderCardContent = useCallback(
@@ -499,10 +596,10 @@ export const ListGestioNueva = () => {
               item.porcentaje || 0,
               "#F87171",
               "Atraso",
-              false
+              false,
             )}
 
-            {/* Documentos - Usar la nueva función */}
+            {/* Documentos - CON NUEVO TOOLTIP DE ETAPAS */}
             {renderDocumentosCircle(item.codigo_proyecto)}
 
             {/* Organismos - Usar la función existente */}
@@ -566,7 +663,7 @@ export const ListGestioNueva = () => {
       renderOrganismosCircle,
       getBotonesAccion,
       location.pathname,
-    ]
+    ],
   );
 
   if (loading) {

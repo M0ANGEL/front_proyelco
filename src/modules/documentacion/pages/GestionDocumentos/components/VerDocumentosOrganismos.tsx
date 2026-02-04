@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button, Modal, Tooltip, List } from "antd";
 import { BASE_URL_IMAGENES, BASE_URL } from "@/config/api";
 import { FaFileAlt } from "react-icons/fa";
@@ -17,6 +17,9 @@ export const VerDocumentoOrganismos = ({
   const [archivoSeleccionado, setArchivoSeleccionado] = useState<any>(null);
 
   const abrirModal = async () => {
+    console.log(documento_id);
+    console.log(nombreProyecto);
+    
     if (!documento_id) {
       console.error("documento_id no definido");
       return;

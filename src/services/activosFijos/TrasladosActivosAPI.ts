@@ -1,5 +1,6 @@
 import { ResponseActivosS } from "@/types/typesGlobal";
 import { client } from "../client";
+import api from "../api";
 
 export interface PaginationParams {
   page?: number;
@@ -116,4 +117,53 @@ export const entregaMensajero = async (data: any): Promise<any> => {
   return await client.post<any>("confirmar-entrega-mensajero", data, {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
+};
+
+
+/* exporta */
+
+
+// Función para exportar activos a Excel
+export const exportarActivosExcel = async (filtros: any) => {
+  try {
+    const response = await api.post('/api/activos/exportar-excel', filtros, {
+      responseType: 'blob', // Importante para descargar archivos
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    return response;
+  } catch (error: any) {
+    console.error('Error exportando activos:', error);
+    
+    // Si hay respuesta del servidor, extraer el mensaje de error
+    if (error.response) {
+      const errorMessage = error.response.data?.message || 'Error al exportar los activos';
+      throw new Error(errorMessage);
+    }
+    
+    throw error;
+  }
+};
+
+// Función para obtener categorías
+export const obtenerCategorias = async () => {
+  try {
+    const response = await api.get('/api/categorias-activos-export');
+    return response.data;
+  } catch (error) {
+    console.error('Error obteniendo categorías:', error);
+    throw error;
+  }
+};
+
+// Función para obtener subcategorías
+export const obtenerSubcategorias = async () => {
+  try {
+    const response = await api.get('/api/subcategorias-activos-export');
+    return response.data;
+  } catch (error) {
+    console.error('Error obteniendo subcategorías:', error);
+    throw error;
+  }
 };

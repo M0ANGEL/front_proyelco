@@ -194,7 +194,7 @@ export const SolicitudeMaterial = () => {
       dataIndex: "codigo_proyecto",
       key: "codigo_proyecto",
       sorter: (a, b) => a.codigo_proyecto.localeCompare(b.codigo_proyecto),
-      width: 120,
+      width: 50,
     },
     {
       title: "Tipo Proyecto",
@@ -202,15 +202,7 @@ export const SolicitudeMaterial = () => {
       key: "tipo_proyecto",
       sorter: (a, b) => a.tipo_proyecto.localeCompare(b.tipo_proyecto),
       render: (text) => text?.toUpperCase(),
-      width: 150,
-    },
-    {
-      title: "Fecha Creación",
-      dataIndex: "created_at",
-      key: "created_at",
-      sorter: (a, b) => a.created_at.localeCompare(b.created_at),
-      render: (fecha) => dayjs(fecha).format("DD-MM-YYYY HH:mm"),
-      width: 150,
+      width: 50,
     },
     {
       title: "Acciones",
@@ -234,7 +226,7 @@ export const SolicitudeMaterial = () => {
         );
       },
       fixed: "right",
-      width: 100,
+      width: 50,
     },
   ];
 

@@ -431,6 +431,7 @@ export interface EmpleadosTH {
   pais_residencia_id: string;
   ciudad_resudencia_id: string;
   genero: string;
+  rfid: string;
   telefono_fijo: string;
   telefono_celular: string;
   direccion: string;
@@ -682,5 +683,67 @@ export interface RutasPowerBI {
   ruta: number;
   link_power_bi: string;
   created_at: string;
+  updated_at: string;
+}
+
+//RFID
+export interface ResponseRfid {
+  data: {
+    status: string;
+    data: Rfid[];
+  };
+}
+export interface Rfid {
+  id: number;
+  estado: string;
+  codigo: string;
+}
+
+
+/* caldiad */
+export interface ResponseCaldiad {
+  data: {
+    status: string;
+    data: Calidad[];
+  };
+}
+export interface Calidad {
+  id: number;
+  estado: string;
+  created_at: string;
+  proyecto: string;
+  codigo_proyecto: string;
+  tipo_reporte: string;
+  insumo: string;
+  descripcion_proyecto: string;
+  codigo_insumo: string;
+  factura: string;
+  proveedor: string;
+  descripcion_nc: string;
+  updated_at: string;
+}
+
+/* sinco globales */
+
+//materiales sinco
+export interface ResponseMaterialesSinco {
+  data: {
+    status: string;
+    data: MaterialSinco[];
+  };
+}
+export interface MaterialSinco {
+  id: number;
+  estado: string;
+  created_at: string;
+  proyecto: string;
+  codigo_proyecto: string;
+  tipo_reporte: string;
+  insumo: string;
+  descripcion_proyecto: string;
+  codigo_insumo: string;
+  factura: string;
+  proveedor: string;
+  descripcion_nc: string;
   updated_at: string;
 }

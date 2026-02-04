@@ -30,11 +30,25 @@ import useSessionStorage from "@/hooks/useSessionStorage";
 import { KEY_ROL } from "@/config/api";
 
 // Tipos para los datos de trámites
+interface EtapaData {
+  etapa: number;
+  avance: number;
+  atrazo: number;
+  total: number;
+  completados: number;
+  pendientes: number;
+  info: string;
+}
+
 interface DocumentoData {
   tipo: string;
   codigo_proyecto: number;
   avance: number;
   atrazo: number;
+  total: number;
+  completados: number;
+  pendientes: number;
+  etapas: EtapaData[];
 }
 
 interface OperadorData {
@@ -148,19 +162,19 @@ export const ListProyectos = () => {
   const getDocumentosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.documentos.find(
-        (doc) => doc.codigo_proyecto === codigoProyecto
+        (doc) => doc.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const getOrganismosData = useCallback(
     (codigoProyecto: number) => {
       return tramitesData.organismos.find(
-        (org) => org.codigo_proyecto === codigoProyecto
+        (org) => org.codigo_proyecto === codigoProyecto,
       );
     },
-    [tramitesData]
+    [tramitesData],
   );
 
   const handleStatus = useCallback(
@@ -187,7 +201,7 @@ export const ListProyectos = () => {
         setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
       }
     },
-    [fetchConvenios]
+    [fetchConvenios],
   );
 
   const handleSearch = useCallback((value: string) => {
@@ -209,17 +223,19 @@ export const ListProyectos = () => {
       const matchesSearch =
         searchValue === "" ||
         Object.values(convenio).some((value) =>
-          String(value).toLowerCase().includes(searchValue.toLowerCase())
+          String(value).toLowerCase().includes(searchValue.toLowerCase()),
         );
 
       if (showActiveConvenios) {
-        return matchesSearch && convenio.estado == "1" || convenio.estado == "2";
+        return (
+          (matchesSearch && convenio.estado == "1") || convenio.estado == "2"
+        );
       } else {
         return matchesSearch && convenio.estado === "0";
       }
     });
   }, [initialData, searchValue, showActiveConvenios]);
- 
+
   // Función para renderizar círculos de progreso
   const renderProgressCircle = useCallback(
     (
@@ -227,7 +243,7 @@ export const ListProyectos = () => {
       color: string,
       label: string,
       showNoData: boolean = false,
-      noDataMessage: string = "PND"
+      noDataMessage: string = "PND",
     ) => {
       // Para avance/atraso: SIEMPRE mostrar círculo aunque sea 0%
       if (!showNoData) {
@@ -263,10 +279,10 @@ export const ListProyectos = () => {
         </div>
       );
     },
-    []
+    [],
   );
 
-  // Función para renderizar círculo de documentos
+  // Función para renderizar círculo de documentos CON NUEVO TOOLTIP DE ETAPAS
   const renderDocumentosCircle = useCallback(
     (codigoProyecto: number) => {
       const documentoData = getDocumentosData(codigoProyecto);
@@ -276,10 +292,74 @@ export const ListProyectos = () => {
         return renderProgressCircle(0, "#60A5FA", "OR", true, "PND");
       }
 
-      // Si EXISTE la relación, mostrar el círculo aunque el avance sea 0%
-      return renderProgressCircle(documentoData.avance, "#60A5FA", "OR", false);
+      // Si EXISTE la relación, mostrar el círculo con tooltip mejorado
+      return (
+        <Tooltip
+          title={
+            <div style={{ textAlign: 'center', padding: '10px', maxWidth: '240px' }}>
+              {documentoData.etapas && documentoData.etapas.length > 0 && (
+                <>
+                  <div style={{ 
+                    margin: '8px 0 6px 0', 
+                    fontWeight: 'bold', 
+                    borderTop: '1px solid #e2e8f0', 
+                    paddingTop: '8px', 
+                    fontSize: '13px',
+                    color: '#1e293b'
+                  }}>
+                    📊 Avance por Etapas:
+                  </div>
+                  {documentoData.etapas.map((etapa, idx) => (
+                    <div key={idx} style={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      fontSize: '12px', 
+                      color: '#475569',
+                      marginBottom: '4px',
+                      padding: '3px 0'
+                    }}>
+                      <span style={{ fontWeight: '500' }}>
+                        {etapa.info} __
+                      </span>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <span style={{ fontWeight: '600', color: '#1e293b' }}>
+                          {etapa.avance.toFixed(1)}%
+                        </span>
+                        {/* <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                          ({etapa.completados}/{etapa.total})
+                        </span> */}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+          }
+          placement="top"
+          color="white"
+          overlayStyle={{ maxWidth: '250px' }}
+        >
+          <div className="circle-progress-container">
+            <div className="circle-progress-wrapper">
+              <div className="circle-progress">
+                <div
+                  className="circle-progress-fill"
+                  style={{
+                    background: `conic-gradient(#60A5FA 0% ${documentoData.avance}%, #F5F5F5 ${documentoData.avance}% 100%)`,
+                  }}
+                ></div>
+                <div className="circle-progress-text">
+                  <span>{documentoData.avance.toFixed(1)}%</span>
+                </div>
+              </div>
+            </div>
+            <span className="circle-progress-label">OR</span>
+          </div>
+        </Tooltip>
+      );
     },
-    [getDocumentosData, renderProgressCircle]
+    [getDocumentosData, renderProgressCircle],
   );
 
   // Función para renderizar círculo de organismos con círculos concéntricos
@@ -411,7 +491,7 @@ export const ListProyectos = () => {
                           color: "black",
                         }}
                       >
-                        Op. {op.operador}: {op.avance.toFixed(1)}%
+                        {op.operador === 1 ? "Retie" : op.operador === 2 ? "Ritel" : "Retilap"}: {op.avance.toFixed(1)}%
                       </span>
                     </div>
                   ))}
@@ -473,7 +553,7 @@ export const ListProyectos = () => {
         </div>
       );
     },
-    [getOrganismosData]
+    [getOrganismosData],
   );
 
   const getBotonesAccion = useCallback(
@@ -482,76 +562,84 @@ export const ListProyectos = () => {
 
       // Solo mostrar el botón de Activar/Desactivar si el usuario es Administrador
       if (user_rol === "Administrador" || user_rol === "Directora Proyectos") {
-        botones.push({
-          tipo: "custom" as const,
-          label: item.estado === "1" ? "Desactivar" : "Activar",
-          onClick: () => handleStatus(item.key, item.tipo),
-          iconoPersonalizado: loadingRow.includes(item.key) ? (
-            <SyncOutlined spin />
-          ) : (
-            <CheckCircleFilled
-              style={{
-                color: item.estado === "1" ? "#10B981" : "#EF4444",
-              }}
-            />
-          ),
-          color: item.estado === "1" ? "success" : ("danger" as const),
-        });
+        if (item.estado !== "2") {
+          botones.push({
+            tipo: "custom" as const,
+            label: item.estado === "1" ? "Desactivar" : "Activar",
+            onClick: () => handleStatus(item.key, item.tipo),
+            iconoPersonalizado: loadingRow.includes(item.key) ? (
+              <SyncOutlined spin />
+            ) : (
+              <CheckCircleFilled
+                style={{
+                  color: item.estado === "1" ? "#10B981" : "#EF4444",
+                }}
+              />
+            ),
+            color: item.estado === "1" ? "success" : ("danger" as const),
+          });
+        }
       }
 
-      // Agregar los demás botones que todos pueden ver
-      botones.push(
-        {
-          tipo: "custom" as const,
-          label: "Tramites",
-          onClick: () => {
-            navigate("/tramites/documentacion-all");
+      // Agregar los demás botones que todos pueden ver solo ing, admin y direcotara proyectos
+      if (
+        user_rol === "Administrador" ||
+        user_rol === "Directora Proyectos" ||
+        user_rol === "Ingeniero Obra"
+      ) {
+        botones.push(
+          {
+            tipo: "custom" as const,
+            label: "Tramites",
+            onClick: () => {
+              navigate("/tramites/documentacion-all");
+            },
+            iconoPersonalizado: <AiFillCopy />,
+            color: "primary" as const,
           },
-          iconoPersonalizado: <AiFillCopy />,
-          color: "primary" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Ver Proceso",
-          onClick: () =>
-            window.open(
-              `${location.pathname}/${
-                item.tipo === "Casa" ? "proceso-casa" : "proceso"
-              }/${item.key}`,
-              "_self"
-            ),
-          iconoPersonalizado: <AiOutlineExpandAlt />,
-          color: "primary" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Informe",
-          onClick: () => {},
-          iconoPersonalizado:
-            item.tipo === "Casa" ? (
-              <ModalInformeCasa proyecto={item} />
-            ) : (
-              <ModalInforme proyecto={item} />
-            ),
-          color: "default" as const,
-        },
-        {
-          tipo: "custom" as const,
-          label: "Historico Porcentajes (no disponible)",
-          onClick: () => {},
-          iconoPersonalizado:
-            item.tipo === "Casa" ? (
-              <ModalHisotircoPorcentajes proyecto={item} />
-            ) : (
-              <ModalHisotircoPorcentajes proyecto={item} />
-            ),
-          color: "default" as const,
-        }
-      );
+          {
+            tipo: "custom" as const,
+            label: "Ver Proceso",
+            onClick: () =>
+              window.open(
+                `${location.pathname}/${
+                  item.tipo === "Casa" ? "proceso-casa" : "proceso"
+                }/${item.key}`,
+                "_self",
+              ),
+            iconoPersonalizado: <AiOutlineExpandAlt />,
+            color: "primary" as const,
+          },
+          {
+            tipo: "custom" as const,
+            label: "Informe",
+            onClick: () => {},
+            iconoPersonalizado:
+              item.tipo === "Casa" ? (
+                <ModalInformeCasa proyecto={item} />
+              ) : (
+                <ModalInforme proyecto={item} />
+              ),
+            color: "default" as const,
+          },
+          {
+            tipo: "custom" as const,
+            label: "Historico Porcentajes (no disponible)",
+            onClick: () => {},
+            iconoPersonalizado:
+              item.tipo === "Casa" ? (
+                <ModalHisotircoPorcentajes proyecto={item} />
+              ) : (
+                <ModalHisotircoPorcentajes proyecto={item} />
+              ),
+            color: "default" as const,
+          },
+        );
+      }
 
       return botones;
     },
-    [handleStatus, loadingRow, location.pathname, user_rol, navigate]
+    [handleStatus, loadingRow, location.pathname, user_rol, navigate],
   );
 
   const renderCardContent = useCallback(
@@ -568,10 +656,10 @@ export const ListProyectos = () => {
               item.porcentaje || 0,
               "#F87171",
               "Atraso",
-              false
+              false,
             )}
 
-            {/* Documentos - Usar la nueva función */}
+            {/* Documentos - CON NUEVO TOOLTIP DE ETAPAS */}
             {renderDocumentosCircle(item.codigo_proyecto)}
 
             {/* Organismos - Usar la función existente */}
@@ -650,7 +738,7 @@ export const ListProyectos = () => {
       renderOrganismosCircle,
       getBotonesAccion,
       location.pathname,
-    ]
+    ],
   );
 
   if (loading) {
@@ -673,9 +761,13 @@ export const ListProyectos = () => {
       extra={
         <div className="header-actions">
           <BackButton />
-          <Link to={`${location.pathname}/create`}>
-            <SaveButton text="Crear Proyecto" />
-          </Link>
+
+          {(user_rol === "Administrador" ||
+            user_rol === "Directora Proyectos") && (
+            <Link to={`${location.pathname}/create`}>
+              <SaveButton text="Crear Proyecto" />
+            </Link>
+          )}
         </div>
       }
     >
@@ -692,12 +784,15 @@ export const ListProyectos = () => {
 
         <div className="filters-section">
           <div className="filter-switch">
-            <Switch
-              checkedChildren="Activos"
-              unCheckedChildren="Inactivos"
-              checked={showActiveConvenios}
-              onChange={toggleConvenioList}
-            />
+            {(user_rol === "Administrador" ||
+              user_rol === "Directora Proyectos") && (
+              <Switch
+                checkedChildren="Activos"
+                unCheckedChildren="Inactivos"
+                checked={showActiveConvenios}
+                onChange={toggleConvenioList}
+              />
+            )}
           </div>
 
           <Typography.Text className="total-text">

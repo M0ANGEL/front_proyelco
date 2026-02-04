@@ -18,7 +18,7 @@ import { MaterialesRoutes } from "@/modules/materiales";
 import { DocumentacionRoutes } from "@/modules/documentacion/routes";
 import { ContabilidadRoutes } from "@/modules/contabilidad";
 import NotFoundPage from "@/modules/common/guards/NotFound/NotFoundPage";
-import { TickestRoutes } from "@/modules/tickets";
+import { CalidadRoutes } from "@/modules/calidad/routes";
 
 // Lazy load
 const Login = React.lazy(() => import("../modules/auth/pages/Login"));
@@ -72,6 +72,7 @@ const AppRouter: React.FC = () => {
                   <Route path="solicitudmaterial/*" element={<MaterialesRoutes />} />
                   <Route path="tramites/*" element={<DocumentacionRoutes />} />
                   <Route path="contabilidad/*" element={<ContabilidadRoutes />} />
+                  <Route path="calidad/*" element={<CalidadRoutes />} />
 
                   {/* Ruta por defecto */}
                   <Route index element={<Navigate to="/dashboard" replace />} />
