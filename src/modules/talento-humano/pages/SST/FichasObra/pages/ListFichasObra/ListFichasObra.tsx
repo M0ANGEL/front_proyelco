@@ -25,6 +25,8 @@ import { DataTable } from "@/components/global/DataTable";
 import { BotonesOpciones } from "@/components/global/BotonesOpciones";
 import { notify } from "@/components/global/NotificationHandler";
 import { StyledCard } from "@/components/layout/styled";
+import useSessionStorage from "@/hooks/useSessionStorage";
+import { KEY_ROL } from "@/config/api";
 
 interface DataType {
   key: number;
@@ -60,6 +62,8 @@ export const ListFichasObra = () => {
   const [dataSource, setDataSource] = useState<DataType[]>([]);
   const [loadingRow, setLoadingRow] = useState<any>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const { getSessionVariable } = useSessionStorage();
+  const user_rol = getSessionVariable(KEY_ROL);
 
   // Estados para RFID
   const [rfid, setRfid] = useState<RFDI[]>([]);
@@ -94,7 +98,7 @@ export const ListFichasObra = () => {
             updated_at: dayjs(ficha?.updated_at).format("DD-MM-YYYY HH:mm"),
             fecha_ingreso: dayjs(ficha?.fecha_ingreso).format("DD-MM-YYYY"),
             fecha_nacimiento: dayjs(ficha?.fecha_nacimiento).format(
-              "DD-MM-YYYY"
+              "DD-MM-YYYY",
             ),
           };
         });
@@ -114,8 +118,8 @@ export const ListFichasObra = () => {
   const handleSearch = (value: string) => {
     const filterTable = initialData?.filter((o: any) =>
       Object.keys(o).some((k) =>
-        String(o[k]).toLowerCase().includes(value.toLowerCase())
-      )
+        String(o[k]).toLowerCase().includes(value.toLowerCase()),
+      ),
     );
     setDataSource(filterTable);
   };
@@ -126,13 +130,15 @@ export const ListFichasObra = () => {
     DeleteFicha(id)
       .then(() => {
         notify.success("Estado de la ficha actualizado con éxito");
-        fetchFichas();
+       
       })
       .catch((error) => {
         const msg =
           error.response?.data?.message || "Error al cambiar el estado";
         notify.error("Error", msg);
         setLoadingRow([]);
+      }).finally(() => {
+        fetchFichas();
       });
   };
 
@@ -159,7 +165,7 @@ export const ListFichasObra = () => {
   // ✅ Manejar cambio de RFID responsable
   const handleRfidChange = async (
     userCedula: number,
-    rfidId: number | null
+    rfidId: number | null,
   ) => {
     try {
       if (rfidId === null) {
@@ -185,8 +191,8 @@ export const ListFichasObra = () => {
         prev.map((item) =>
           item.identificacion === userCedula
             ? { ...item, rfid: selectedRfid.codigo }
-            : item
-        )
+            : item,
+        ),
       );
 
       // También actualizar initialData para mantener consistencia en búsquedas
@@ -194,14 +200,14 @@ export const ListFichasObra = () => {
         prev.map((item) =>
           item.identificacion === userCedula
             ? { ...item, rfid: selectedRfid.codigo }
-            : item
-        )
+            : item,
+        ),
       );
 
       message.success("RFID actualizado correctamente");
     } catch (error) {
       message.error(
-        error?.response?.data?.message || "Error al actualizar RFID"
+        error?.response?.data?.message || "Error al actualizar RFID",
       );
     }
   };
@@ -214,15 +220,15 @@ export const ListFichasObra = () => {
       // Actualizar el estado local
       setDataSource((prev) =>
         prev.map((item) =>
-          item.id === userId ? { ...item, rfid: null } : item
-        )
+          item.id === userId ? { ...item, rfid: null } : item,
+        ),
       );
 
       // También actualizar initialData
       setInitialData((prev) =>
         prev.map((item) =>
-          item.id === userId ? { ...item, rfid: null } : item
-        )
+          item.id === userId ? { ...item, rfid: null } : item,
+        ),
       );
 
       message.success("RFID liberado correctamente");
@@ -362,11 +368,11 @@ export const ListFichasObra = () => {
             title="¿Desea cambiar el estado?"
             onConfirm={() => handleStatus(record.key)}
             placement="left"
-            disabled={record.estado === "2"}
+            disabled={user_rol !== "Administrador" && user_rol !== "Talento Humano"} 
             okText="Sí"
             cancelText="No"
           >
-            <ButtonTag disabled={record.estado === "2"} color={color}>
+            <ButtonTag disabled={user_rol !== "Administrador" && user_rol !== "Talento Humano"} color={color}>
               <Tooltip
                 title={
                   record.estado === "2"
@@ -407,7 +413,7 @@ export const ListFichasObra = () => {
                 tipo: "editar",
                 label: "Editar ficha",
                 onClick: () => handleEdit(record),
-                disabled: record.estado === "2",
+                disabled: user_rol !== "Administrador" && user_rol !== "Talento Humano",
               },
             ]}
             soloIconos={true}

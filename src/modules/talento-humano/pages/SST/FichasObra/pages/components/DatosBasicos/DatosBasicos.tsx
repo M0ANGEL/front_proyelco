@@ -58,6 +58,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [cargandoDatos, setCargandoDatos] = useState(false);
+  const[estadoContratista,setEstadoContratista]=useState<boolean>(false);
 
   // 🔹 Determinar qué foto mostrar (prioridad: nueva foto > foto existente del prop)
   const fotoAMostrar = fotoPreview || foto;
@@ -77,6 +78,8 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
 
       // Luego buscar los datos completos del empleado por cédula
       await buscarEmpleado(TkCategoria.identificacion, true);
+      setEstadoContratista(TkCategoria.estado != "1" ? true : false);
+      
     } catch (error) {
       console.error("Error al cargar datos por ID:", error);
     } finally {
@@ -679,6 +682,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                           {...field}
                           status={error && "error"}
                           options={contratista}
+                          disabled={estadoContratista} //si el estado es distito a 1 solo lectura
                         />
                         <Text type="danger">{error?.message}</Text>
                       </StyledFormItem>
@@ -773,6 +777,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                               .toLowerCase()
                               .includes(input.toLowerCase())
                           }
+                          disabled={estadoContratista} //si el estado es distito a 1 solo lectura
                         />
                         <Text type="danger">{error?.message}</Text>
                       </StyledFormItem>
@@ -804,6 +809,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                               .toLowerCase()
                               .includes(input.toLowerCase())
                           }
+                          disabled={estadoContratista} //si el estado es distito a 1 solo lectura
                         />
                         <Text type="danger">{error?.message}</Text>
                       </StyledFormItem>
@@ -838,6 +844,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                             { value: "AB-", label: "AB-" },
                           ]}
                           status={error ? "error" : ""}
+                          disabled={estadoContratista} //si el estado es distito a 1 solo lectura
                         />
                         <Text type="danger">{error?.message}</Text>
                       </StyledFormItem>
@@ -863,6 +870,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                           min={0}
                           max={20}
                           status={error ? "error" : ""}
+                          disabled={estadoContratista} //si el estado es distito a 1 solo lectura
                         />
                         <Text type="danger">{error?.message}</Text>
                       </StyledFormItem>
@@ -940,6 +948,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
               </Card>
 
               {/* Upload de fotos */}
+              {estadoContratista === false && (
               <Card
                 title="Subir Fotografía"
                 bordered={false}
@@ -992,6 +1001,7 @@ export const DatosBasicos = ({ TkCategoria, foto }: Props) => {
                   </Button>
                 )}
               </Card>
+              )}
             </Space>
           </Col>
         </Row>

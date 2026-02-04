@@ -1,13 +1,39 @@
-import { useEffect } from "react";
-import { Col, Input, Row, Typography } from "antd";
+import { useEffect, useState } from "react";
+import { Col, Input, Row, Select, Typography } from "antd";
 import { Controller, useFormContext } from "react-hook-form";
 import { Props } from "./types";
 import { StyledFormItem } from "@/components/layout/styled";
+import { getInsumosSincoApi } from "@/services/sincoGlobalAPI/sincoGlobalAPI";
 
 const { Text } = Typography;
 
+interface DataSelect {
+  label: string;
+  value: number;
+}
+
 export const DatosBasicos = ({ TkCategoria }: Props) => {
   const methods = useFormContext();
+  const [proyectos, setProyectos] = useState<DataSelect[]>([]);
+
+  const TipoReportes = [
+    { label: "Calidad", value: "CALIDAD" },
+    { label: "Servicio", value: "SERVICIO" },
+    { label: "Otro", value: "OTRO" },
+  ];
+
+  /* llamado de los insumos de sico */
+  const getInsumosSinco = async () => {
+    const {
+      data: { data },
+    } = await getInsumosSincoApi();
+    setProyectos(
+      data.map((p: any) => ({
+        label: p.nombre.toUpperCase(),
+        value: p.codigo,
+      })),
+    );
+  };
 
   useEffect(() => {
     //si tenemos datos en categoria agregamos a metho los datos
@@ -21,10 +47,11 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
     } else {
       /*  methods.setValue('estado', '1') */
     }
+    getInsumosSinco();
   }, [TkCategoria]);
   return (
     <Row gutter={24}>
-      {/* nombre de la empresa */}
+      {/* aqui todo los proyectos sea casa o apartamento */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="emp_nombre"
@@ -36,7 +63,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Nombre de la empresa">
+            <StyledFormItem required label="Proyecto">
               <Input
                 {...field}
                 maxLength={50}
@@ -50,7 +77,7 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
         />
       </Col>
 
-      {/* direccion */}
+      {/* tipo de reporte, sera un select */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="direccion"
@@ -62,21 +89,15 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Direccion">
-              <Input
-                {...field}
-                maxLength={50}
-                placeholder="Calle 2"
-                status={error && "error"}
-                style={{ textTransform: "uppercase" }}
-              />
+            <StyledFormItem required label="Tipo de Reporte">
+              <Select options={TipoReportes} {...field} />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
           )}
         />
       </Col>
 
-      {/* Telefono de la emrpesa */}
+      {/* Codigo proyecto y material, poder filtrar en el select */}
       <Col xs={24} sm={12} style={{ width: "100%" }}>
         <Controller
           name="telefono"
@@ -88,14 +109,8 @@ export const DatosBasicos = ({ TkCategoria }: Props) => {
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <StyledFormItem required label="Telefono de la empresa">
-              <Input
-                {...field}
-                maxLength={50}
-                placeholder="000 000 00 00"
-                status={error && "error"}
-                style={{ textTransform: "uppercase" }}
-              />
+            <StyledFormItem required label="Insumo Sinco">
+              <Select options={proyectos} {...field} />
               <Text type="danger">{error?.message}</Text>
             </StyledFormItem>
           )}

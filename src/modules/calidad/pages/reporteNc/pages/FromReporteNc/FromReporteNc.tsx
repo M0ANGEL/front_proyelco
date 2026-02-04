@@ -11,7 +11,7 @@ import {
   SaveOutlined,
 } from "@ant-design/icons";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Componentes globales
 import { GlobalCard } from "@/components/global/GlobalCard";
@@ -27,11 +27,14 @@ import { crearAmCliente, getAmcliente, updateAmCliente } from "@/services/client
 
 const { Text } = Typography;
 
+
+
 export const FromReporteNc = () => {
   const [loaderSave, setLoaderSave] = useState<boolean>(false);
   const control = useForm();
   const [categoria, setCategoria] = useState<AmClientes>();
   const { transformToUpperCase } = useSerialize();
+
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
 
@@ -58,7 +61,9 @@ export const FromReporteNc = () => {
     } else {
       setLoaderSave(false);
     }
+    
   }, [id]);
+
 
   // Guardado de los datos
   const onFinish: SubmitHandler<any> = async (data) => {
@@ -136,13 +141,13 @@ export const FromReporteNc = () => {
           autoComplete="off"
         >
           <GlobalCard
-            title={`${isEditMode ? "Editar" : "Crear"} Cliente`}
+            title={`${isEditMode ? "Editar" : "Crear"} Reporte`}
             extra={
               <Space>
                 <SaveButton
                   loading={loaderSave}
                   disabled={loaderSave}
-                  text={isEditMode ? "Actualizar Cliente" : "Crear Cliente"}
+                  text={isEditMode ? "Actualizar Reporte" : "Crear Reporte"}
                   htmlType="submit"
                   icon={<SaveOutlined />}
                 />
