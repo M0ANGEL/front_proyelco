@@ -144,95 +144,6 @@ export const ListaActividadesProyecto = () => {
     }
   };
 
-  // const columns: ColumnsType<DocumentacionDetalle> = [
-  //   {
-  //     title: "Orden",
-  //     dataIndex: "orden",
-  //     key: "orden",
-  //     width: 80,
-  //     sorter: (a, b) => a.orden - b.orden,
-  //   },
-  //   {
-  //     title: "Actividad",
-  //     dataIndex: ["actividad", "actividad"],
-  //     key: "actividad",
-  //     render: (text: string, record: DocumentacionDetalle) => (
-  //       <div>
-  //         <strong>{text || "Sin nombre"}</strong>
-  //         <br />
-  //         <small style={{ color: "#666" }}>Tipo: {record.tipo}</small>
-  //       </div>
-  //     ),
-  //   },
-  //   {
-  //     title: "Estado",
-  //     dataIndex: "estado",
-  //     key: "estado",
-  //     render: (estado: number) => (
-  //       <Tag color={getEstadoColor(estado)}>{getEstadoTexto(estado)}</Tag>
-  //     ),
-  //   },
-  //   {
-  //     title: "Fecha Proyección",
-  //     dataIndex: "fecha_proyeccion",
-  //     key: "fecha_proyeccion",
-  //     render: (fecha: string) =>
-  //       fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-  //   },
-  //   ...(rolesPermitidos.includes(user_rol)
-  //   ? [
-  //      {
-  //     title: "Acciones",
-  //     key: "acciones",
-  //     align: "center",
-  //     render: (_, record: DocumentacionDetalle) => (
-  //         {record.estado == "2" ? (
-  //             <VerDocumentoRed
-  //               documento_id={record.id} // <-- aquí
-  //               nombreProyecto={record.nombre_etapa}
-  //             />
-  //         ) : (
-  //           ""
-  //         )}
-  //     ),
-  //   },
-  //   ] : []),
-
-  //   ...(rolesPermitidos.includes(user_rol)
-  //     ? [
-  //         {
-  //           title: "Fecha Real",
-  //           dataIndex: "fecha_actual",
-  //           key: "fecha_actual",
-  //           render: (fecha: string) =>
-  //             fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
-  //         },
-  //         {
-  //           title: "Acciones",
-  //           key: "acciones",
-  //           render: (_: any, record: DocumentacionDetalle) => (
-  //             <>
-  //               {record.estado == "2" && (
-  //                 <VerDocumentoRed
-  //                   documento_id={record.id}
-  //                   nombreProyecto={record.nombre_etapa}
-  //                 />
-  //               )}
-  //               <Button
-  //                 type="primary"
-  //                 size="small"
-  //                 icon={<CheckOutlined />}
-  //                 onClick={() => abrirModalConfirmacion(record)}
-  //                 disabled={record.estado != "1"}
-  //               >
-  //                 Confirmar
-  //               </Button>
-  //             </>
-  //           ),
-  //         },
-  //       ]
-  //     : []),
-  // ];
 
   const columns: ColumnsType<DocumentacionDetalle> = [
     {
@@ -327,7 +238,7 @@ export const ListaActividadesProyecto = () => {
                   size="small"
                   icon={<CheckOutlined />}
                   onClick={() => abrirModalConfirmacion(record)}
-                  disabled={record.estado != "1"}
+                  // disabled={record.estado != "1"}
                   style={{ marginLeft: 8 }}
                 >
                   Confirmar
