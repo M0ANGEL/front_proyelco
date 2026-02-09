@@ -79,3 +79,17 @@ export const ConfirmarTM = async (data: any): Promise<any> => {
     headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
   });
 };
+
+/* eliminar confirmacion de actividad */
+
+export const deleteDocumentacionProyecto = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`gestion-documentos-anular/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+}; 
+
+export const deleteDocumentacionProyectoCelsia = async (id: React.Key): Promise<any> => {
+  return await client.get<any>(`gestion-documentos-anular-celsia/${id}`, {
+    headers: { Authorization: `Bearer ${localStorage.getItem("auth_token")}` },
+  });
+}; 
