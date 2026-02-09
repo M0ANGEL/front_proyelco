@@ -1,10 +1,20 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Table, Tag, Button, Typography, Spin, notification, Tooltip } from "antd";
+import {
+  Table,
+  Tag,
+  Button,
+  Typography,
+  Spin,
+  notification,
+  Tooltip,
+  Modal,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
+  deleteDocumentacionProyectoCelsia,
   getDocumentaCIonProyecto,
   getNombreProyectosXCodigo,
 } from "@/services/documentacion/documentacionAPI";
@@ -16,6 +26,7 @@ import { AiFillClockCircle } from "react-icons/ai";
 import { ModalConfirmacionCelsia } from "./ModalConfirmacionCelsia";
 
 const { Title } = Typography;
+const { confirm } = Modal;
 
 interface DocumentacionDetalle {
   id: number;
@@ -103,6 +114,35 @@ export const ListaActividadesCelsiaProyecto = () => {
       });
   };
 
+  const handleEliminarActividad = (actividad: DocumentacionDetalle) => {
+    confirm({
+      title: "¿Está seguro de eliminar esta actividad?",
+      content:
+        "Si esta actividad afecta la secuencia, se eliminarán las actividades dependientes en cascada.",
+      okText: "Sí, eliminar",
+      okType: "danger",
+      cancelText: "Cancelar",
+      onOk() {
+        setLoading(true);
+        deleteDocumentacionProyectoCelsia(actividad.id)
+          .then(() => {
+            notification.success({
+              message: "Éxito",
+              description: "Actividad eliminada correctamente",
+            });
+            cargarActividades();
+          })
+          .catch((error) => {
+            notification.error({
+              message: "Error",
+              description: "No se pudo eliminar la actividad",
+            });
+            setLoading(false);
+          });
+      },
+    });
+  };
+
   const abrirModalConfirmacion = (actividad: DocumentacionDetalle) => {
     setActividadSeleccionada(actividad);
     setModalVisible(true);
@@ -113,7 +153,7 @@ export const ListaActividadesCelsiaProyecto = () => {
     setActividadSeleccionada(null);
   };
 
-  const rolesPermitidos = ["Tramites", "Directora Proyectos","Administrador"];
+  const rolesPermitidos = ["Tramites", "Directora Proyectos", "Administrador"];
   const rolesPermitidosBasicos = ["Ingeniero Obra"];
 
   // Función para obtener el texto del estado
@@ -179,7 +219,7 @@ export const ListaActividadesCelsiaProyecto = () => {
       render: (fecha: string) =>
         fecha ? dayjs(fecha).format("DD/MM/YYYY") : "-",
     },
-     //  Columna solo para ciertos roles (ver documento)
+    //  Columna solo para ciertos roles (ver documento)
     ...(rolesPermitidosBasicos.includes(user_rol)
       ? [
           {
@@ -229,15 +269,35 @@ export const ListaActividadesCelsiaProyecto = () => {
                     nombreProyecto={record.nombre_etapa}
                   />
                 )}
+
                 <Button
                   type="primary"
                   size="small"
                   icon={<CheckOutlined />}
                   onClick={() => abrirModalConfirmacion(record)}
-                  disabled={record.estado != "1"}
                 >
                   Confirmar
                 </Button>
+
+                {record.estado == "2" && (
+                  <>
+                    {/* Botón de eliminar - solo visible para Administrador y estado 2 */}
+                    {user_rol.includes("Administrador") ||
+                    user_rol.includes("Directora Proyectos") ? (
+                      <Tooltip title="Eliminar actividad">
+                        <Button
+                          type="default"
+                          danger
+                          size="small"
+                          icon={<DeleteOutlined />}
+                          onClick={() => handleEliminarActividad(record)}
+                        >
+                          Eliminar
+                        </Button>
+                      </Tooltip>
+                    ) : null}
+                  </>
+                )}
               </>
             ),
           },
