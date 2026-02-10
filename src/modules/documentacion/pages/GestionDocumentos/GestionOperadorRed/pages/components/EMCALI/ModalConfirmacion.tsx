@@ -8,13 +8,16 @@ import {
   UploadFile,
   UploadProps,
   notification,
+  DatePicker,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/config/api";
+import dayjs from "dayjs";
 
 interface ModalConfirmacionProps {
   visible: boolean;
   actividad: any;
+  estado?: string;
   onClose: () => void;
   onConfirm: () => void;
 }
@@ -24,6 +27,7 @@ export const ModalConfirmacion = ({
   actividad,
   onClose,
   onConfirm,
+  estado,
 }: ModalConfirmacionProps) => {
   const [form] = Form.useForm();
   const [files, setFiles] = useState<UploadFile[]>([]);
@@ -112,7 +116,7 @@ export const ModalConfirmacion = ({
       formData.append("actividad_id", actividad.actividad_id.toString());
       formData.append(
         "actividad_depende_id",
-        actividad.actividad_depende_id?.toString() || ""
+        actividad.actividad_depende_id?.toString() || "",
       );
       formData.append("tipo", actividad.tipo);
       formData.append("orden", actividad.orden.toString());
@@ -120,7 +124,10 @@ export const ModalConfirmacion = ({
       formData.append("fecha_actual", actividad.fecha_actual);
       formData.append("operador", actividad.operador.toString());
       formData.append("actividad_nombre", actividad.actividad?.actividad || "");
-      formData.append("observacion", values.observacion == undefined ? "." : values.observacion);
+      formData.append(
+        "observacion",
+        values.observacion == undefined ? "." : values.observacion,
+      );
 
       // agregar múltiples archivos
       files.forEach((file) => {
@@ -130,7 +137,7 @@ export const ModalConfirmacion = ({
       formData.append("estado", "2");
       formData.append(
         "fecha_confirmacion",
-        new Date().toISOString().split("T")[0]
+        new Date().toISOString().split("T")[0],
       );
       formData.append("usaurio_id", "1");
 
@@ -189,31 +196,61 @@ export const ModalConfirmacion = ({
         <Button key="cancel" onClick={handleCancel}>
           Cancelar
         </Button>,
-        <Button key="confirm" type="primary" loading={loading} onClick={handleConfirmar}>
-          Confirmar Actividad
+        <Button
+          key="confirm"
+          type="primary"
+          loading={loading}
+          onClick={handleConfirmar}
+        >
+          {estado == "2" ? "Cargar Archivos" : "Confirmar Actividad"}
         </Button>,
       ]}
     >
       <Form form={form} layout="vertical">
-        <Form.Item
-          name="observacion"
-          label="Observación"
-        >
-          <Input.TextArea
-            rows={4}
-            placeholder="Ingrese observaciones sobre la actividad..."
-            maxLength={500}
-            showCount
-          />
-        </Form.Item>
+        {estado != "2" && (
+          <Form.Item
+            name="fecha_confirmacion"
+            label="Fecha Confirmación"
+            rules={[
+              {
+                required: true,
+                message: "La fecha de confirmación es obligatoria",
+              },
+            ]}
+          >
+            <DatePicker
+              disabledDate={(current) =>
+                current && current > dayjs().endOf("day")
+              }
+              placeholder="Fecha de confirmación"
+            />
+          </Form.Item>
+        )}
+
+        {estado != "2" && (
+          <Form.Item name="observacion" label="Observación">
+            <Input.TextArea
+              rows={4}
+              placeholder="Ingrese observaciones sobre la actividad..."
+              maxLength={500}
+              showCount
+            />
+          </Form.Item>
+        )}
 
         <Form.Item
           label="Subir Archivos (Opcional)"
           extra={
             <div>
-              <p><strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF</p>
-              <p><strong>Tamaño máximo por archivo:</strong> 1GB</p>
-              <p><strong>Puede seleccionar varios archivos.</strong></p>
+              <p>
+                <strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF
+              </p>
+              <p>
+                <strong>Tamaño máximo por archivo:</strong> 1GB
+              </p>
+              <p>
+                <strong>Puede seleccionar varios archivos.</strong>
+              </p>
             </div>
           }
         >
