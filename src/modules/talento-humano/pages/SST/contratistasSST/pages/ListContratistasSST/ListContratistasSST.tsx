@@ -227,15 +227,6 @@ export const ListContratistasSST = () => {
         hasFixedColumn={true}
         stickyHeader={true}
         scroll={{ x: 1200, y: 500 }}
-        pagination={{
-          total: dataSource?.length,
-          showSizeChanger: true,
-          showQuickJumper: true,
-          showTotal: (total, range) => 
-            `${range[0]}-${range[1]} de ${total} registros`,
-          pageSizeOptions: ["10", "20", "50"],
-          defaultPageSize: 10,
-        }}
       />
     </StyledCard>
   );

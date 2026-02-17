@@ -26,8 +26,8 @@ export const DataTable: React.FC<DataTableProps> = ({
         showQuickJumper: true,
         showTotal: (total: number, range: number[]) =>
           `${range[0]}-${range[1]} de ${total} registros`,
-        pageSizeOptions: ["10", "20", "50", "100"],
-        defaultPageSize: 10,
+        pageSizeOptions: ["100", "50", "20", "10"],
+        defaultPageSize: 100,
       }
     : false;
 

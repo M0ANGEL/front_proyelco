@@ -534,15 +534,6 @@ export const ListGestioNueva = () => {
     (item: DataType) => [
       {
         tipo: "custom" as const,
-        label: "Tramites",
-        onClick: () => {
-          navigate("/tramites/documentacion-all");
-        },
-        iconoPersonalizado: <AiFillCopy />,
-        color: "primary" as const,
-      },
-      {
-        tipo: "custom" as const,
         label: "Ver Proceso",
         onClick: () =>
           window.open(
