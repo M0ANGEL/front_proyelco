@@ -350,6 +350,7 @@ export const ListaActividadesProyecto = () => {
                 <Button
                   type="primary"
                   size="small"
+                  disabled={record.estado == "0"}
                   icon={<CheckOutlined />}
                   onClick={() => abrirModalConfirmacion(record, record.estado)}
                 >
