@@ -1,4 +1,4 @@
- import { defineConfig } from "vite";
+/*  import { defineConfig } from "vite";
  import react from "@vitejs/plugin-react";
  import { resolve } from "path";
  import dotenv from "dotenv";
@@ -30,11 +30,11 @@
        "process.env": JSON.stringify(dotenv.config().parsed),
      },
    };
- });
+ }); */
 
 
 
-/* import { defineConfig } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { resolve } from "path";
 
@@ -68,4 +68,4 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
- */
+
