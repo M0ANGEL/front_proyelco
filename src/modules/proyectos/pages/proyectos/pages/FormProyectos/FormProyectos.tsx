@@ -444,7 +444,7 @@ export const FormProyectos = () => {
                     : []),
 
                     //nuevo, zonas comunes global para casa y apto
-                    ...(!id
+                    /* ...(!id
                     ? [
                         {
                           key: "5",
@@ -471,7 +471,7 @@ export const FormProyectos = () => {
                           forceRender: true,
                         },
                       ]
-                    : []),
+                    : []), */
                 ]}
                 animated
               />

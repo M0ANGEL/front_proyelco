@@ -20,7 +20,10 @@ import {
 } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import { BASE_URL } from "@/config/api";
-import { getProyectosCodigo } from "@/services/documentacion/documentacionAPI";
+import {
+  getProyectosCodigo,
+  getTorresManzasDisponibles,
+} from "@/services/documentacion/documentacionAPI";
 import { StyledFormItem } from "@/components/layout/styled";
 
 interface FormData {
@@ -48,7 +51,9 @@ export const CrearDocumentacionRed = () => {
   const [loading, setLoading] = useState(false);
   const [loadingProyectos, setLoadingProyectos] = useState(false);
   const [selectProyecto, setSelectProyecto] = useState<ProyectoOption[]>([]);
+  const [selectToMaDisponibles, setSelectToMaDisponibles] = useState<any[]>([]);
   const [selectedOrganismo, setSelectedOrganismo] = useState("0");
+  const [loadingTorres, setLoadingTorres] = useState(false);
 
   const opcionOperadorRed = [
     { value: "1", label: "EMCALI" },
@@ -66,6 +71,44 @@ export const CrearDocumentacionRed = () => {
     { value: "1", label: "RETIE" },
     { value: "2", label: "RITEL" },
     { value: "3", label: "RETILAP" },
+  ];
+
+  //manejo de torres o manzanas disponibles
+  const handleProyectoChange = async (value: string) => {
+    // Limpiar torres seleccionadas
+    form.setFieldValue("torres", []);
+    setSelectToMaDisponibles([]);
+
+    if (!value) return;
+
+    try {
+      setLoadingTorres(true);
+
+      const response = await getTorresManzasDisponibles(value);
+
+      if (response.data.status === "success") {
+        const opciones = response.data.data.map((item: any) => ({
+          label: item.nombre_torre ?? item.nombre_manzana,
+          value: item.nombre_torre ?? item.nombre_manzana,
+        }));
+
+        setSelectToMaDisponibles(opciones);
+      } else {
+        message.warning("No hay torres/manzanas disponibles");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error al cargar torres/manzanas disponibles");
+    } finally {
+      setLoadingTorres(false);
+    }
+  };
+
+  //opcion de torres temporal ya que debe llegar desde la api
+  const torresApi = [
+    { value: "1", label: "T1" },
+    { value: "2", label: "T2" },
+    { value: "3", label: "T3" },
   ];
 
   const opcionEtapa = [
@@ -363,6 +406,12 @@ export const CrearDocumentacionRed = () => {
                 }
                 allowClear
                 showSearch
+                loading={loadingProyectos}
+                onChange={handleProyectoChange} // 🔥 ENVÍA EL CÓDIGO A LA API
+                onClear={() => {
+                  setSelectToMaDisponibles([]);
+                  form.setFieldValue("torres", []);
+                }}
                 filterOption={(input, option) =>
                   (option?.label ?? "")
                     .toLowerCase()
@@ -377,7 +426,10 @@ export const CrearDocumentacionRed = () => {
                 }
                 suffixIcon={
                   <ReloadOutlined
-                    onClick={handleRecargarProyectos}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRecargarProyectos();
+                    }}
                     style={{ cursor: "pointer" }}
                     title="Recargar proyectos"
                   />
@@ -410,7 +462,7 @@ export const CrearDocumentacionRed = () => {
               label={
                 <span>
                   ¿Requiere Organismo?
-                  <Tooltip title="Indique si esta documentación requiere organismo de inspección">
+                  <Tooltip title="Indique si esta documentación requiere organismo de inspección (OI)">
                     <InfoCircleOutlined
                       style={{ marginLeft: 8, color: "#1890ff" }}
                     />
@@ -435,7 +487,7 @@ export const CrearDocumentacionRed = () => {
               <Col xs={24} sm={12} md={6}>
                 <StyledFormItem
                   name="organismoInspeccion"
-                  label="Organismo de Inspección"
+                  label="Organismo de Inspección (OI)"
                   rules={[
                     {
                       required: true,
@@ -457,7 +509,7 @@ export const CrearDocumentacionRed = () => {
               <Col xs={24} sm={12} md={4}>
                 <StyledFormItem
                   name="cantidad_tm"
-                  label="Número de Torres o Manzanas"
+                  label="Número de Torres o Manzanas (OI)"
                   rules={[{ required: true, message: "Campo obligatorio" }]}
                   required
                 >
@@ -484,6 +536,29 @@ export const CrearDocumentacionRed = () => {
                 options={opcionEtapa}
                 placeholder="Seleccione etapa"
                 allowClear
+              />
+            </StyledFormItem>
+          </Col>
+
+          {/* Torres o manzana del proyecto disponibles */}
+          <Col xs={24} sm={12} md={6}>
+            <StyledFormItem
+              name="torres"
+              label="Torres / Manzanas Etapa"
+              rules={[
+                {
+                  required: true,
+                  message: "Seleccione Torre(s)",
+                },
+              ]}
+              required
+            >
+              <Select
+                mode="multiple"
+                options={selectToMaDisponibles}
+                placeholder="Seleccione Torre(s)"
+                allowClear
+                loading={loadingTorres}
               />
             </StyledFormItem>
           </Col>
