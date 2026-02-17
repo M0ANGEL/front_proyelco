@@ -83,7 +83,7 @@ export const ListGestionEncargadoObra = () => {
           apt: categoria.apt,
           pisoCambiarProceso: categoria.pisoCambiarProceso,
           fecha_ini_proyecto: categoria.fecha_ini_proyecto,
-          nombre_tipo: categoria.nombre_tipo,
+          nombre_tipo: categoria.nombre_tipo.toString(),
           emp_nombre: categoria.emp_nombre,
           porcentaje: categoria.porcentaje?.toString(),
           avance: categoria.avance,
@@ -121,12 +121,12 @@ export const ListGestionEncargadoObra = () => {
         Object.keys(o).some((k) =>
           String(o[k as keyof DataType])
             .toLowerCase()
-            .includes(value.toLowerCase())
-        )
+            .includes(value.toLowerCase()),
+        ),
       );
       setFilteredData(filterTable);
     },
-    [initialData]
+    [initialData],
   );
 
   const handleReset = useCallback(() => {
@@ -146,7 +146,7 @@ export const ListGestionEncargadoObra = () => {
           setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
         });
     },
-    [fetchCategorias]
+    [fetchCategorias],
   );
 
   // Iniciar proyecto casas
@@ -161,7 +161,7 @@ export const ListGestionEncargadoObra = () => {
           setLoadingRow((prev) => prev.filter((rowId) => rowId !== id));
         });
     },
-    [fetchCategorias]
+    [fetchCategorias],
   );
 
   const columns = useMemo(
@@ -263,54 +263,56 @@ export const ListGestionEncargadoObra = () => {
             record.fecha_ini_proyecto !== null ? "PROCESO" : "INICIAR";
           const color = record.fecha_ini_proyecto !== null ? "green" : "blue";
 
-          const iniciarProyecto = (id: React.Key, tipo: string) => {
-            if (tipo === "Apartamentos") {
-              iniciarProyectoAparamentos(id);
-            } else if (tipo === "Casa") {
-              iniciarProyectoCasas(id);
-            }
-          };
+          const tieneRol = [
+            "Encargado Obras",
+            "Administrador",
+            "Tramites",
+            "Directora Proyectos",
+          ].includes(user_rol);
+          const puedeIniciar = record.fecha_ini_proyecto === null && tieneRol;
 
-          return (
-            <Popconfirm
-              // disabled={!["Encargado Obras"].includes(user_rol) || record.fecha_ini_proyecto !== null}
-              title="¿Desea iniciar el proyecto?"
-              onConfirm={() => iniciarProyecto(record.key, record.nombre_tipo)}
-              placement="left"
+          const tag = (
+            <Tag
+              color={color}
+              icon={
+                loadingRow.includes(record.key) ? <SyncOutlined spin /> : null
+              }
+              style={{
+                cursor: puedeIniciar ? "pointer" : "default",
+                margin: 0,
+              }}
             >
-              <Tooltip
-                title={
-                  record.fecha_ini_proyecto !== null
-                    ? "Proyecto en proceso"
-                    : "Iniciar Proyecto"
-                }
-              >
-                <Tag
-                  color={color}
-                  icon={
-                    loadingRow.includes(record.key) ? (
-                      <SyncOutlined spin />
-                    ) : null
-                  }
-                  style={{
-                    cursor:
-                      record.fecha_ini_proyecto === null &&
-                      ["Encargado Obras", "Administrador"].includes(user_rol)
-                        ? "pointer"
-                        : "default",
-                    margin: 0,
-                  }}
-                >
-                  {estadoString.toUpperCase()}
-                </Tag>
-              </Tooltip>
-            </Popconfirm>
+              {estadoString.toUpperCase()}
+            </Tag>
           );
+
+          // Si puede iniciar, mostrar con Popconfirm
+          if (puedeIniciar) {
+            return (
+              <Popconfirm
+                title="¿Desea iniciar el proyecto?"
+                onConfirm={() => {
+                  if (record.nombre_tipo === "Apartamento") {
+                    iniciarProyectoAparamentos(record.key);
+                  } else {
+                    iniciarProyectoCasas(record.key);
+                  }
+                }}
+                placement="left"
+              >
+                {tag}
+              </Popconfirm>
+            );
+          }
+
+          // Si no, solo el tag
+          return tag;
         },
-        sorter: (a: DataType, b: DataType) =>
-          (a.fecha_ini_proyecto || "").localeCompare(
-            b.fecha_ini_proyecto || ""
-          ),
+        sorter: (a: DataType, b: DataType) => {
+          if (!a.fecha_ini_proyecto) return -1;
+          if (!b.fecha_ini_proyecto) return 1;
+          return a.fecha_ini_proyecto.localeCompare(b.fecha_ini_proyecto);
+        },
         width: 120,
       },
       {
@@ -362,7 +364,7 @@ export const ListGestionEncargadoObra = () => {
       loadingRow,
       iniciarProyectoAparamentos,
       iniciarProyectoCasas,
-    ]
+    ],
   );
 
   return (
