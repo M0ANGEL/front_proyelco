@@ -590,15 +590,6 @@ export const ListProyectos = () => {
         botones.push(
           {
             tipo: "custom" as const,
-            label: "Tramites",
-            onClick: () => {
-              navigate("/tramites/documentacion-all");
-            },
-            iconoPersonalizado: <AiFillCopy />,
-            color: "primary" as const,
-          },
-          {
-            tipo: "custom" as const,
             label: "Ver Proceso",
             onClick: () =>
               window.open(
