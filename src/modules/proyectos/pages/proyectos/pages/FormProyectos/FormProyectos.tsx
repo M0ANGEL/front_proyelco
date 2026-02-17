@@ -348,6 +348,7 @@ export const FormProyectos = () => {
               <Tabs
                 defaultActiveKey="1"
                 items={[
+                  //datos basicos del proyecto
                   {
                     key: "1",
                     label: (
@@ -363,6 +364,7 @@ export const FormProyectos = () => {
                     ),
                     children: <DatosBasicos usuariosCorreo={usuariosCorreo} />,
                   },
+                  //datos del proyecto
                   {
                     key: "2",
                     label: (
@@ -388,6 +390,7 @@ export const FormProyectos = () => {
                     ),
                     forceRender: true,
                   },
+                  //configuracion de proyecto solo se muestra en creacion de proyecto, no en edicion
                   ...(!id
                     ? [
                         {
@@ -416,6 +419,7 @@ export const FormProyectos = () => {
                         },
                       ]
                     : []),
+                    //editar nomenclaturas solo se muestra en edicion de proyecto, no en creacion
                   ...(id
                     ? [
                         {
@@ -438,6 +442,36 @@ export const FormProyectos = () => {
                         },
                       ]
                     : []),
+
+                    //nuevo, zonas comunes global para casa y apto
+                    /* ...(!id
+                    ? [
+                        {
+                          key: "5",
+                          label: (
+                            <Space>
+                              <Text
+                                type={
+                                  Object.keys(control.formState.errors).length >
+                                  0
+                                    ? "danger"
+                                    : undefined
+                                }
+                              >
+                                Configurar Zonas Comunes
+                              </Text>
+                            </Space>
+                          ),
+                          children: (
+                            <DatosConfigProyecto
+                              selectTipoProcesos={selectTipoProcesos}
+                              selectTipoProyecto={selectTipoProyecto}
+                            />
+                          ),
+                          forceRender: true,
+                        },
+                      ]
+                    : []), */
                 ]}
                 animated
               />

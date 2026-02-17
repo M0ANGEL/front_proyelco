@@ -33,10 +33,10 @@ export const FormEncargadoObra = () => {
   const [porcetanjeTorre, setPorcetanjeTorre] = useState<any>({});
   const [loading, setLoading] = useState(false);
   const [torreSeleccionada, setTorreSeleccionada] = useState<string | null>(
-    null
+    null,
   );
   const [procesoSeleccionado, setProcesoSeleccionado] = useState<string | null>(
-    null
+    null,
   );
   const [infoProyecto, setInfoProyecto] = useState<any>({});
   const [cantidadPisos, setCantidadPisos] = useState<any>({});
@@ -139,7 +139,8 @@ export const FormEncargadoObra = () => {
         const proceso = torreSeleccionada
           ? Object.values(data[torreSeleccionada] || {}).find(
               (p: any) =>
-                p.orden_proceso === (response.data.next_process || ordenProceso)
+                p.orden_proceso ===
+                (response.data.next_process || ordenProceso),
             )
           : undefined;
 
@@ -229,7 +230,7 @@ export const FormEncargadoObra = () => {
 
     Object.entries(pisos || {}).forEach(([piso, aptos]: any) => {
       const aptosFiltrados = aptos.filter(
-        (apt: any) => apt.estado === "1" || apt.estado === "2"
+        (apt: any) => apt.estado === "1" || apt.estado === "2",
       );
       if (aptosFiltrados.length > 0) {
         pisosFiltrados[piso] = aptosFiltrados;
@@ -370,7 +371,12 @@ export const FormEncargadoObra = () => {
                   disabled={
                     !torreSeleccionada ||
                     torreYaIniciada() ||
-                    !["Encargado Obras"].includes(user_rol)
+                    ![
+                      "Encargado Obras",
+                      "Administrador",
+                      "Tramites",
+                      "Directora Proyectos",
+                    ].includes(user_rol)
                   }
                   style={{
                     background: torreYaIniciada() ? "#52c41a" : "#1890ff",
@@ -448,7 +454,7 @@ export const FormEncargadoObra = () => {
                 <Row gutter={[24, 24]}>
                   {procesosDeTorre
                     .filter(
-                      ([procesoKey]) => procesoKey === procesoSeleccionado
+                      ([procesoKey]) => procesoKey === procesoSeleccionado,
                     )
                     .map(([procesoKey, contenido]: any) => {
                       const necesitaValidacion =
@@ -518,7 +524,12 @@ export const FormEncargadoObra = () => {
                                   disabled={
                                     !(
                                       torreYaIniciada() &&
-                                      ["Encargado Obras"].includes(user_rol)
+                                      [
+                                        "Encargado Obras",
+                                        "Administrador",
+                                        "Tramites",
+                                        "Directora Proyectos",
+                                      ].includes(user_rol)
                                     )
                                   }
                                   style={{ marginLeft: 15 }}
@@ -577,15 +588,18 @@ export const FormEncargadoObra = () => {
                                           {apt.estado === "1" ? (
                                             <Popconfirm
                                               disabled={
-                                                !["Encargado Obras"].includes(
-                                                  user_rol
-                                                )
+                                                ![
+                                                  "Encargado Obras",
+                                                  "Administrador",
+                                                  "Tramites",
+                                                  "Directora Proyectos",
+                                                ].includes(user_rol)
                                               }
                                               title="¿Estás seguro de que deseas confirmar este APT?"
                                               onConfirm={() =>
                                                 confirmarApt(
                                                   apt.id,
-                                                  contenido.orden_proceso
+                                                  contenido.orden_proceso,
                                                 )
                                               }
                                               okText="Sí"

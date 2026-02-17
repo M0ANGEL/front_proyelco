@@ -8,11 +8,13 @@ import {
   UploadFile,
   UploadProps,
   notification,
+  DatePicker,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { BASE_URL } from "@/config/api";
+import dayjs from "dayjs";
 
-interface ModalConfirmacionProps {
+interface ModalConfirmacionCelsiaProps {
   visible: boolean;
   actividad: any;
   onClose: () => void;
@@ -24,12 +26,20 @@ export const ModalConfirmacionCelsia = ({
   actividad,
   onClose,
   onConfirm,
-}: ModalConfirmacionProps) => {
+}: ModalConfirmacionCelsiaProps) => {
   const [form] = Form.useForm();
   const [files, setFiles] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Función para validar el tipo de archivo por extensión
+  // Determinar si la actividad ya está completada (estado 2)
+  const esCompletada = actividad?.estado == "2";
+
+  // Limpiar formulario cuando se abre/cierra el modal
+  const resetForm = () => {
+    form.resetFields();
+    setFiles([]);
+  };
+
   const validarArchivo = (file: File): boolean => {
     const extensionesPermitidas = [".jpg", ".jpeg", ".png", ".pdf"];
     const extension = "." + file.name.toLowerCase().split(".").pop();
@@ -42,7 +52,6 @@ export const ModalConfirmacionCelsia = ({
       return false;
     }
 
-    // Validar por tipo MIME también
     const tiposMimePermitidos = [
       "image/jpeg",
       "image/jpg",
@@ -58,8 +67,7 @@ export const ModalConfirmacionCelsia = ({
       return false;
     }
 
-    // Validar tamaño (10MB)
-    const tamanoMaximo = 10 * 1024 * 1024; // 10MB en bytes
+    const tamanoMaximo = 1024 * 1024 * 1024; // 1GB
     if (file.size > tamanoMaximo) {
       notification.error({
         message: "Archivo muy grande",
@@ -80,73 +88,88 @@ export const ModalConfirmacionCelsia = ({
     accept: ".jpg,.jpeg,.png,.pdf",
     beforeUpload: (file) => {
       if (!validarArchivo(file)) {
-        return false;
+        return Upload.LIST_IGNORE;
       }
-
-      setFiles((prev) => [...prev, file]);
       return false; // evitar subida automática
     },
-
+    onChange: ({ fileList }) => {
+      setFiles(fileList);
+    },
     onRemove: (file) => {
       setFiles((prev) => prev.filter((f) => f.uid !== file.uid));
     },
-
     fileList: files,
+    disabled: loading,
   };
 
   const handleConfirmar = async () => {
     try {
+      // Validar el formulario
       const values = await form.validateFields();
 
-      // validación de archivos
-      for (const file of files) {
-        if (!validarArchivo(file as any)) return;
+      // Validar que haya al menos un archivo si la actividad está completada
+      if (esCompletada && files.length === 0) {
+        notification.warning({
+          message: "Archivos requeridos",
+          description: "Debe subir al menos un archivo",
+        });
+        return;
       }
 
       setLoading(true);
 
       const formData = new FormData();
 
-      // Datos de la actividad
-      formData.append("id", actividad.id.toString());
-      formData.append("codigo_proyecto", actividad.codigo_proyecto);
-      formData.append("codigo_documento", actividad.codigo_documento);
-      formData.append("etapa", actividad.etapa.toString());
-      formData.append("actividad_id", actividad.actividad_id.toString());
-      formData.append(
-        "actividad_depende_id",
-        actividad.actividad_depende_id?.toString() || "",
-      );
-      formData.append("tipo", actividad.tipo);
-      formData.append("orden", actividad.orden.toString());
-      formData.append("fecha_proyeccion", actividad.fecha_proyeccion);
-      formData.append("fecha_actual", actividad.fecha_actual);
-      formData.append("operador", actividad.operador.toString());
+      // Datos básicos de la actividad
+      formData.append("id", String(actividad.id));
+      formData.append("codigo_proyecto", String(actividad.codigo_proyecto));
+      formData.append("codigo_documento", String(actividad.codigo_documento));
+      formData.append("etapa", String(actividad.etapa));
+      formData.append("actividad_id", String(actividad.actividad_id));
+      
+      if (actividad.actividad_depende_id) {
+        formData.append("actividad_depende_id", String(actividad.actividad_depende_id));
+      }
+      
+      formData.append("tipo", actividad.tipo || "");
+      formData.append("orden", String(actividad.orden));
+      formData.append("fecha_proyeccion", actividad.fecha_proyeccion || "");
+      formData.append("fecha_actual", actividad.fecha_actual || "");
+      
+      // Usar la fecha del formulario (la que selecciona el usuario)
+      if (values.fecha_confirmacion) {
+        formData.append(
+          "fecha_confirmacion",
+          values.fecha_confirmacion.format("YYYY-MM-DD")
+        );
+      } else {
+        // Si no hay fecha seleccionada, usar fecha actual
+        formData.append("fecha_confirmacion", dayjs().format("YYYY-MM-DD"));
+      }
+      
+      formData.append("operador", String(actividad.operador || ""));
       formData.append("actividad_nombre", actividad.actividad?.actividad || "");
-      formData.append("observacion", values.observacion == undefined ? "." : values.observacion);
+      formData.append(
+        "observacion",
+        values.observacion?.trim() ? values.observacion : "Sin observación"
+      );
+      formData.append("estado", "2");
 
-      // agregar múltiples archivos
+      // Agregar múltiples archivos
       files.forEach((file) => {
-        formData.append("archivos[]", file as any);
+        if (file.originFileObj) {
+          formData.append("archivos[]", file.originFileObj);
+        }
       });
 
-      formData.append("estado", "2");
-      formData.append(
-        "fecha_confirmacion",
-        new Date().toISOString().split("T")[0],
-      );
-      formData.append("usaurio_id", "1");
-
-      const response = await fetch(
-        BASE_URL + "gestion-documentos-confirmar-celsia",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-          },
-          body: formData,
+      // Enviar petición
+      const response = await fetch(`${BASE_URL}gestion-documentos-confirmar-celsia`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
         },
-      );
+        body: formData,
+      });
 
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -156,42 +179,72 @@ export const ModalConfirmacionCelsia = ({
 
       if (result.status === "success") {
         notification.success({
-          message: "Actividad confirmada",
-          description: `"${actividad.actividad?.actividad}" ha sido confirmada exitosamente`,
+          message: "Éxito",
+          description: result.message || "Actividad confirmada exitosamente",
+          duration: 3,
         });
 
-        form.resetFields();
-        setFiles([]);
+        // Limpiar y cerrar
+        resetForm();
         onConfirm();
         onClose();
       } else {
         throw new Error(result.message || "Error al confirmar la actividad");
       }
-
-      setLoading(false);
     } catch (error: any) {
-      console.error("Error al validar formulario:", error);
-      notification.error({
-        message: "Error",
-        description: error.message || "No se pudo confirmar la actividad",
-      });
+      console.error("Error al confirmar:", error);
+      
+      // Manejo específico de errores de validación
+      if (error.errorFields) {
+        notification.error({
+          message: "Error de validación",
+          description: "Por favor, complete todos los campos requeridos",
+        });
+      } else {
+        notification.error({
+          message: "Error",
+          description: error.message || "No se pudo confirmar la actividad",
+          duration: 4,
+        });
+      }
+    } finally {
       setLoading(false);
     }
   };
+
   const handleCancel = () => {
-    form.resetFields();
-    setFiles([]);
+    resetForm();
     onClose();
+  };
+
+  // Resetear formulario cuando se abre el modal
+  const afterOpenChange = (open: boolean) => {
+    if (open) {
+      // Establecer fecha actual por defecto en el DatePicker
+      form.setFieldsValue({
+        fecha_confirmacion: dayjs(),
+      });
+    }
   };
 
   return (
     <Modal
-      title={`Confirmar Actividad: ${actividad?.actividad?.actividad}`}
+      title={
+        <span style={{ fontSize: "1.2rem", fontWeight: 500 }}>
+          Confirmar Actividad: {actividad?.actividad?.actividad}
+        </span>
+      }
       open={visible}
       onCancel={handleCancel}
+      afterOpenChange={afterOpenChange}
       width={600}
+      destroyOnClose
       footer={[
-        <Button key="cancel" onClick={handleCancel}>
+        <Button 
+          key="cancel" 
+          onClick={handleCancel}
+          disabled={loading}
+        >
           Cancelar
         </Button>,
         <Button
@@ -199,43 +252,91 @@ export const ModalConfirmacionCelsia = ({
           type="primary"
           loading={loading}
           onClick={handleConfirmar}
+          style={{
+            background: "#52c41a",
+            borderColor: "#52c41a",
+          }}
         >
-          Confirmar Actividad
+          {esCompletada ? "Subir Archivos" : "Confirmar Actividad"}
         </Button>,
       ]}
     >
-      <Form form={form} layout="vertical">
-        <Form.Item
-          name="observacion"
-          label="Observación"
-        >
-          <Input.TextArea
-            rows={4}
-            placeholder="Ingrese observaciones sobre la actividad..."
-            maxLength={500}
-            showCount
-          />
-        </Form.Item>
+      <Form 
+        form={form} 
+        layout="vertical"
+        initialValues={{
+          fecha_confirmacion: dayjs(),
+        }}
+      >
+        {/* Campo de fecha - Siempre visible cuando no está completada */}
+        {!esCompletada && (
+          <Form.Item
+            name="fecha_confirmacion"
+            label="Fecha de Confirmación"
+            rules={[
+              {
+                required: true,
+                message: "La fecha de confirmación es obligatoria",
+              },
+            ]}
+            tooltip="Seleccione la fecha en que se está confirmando esta actividad"
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              disabledDate={(current) =>
+                current && current > dayjs().endOf("day")
+              }
+              format="DD/MM/YYYY"
+              placeholder="Seleccione fecha"
+              allowClear={false}
+              disabled={loading}
+            />
+          </Form.Item>
+        )}
 
+        {/* Campo de observación - Siempre visible cuando no está completada */}
+        {!esCompletada && (
+          <Form.Item
+            name="observacion"
+            label="Observación"
+            tooltip="Puede agregar comentarios adicionales sobre la actividad"
+          >
+            <Input.TextArea
+              rows={4}
+              placeholder="Ingrese observaciones sobre la actividad (opcional)..."
+              maxLength={500}
+              showCount
+              disabled={loading}
+            />
+          </Form.Item>
+        )}
+
+        {/* Campo de archivos */}
         <Form.Item
-          label="Subir Archivos (Opcional)"
-          extra={
-            <div>
-              <p>
-                <strong>Formatos permitidos:</strong> JPG, JPEG, PNG, PDF
-              </p>
-              <p>
-                <strong>Tamaño máximo por archivo:</strong> 1GB
-              </p>
-              <p>
-                <strong>Puede seleccionar varios archivos.</strong>
-              </p>
-            </div>
+          label={
+            <span>
+              {esCompletada ? "Archivos requeridos" : "Archivos adicionales (opcional)"}
+            </span>
           }
+          tooltip="Formatos permitidos: JPG, JPEG, PNG, PDF. Tamaño máximo: 1GB"
+          required={esCompletada}
         >
           <Upload {...uploadProps}>
-            <Button icon={<UploadOutlined />}>Seleccionar archivos</Button>
+            <Button 
+              icon={<UploadOutlined />} 
+              disabled={loading}
+            >
+              Seleccionar archivos
+            </Button>
           </Upload>
+          <div style={{ marginTop: 8, fontSize: "12px", color: "#666" }}>
+            <p>• Formatos: JPG, JPEG, PNG, PDF</p>
+            <p>• Tamaño máximo: 1GB por archivo</p>
+            <p>• Puede seleccionar múltiples archivos</p>
+            {esCompletada && (
+              <p style={{ color: "#ff4d4f" }}>• Al menos un archivo es requerido</p>
+            )}
+          </div>
         </Form.Item>
       </Form>
     </Modal>
