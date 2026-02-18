@@ -731,7 +731,7 @@ export const ListCrearActivos = () => {
       extra={
         <>
           <Link to={`${location.pathname}/create`}>
-            <Button  disabled={!["Administrador", "Activos"].includes(user_rol)} type="primary">Crear</Button>
+            <Button  disabled={!["Administrador", "Activos","Administrador TI","Directora Proyectos"].includes(user_rol)} type="primary">Crear</Button>
           </Link>
         </>
       }
