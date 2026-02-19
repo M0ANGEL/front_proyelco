@@ -30,7 +30,7 @@ interface FormData {
   codigo_proyecto: string;
   operadorRed: string;
   requiereOrganismos: string; // "1" para SI, "2" para NO
-  organismoInspeccion?: string; // Opcional
+  organismoInspeccion?: string[]; // Array de organismos seleccionados
   etapaProyecto: string;
   codigoDocumentos: string;
   fechaEntrega: any;
@@ -38,6 +38,9 @@ interface FormData {
   numeroContrato?: string;
   responsable?: string;
   descripcion?: string;
+  requiereTorres?: string; // "1" para SI, "2" para NO
+  torres?: string[]; // Torres seleccionadas
+  cantidad_tm?: number; // Cantidad de torres/manzanas para OI
 }
 
 interface ProyectoOption {
@@ -46,13 +49,20 @@ interface ProyectoOption {
   descripcion?: string;
 }
 
+interface TorresManzanasOption {
+  label: string;
+  value: string;
+  id?: number;
+}
+
 export const CrearDocumentacionRed = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [loadingProyectos, setLoadingProyectos] = useState(false);
   const [selectProyecto, setSelectProyecto] = useState<ProyectoOption[]>([]);
-  const [selectToMaDisponibles, setSelectToMaDisponibles] = useState<any[]>([]);
-  const [selectedOrganismo, setSelectedOrganismo] = useState("0");
+  const [selectToMaDisponibles, setSelectToMaDisponibles] = useState<TorresManzanasOption[]>([]);
+  const [selectedOrganismo, setSelectedOrganismo] = useState<string>("");
+  const [selectedTorres, setSelectedTorres] = useState<string>("");
   const [loadingTorres, setLoadingTorres] = useState(false);
 
   const opcionOperadorRed = [
@@ -65,50 +75,18 @@ export const CrearDocumentacionRed = () => {
     { value: "2", label: "NO" },
   ];
 
+  const RequeireOpcionTorres = [
+    { value: "1", label: "SI" },
+    { value: "2", label: "NO" },
+  ];
+
   const organismoSI = selectedOrganismo === "1";
+  const torresSi = selectedTorres === "1";
 
   const opcionOrganismo = [
     { value: "1", label: "RETIE" },
     { value: "2", label: "RITEL" },
     { value: "3", label: "RETILAP" },
-  ];
-
-  //manejo de torres o manzanas disponibles
-  const handleProyectoChange = async (value: string) => {
-    // Limpiar torres seleccionadas
-    form.setFieldValue("torres", []);
-    setSelectToMaDisponibles([]);
-
-    if (!value) return;
-
-    try {
-      setLoadingTorres(true);
-
-      const response = await getTorresManzasDisponibles(value);
-
-      if (response.data.status === "success") {
-        const opciones = response.data.data.map((item: any) => ({
-          label: item.nombre_torre ?? item.nombre_manzana,
-          value: item.nombre_torre ?? item.nombre_manzana,
-        }));
-
-        setSelectToMaDisponibles(opciones);
-      } else {
-        message.warning("No hay torres/manzanas disponibles");
-      }
-    } catch (error) {
-      console.error(error);
-      message.error("Error al cargar torres/manzanas disponibles");
-    } finally {
-      setLoadingTorres(false);
-    }
-  };
-
-  //opcion de torres temporal ya que debe llegar desde la api
-  const torresApi = [
-    { value: "1", label: "T1" },
-    { value: "2", label: "T2" },
-    { value: "3", label: "T3" },
   ];
 
   const opcionEtapa = [
@@ -144,6 +122,42 @@ export const CrearDocumentacionRed = () => {
     { value: "30", label: "ET30" },
   ];
 
+  // Manejo de torres o manzanas disponibles
+  const handleProyectoChange = async (value: string) => {
+    // Limpiar torres seleccionadas
+    form.setFieldValue("torres", []);
+    setSelectToMaDisponibles([]);
+
+    if (!value) return;
+
+    try {
+      setLoadingTorres(true);
+
+      const response = await getTorresManzasDisponibles(value);
+
+      if (response.data.status === "success") {
+        const opciones = response.data.data.map((item: any) => ({
+          label: item.nombre_torre ?? item.nombre_manzana,
+          value: item.nombre_torre ?? item.nombre_manzana,
+          id: item.id,
+        }));
+
+        setSelectToMaDisponibles(opciones);
+        
+        if (opciones.length === 0) {
+          message.info("El proyecto seleccionado no tiene torres o manzanas disponibles");
+        }
+      } else {
+        message.warning("No hay torres/manzanas disponibles para este proyecto");
+      }
+    } catch (error) {
+      console.error(error);
+      message.error("Error al cargar torres/manzanas disponibles");
+    } finally {
+      setLoadingTorres(false);
+    }
+  };
+
   // Función mejorada para enviar datos a la API
   const enviarDatosAPI = async (datos: FormData): Promise<any> => {
     try {
@@ -158,15 +172,15 @@ export const CrearDocumentacionRed = () => {
       const token = localStorage.getItem("auth_token");
       if (!token) {
         throw new Error(
-          "Sesión expirada. Por favor, inicie sesión nuevamente.",
+          "Sesión expirada. Por favor, inicie sesión nuevamente."
         );
       }
 
       // Preparar datos para enviar
       const datosEnviar = {
         ...datos,
-        // Si se seleccionó "NO", limpiar el campo organismoInspeccion
         organismoInspeccion: organismoSI ? datos.organismoInspeccion : null,
+        torres: torresSi ? datos.torres : null,
         fechaEntrega: datos.fechaEntrega
           ? datos.fechaEntrega.format("YYYY-MM-DD")
           : null,
@@ -213,13 +227,13 @@ export const CrearDocumentacionRed = () => {
       // Mensajes de error específicos
       if (error.name === "AbortError") {
         throw new Error(
-          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente.",
+          "La solicitud tardó demasiado tiempo. Por favor, intente nuevamente."
         );
       }
 
       if (error.message.includes("Failed to fetch")) {
         throw new Error(
-          "Error de conexión. Verifique su internet e intente nuevamente.",
+          "Error de conexión. Verifique su internet e intente nuevamente."
         );
       }
 
@@ -229,7 +243,7 @@ export const CrearDocumentacionRed = () => {
     }
   };
 
-  // Validar datos antes del envío - CORREGIDO
+  // Validar datos antes del envío
   const validarDatosEnvio = (datos: FormData): string[] => {
     const errores: string[] = [];
 
@@ -244,11 +258,25 @@ export const CrearDocumentacionRed = () => {
     if (!datos.nombre_etapa?.trim())
       errores.push("Nombre de la etapa es requerido");
 
-    // ✅ VALIDACIÓN CONDICIONAL: Solo requerir organismo si se seleccionó "SI"
-    if (organismoSI && !datos.organismoInspeccion) {
-      errores.push(
-        "Organismo de inspección es requerido cuando se selecciona 'SI'",
-      );
+    // Validación condicional: Organismo de inspección
+    if (organismoSI) {
+      if (!datos.organismoInspeccion || datos.organismoInspeccion.length === 0) {
+        errores.push(
+          "Organismo de inspección es requerido cuando se selecciona 'SI'"
+        );
+      }
+      if (!datos.cantidad_tm && datos.cantidad_tm !== 0) {
+        errores.push("Cantidad de torres/manzanas es requerida para OI");
+      }
+    }
+
+    // Validación condicional: Torres
+    if (torresSi) {
+      if (!datos.torres || datos.torres.length === 0) {
+        errores.push(
+          "Debe seleccionar al menos una torre/manzana cuando requiere torres"
+        );
+      }
     }
 
     if (datos.codigoDocumentos && datos.codigoDocumentos.length > 20) {
@@ -304,9 +332,20 @@ export const CrearDocumentacionRed = () => {
   const handleOrganismoChange = (value: string) => {
     setSelectedOrganismo(value);
 
-    // Si se cambia a "NO", limpiar el campo organismoInspeccion
+    // Si se cambia a "NO", limpiar el campo organismoInspeccion y cantidad
     if (value === "2") {
       form.setFieldValue("organismoInspeccion", undefined);
+      form.setFieldValue("cantidad_tm", undefined);
+    }
+  };
+
+  // Manejar cambio en "Requiere Torres"
+  const handleTorreChange = (value: string) => {
+    setSelectedTorres(value);
+
+    // Si se cambia a "NO", limpiar el campo torres
+    if (value === "2") {
+      form.setFieldValue("torres", undefined);
     }
   };
 
@@ -322,7 +361,9 @@ export const CrearDocumentacionRed = () => {
 
       // Resetear formulario
       form.resetFields();
-      setSelectedOrganismo("0"); // Resetear el estado también
+      setSelectedOrganismo(""); // Resetear el estado
+      setSelectedTorres(""); // Resetear el estado
+      setSelectToMaDisponibles([]); // Limpiar torres disponibles
     } catch (error: any) {
       console.error("Error al crear documentación:", error);
 
@@ -337,7 +378,7 @@ export const CrearDocumentacionRed = () => {
       } else {
         message.error(
           error.message ||
-            "Error al crear la documentación. Por favor, intente nuevamente.",
+            "Error al crear la documentación. Por favor, intente nuevamente."
         );
       }
     }
@@ -407,7 +448,7 @@ export const CrearDocumentacionRed = () => {
                 allowClear
                 showSearch
                 loading={loadingProyectos}
-                onChange={handleProyectoChange} // 🔥 ENVÍA EL CÓDIGO A LA API
+                onChange={handleProyectoChange}
                 onClear={() => {
                   setSelectToMaDisponibles([]);
                   form.setFieldValue("torres", []);
@@ -505,7 +546,7 @@ export const CrearDocumentacionRed = () => {
                 </StyledFormItem>
               </Col>
 
-              {/* Etapa del proyecto */}
+              {/* Cantidad de torres o manzanas para OI */}
               <Col xs={24} sm={12} md={4}>
                 <StyledFormItem
                   name="cantidad_tm"
@@ -516,7 +557,7 @@ export const CrearDocumentacionRed = () => {
                   <InputNumber
                     placeholder="Número de Torres o Manzanas"
                     style={{ width: "100%" }}
-                    min={0}
+                    min={1}
                     max={100}
                   />
                 </StyledFormItem>
@@ -540,28 +581,83 @@ export const CrearDocumentacionRed = () => {
             </StyledFormItem>
           </Col>
 
-          {/* Torres o manzana del proyecto disponibles */}
-          <Col xs={24} sm={12} md={6}>
+          {/* ¿REQUIERE TORRES? */}
+          <Col xs={24} sm={12} md={4}>
             <StyledFormItem
-              name="torres"
-              label="Torres / Manzanas Etapa"
-              rules={[
-                {
-                  required: true,
-                  message: "Seleccione Torre(s)",
-                },
-              ]}
+              name="requiereTorres"
+              label={
+                <span>
+                  ¿Requiere Torres?
+                  <Tooltip title="Indique si esta documentación requiere seleccionar torres o manzanas">
+                    <InfoCircleOutlined
+                      style={{ marginLeft: 8, color: "#1890ff" }}
+                    />
+                  </Tooltip>
+                </span>
+              }
+              rules={[{ required: true, message: "Seleccione una opción" }]}
               required
             >
               <Select
-                mode="multiple"
-                options={selectToMaDisponibles}
-                placeholder="Seleccione Torre(s)"
+                options={RequeireOpcionTorres}
+                placeholder="SI / NO"
+                onChange={handleTorreChange}
                 allowClear
-                loading={loadingTorres}
               />
             </StyledFormItem>
           </Col>
+
+          {/* Torres / Manzanas - CONDICIONAL */}
+          {torresSi && (
+            <Col xs={24} sm={12} md={6}>
+              <StyledFormItem
+                name="torres"
+                label="Torres / Manzanas Etapa"
+                rules={[
+                  {
+                    required: torresSi,
+                    message: "Seleccione al menos una Torre",
+                  },
+                ]}
+                required={torresSi}
+              >
+                <Select
+                  mode="multiple"
+                  options={selectToMaDisponibles}
+                  placeholder={
+                    loadingTorres 
+                      ? "Cargando torres..." 
+                      : selectToMaDisponibles.length === 0
+                      ? "No hay torres disponibles"
+                      : "Seleccione Torre(s)"
+                  }
+                  allowClear
+                  loading={loadingTorres}
+                  disabled={loadingTorres || selectToMaDisponibles.length === 0}
+                  notFoundContent={
+                    loadingTorres ? (
+                      <Spin size="small">Cargando...</Spin>
+                    ) : (
+                      "No hay torres/manzanas disponibles"
+                    )
+                  }
+                />
+              </StyledFormItem>
+            </Col>
+          )}
+
+          {/* Mensaje cuando no hay torres disponibles */}
+          {torresSi && selectToMaDisponibles.length === 0 && !loadingTorres && (
+            <Col span={24}>
+              <Alert
+                message="No hay torres disponibles"
+                description="El proyecto seleccionado no tiene torres o manzanas asociadas. Puede continuar sin seleccionar torres o cambiar de proyecto."
+                type="warning"
+                showIcon
+                style={{ marginBottom: 16 }}
+              />
+            </Col>
+          )}
 
           {/* Código de documentos */}
           <Col xs={24} sm={12} md={8}>
@@ -651,7 +747,9 @@ export const CrearDocumentacionRed = () => {
                 size="large"
                 onClick={() => {
                   form.resetFields();
-                  setSelectedOrganismo("0");
+                  setSelectedOrganismo("");
+                  setSelectedTorres("");
+                  setSelectToMaDisponibles([]);
                 }}
                 disabled={loading}
                 icon={<ReloadOutlined />}
